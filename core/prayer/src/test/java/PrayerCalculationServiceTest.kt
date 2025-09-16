@@ -1,6 +1,5 @@
 import com.kutluoglu.core.model.CalculationMethod
 import com.kutluoglu.core.model.JuristicMethod
-import kotlinx.datetime.toKotlinLocalDate
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
