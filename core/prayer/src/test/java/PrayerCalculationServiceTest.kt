@@ -19,7 +19,7 @@ class PrayerCalculationServiceTest {
         val latitude = 41.03648429460445 // Halkalı/Küçükçekmece/Istanbul
         val longitude = 28.79004556525033
         val method = CalculationMethod.TURKEY_DIYANET
-        val juristic = JuristicMethod.HANAFI
+        val juristic = JuristicMethod.STANDARD
 
         // WHEN we call the function we are about to build
         val prayers = service.calculatePrayerTimes(

@@ -21,10 +21,8 @@ class PrayerCalculationService {
     ): List<Prayer> {
         val coordinates = Coordinates(latitude, longitude)
         val dateComponents = DateComponents.from(
-            Date.from(
-                date.atStartOfDay(
-                    ZoneId.systemDefault()).toInstant()
-                    ).toInstant().toKotlinInstant()
+            Date.from(date.atStartOfDay(
+                ZoneId.systemDefault()).toInstant()).toInstant().toKotlinInstant()
         )
         val params = getCalculationParameters(calculationMethod, juristicMethod)
         val prayerTimes = PrayerTimes(coordinates, dateComponents, params)
@@ -89,8 +87,8 @@ class PrayerCalculationService {
             CalculationMethod.ISNA -> com.batoulapps.adhan2.CalculationMethod.NORTH_AMERICA
             CalculationMethod.MUSLIM_WORLD_LEAGUE -> com.batoulapps.adhan2.CalculationMethod.MUSLIM_WORLD_LEAGUE
         }
-        val params = method.parameters
-        when(juristicMethod) {
+        var params = method.parameters
+        params = when(juristicMethod) {
             JuristicMethod.STANDARD -> params.copy(madhab =  com.batoulapps.adhan2.Madhab.SHAFI)
             JuristicMethod.HANAFI -> params.copy(madhab = com.batoulapps.adhan2.Madhab.HANAFI)
         }
