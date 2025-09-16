@@ -1,4 +1,5 @@
-import com.kutluoglu.prayer.model.CalculationMethod
+package com.kutluoglu.prayer.model
+
 import java.time.LocalDate
 import java.time.LocalTime
 
