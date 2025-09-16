@@ -1,5 +1,5 @@
-import com.kutluoglu.core.model.CalculationMethod
-import com.kutluoglu.core.model.JuristicMethod
+import com.kutluoglu.prayer.model.CalculationMethod
+import com.kutluoglu.prayer.model.JuristicMethod
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
