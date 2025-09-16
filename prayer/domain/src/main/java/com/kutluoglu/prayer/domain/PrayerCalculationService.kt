@@ -1,3 +1,5 @@
+package com.kutluoglu.prayer.domain
+
 import com.batoulapps.adhan2.CalculationParameters
 import com.batoulapps.adhan2.Coordinates
 import com.batoulapps.adhan2.Prayer.*
@@ -5,6 +7,7 @@ import com.batoulapps.adhan2.PrayerTimes
 import com.batoulapps.adhan2.data.DateComponents
 import com.kutluoglu.prayer.model.CalculationMethod
 import com.kutluoglu.prayer.model.JuristicMethod
+import com.kutluoglu.prayer.model.Prayer
 import kotlinx.datetime.toJavaInstant
 import kotlinx.datetime.toKotlinInstant
 import java.time.LocalDate
