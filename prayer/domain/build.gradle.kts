@@ -15,6 +15,10 @@ dependencies {
     // This module needs the data models (e.g., the Prayer data class)
     implementation(project(":prayer:model"))
     implementation(libs.adhan)
+    // Koin
+    implementation(platform(libs.koin.bom))
+    implementation(libs.koin.core)
+    implementation(libs.koin.core.viewmodel)
 
     // --- Testing Dependencies ---
     // Standard JUnit 5 for running tests
@@ -35,6 +39,10 @@ dependencies {
 
     // For testing coroutines if your service uses them
     testImplementation(libs.kotlinx.coroutines.test)
+
+    // Koin Test
+    testImplementation(libs.koin.test)
+
 }
 
 // This block is still required to tell Gradle to use the JUnit 5 runner
