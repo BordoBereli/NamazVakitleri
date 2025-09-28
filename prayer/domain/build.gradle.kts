@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     id("java-library")
     alias(libs.plugins.jetbrains.kotlin.jvm)
@@ -8,44 +10,25 @@ java {
 }
 kotlin {
     compilerOptions {
-        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11
+        jvmTarget = JvmTarget.JVM_11
     }
 }
 dependencies {
-    // This module needs the data models (e.g., the Prayer data class)
     implementation(project(":prayer:model"))
+
     implementation(libs.adhan)
-    // Koin
-    implementation(platform(libs.koin.bom))
-    implementation(libs.koin.core)
-    implementation(libs.koin.core.viewmodel)
 
-    // --- Testing Dependencies ---
-    // Standard JUnit 5 for running tests
-    testImplementation(platform(libs.junit.bom))
+    // Core Testing
+    testImplementation(platform { libs.junit.bom })
+    testImplementation(libs.kotlinx.coroutines.test) // For testing coroutines
+    testImplementation(libs.turbine) // Excellent for testing Flows
+    testImplementation(libs.truth) // For readable assertions
     testImplementation(libs.junit.jupiter.api)
-    testRuntimeOnly(libs.junit.jupiter.engine)
+    testImplementation(libs.junit.jupiter.engine)
     testImplementation(libs.junit.jupiter.params)
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher") {
-        because("Only needed to run tests in a version of IntelliJ IDEA that bundles older versions")
-    }
-    testRuntimeOnly(libs.jupiter.junit.jupiter.engine)
-
-    // MockK for creating mock objects in tests
-    testImplementation(libs.mockk)
-
-    // AssertJ for more readable assertions (optional, but recommended)
+    testImplementation(libs.jupiter.junit.jupiter.engine)
     testImplementation(libs.assertj.core)
 
-    // For testing coroutines if your service uses them
-    testImplementation(libs.kotlinx.coroutines.test)
-
-    // Koin Test
-    testImplementation(libs.koin.test)
-
-}
-
-// This block is still required to tell Gradle to use the JUnit 5 runner
-tasks.withType<Test> {
-    useJUnitPlatform()
+    // MockK for mocking dependencies
+    testImplementation(libs.mockk)
 }
