@@ -48,7 +48,6 @@ dependencies {
     //implementation(libs.koin.core)
 
     // Core Testing
-    testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test) // For testing coroutines
     testImplementation(libs.turbine) // Excellent for testing Flows
     testImplementation(libs.truth) // For readable assertions

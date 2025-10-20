@@ -2,7 +2,7 @@ import com.kutluoglu.prayer.domain.PrayerTimeEngine
 import com.kutluoglu.prayer.model.CalculationMethod
 import com.kutluoglu.prayer.model.JuristicMethod
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
-import org.junit.jupiter.api.Test
+import org.junit.Test
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -10,7 +10,9 @@ import java.time.LocalTime
 class PrayerCalculationServiceTest {
 
     @Test
-    fun `calculatePrayerTimes fails because it does not exist yet`() {
+    fun `calculateDailyPrayerTimes successful`() {
+        // This test documents our starting point.
+
         // GIVEN a specific, known set of parameters
         val service = PrayerTimeEngine()
         val date = LocalDate.of(2025, 9, 15)

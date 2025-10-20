@@ -64,7 +64,6 @@ dependencies {
     implementation(libs.androidx.compose.material3)
 
     // Core Testing
-    testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test) // For testing coroutines
     testImplementation(libs.turbine) // Excellent for testing Flows
     testImplementation(libs.truth) // For readable assertions
@@ -74,9 +73,7 @@ dependencies {
 
     // Koin Testing
     testImplementation(libs.koin.test)
-    testImplementation(libs.koin.test.junit4)
-
-
+    testImplementation(libs.koin.test.junit5)
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
