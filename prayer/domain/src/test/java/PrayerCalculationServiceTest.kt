@@ -1,4 +1,4 @@
-import com.kutluoglu.prayer.domain.PrayerCalculationService
+import com.kutluoglu.prayer.domain.PrayerTimeEngine
 import com.kutluoglu.prayer.model.CalculationMethod
 import com.kutluoglu.prayer.model.JuristicMethod
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
@@ -14,7 +14,7 @@ class PrayerCalculationServiceTest {
         // This test documents our starting point.
 
         // GIVEN a specific, known set of parameters
-        val service = PrayerCalculationService()
+        val service = PrayerTimeEngine()
         val date = LocalDate.of(2025, 9, 15)
         val latitude = 41.03648429460445 // Halkalı/Küçükçekmece/Istanbul
         val longitude = 28.79004556525033
@@ -22,7 +22,7 @@ class PrayerCalculationServiceTest {
         val juristic = JuristicMethod.STANDARD
 
         // WHEN we call the function we are about to build
-        val prayers = service.calculatePrayerTimes(
+        val prayers = service.calculateDailyPrayerTimes(
             latitude,
             longitude,
             date,

@@ -22,9 +22,6 @@ dependencies {
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testImplementation(libs.junit.jupiter.params)
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher") {
-        because("Only needed to run tests in a version of IntelliJ IDEA that bundles older versions")
-    }
     testRuntimeOnly(libs.jupiter.junit.jupiter.engine)
 
     // MockK for creating mock objects in tests
@@ -35,6 +32,19 @@ dependencies {
 
     // For testing coroutines if your service uses them
     testImplementation(libs.kotlinx.coroutines.test)
+
+
+    // Core Testing
+    testImplementation(platform { libs.junit.bom })
+    testImplementation(libs.kotlinx.coroutines.test) // For testing coroutines
+    testImplementation(libs.turbine) // Excellent for testing Flows
+    testImplementation(libs.truth) // For readable assertions
+//    testImplementation(libs.junit.jupiter.api)
+//    testImplementation(libs.junit.jupiter.engine)
+//    testImplementation(libs.junit.jupiter.params)
+//    testImplementation(libs.jupiter.junit.jupiter.engine)
+    testImplementation(libs.assertj.core)
+
 }
 
 // This block is still required to tell Gradle to use the JUnit 5 runner
