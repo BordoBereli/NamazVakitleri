@@ -63,6 +63,7 @@ junit-bom = { module = "org.junit:junit-bom", version.ref = "junitBom" }
 junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api" }
 junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine" }
 junit-jupiter-params = { module = "org.junit.jupiter:junit-jupiter-params" }
+junit-platform-suite = { module = "org.junit.platform:junit-platform-suite" }
 junit-platform-suite-api = { module = "org.junit.jupiter:junit-platform-suite-api" }
 junit-platform-suite-engine = { module = "org.junit.jupiter:junit-platform-suite-engine" }
 

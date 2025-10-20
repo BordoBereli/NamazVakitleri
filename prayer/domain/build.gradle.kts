@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.org.apache.commons.io.function.Uncheck.test
+
 plugins {
     id("java-library")
     alias(libs.plugins.jetbrains.kotlin.jvm)
@@ -35,4 +37,9 @@ dependencies {
     testImplementation(libs.assertj.core) // AssertJ for more readable assertions (optional, but recommended)
     testImplementation(libs.mockk) // MockK for creating mock objects in tests
 
+    // Test Suite
+    testImplementation(libs.junit.platform.suite)
+    //testImplementation(libs.junit.platform.suite.api)
+    //testRuntimeOnly(libs.junit.platform.suite.engine)
 }
+
