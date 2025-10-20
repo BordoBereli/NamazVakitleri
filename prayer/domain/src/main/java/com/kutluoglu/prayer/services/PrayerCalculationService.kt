@@ -1,4 +1,4 @@
-package com.kutluoglu.prayer.domain
+package com.kutluoglu.prayer.services
 
 import com.kutluoglu.prayer.model.CalculationMethod
 import com.kutluoglu.prayer.model.JuristicMethod

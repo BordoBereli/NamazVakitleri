@@ -16,12 +16,6 @@ dependencies {
     implementation(project(":prayer:model"))
     implementation(libs.adhan)
 
-    // Dependency Injection - Koin
-    implementation(platform(libs.koin.bom))
-    implementation(libs.koin.core)
-    implementation(libs.koin.core.viewmodel)
-//    implementation(libs.koin.androidx.workmanager) // Add when WorkManager is implemented
-
     // --- Testing Dependencies ---
     // Standard JUnit 5 for running tests
     testImplementation(platform(libs.junit.bom))

@@ -1,4 +1,4 @@
-import com.kutluoglu.prayer.domain.PrayerTimeEngine
+import com.kutluoglu.prayer.domain.PrayerCalculationService
 import com.kutluoglu.prayer.model.CalculationMethod
 import com.kutluoglu.prayer.model.JuristicMethod
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
@@ -11,16 +11,18 @@ class PrayerCalculationServiceTest {
 
     @Test
     fun `calculatePrayerTimes fails because it does not exist yet`() {
+        // This test documents our starting point.
+
         // GIVEN a specific, known set of parameters
-        val service = PrayerTimeEngine()
+        val service = PrayerCalculationService()
         val date = LocalDate.of(2025, 9, 15)
         val latitude = 41.03648429460445 // Halkalı/Küçükçekmece/Istanbul
         val longitude = 28.79004556525033
         val method = CalculationMethod.TURKEY_DIYANET
         val juristic = JuristicMethod.STANDARD
 
-        // WHEN we call the function calculatePrayerTimes
-        val prayers = service.calculateDailyPrayerTimes(
+        // WHEN we call the function we are about to build
+        val prayers = service.calculatePrayerTimes(
             latitude,
             longitude,
             date,
