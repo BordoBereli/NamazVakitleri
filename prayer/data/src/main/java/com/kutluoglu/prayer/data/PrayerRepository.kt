@@ -22,7 +22,7 @@ class PrayerRepository(
 
         // Step 2 - If not cached, calculate new prayer times.
         // For now, we always calculate.
-        val prayerTimes =  prayerCalculationService.calculatePrayerTimes(
+        val prayerTimes =  prayerCalculationService.calculateDailyPrayerTimes(
             latitude = latitude,
             longitude = longitude,
             date = date,
