@@ -6,8 +6,8 @@ import com.kutluoglu.prayer.usecases.GetPrayerTimesUseCase
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -15,7 +15,7 @@ class GetPrayerTimesUseCaseTest {
     private lateinit var prayerRepository: IPrayerRepository
     private lateinit var useCase: GetPrayerTimesUseCase
 
-    @Before
+    @BeforeEach
     fun setUp() {
         prayerRepository = mockk()
         useCase = GetPrayerTimesUseCase(prayerRepository)

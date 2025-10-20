@@ -2,6 +2,7 @@
 agp = "8.10.1"
 adhan2 = "0.0.5"
 jetbrainsKotlinJvm = "2.2.20"
+junitPlatformSuiteEngine = "1.13.4"
 kotlin = "2.2.20"
 coreKtx = "1.17.0"
 kotlinxDatetime = "0.7.1"
@@ -48,9 +49,12 @@ junit-bom = { module = "org.junit:junit-bom", version.ref = "junitBom" }
 junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api" }
 junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine" }
 junit-jupiter-params = { module = "org.junit.jupiter:junit-jupiter-params" }
-junit-platform-suite = { module = "org.junit.platform:junit-platform-suite" }
+junit-platform-suite = { module = "org.junit.platform:junit-platform-suite", version.ref = "junitPlatformSuiteEngine"  }
+platform-junit-platform-suite-engine = { module = "org.junit.platform:junit-platform-suite-engine", version.ref = "junitPlatformSuiteEngine" }
 junit-platform-suite-api = { module = "org.junit.jupiter:junit-platform-suite-api" }
 junit-platform-suite-engine = { module = "org.junit.jupiter:junit-platform-suite-engine" }
+truth = { module = "com.google.truth:truth", version.ref = "truth" }
+turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 
 
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
@@ -73,8 +77,7 @@ koin-test = { module = "io.insert-koin:koin-test" }
 koin-test-junit5 = { module = "io.insert-koin:koin-test-junit5" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
-truth = { module = "com.google.truth:truth", version.ref = "truth" }
-turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

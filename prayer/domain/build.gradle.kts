@@ -40,7 +40,8 @@ dependencies {
 
     // Test Suite
     testImplementation(libs.junit.platform.suite)
+    testRuntimeOnly(libs.platform.junit.platform.suite.engine)
     //testImplementation(libs.junit.platform.suite.api)
     //testRuntimeOnly(libs.junit.platform.suite.engine)
 }
-
+tasks.withType<Test> { useJUnitPlatform() }

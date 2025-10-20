@@ -1,4 +1,6 @@
+import org.junit.platform.suite.api.SelectPackages
 import org.junit.platform.suite.api.Suite
+import org.junit.platform.suite.api.SuiteDisplayName
 
 
 /**
@@ -7,5 +9,6 @@ import org.junit.platform.suite.api.Suite
  */
 
 @Suite
-class PrayerDomainTestSuite {
-}
+@SuiteDisplayName("Prayer Domain Test Suite")
+@SelectPackages("")
+class PrayerDomainTestSuite
