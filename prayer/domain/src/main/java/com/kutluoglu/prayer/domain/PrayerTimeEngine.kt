@@ -8,6 +8,7 @@ import com.batoulapps.adhan2.data.DateComponents
 import com.kutluoglu.prayer.model.CalculationMethod
 import com.kutluoglu.prayer.model.JuristicMethod
 import com.kutluoglu.prayer.model.Prayer
+import com.kutluoglu.prayer.services.PrayerCalculationService
 import kotlinx.datetime.toJavaInstant
 import kotlinx.datetime.toKotlinInstant
 import java.time.LocalDate

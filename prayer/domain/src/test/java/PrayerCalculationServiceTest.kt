@@ -19,7 +19,7 @@ class PrayerCalculationServiceTest {
         val method = CalculationMethod.TURKEY_DIYANET
         val juristic = JuristicMethod.STANDARD
 
-        // WHEN we call the function calculatePrayerTimes
+        // WHEN we call the function we are about to build
         val prayers = service.calculateDailyPrayerTimes(
             latitude,
             longitude,
