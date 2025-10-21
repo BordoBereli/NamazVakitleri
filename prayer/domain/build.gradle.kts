@@ -35,13 +35,12 @@ dependencies {
     testImplementation(libs.kotlinx.coroutines.test) // For testing coroutines
     testImplementation(libs.turbine) // Excellent for testing Flows
     testImplementation(libs.truth) // For readable assertions
-    testImplementation(libs.assertj.core) // AssertJ for more readable assertions (optional, but recommended)
     testImplementation(libs.mockk) // MockK for creating mock objects in tests
+    testImplementation(libs.assertj.core) // AssertJ for more readable assertions (optional, but recommended)
 
     // Test Suite
     testImplementation(libs.junit.platform.suite)
     testRuntimeOnly(libs.platform.junit.platform.suite.engine)
-    //testImplementation(libs.junit.platform.suite.api)
-    //testRuntimeOnly(libs.junit.platform.suite.engine)
+
 }
 tasks.withType<Test> { useJUnitPlatform() }

@@ -8,8 +8,9 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -19,7 +20,7 @@ class PrayerRepositoryTest {
     private lateinit var prayerCalculationService: PrayerCalculationService
     private lateinit var repository: PrayerRepository
 
-    @Before
+    @BeforeEach
     fun setUp() {
         // 2. Create a mock of the dependency
         prayerCalculationService = mockk()
@@ -48,14 +49,14 @@ class PrayerRepositoryTest {
 
         // Stub the mock: When prayerCalculationService.calculatePrayerTimes is called with ANY arguments,
         // it should return our mockPrayerList.
-        coEvery { prayerCalculationService.calculatePrayerTimes(any(), any(), any(), any(), any()) } returns mockPrayerList
+        coEvery { prayerCalculationService.calculateDailyPrayerTimes(any(), any(), any(), any(), any()) } returns mockPrayerList
 
         // Act (When)
         val result = repository.getPrayerTimes(testDate, testLatitude, testLongitude)
 
         // Assert (Then)
         // Verify that the service was called exactly once.
-        coVerify(exactly = 1) { prayerCalculationService.calculatePrayerTimes(testLatitude, testLongitude, testDate, any(), any()) }
+        coVerify(exactly = 1) { prayerCalculationService.calculateDailyPrayerTimes(testLatitude, testLongitude, testDate, any(), any()) }
 
         // Verify that the result from the repository is the same as the one we told the mock to return.
         assertThat(result).isEqualTo(mockPrayerList)
