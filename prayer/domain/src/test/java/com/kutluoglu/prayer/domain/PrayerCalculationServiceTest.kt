@@ -2,6 +2,7 @@ package com.kutluoglu.prayer.domain
 
 import com.kutluoglu.prayer.model.CalculationMethod
 import com.kutluoglu.prayer.model.JuristicMethod
+import com.kutluoglu.prayer.services.PrayerTimeEngine
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
