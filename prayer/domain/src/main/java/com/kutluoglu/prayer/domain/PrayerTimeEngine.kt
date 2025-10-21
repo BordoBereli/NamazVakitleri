@@ -1,4 +1,4 @@
-package com.kutluoglu.prayer.domain
+package com.kutluoglu.prayer.services
 
 import com.batoulapps.adhan2.CalculationParameters
 import com.batoulapps.adhan2.Coordinates
