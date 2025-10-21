@@ -11,16 +11,15 @@ import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import java.time.LocalDate
 import java.time.LocalTime
 
 
 @ExperimentalCoroutinesApi
+@ExtendWith(MainCoroutineRule::class)
 class HomeViewModelTest {
-
-    @get:Rule
-    val mainCoroutineRule = MainCoroutineRule()
 
     private lateinit var getPrayerTimesUseCase: GetPrayerTimesUseCase
     private lateinit var viewModel: HomeViewModel
