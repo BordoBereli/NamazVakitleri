@@ -1,3 +1,5 @@
+package com.kutluoglu.prayer.domain
+
 import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.prayer.model.CalculationMethod
 import com.kutluoglu.prayer.model.Prayer

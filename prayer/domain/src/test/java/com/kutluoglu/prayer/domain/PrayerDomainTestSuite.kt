@@ -1,3 +1,5 @@
+package com.kutluoglu.prayer.domain
+
 import org.junit.platform.suite.api.SelectPackages
 import org.junit.platform.suite.api.Suite
 import org.junit.platform.suite.api.SuiteDisplayName
@@ -10,5 +12,5 @@ import org.junit.platform.suite.api.SuiteDisplayName
 
 @Suite
 @SuiteDisplayName("Prayer Domain Test Suite")
-@SelectPackages("")
+@SelectPackages("com.kutluoglu.prayer.domain")
 class PrayerDomainTestSuite

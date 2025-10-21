@@ -1,4 +1,5 @@
-import com.kutluoglu.prayer.domain.PrayerTimeEngine
+package com.kutluoglu.prayer.domain
+
 import com.kutluoglu.prayer.model.CalculationMethod
 import com.kutluoglu.prayer.model.JuristicMethod
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
