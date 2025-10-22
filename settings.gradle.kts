@@ -51,3 +51,5 @@ include(":core:common")          // Shared utilities, extensions, base classes
 include(":prayer:domain")
 include(":prayer:model")
 include(":prayer:data")
+include(":core:ui")
+include(":prayer_feature:home")

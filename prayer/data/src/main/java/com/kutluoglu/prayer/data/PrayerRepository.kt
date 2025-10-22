@@ -1,6 +1,5 @@
 package com.kutluoglu.prayer.data
 
-import com.kutluoglu.core.common.formatter
 import com.kutluoglu.prayer.model.CalculationMethod
 import com.kutluoglu.prayer.model.JuristicMethod
 import com.kutluoglu.prayer.model.Prayer

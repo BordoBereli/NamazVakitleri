@@ -44,6 +44,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:ui"))
     implementation(project(":core:common"))
     implementation(project(":prayer:domain"))
     implementation(project(":prayer:model"))
