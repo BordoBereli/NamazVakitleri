@@ -1,5 +1,4 @@
-import org.jetbrains.kotlin.org.apache.commons.io.function.Uncheck.test
-
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     id("java-library")
     alias(libs.plugins.jetbrains.kotlin.jvm)
