@@ -3,18 +3,16 @@ package com.kutluoglu.namazvakitleri
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.namazvakitleri.ui.viewModel.HomeViewModel
-import com.kutluoglu.prayer.model.CalculationMethod
 import com.kutluoglu.prayer.model.Prayer
 import com.kutluoglu.prayer.usecases.GetPrayerTimesUseCase
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import org.junit.Rule
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalTime
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import java.time.LocalDate
-import java.time.LocalTime
 
 
 @ExperimentalCoroutinesApi
@@ -27,17 +25,15 @@ class HomeViewModelTest {
     @Test
     fun `loadPrayerTimes success should update uiState with prayer list`() = runTest {
         // Arrange
-        val testDate = LocalDate.of(2024, 1, 1)
+        val testDate = LocalDate(2024, 1, 1)
         val mockPrayerList = listOf(
             Prayer(
                 name = "Fajr",
                 arabicName = "الفجر",
-                time = LocalTime.of(16, 30),
+                time = LocalTime.parse("16:30"),
                 date = testDate,
                 isCurrent = false,
-                notificationEnabled = false,
-                calculationMethod = CalculationMethod.TURKEY_DIYANET,
-                adjustmentMinutes = 0
+                notificationEnabled = false
             )
         )
         getPrayerTimesUseCase = mockk()

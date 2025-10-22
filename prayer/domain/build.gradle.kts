@@ -14,9 +14,10 @@ kotlin {
     }
 }
 dependencies {
-    // This module needs the data models (e.g., the Prayer data class)
+    implementation(project(":core:common"))
     implementation(project(":prayer:model"))
     implementation(libs.adhan)
+    implementation(libs.kotlinx.datetime)
 
     // Dependency Injection - Koin
     implementation(platform(libs.koin.bom))

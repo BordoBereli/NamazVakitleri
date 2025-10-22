@@ -1,6 +1,6 @@
 [versions]
 agp = "8.10.1"
-adhan2 = "0.0.5"
+adhan2 = "0.0.6"
 jetbrainsKotlinJvm = "2.2.20"
 junitPlatformSuiteEngine = "1.13.4"
 kotlin = "2.2.20"

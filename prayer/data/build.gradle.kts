@@ -37,6 +37,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:common"))
     implementation(project(":prayer:domain"))
     implementation(project(":prayer:model"))
     implementation(libs.kotlinx.datetime)

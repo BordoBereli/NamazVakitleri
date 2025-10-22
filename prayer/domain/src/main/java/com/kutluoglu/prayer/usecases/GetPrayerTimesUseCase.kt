@@ -2,12 +2,12 @@ package com.kutluoglu.prayer.usecases
 
 import com.kutluoglu.prayer.model.Prayer
 import com.kutluoglu.prayer.repository.IPrayerRepository
-import java.time.LocalDate
+import kotlinx.datetime.LocalDateTime
 
 class GetPrayerTimesUseCase(
     private val prayerRepository: IPrayerRepository
 ) {
-    suspend operator fun invoke(date: LocalDate, latitude: Double, longitude: Double): Result<List<Prayer>> {
+    suspend operator fun invoke(date: LocalDateTime, latitude: Double, longitude: Double): Result<List<Prayer>> {
         return try {
             val prayerTimes = prayerRepository.getPrayerTimes(date, latitude, longitude)
             Result.success(prayerTimes)
