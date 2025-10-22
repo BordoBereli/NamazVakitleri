@@ -1,11 +1,12 @@
 package com.kutluoglu.prayer.data
 
+import com.kutluoglu.core.common.formatter
 import com.kutluoglu.prayer.model.CalculationMethod
 import com.kutluoglu.prayer.model.JuristicMethod
 import com.kutluoglu.prayer.model.Prayer
 import com.kutluoglu.prayer.repository.IPrayerRepository
 import com.kutluoglu.prayer.services.PrayerCalculationService
-import java.time.LocalDate
+import kotlinx.datetime.LocalDateTime
 
 
 class PrayerRepository(
@@ -13,7 +14,7 @@ class PrayerRepository(
     // private val prayerDao: PrayerDao // We will add this later for caching
 ) : IPrayerRepository {
     override suspend fun getPrayerTimes(
-        date: LocalDate,
+        date: LocalDateTime,
         latitude: Double,
         longitude: Double
     ): List<Prayer> {

@@ -44,6 +44,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:common"))
     implementation(project(":prayer:domain"))
     implementation(project(":prayer:model"))
     implementation(project(":prayer:data"))
@@ -56,6 +57,8 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+
+    implementation(libs.kotlinx.datetime)
 
     // Koin
     implementation(platform(libs.koin.bom))

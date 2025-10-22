@@ -1,18 +1,17 @@
 package com.kutluoglu.prayer.data
 
 import com.google.common.truth.Truth.assertThat
-import com.kutluoglu.prayer.model.CalculationMethod
+import com.kutluoglu.core.common.createBy
 import com.kutluoglu.prayer.model.Prayer
 import com.kutluoglu.prayer.services.PrayerCalculationService
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-
-import java.time.LocalDate
-import java.time.LocalTime
 
 class PrayerRepositoryTest {
 
@@ -31,19 +30,17 @@ class PrayerRepositoryTest {
     @Test
     fun `getPrayerTimes should call calculationService and return its result`() = runTest {
         // Arrange (Given)
-        val testDate = LocalDate.of(2024, 1, 1)
+        val testDate = LocalDateTime.createBy(2024, 1, 1)
         val testLatitude = 41.0
         val testLongitude = 29.0
         val mockPrayerList = listOf(
             Prayer(
                 name = "Fajr",
                 arabicName = "الفجر",
-                time = LocalTime.of(5, 0),
-                date = testDate,
+                time = LocalTime.parse("05:00"),
+                date = testDate.date,
                 isCurrent = false,
-                notificationEnabled = false,
-                calculationMethod = CalculationMethod.TURKEY_DIYANET,
-                adjustmentMinutes = 0
+                notificationEnabled = false
             )
         )
 

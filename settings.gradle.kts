@@ -22,7 +22,7 @@ dependencyResolutionManagement {
 rootProject.name = "NamazVakitleri"
 include(":app")
 // Foundation Modules
-//include(":core:common")          // Shared utilities, extensions, base classes
+include(":core:common")          // Shared utilities, extensions, base classes
 //include(":core:network")         // Retrofit, API interfaces, network utils
 //include(":core:database")        // Room database, DAOs
 //include(":core:preferences")     // DataStore/SharedPreferences wrapper

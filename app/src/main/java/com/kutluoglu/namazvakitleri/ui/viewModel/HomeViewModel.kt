@@ -2,6 +2,7 @@ package com.kutluoglu.namazvakitleri.ui.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kutluoglu.core.common.now
 import com.kutluoglu.namazvakitleri.ui.model.HomeUiState
 import com.kutluoglu.prayer.usecases.GetPrayerTimesUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -9,7 +10,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
 import java.time.LocalDate
+import java.time.ZoneId
 
 class HomeViewModel(
     private val getPrayerTimesUseCase: GetPrayerTimesUseCase
@@ -29,7 +33,7 @@ class HomeViewModel(
             val latitude = 41.0082
             val longitude = 28.9784
 
-            getPrayerTimesUseCase(LocalDate.now(), latitude, longitude)
+            getPrayerTimesUseCase(LocalDateTime.now(), latitude, longitude)
                 .onSuccess { prayerTimes ->
                     _uiState.update {
                         it.copy(
