@@ -1,4 +1,4 @@
-package com.kutluoglu.prayer.services
+package com.kutluoglu.prayer.domain
 
 import com.batoulapps.adhan2.CalculationParameters
 import com.batoulapps.adhan2.Coordinates
@@ -8,9 +8,11 @@ import com.batoulapps.adhan2.data.DateComponents
 import com.kutluoglu.prayer.model.CalculationMethod
 import com.kutluoglu.prayer.model.JuristicMethod
 import com.kutluoglu.prayer.model.Prayer
+import com.kutluoglu.prayer.services.PrayerCalculationService
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.toKotlinTimeZone
 import kotlinx.datetime.toLocalDateTime
+import org.koin.core.annotation.Factory
 import java.time.LocalTime
 import java.time.ZoneId
 import kotlin.time.ExperimentalTime
@@ -18,6 +20,7 @@ import kotlin.time.Instant
 import kotlin.time.toJavaInstant
 
 @OptIn(ExperimentalTime::class)
+@Factory
 class PrayerTimeEngine : PrayerCalculationService {
     override fun calculateDailyPrayerTimes(
         latitude: Double,

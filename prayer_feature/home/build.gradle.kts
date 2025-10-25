@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -45,6 +46,7 @@ dependencies {
     implementation(project(":core:common"))
     implementation(project(":prayer:domain"))
     implementation(project(":prayer:model"))
+    implementation(project(":prayer_navigation:core"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -56,13 +58,20 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
 
+    implementation(libs.compose.navigation)
+
     implementation(libs.kotlinx.datetime)
+
+    // Coil
+    implementation(libs.coil)
 
     // Koin
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.core)
     implementation(libs.koin.android)
     implementation(libs.koin.android.compose)
+    implementation(libs.koin.annotations)
+    ksp(libs.koin.ksp)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

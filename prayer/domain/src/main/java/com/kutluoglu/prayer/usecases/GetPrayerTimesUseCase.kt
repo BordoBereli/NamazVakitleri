@@ -3,7 +3,9 @@ package com.kutluoglu.prayer.usecases
 import com.kutluoglu.prayer.model.Prayer
 import com.kutluoglu.prayer.repository.IPrayerRepository
 import kotlinx.datetime.LocalDateTime
+import org.koin.core.annotation.Factory
 
+@Factory
 class GetPrayerTimesUseCase(
     private val prayerRepository: IPrayerRepository
 ) {

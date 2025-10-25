@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     id("java-library")
     alias(libs.plugins.jetbrains.kotlin.jvm)
+    alias(libs.plugins.ksp)
 }
 java {
     sourceCompatibility = JavaVersion.VERSION_11
@@ -21,7 +22,8 @@ dependencies {
     // Dependency Injection - Koin
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.core)
-//    implementation(libs.koin.androidx.workmanager) // Add when WorkManager is implemented
+    implementation(libs.koin.annotations)
+    ksp(libs.koin.ksp)
 
     // --- Testing Dependencies ---
     // Standard JUnit 5 for running tests

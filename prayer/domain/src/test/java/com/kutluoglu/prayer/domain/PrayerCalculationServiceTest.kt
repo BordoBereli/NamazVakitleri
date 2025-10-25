@@ -3,12 +3,10 @@ package com.kutluoglu.prayer.domain
 import com.kutluoglu.core.common.createBy
 import com.kutluoglu.prayer.model.CalculationMethod
 import com.kutluoglu.prayer.model.JuristicMethod
-import com.kutluoglu.prayer.services.PrayerTimeEngine
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.junit.jupiter.api.Test
-
 
 class PrayerCalculationServiceTest {
 

@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -49,7 +50,10 @@ dependencies {
     implementation(project(":prayer:domain"))
     implementation(project(":prayer:model"))
     implementation(project(":prayer:data"))
-    
+    implementation(project(":prayer_navigation:core"))
+    implementation(project(":prayer_feature:home"))
+    implementation(project(":prayer_feature:prayertimes"))
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -58,6 +62,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+    implementation(libs.compose.navigation)
 
     implementation(libs.kotlinx.datetime)
 
@@ -65,7 +70,7 @@ dependencies {
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.core)
     implementation(libs.koin.android)
-    implementation(libs.koin.android.compose)
+    ksp(libs.koin.ksp)
 
     // --- Testing Dependencies ---
     // Standard JUnit 5 for running tests

@@ -6,8 +6,10 @@ import com.kutluoglu.prayer.model.Prayer
 import com.kutluoglu.prayer.repository.IPrayerRepository
 import com.kutluoglu.prayer.services.PrayerCalculationService
 import kotlinx.datetime.LocalDateTime
+import org.koin.core.annotation.Single
 
 
+@Single
 class PrayerRepository(
     private val prayerCalculationService: PrayerCalculationService
     // private val prayerDao: PrayerDao // We will add this later for caching
