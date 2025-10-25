@@ -2,6 +2,9 @@ package com.kutluoglu.core.common
 
 import kotlinx.datetime.LocalDateTime
 import java.time.ZoneId
+import java.util.Date
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 /**
  * Created by F.K. on 22.10.2025.
@@ -33,3 +36,6 @@ fun LocalDateTime.Companion.createBy(year: Int, month: Int, day: Int): LocalDate
         nanosecond = javaLocalDateTime.nano
     )
 }
+
+@OptIn(ExperimentalTime::class)
+fun Instant.asDate() = Date(toEpochMilliseconds())

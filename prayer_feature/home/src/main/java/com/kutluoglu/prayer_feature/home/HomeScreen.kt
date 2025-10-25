@@ -175,32 +175,6 @@ fun HomeScreen(
             }
         }
     }
-
-    /*when (val state = uiState) {
-        is HomeUiState.Loading -> ScreenState {
-            CircularProgressIndicator()
-            Text("Loading...")
-        }
-        is HomeUiState.Error   -> ScreenState {
-            Text("Error: ${state.message}")
-        }
-        is HomeUiState.Success -> ScreenState {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 16.dp, vertical = 0.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                contentPadding = PaddingValues(16.dp)
-            ) {
-                items(state.data.prayers) { prayer ->
-                    PrayerCard(
-                        modifier = Modifier.fillMaxWidth(),
-                        prayer = prayer
-                    )
-                }
-            }
-        }
-    }*/
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
