@@ -66,13 +66,11 @@ fun PrayerCard(
             }*/
             Icon(
                 painter = painterResource(getPrayerDrawableIdFrom(prayer.name)),
-                contentDescription = prayer.name,
-                tint = MaterialTheme.colorScheme.primary
+                contentDescription = prayer.name
             )
             Text(
                 text = prayer.name,
-                style = MaterialTheme.typography.headlineSmall,
-                color = MaterialTheme.colorScheme.primary
+                style = MaterialTheme.typography.headlineSmall
             )
             Text(
                 text = "${prayer.time}",
