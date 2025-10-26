@@ -147,10 +147,10 @@ fun HomeScreen(
                             // 1. Specify the number of columns in the grid
                             columns = GridCells.Fixed(3),
                             modifier = Modifier.fillMaxSize(),
-                            contentPadding = PaddingValues(4.dp),
+                            contentPadding = PaddingValues(8.dp),
                             // Optional: add spacing between grid cells
-                            verticalArrangement = Arrangement.spacedBy(4.dp),
-                            horizontalArrangement = Arrangement.Center
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             // 1. ADD THE TITLE ITEM HERE
                             item(

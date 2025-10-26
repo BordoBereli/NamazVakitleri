@@ -49,7 +49,7 @@ fun PrayerCard(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // New Row for Icon and Arabic name
-            Row(
+            /*Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
@@ -63,7 +63,12 @@ fun PrayerCard(
                     contentDescription = prayer.name,
                     tint = MaterialTheme.colorScheme.primary
                 )
-            }
+            }*/
+            Icon(
+                painter = painterResource(getPrayerDrawableIdFrom(prayer.name)),
+                contentDescription = prayer.name,
+                tint = MaterialTheme.colorScheme.primary
+            )
             Text(
                 text = prayer.name,
                 style = MaterialTheme.typography.headlineSmall,
