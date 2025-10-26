@@ -3,6 +3,7 @@ package com.kutluoglu.core.ui.theme
 import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
@@ -15,6 +16,8 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 
 // Define the Dark Color Scheme using your custom colors
 private val DarkColorScheme = darkColorScheme(
@@ -56,7 +59,7 @@ private val LightColorScheme = lightColorScheme(
 fun NamazVakitleriTheme(
         darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
-        dynamicColor: Boolean = true, content: @Composable () -> Unit
+        dynamicColor: Boolean = false, content: @Composable () -> Unit
 ) {
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
@@ -64,16 +67,29 @@ fun NamazVakitleriTheme(
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
 
-        darkTheme                                                      -> DarkColorScheme
-        else                                                           -> LightColorScheme
+        darkTheme -> DarkColorScheme
+        else -> LightColorScheme
     }
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
+            val insetsController = WindowCompat.getInsetsController(window, view)
+
+            // THIS IS THE KEY CHANGE:
+            // Hide the status bar completely.
+            insetsController.hide(WindowInsetsCompat.Type.statusBars())
+
+            // Define the behavior for when the user swipes from the edge.
+            // BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE means the bar will appear
+            // temporarily and then hide again.
+            insetsController.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         }
+        /*SideEffect {
+            val window = (view.context as Activity).window
+            window.statusBarColor = Color.Transparent.toArgb()
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
+        }*/
     }
 
     MaterialTheme(

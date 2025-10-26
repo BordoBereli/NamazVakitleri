@@ -4,24 +4,20 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
-import androidx.compose.material3.OutlinedTextFieldDefaults.contentPadding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
@@ -31,11 +27,14 @@ import com.kutluoglu.namazvakitleri.bottom_navigation.Destination
 import com.kutluoglu.prayer_feature.home.navigation.homeGraph
 import com.kutluoglu.prayer_navigation.core.Screen
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.navigation
+import com.kutluoglu.core.ui.theme.navigation.NestedGraph
 import com.kutluoglu.prayer_feature.prayertimes.navigation.prayerTimesGraph
 
 class MainActivity : ComponentActivity() {
@@ -44,72 +43,119 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            NamazVakitleriTheme {
-                val modifier = Modifier
-                val navController = rememberNavController()
-                // Get the current back stack entry as state to observe changes
-                val navBackStackEntry by navController.currentBackStackEntryAsState()
-                // Get the current route from the back stack entry
-                val currentRoute = navBackStackEntry?.destination?.route
-                // Find the current Destination enum based on the route
-                val currentDestination = Destination.entries.find { it.route == currentRoute }
-
-                Box(modifier = Modifier.fillMaxSize()) {
-                    Scaffold(
-                        modifier = modifier,
-                        /*bottomBar = {
-                            NavigationBar(windowInsets = NavigationBarDefaults.windowInsets) {
-                                Destination.entries.forEach { destination ->
-                                    val isSelected = currentRoute == destination.route
-                                    NavigationBarItem(
-                                        selected = isSelected,
-                                        onClick = {
-                                            // This ensures you don't build up a large back stack
-                                            navController.navigate(route = destination.route) {
-                                                // Pop up to the start destination of the graph to
-                                                // avoid building up a large stack of destinations
-                                                // on the back stack as users select items
-                                                popUpTo(navController.graph.findStartDestination().id) {
-                                                    saveState = true
-                                                }
-                                                // Avoid multiple copies of the same destination when
-                                                // re-selecting the same item
-                                                launchSingleTop = true
-                                                // Restore state when re-selecting a previously selected item
-                                                restoreState = true
-                                            }
-                                        },
-                                        icon = {
-                                            Icon(
-                                                ImageVector.vectorResource(destination.iconDrawable),
-                                                contentDescription = destination.contentDescription
-                                            )
-                                        },
-                                        label = { Text(destination.label) },
-                                    )
-                                }
-                            }
-                        }*/
-                    ) { contentPadding ->
-                        val padding = contentPadding
-                        NavHost(
-                            navController = navController,
-                            startDestination = Screen.HomeScreen.route
-                        ) {
-                            homeGraph(navController)
-                            prayerTimesGraph(navController)
-                        }
-                    }
-                }
+            NamazVakitleriTheme(
+                darkTheme = true
+            ) {
+               MainAppScreen()
             }
         }
     }
 }
 
 @Composable
+private fun MainAppScreen() {
+    val modifier = Modifier
+    val navController = rememberNavController()
+    // Get the current back stack entry as state to observe changes
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    // Get the current route from the back stack entry
+    val currentGraph = navBackStackEntry?.destination?.parent?.route
+    // Find the current Destination enum based on the route
+    val currentDestination = Destination.entries.find { it.graph == currentGraph }
+
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {},
+        bottomBar = {
+            NavigationBar(
+                // Manually set the height to a smaller value. 56.dp is a common choice.
+                modifier = Modifier.height(56.dp),
+                // By providing empty WindowInsets, we stop the NavigationBar
+                // from adding extra padding at the bottom.
+                windowInsets = WindowInsets(0, 0, 0, 0)
+            ) {
+                Destination.entries.forEach { destination ->
+                    val isSelected = currentGraph == destination.graph
+                    NavigationBarItem(
+                        modifier = Modifier.fillMaxHeight(),
+                        selected = isSelected,
+                        onClick = {
+                            // This ensures you don't build up a large back stack
+                            navController.navigate(route = destination.graph) {
+                                // Pop up to the start destination of the graph to
+                                // avoid building up a large stack of destinations
+                                // on the back stack as users select items
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
+                                }
+                                // Avoid multiple copies of the same destination when
+                                // re-selecting the same item
+                                launchSingleTop = true
+                                // Restore state when re-selecting a previously selected item
+                                restoreState = true
+                            }
+                        },
+                        icon = {
+                            Icon(
+                                ImageVector.vectorResource(destination.iconDrawable),
+                                contentDescription = destination.contentDescription
+                            )
+                        },
+                        label = {
+                            Text(
+                                text =  destination.label,
+                            )
+                        },
+                        // Force the label to always be visible, which changes the item's
+                        // layout to be more compact.
+                        alwaysShowLabel = true,
+                        // OPTIONAL BUT RECOMMENDED: Customize the colors
+                        colors = NavigationBarItemDefaults.colors(
+                            // Set the selected indicator color to your theme's primary color
+                            selectedIconColor = MaterialTheme.colorScheme.primary,
+                            selectedTextColor = MaterialTheme.colorScheme.primary,
+                            // Set the unselected icon/text color if needed
+                            unselectedIconColor = Color.Gray,
+                            unselectedTextColor = Color.Gray
+                        )
+                    )
+                }
+            }
+        }
+    ) { contentPadding ->
+        NavHost(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(contentPadding),
+            navController = navController,
+            startDestination = NestedGraph.HOME
+        ) {
+            // Define the nested graphs with their new routes
+            navigation(
+                route = NestedGraph.HOME,
+                startDestination = Screen.HomeScreen.route
+            ) {
+                homeGraph(navController)
+            }
+
+            navigation(
+                route = NestedGraph.PRAYER_TIMES,
+                startDestination = Screen.PayerTimesScreen.route
+            ) {
+                prayerTimesGraph(navController)
+            }
+        }
+    }
+    /*Box(modifier = Modifier.fillMaxSize()) {
+
+    }*/
+}
+
+@Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
     Text(
         text = "Hello $name!",
+        color = MaterialTheme.colorScheme.primary,
         modifier = modifier
     )
 }

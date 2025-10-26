@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="home_page_fallback">Mescid-i Nebevi</string>
+    <string name="prayer_times_title">Günün Vakitleri</string>
+    <string name="view_all_prayers">Tümünü Gör ></string>
 </resources>
