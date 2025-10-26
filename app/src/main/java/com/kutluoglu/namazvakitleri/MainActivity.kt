@@ -4,11 +4,13 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -35,6 +37,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import com.kutluoglu.core.ui.theme.navigation.NestedGraph
+import com.kutluoglu.namazvakitleri.bottom_navigation.NavButton
 import com.kutluoglu.prayer_feature.prayertimes.navigation.prayerTimesGraph
 
 class MainActivity : ComponentActivity() {
@@ -72,11 +75,31 @@ private fun MainAppScreen() {
                 modifier = Modifier.height(56.dp),
                 // By providing empty WindowInsets, we stop the NavigationBar
                 // from adding extra padding at the bottom.
-                windowInsets = WindowInsets(0, 0, 0, 0)
+                windowInsets = WindowInsets(0, 0, 0, 0),
+                containerColor = MaterialTheme.colorScheme.background
             ) {
+                // Add a spacer to create padding from the screen edges
+                Spacer(modifier = Modifier.width(8.dp))
                 Destination.entries.forEach { destination ->
                     val isSelected = currentGraph == destination.graph
-                    NavigationBarItem(
+                    // USE YOUR NEW CUSTOM BUTTON
+                    NavButton(
+                        destination = destination,
+                        isSelected = isSelected,
+                        onClick = {
+                            navController.navigate(route = destination.graph) {
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        }
+                    )
+
+                    // Add spacing between the buttons
+                    Spacer(modifier = Modifier.width(8.dp))
+                   /* NavigationBarItem(
                         modifier = Modifier.fillMaxHeight(),
                         selected = isSelected,
                         onClick = {
@@ -118,7 +141,7 @@ private fun MainAppScreen() {
                             unselectedIconColor = Color.Gray,
                             unselectedTextColor = Color.Gray
                         )
-                    )
+                    )*/
                 }
             }
         }
