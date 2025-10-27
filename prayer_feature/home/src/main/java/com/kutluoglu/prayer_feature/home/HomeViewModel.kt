@@ -68,7 +68,7 @@ class HomeViewModel(
     private fun withLocalizedNames(prayerTimes: List<Prayer>): List<Prayer> {
         val prayerNames = resProvider.getStringArray(array.prayers)
         val langDetectedPrayerTimes = prayerTimes.mapIndexed { index, prayer ->
-            prayer.copy(name = prayerNames[index], isCurrent = false)
+            prayer.copy(name = prayerNames[index], isCurrent = index == 4)
         }
         return langDetectedPrayerTimes
     }

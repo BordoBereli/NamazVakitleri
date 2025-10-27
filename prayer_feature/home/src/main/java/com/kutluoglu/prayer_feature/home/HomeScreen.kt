@@ -1,5 +1,6 @@
 package com.kutluoglu.prayer_feature.home
 
+import android.R.attr.strokeWidth
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -8,26 +9,34 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.ColorPainter
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -103,6 +112,7 @@ fun TopContainer(
         modifier: Modifier,
         painter: Painter
 ) {
+    val borderColorFromTheme = MaterialTheme.colorScheme.onSecondaryContainer
     Box(
         modifier = modifier.fillMaxWidth(),
         contentAlignment = Alignment.Center
@@ -121,17 +131,89 @@ fun TopContainer(
                     .fillMaxSize()
                     .background(Color.Transparent)
             ) {
-                TopAppBar(
+                /*TopAppBar(
                     // This pushes the title down so it's below the status bar icons.
                     title = { LocationInfoSection() },
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = Color.Transparent
                     )
-                )
+                )*/
+                Box(modifier = modifier
+                    .weight(0.2F)
+                    .padding(start = 16.dp, top = 16.dp)
+                ){
+                    LocationInfoSection()
+                }
+                Box(modifier = modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, end = 16.dp)
+                    .weight(0.4F),
+                    contentAlignment = Alignment.Center
+                ){
+                    TimeInfo()
+                }
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(0.4F)
+                        .padding(start = 16.dp, end = 16.dp)
+                        .background(
+                            Color.Black.copy(alpha = 0.3F),
+                            shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
+                        )
+                        .drawBehind {
+                            drawPath(
+                                path = defineCustomBorderShapeForCurrentPrayerContainer(),
+                                color = borderColorFromTheme.copy(alpha = 0.7F),
+                                style = Stroke(width = 1.dp.toPx())
+                            )
+                        },
+                    contentAlignment = Alignment.Center,
+                ){
+                    NextPrayerInfo()
+                }
             }
         }
 
     }
+}
+
+private fun DrawScope.defineCustomBorderShapeForCurrentPrayerContainer(): Path = Path().apply {
+    val cornerRadius = 16.dp.toPx()
+    // Start from the bottom-right corner (where the border ends)
+    moveTo(size.width, size.height)
+    // Draw a line up to the top-right corner (just before the curve starts)
+    lineTo(size.width, cornerRadius)
+    // Draw the top-right rounded corner
+    arcTo(
+        rect = Rect(
+            Offset(size.width - 2 * cornerRadius, 0f),
+            Size(
+                2 * cornerRadius,
+                2 * cornerRadius
+            )
+        ),
+        startAngleDegrees = 0f,
+        sweepAngleDegrees = -90f,
+        forceMoveTo = false
+    )
+    // Draw the top line
+    lineTo(cornerRadius, 0f)
+    // Draw the top-left rounded corner
+    arcTo(
+        rect = Rect(
+            Offset(0f, 0f),
+            Size(
+                2 * cornerRadius,
+                2 * cornerRadius
+            )
+        ),
+        startAngleDegrees = 270f,
+        sweepAngleDegrees = -90f,
+        forceMoveTo = false
+    )
+    // Draw the left line down to the bottom
+    lineTo(0f, size.height)
 }
 
 @Composable
@@ -150,6 +232,76 @@ fun LocationInfoSection() {
             text = "Konum Bilgisi",
             fontSize = 16.sp,
             color = MaterialTheme.colorScheme.primary
+        )
+    }
+}
+
+@Composable
+fun TimeInfo() {
+    // A Column to arrange the time info vertically
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        // 1. Digital Clock Display
+        Text(
+            text = "10:45", // Placeholder for the actual time
+            style = MaterialTheme.typography.displaySmall, // A larger, more prominent style
+            color = MaterialTheme.colorScheme.onPrimaryContainer
+        )
+
+        // Add some space between the icon and the text
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // 2. Gregorian Date with Day Name
+        Text(
+            // Add the day of the week to the text
+            text = "Monday, October 27, 2025", // Placeholder for the actual date
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onPrimaryContainer
+        )
+
+        // 3. Hijri Date
+        Text(
+            text = "22 Rabi' al-awwal 1447", // Placeholder for the Hijri date
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f) // Slightly less prominent
+        )
+    }
+}
+
+@Composable
+fun NextPrayerInfo() {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        // 1. Icon and time-sensitive message in a Row
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp) // Adds space between icon and text
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.isha_gold), // Using a standard clock icon
+                contentDescription = stringResource(id = R.string.time_until_message), // For accessibility
+                tint = Color.Unspecified,
+                modifier = Modifier.size(16.dp) // Make the icon a bit smaller to match text
+            )
+            Text(
+                text = "Time until Isha", // Example of a time-sensitive message
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f) // Slightly faded
+            )
+        }
+
+        // Add some space between the message and the countdown
+        Spacer(modifier = Modifier.height(4.dp))
+
+        // 2. Remaining time countdown (Hour and Minute only)
+        Text(
+            text = "01:23", // Placeholder updated to "HH:mm" format
+            style = MaterialTheme.typography.displayMedium,
+            color = MaterialTheme.colorScheme.onSecondaryContainer
         )
     }
 }
@@ -229,7 +381,8 @@ fun DailyPrayers(uiState: HomeUiState, navController: NavController) {
                 items(state.data.prayers, key = { it.name }) { prayer ->
                     PrayerCard(
                         // The PrayerCard itself doesn't need to change
-                        prayer = prayer
+                        prayer = prayer,
+                        isCurrent = prayer.isCurrent
                         // The modifier here can be simplified as the grid handles the width
                     )
                 }
@@ -263,6 +416,22 @@ fun BottomContainerPreview() {
 fun LocationInfoSectionPreview() {
     NamazVakitleriTheme { // Apply the theme wrapper
         LocationInfoSection()
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFCCCCCC) // Use a grey background for contrast
+@Composable
+fun TimeInfoPreview() {
+    NamazVakitleriTheme {
+        TimeInfo()
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF2C2C2C)
+@Composable
+fun NextPrayerInfoPreview() {
+    NamazVakitleriTheme {
+        NextPrayerInfo()
     }
 }
 

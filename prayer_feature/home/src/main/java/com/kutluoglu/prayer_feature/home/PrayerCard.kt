@@ -1,5 +1,6 @@
 package com.kutluoglu.prayer_feature.home
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.text.font.FontWeight
@@ -29,16 +31,21 @@ fun PrayerCard(
     isCurrent: Boolean = false,
     timeRemaining: String? = null
 ) {
+    // Determine colors based on selection state
+    val contentColor = if (isCurrent) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+    val backgroundColor = if (isCurrent) MaterialTheme.colorScheme.primary.copy(alpha = 0.1f) else MaterialTheme.colorScheme.secondary
+
+    // Define the border
+    val border = if (isCurrent) BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null
+
     Card(
         modifier = modifier.fillMaxSize(),
         colors = CardDefaults.cardColors(
             // Use MaterialTheme.colorScheme to access the theme's colors
-            containerColor = if (isCurrent)
-                MaterialTheme.colorScheme.primaryContainer // A good choice for the current item
-            else
-                MaterialTheme.colorScheme.surface, // Standard card background
-            contentColor = MaterialTheme.colorScheme.onSurface // Text color on top of surface
+            containerColor =backgroundColor, // Standard card background
+            contentColor = contentColor // Text color on top of surface
         ),
+        border = border,
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Column(
