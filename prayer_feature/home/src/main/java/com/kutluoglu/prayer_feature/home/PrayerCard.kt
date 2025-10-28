@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.kutluoglu.core.ui.R.*
 import com.kutluoglu.prayer.model.Prayer
+import com.kutluoglu.prayer_feature.home.common.getPrayerDrawableIdFrom
 
 // PrayerCard.kt - Reusable prayer display component
 @Composable
@@ -85,20 +86,5 @@ fun PrayerCard(
                 fontWeight = FontWeight.Bold
             )
         }
-    }
-}
-
-@Composable
-fun getPrayerDrawableIdFrom(drawableName: String): Int {
-    println("drawableName: $drawableName")
-    val prayerNames = stringArrayResource(array.prayers)
-    return when(drawableName) {
-        prayerNames[0] -> return R.drawable.facr
-        prayerNames[1] -> return R.drawable.sunrise
-        prayerNames[2] -> return R.drawable.dhuhr
-        prayerNames[3] -> return R.drawable.asr
-        prayerNames[4] -> return R.drawable.magrip
-        prayerNames[5] -> return R.drawable.isha
-        else -> -1
     }
 }

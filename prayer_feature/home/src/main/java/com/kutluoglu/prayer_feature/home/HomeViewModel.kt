@@ -2,7 +2,10 @@ package com.kutluoglu.prayer_feature.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kutluoglu.core.common.gregorianFormatter
+import com.kutluoglu.core.common.hijriFormatter
 import com.kutluoglu.core.common.now
+import com.kutluoglu.core.common.timeFormatter
 import com.kutluoglu.core.ui.R.*
 import com.kutluoglu.core.ui.theme.StringResourcesProvider
 import com.kutluoglu.prayer.model.Prayer
@@ -14,8 +17,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.toJavaLocalTime
 import org.koin.android.annotation.KoinViewModel
-import kotlin.collections.List
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.chrono.HijrahDate
+import java.time.Duration
+import kotlin.time.toKotlinDuration
 
 @KoinViewModel
 class HomeViewModel(
@@ -36,10 +45,7 @@ class HomeViewModel(
     fun startPrayerCountdown() {
         countdownJob?.cancel()
         countdownJob = viewModelScope.launch {
-            while (true) {
-                updateCountdown()
-                delay(1000)
-            }
+            while (countdownJob?.isActive != false) updateCountdown()
         }
     }
 
@@ -54,9 +60,14 @@ class HomeViewModel(
             getPrayerTimesUseCase(LocalDateTime.now(), latitude, longitude)
                 .onSuccess { prayerTimes ->
                     val langDetectedPrayerTimes = withLocalizedNames(prayerTimes)
-
                     _uiState.value =
-                        HomeUiState.Success(data = HomeDataUiState(prayers = langDetectedPrayerTimes))
+                        HomeUiState.Success(
+                            data = HomeDataUiState(
+                                prayers = langDetectedPrayerTimes,
+                                timeInfo = getTimeInfo()
+                            )
+                        )
+                    startPrayerCountdown()
                 }
                 .onFailure { error ->
                     _uiState.value =
@@ -67,39 +78,121 @@ class HomeViewModel(
 
     private fun withLocalizedNames(prayerTimes: List<Prayer>): List<Prayer> {
         val prayerNames = resProvider.getStringArray(array.prayers)
+        val now = java.time.LocalTime.now(ZoneId.systemDefault())
         val langDetectedPrayerTimes = prayerTimes.mapIndexed { index, prayer ->
-            prayer.copy(name = prayerNames[index], isCurrent = index == 4)
+            val isCurrent = findCurrentPrayer(prayerTimes, now) == prayer
+            prayer.copy(name = prayerNames[index], isCurrent = isCurrent)
         }
         return langDetectedPrayerTimes
     }
 
-    /*private fun loadPrayerTimes() {
-        viewModelScope.launch {
-            try {
-//                val location = locationRepository.getCurrentLocation()
-//                val prayers = getPrayerTimesUseCase(location)
-                val prayers = getPrayerTimesUseCase()
+    private fun getTimeInfo(): TimeInfo {
+        // 1. Get the current Gregorian date dynamically instead of using a hardcoded string.
+        val today = LocalDate.now(ZoneId.systemDefault())
+        // 2. Convert the Gregorian date to HijrahDate.
+        val hijrahDate = HijrahDate.from(today)
+        // 3. Format the HijrahDate object using the hijriFormatter.
+        val formattedHijrihDate = hijrahDate.format(hijriFormatter)
+        val formattedGregorianDate = today.format(gregorianFormatter)
 
-                _uiState.update { currentState ->
-                    currentState.copy(
-                        prayers = prayers,
-                        currentPrayer = prayers.find { it.isCurrent },
-                        nextPrayer = findNextPrayer(prayers),
-                        isLoading = false
-                    )
-                }
-            } catch (e: Exception) {
-                _uiState.update { it.copy(error = e.message, isLoading = false) }
-            }
-        }
-    }*/
+        return TimeInfo(
+            hijriDate = formattedHijrihDate,
+            gregorianDate = formattedGregorianDate,
+            currentTime = getCurrentTime()
+        )
+    }
+    private fun getCurrentTime(): String {
+        // 1. Get the current time.
+        val now = java.time.LocalTime.now(ZoneId.systemDefault())
+
+        // 2. Format and return the time string.
+        return now.format(timeFormatter)
+    }
 
     private suspend fun updateCountdown() {
-//        val nextPrayer = _uiState.value.nextPrayer ?: return
-//        val timeRemaining = calculateTimeRemaining(nextPrayer.time)
+        val currentState = _uiState.value
+        if (currentState is HomeUiState.Success) {
+            val now = java.time.LocalTime.now() // Using java.time.LocalTime for comparison
+            val (currentPrayer, nextPrayer) =
+                findCurrentAndNextPrayer(currentState.data.prayers, now)
 
-//        _uiState.update { it.copy(timeRemaining = timeRemaining) }
+            val timeRemainingString = if (nextPrayer != null) {
+                // This now correctly returns a kotlin.time.Duration
+                val duration = calculateTimeRemaining(nextPrayer.time)
+
+                // Use the built-in formatting for kotlin.time.Duration
+                duration.toKotlinDuration().toComponents { hours, minutes, seconds, _ ->
+                    String.format("%02d:%02d:%02d", hours, minutes, seconds) // Format to HH:mm
+                }
+            } else {
+                "--:--" // Default or end state
+            }
+
+            _uiState.value = currentState.copy(
+                data = currentState.data.copy(
+                    currentPrayer = currentPrayer,
+                    nextPrayer = nextPrayer,
+                    timeRemaining = timeRemainingString,
+                    timeInfo = currentState.data.timeInfo.copy(
+                        currentTime = getCurrentTime() // Update currentTime here
+                    )
+                )
+            )
+            delay(1000) // The single loop runs every secon
+        }
     }
+
+    private fun findCurrentAndNextPrayer(
+            prayers: List<Prayer>,
+            currentTime: java.time.LocalTime
+    ): Pair<Prayer?, Prayer?> {
+        var currentPrayer: Prayer? = null
+        var nextPrayer: Prayer? = null
+
+        // Find the last prayer that has already passed
+        currentPrayer = findCurrentPrayer(prayers, currentTime)
+
+        // The next prayer is the one immediately after the current one in the list
+        if (currentPrayer != null) {
+            val currentIndex = prayers.indexOf(currentPrayer)
+            nextPrayer = prayers.getOrNull(currentIndex + 1)
+        }
+
+        // Special case: If no prayer has passed today (e.g., before Fajr),
+        // current is Isha of yesterday (conceptually), and next is Fajr.
+        if (currentPrayer == null) {
+            nextPrayer = prayers.firstOrNull()
+        }
+        // Special case: If the current prayer is Isha, the next prayer is Fajr of the next day.
+        else if (nextPrayer == null) {
+            nextPrayer = prayers.firstOrNull()
+        }
+
+
+        return Pair(currentPrayer, nextPrayer)
+    }
+
+    private fun findCurrentPrayer(
+            prayers: List<Prayer>,
+            currentTime: java.time.LocalTime
+    ): Prayer? = prayers.lastOrNull { prayer ->
+        !prayer.time.toJavaLocalTime().isAfter(currentTime)
+    }
+
+    private fun calculateTimeRemaining(nextPrayerTime: LocalTime): Duration {
+        val now = LocalDateTime.now()
+        var duration = Duration.between(
+            now.time.toJavaLocalTime(),
+            nextPrayerTime.toJavaLocalTime()
+        )
+
+        // The rest of your logic remains the same, but is much cleaner
+        if (duration.isNegative()) {
+            duration = duration.plus(Duration.parse("24h"))
+        }
+        return duration
+    }
+
 
     override fun onCleared() {
         super.onCleared()
@@ -118,5 +211,11 @@ data class HomeDataUiState(
     val currentPrayer: Prayer? = null,
     val nextPrayer: Prayer? = null,
     val timeRemaining: String = "",
-    val hijriDate: String = ""
+    val timeInfo: TimeInfo = TimeInfo()
+)
+
+data class TimeInfo(
+        val hijriDate: String = "",
+        val gregorianDate: String = "",
+        val currentTime: String = ""
 )

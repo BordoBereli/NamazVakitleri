@@ -1,6 +1,5 @@
 package com.kutluoglu.prayer_feature.home
 
-import android.R.attr.strokeWidth
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -51,6 +50,7 @@ import androidx.navigation.compose.rememberNavController
 import com.kutluoglu.core.ui.theme.NamazVakitleriTheme
 import com.kutluoglu.core.ui.theme.navigation.NestedGraph
 import com.kutluoglu.prayer.model.Prayer
+import com.kutluoglu.prayer_feature.home.common.getPrayerDrawableIdFrom
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 
@@ -78,7 +78,8 @@ fun HomeScreen(
         ) {
             TopContainer(
                 modifier = Modifier.statusBarsPadding(),
-                painter = painterResource(id = R.drawable.home_page_fallback)
+                painter = painterResource(id = R.drawable.home_page_fallback),
+                uiState = uiState
             )
         }
 
@@ -110,7 +111,8 @@ fun HomeScreen(
 @Composable
 fun TopContainer(
         modifier: Modifier,
-        painter: Painter
+        painter: Painter,
+        uiState: HomeUiState
 ) {
     val borderColorFromTheme = MaterialTheme.colorScheme.onSecondaryContainer
     Box(
@@ -131,26 +133,21 @@ fun TopContainer(
                     .fillMaxSize()
                     .background(Color.Transparent)
             ) {
-                /*TopAppBar(
-                    // This pushes the title down so it's below the status bar icons.
-                    title = { LocationInfoSection() },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = Color.Transparent
-                    )
-                )*/
-                Box(modifier = modifier
-                    .weight(0.2F)
-                    .padding(start = 16.dp, top = 16.dp)
-                ){
+                Box(
+                    modifier = modifier
+                        .weight(0.2F)
+                        .padding(start = 16.dp, top = 16.dp)
+                ) {
                     LocationInfoSection()
                 }
-                Box(modifier = modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp, end = 16.dp)
-                    .weight(0.4F),
+                Box(
+                    modifier = modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, bottom = 16.dp, end = 16.dp)
+                        .weight(0.4F),
                     contentAlignment = Alignment.Center
-                ){
-                    TimeInfo()
+                ) {
+                    TimeInfo(uiState = uiState)
                 }
                 Box(
                     modifier = Modifier
@@ -169,8 +166,8 @@ fun TopContainer(
                             )
                         },
                     contentAlignment = Alignment.Center,
-                ){
-                    NextPrayerInfo()
+                ) {
+                    NextPrayerInfo(uiState = uiState)
                 }
             }
         }
@@ -237,72 +234,96 @@ fun LocationInfoSection() {
 }
 
 @Composable
-fun TimeInfo() {
+fun TimeInfo(uiState: HomeUiState) {
     // A Column to arrange the time info vertically
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        // 1. Digital Clock Display
-        Text(
-            text = "10:45", // Placeholder for the actual time
-            style = MaterialTheme.typography.displaySmall, // A larger, more prominent style
-            color = MaterialTheme.colorScheme.onPrimaryContainer
-        )
+        when (val state = uiState) {
+            is HomeUiState.Success -> {
+                // 1. Digital Clock Display
+                Text(
+                    text = state.data.timeInfo.currentTime,
+                    style = MaterialTheme.typography.displaySmall, // A larger, more prominent style
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+                // Add some space between the icon and the text
+                Spacer(modifier = Modifier.height(8.dp))
+                // 2. Gregorian Date with Day Name
+                Text(
+                    // Use the gregorianDate from the success state
+                    text = state.data.timeInfo.gregorianDate,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+                // 3. Hijri Date
+                Text(
+                    text = state.data.timeInfo.hijriDate,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f) // Slightly less prominent
+                )
+            }
 
-        // Add some space between the icon and the text
-        Spacer(modifier = Modifier.height(8.dp))
+            else -> {
+                Text(
+                    text = "", // Placeholder for the Current Time
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+                // Add some space between the icon and the text
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "", // Placeholder for the GregorianDate
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+                Text(
+                    text = "", // Placeholder for the Hijri date
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f) // Slightly less prominent
+                )
+            }
+        }
 
-        // 2. Gregorian Date with Day Name
-        Text(
-            // Add the day of the week to the text
-            text = "Monday, October 27, 2025", // Placeholder for the actual date
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onPrimaryContainer
-        )
-
-        // 3. Hijri Date
-        Text(
-            text = "22 Rabi' al-awwal 1447", // Placeholder for the Hijri date
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f) // Slightly less prominent
-        )
     }
 }
 
 @Composable
-fun NextPrayerInfo() {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        // 1. Icon and time-sensitive message in a Row
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(4.dp) // Adds space between icon and text
+fun NextPrayerInfo(uiState: HomeUiState) {
+    if (uiState is HomeUiState.Success) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-            Icon(
-                painter = painterResource(id = R.drawable.isha_gold), // Using a standard clock icon
-                contentDescription = stringResource(id = R.string.time_until_message), // For accessibility
-                tint = Color.Unspecified,
-                modifier = Modifier.size(16.dp) // Make the icon a bit smaller to match text
-            )
+            // 1. Icon and time-sensitive message in a Row
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp) // Adds space between icon and text
+            ) {
+                Icon(
+                    painter = painterResource(id = getPrayerDrawableIdFrom(uiState.data.currentPrayer?.name ?: "")), // Using a standard clock icon
+                    contentDescription = stringResource(id = R.string.time_until_message), // For accessibility
+                    tint = Color.Unspecified,
+                    modifier = Modifier.size(16.dp) // Make the icon a bit smaller to match text
+                )
+                Text(
+                    text = "Time until ${uiState.data.nextPrayer?.name}", // Example of a time-sensitive message
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f) // Slightly faded
+                )
+            }
+
+            // Add some space between the message and the countdown
+            Spacer(modifier = Modifier.height(4.dp))
+
+            // 2. Remaining time countdown (Hour and Minute only)
             Text(
-                text = "Time until Isha", // Example of a time-sensitive message
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f) // Slightly faded
+                text = uiState.data.timeRemaining, // Placeholder updated to "HH:mm" format
+                style = MaterialTheme.typography.displayMedium,
+                color = MaterialTheme.colorScheme.onSecondaryContainer
             )
         }
-
-        // Add some space between the message and the countdown
-        Spacer(modifier = Modifier.height(4.dp))
-
-        // 2. Remaining time countdown (Hour and Minute only)
-        Text(
-            text = "01:23", // Placeholder updated to "HH:mm" format
-            style = MaterialTheme.typography.displayMedium,
-            color = MaterialTheme.colorScheme.onSecondaryContainer
-        )
     }
 }
 
@@ -423,7 +444,30 @@ fun LocationInfoSectionPreview() {
 @Composable
 fun TimeInfoPreview() {
     NamazVakitleriTheme {
-        TimeInfo()
+        // --- Create Sample Data (your existing code is fine) ---
+        val basePrayer = Prayer(
+            "Asr", "صلاة العصر",
+            LocalTime(12, 20),
+            LocalDate(2025, 10, 22)
+        )
+
+        // KEY CHANGE: Ensure each prayer has a unique name for the key
+        val prayers = listOf(
+            basePrayer.copy(name = "Fajr"),
+            basePrayer.copy(name = "Dhuhr"),
+            basePrayer.copy(name = "Asr"),
+            basePrayer.copy(name = "Maghrib"),
+            basePrayer.copy(name = "Isha"),
+            basePrayer.copy(name = "Next") // Example for a 6th item
+        )
+
+        val sampleData = HomeDataUiState(
+            prayers = prayers, timeInfo = TimeInfo(
+                hijriDate = "22 Rabiul Evvel 1447"
+            )
+        )
+        val successState = HomeUiState.Success(sampleData)
+        TimeInfo(successState)
     }
 }
 
@@ -431,7 +475,30 @@ fun TimeInfoPreview() {
 @Composable
 fun NextPrayerInfoPreview() {
     NamazVakitleriTheme {
-        NextPrayerInfo()
+        // --- Create Sample Data (your existing code is fine) ---
+        val basePrayer = Prayer(
+            "Asr", "صلاة العصر",
+            LocalTime(12, 20),
+            LocalDate(2025, 10, 22)
+        )
+
+        // KEY CHANGE: Ensure each prayer has a unique name for the key
+        val prayers = listOf(
+            basePrayer.copy(name = "Fajr"),
+            basePrayer.copy(name = "Dhuhr"),
+            basePrayer.copy(name = "Asr"),
+            basePrayer.copy(name = "Maghrib"),
+            basePrayer.copy(name = "Isha"),
+            basePrayer.copy(name = "Next") // Example for a 6th item
+        )
+
+        val sampleData = HomeDataUiState(
+            prayers = prayers, timeInfo = TimeInfo(
+                hijriDate = "22 Rabiul Evvel 1447"
+            )
+        )
+        val successState = HomeUiState.Success(sampleData)
+        NextPrayerInfo(successState)
     }
 }
 
