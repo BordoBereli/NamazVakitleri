@@ -60,11 +60,11 @@ fun PrayerCard(
             )
             Text(
                 text = prayer.name,
-                style = MaterialTheme.typography.headlineSmall
+                style = MaterialTheme.typography.titleSmall
             )
             Text(
                 text = "${prayer.time}",
-                style = MaterialTheme.typography.titleLarge,
+                style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
         }

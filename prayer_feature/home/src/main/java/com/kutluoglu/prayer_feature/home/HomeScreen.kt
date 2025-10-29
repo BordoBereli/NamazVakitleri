@@ -2,6 +2,7 @@ package com.kutluoglu.prayer_feature.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -52,7 +53,7 @@ fun HomeScreen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(0.57f)
+                    .weight(0.64f)
                     .background(Color.Transparent)
             ) {
                 DailyPrayers(
@@ -67,8 +68,8 @@ fun HomeScreen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(0.08f),
-//                    .background(Color.Blue.copy(alpha = 0.3f)),
+                    .weight(0.01f)
+                    .background(MaterialTheme.colorScheme.secondary),
                 contentAlignment = Alignment.Center
             ) {
                 BottomContainer()
