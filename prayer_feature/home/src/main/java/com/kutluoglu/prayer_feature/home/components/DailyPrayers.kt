@@ -2,6 +2,7 @@ package com.kutluoglu.prayer_feature.home.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,6 +12,10 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,24 +32,49 @@ import com.kutluoglu.prayer.model.Prayer
 import com.kutluoglu.prayer_feature.home.HomeUiState
 import com.kutluoglu.prayer_feature.home.R
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun DailyPrayers(uiState: HomeUiState, navController: NavController) {
-    when (val state = uiState) {
-        is HomeUiState.Loading -> {
-            // A simple, reusable composable for showing a loading indicator.
-            LoadingIndicator()
+fun DailyPrayers(
+        uiState: HomeUiState,
+        navController: NavController,
+        isRefreshing: Boolean,
+        onRefresh: () -> Unit
+) {
+    // Create the state for the pull-to-refresh component
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = isRefreshing,
+        onRefresh = onRefresh // This calls the lambda that triggers the ViewModel event
+    )
+    Box(modifier = Modifier.pullRefresh(pullRefreshState)) {
+
+        when (val state = uiState) {
+            is HomeUiState.Loading -> {
+                // Show a centered indicator only on initial load, not on pull-refresh
+                // The PullRefreshIndicator will show for subsequent loads.
+                if (!isRefreshing) { // This check can be refined if needed
+                    LoadingIndicator()
+                }
+            }
+
+            is HomeUiState.Error   -> {
+                // A reusable composable for showing an error message.
+                ErrorMessage(message = state.message)
+            }
+
+            is HomeUiState.Success -> {
+                // The success state delegates the complex grid logic to a dedicated composable.
+                PrayerGrid(
+                    prayers = state.data.prayers,
+                    navController = navController
+                )
+            }
         }
-        is HomeUiState.Error -> {
-            // A reusable composable for showing an error message.
-            ErrorMessage(message = state.message)
-        }
-        is HomeUiState.Success -> {
-            // The success state delegates the complex grid logic to a dedicated composable.
-            PrayerGrid(
-                prayers = state.data.prayers,
-                navController = navController
-            )
-        }
+        // Place the indicator at the top center of the Box
+        PullRefreshIndicator(
+            refreshing = isRefreshing,
+            state = pullRefreshState,
+            modifier = Modifier.align(Alignment.TopCenter)
+        )
     }
 }
 

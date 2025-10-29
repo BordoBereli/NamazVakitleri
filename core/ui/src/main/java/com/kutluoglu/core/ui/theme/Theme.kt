@@ -3,7 +3,6 @@ package com.kutluoglu.core.ui.theme
 import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
@@ -74,22 +73,27 @@ fun NamazVakitleriTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            val insetsController = WindowCompat.getInsetsController(window, view)
 
-            // THIS IS THE KEY CHANGE:
-            // Hide the status bar completely.
-            insetsController.hide(WindowInsetsCompat.Type.statusBars())
+            // This tells the app to draw behind the system bars. This is correct.
+            WindowCompat.setDecorFitsSystemWindows(window, false)
+
+            val insetsController =
+                WindowCompat.getInsetsController(window, view)
+
+            // Determine if the content behind the status bar is light or dark.
+            // Set this to `true` for dark content (light theme) and `false` for light content (dark theme).
+            insetsController.isAppearanceLightStatusBars = !darkTheme
+            insetsController.isAppearanceLightNavigationBars = !darkTheme
+
+            // Hide BOTH the status bar and the navigation bar.
+            insetsController.hide(
+                WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.navigationBars()
+            )
 
             // Define the behavior for when the user swipes from the edge.
-            // BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE means the bar will appear
-            // temporarily and then hide again.
-            insetsController.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            insetsController.systemBarsBehavior =
+                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         }
-        /*SideEffect {
-            val window = (view.context as Activity).window
-            window.statusBarColor = Color.Transparent.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
-        }*/
     }
 
     MaterialTheme(

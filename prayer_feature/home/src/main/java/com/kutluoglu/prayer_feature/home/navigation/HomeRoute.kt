@@ -5,6 +5,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.navigation.NavController
 import org.koin.androidx.compose.koinViewModel
 import androidx.compose.runtime.getValue
+import com.kutluoglu.prayer_feature.home.HomeEvent
 import com.kutluoglu.prayer_feature.home.HomeScreen
 import com.kutluoglu.prayer_feature.home.HomeViewModel
 
@@ -22,6 +23,7 @@ fun HomeRoute(
     // The Route connects the ViewModel to the stateless UI
     HomeScreen(
         navController = navController,
-        uiState = uiState
+        uiState = uiState,
+        onEvent = { event -> viewModel.onEvent(event) }
     )
 }

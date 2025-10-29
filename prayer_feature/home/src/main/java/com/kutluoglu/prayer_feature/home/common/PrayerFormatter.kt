@@ -19,7 +19,7 @@ import kotlin.time.toKotlinDuration
 class PrayerFormatter {
     fun getInitialTimeInfo(): TimeInfo {
         val today = LocalDate.now(ZoneId.systemDefault())
-        val hijrahDate = HijrahDate.from(today)
+        val hijrahDate = HijrahDate.now(ZoneId.systemDefault())
 
         return TimeInfo(
             hijriDate = hijrahDate.format(hijriFormatter),

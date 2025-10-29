@@ -1,5 +1,6 @@
 package com.kutluoglu.prayer_feature.home
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kutluoglu.core.common.gregorianFormatter
@@ -44,6 +45,20 @@ class HomeViewModel(
     init {
         loadPrayerTimes()
 //        observeLocationChanges()
+    }
+
+    /**
+     * Handles UI events such as pull-to-refresh.
+     *
+     */
+    fun onEvent(event: HomeEvent) {
+        when (event) {
+            HomeEvent.OnRefresh -> {
+                // When a refresh event is received, simply call loadPrayerTimes again.
+                // This will show the loading indicator and refetch all data.
+                loadPrayerTimes()
+            }
+        }
     }
 
     fun loadPrayerTimes() {

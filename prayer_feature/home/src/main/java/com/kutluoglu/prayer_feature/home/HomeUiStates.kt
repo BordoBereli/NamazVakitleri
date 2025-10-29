@@ -26,3 +26,4 @@ data class TimeInfo(
         val gregorianDate: String = "",
         val currentTime: String = ""
 )
+
