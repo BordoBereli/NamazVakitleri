@@ -8,13 +8,16 @@ import com.kutluoglu.core.common.now
 import com.kutluoglu.core.common.timeFormatter
 import com.kutluoglu.core.ui.R.*
 import com.kutluoglu.core.ui.theme.StringResourcesProvider
+import com.kutluoglu.prayer.domain.PrayerLogicEngine
 import com.kutluoglu.prayer.model.Prayer
 import com.kutluoglu.prayer.usecases.GetPrayerTimesUseCase
+import com.kutluoglu.prayer_feature.home.common.PrayerFormatter
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
@@ -30,7 +33,8 @@ import kotlin.time.toKotlinDuration
 class HomeViewModel(
         private val getPrayerTimesUseCase: GetPrayerTimesUseCase,
         private val resProvider: StringResourcesProvider,
-        private val calculator: TimeAndPrayerCalculator
+        private val calculator: PrayerLogicEngine,
+        private val formatter: PrayerFormatter
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
@@ -41,6 +45,7 @@ class HomeViewModel(
         loadPrayerTimes()
 //        observeLocationChanges()
     }
+
     fun loadPrayerTimes() {
         viewModelScope.launch {
             _uiState.value = HomeUiState.Loading
@@ -55,7 +60,7 @@ class HomeViewModel(
                     _uiState.value = HomeUiState.Success(
                         data = HomeDataUiState(
                             prayers = langDetectedPrayerTimes,
-                            timeInfo = calculator.getInitialTimeInfo()
+                            timeInfo = formatter.getInitialTimeInfo()
                         )
                     )
                     startPrayerCountdown()
@@ -66,52 +71,52 @@ class HomeViewModel(
                 }
         }
     }
+
     fun startPrayerCountdown() {
         countdownJob?.cancel()
         countdownJob = viewModelScope.launch {
-            while (countdownJob?.isActive != false) updateCountdown()
+            while (isActive) {
+                updateCountdown()
+                delay(1_000)
+            }
         }
     }
+
     private suspend fun updateCountdown() {
         val currentState = _uiState.value
         if (currentState is HomeUiState.Success) {
-            val now = java.time.LocalTime.now() // Using java.time.LocalTime for comparison
-            val (currentPrayer, nextPrayer) =
-                calculator.findCurrentAndNextPrayer(
-                    prayers = currentState.data.prayers,
-                    currentTime = now
-                )
-
+            val (currentPrayer, nextPrayer) = calculator.findCurrentAndNextPrayer(
+                prayers = currentState.data.prayers
+            )
+            val prayersWithCurrent = currentState.data.prayers.map { prayer ->
+                prayer.copy(isCurrent = prayer.name == currentPrayer?.name)
+            }
             val timeRemainingString = if (nextPrayer != null) {
                 val duration = calculator.calculateTimeRemaining(nextPrayer.time)
-                duration.toKotlinDuration().toComponents { hours, minutes, seconds, _ ->
-                    calculator.formatTimeRemaining(duration)
-                }
+                formatter.formatTimeRemaining(duration)
             } else {
-                "--:--" // Default or end state
+                "--:--:--" // Use a placeholder that matches the format
             }
 
             _uiState.value = currentState.copy(
                 data = currentState.data.copy(
+                    prayers = prayersWithCurrent,
                     currentPrayer = currentPrayer,
                     nextPrayer = nextPrayer,
                     timeRemaining = timeRemainingString,
                     timeInfo = currentState.data.timeInfo.copy(
-                        currentTime = calculator.getCurrentTime()
+                        currentTime = formatter.getFormattedCurrentTime()
                     )
                 )
             )
-            delay(1000)
         }
     }
+
     private fun withLocalizedNames(prayerTimes: List<Prayer>): List<Prayer> {
         val prayerNames = resProvider.getStringArray(array.prayers)
-        val now = java.time.LocalTime.now(ZoneId.systemDefault())
-        val langDetectedPrayerTimes = prayerTimes.mapIndexed { index, prayer ->
-            val isCurrent = calculator.findCurrentPrayer(prayerTimes, now) == prayer
-            prayer.copy(name = prayerNames[index], isCurrent = isCurrent)
+        return prayerTimes.mapIndexed { index, prayer ->
+            prayer.copy(name = prayerNames[index])
         }
-        return langDetectedPrayerTimes
     }
 
     override fun onCleared() {
