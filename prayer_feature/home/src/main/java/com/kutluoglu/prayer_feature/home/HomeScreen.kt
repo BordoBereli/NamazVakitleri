@@ -67,8 +67,8 @@ fun HomeScreen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(0.08f)
-                    .background(Color.Blue.copy(alpha = 0.3f)),
+                    .weight(0.08f),
+//                    .background(Color.Blue.copy(alpha = 0.3f)),
                 contentAlignment = Alignment.Center
             ) {
                 BottomContainer()
