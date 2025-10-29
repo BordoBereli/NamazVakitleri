@@ -1,6 +1,6 @@
 package com.kutluoglu.namazvakitleri.bottom_navigation
 
-import com.kutluoglu.core.ui.theme.navigation.NestedGraph
+import com.kutluoglu.prayer_navigation.core.PrayerNestedGraph
 
 /**
  * Created by F.K. on 23.10.2025.
@@ -14,13 +14,13 @@ enum class Destination(
         val contentDescription: String
 ) {
     HOME(
-        NestedGraph.HOME,
+        PrayerNestedGraph.HOME,
         "Home",
         com.kutluoglu.prayer_feature.home.R.drawable.home,
         "Home Page"
     ),
     PRAYER_TIMES(
-        NestedGraph.PRAYER_TIMES,
+        PrayerNestedGraph.PRAYER_TIMES,
         "Prayer Times",
         com.kutluoglu.prayer_feature.prayertimes.R.drawable.prayertimes,
         "PrayerTimes Page"

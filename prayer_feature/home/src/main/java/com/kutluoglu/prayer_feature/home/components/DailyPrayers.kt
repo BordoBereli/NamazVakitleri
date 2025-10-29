@@ -27,7 +27,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.kutluoglu.core.ui.theme.components.ErrorMessage
 import com.kutluoglu.core.ui.theme.components.LoadingIndicator
-import com.kutluoglu.core.ui.theme.navigation.NestedGraph
+import com.kutluoglu.prayer_navigation.core.PrayerNestedGraph
 import com.kutluoglu.prayer.model.Prayer
 import com.kutluoglu.prayer_feature.home.HomeUiState
 import com.kutluoglu.prayer_feature.home.R
@@ -123,7 +123,7 @@ private fun PrayerGridHeader(navController: NavController) {
             modifier = Modifier
                 .padding(vertical = 8.dp)
                 .clickable {
-                    navController.navigate(NestedGraph.PRAYER_TIMES) {
+                    navController.navigate(PrayerNestedGraph.PRAYER_TIMES) {
                         // This navigation logic is standard and correct.
                         popUpTo(navController.graph.findStartDestination().id) {
                             saveState = true

@@ -6,17 +6,13 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,14 +25,11 @@ import com.kutluoglu.namazvakitleri.bottom_navigation.Destination
 import com.kutluoglu.prayer_feature.home.navigation.homeGraph
 import com.kutluoglu.prayer_navigation.core.Screen
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
-import com.kutluoglu.core.ui.theme.navigation.NestedGraph
+import com.kutluoglu.prayer_navigation.core.PrayerNestedGraph
 import com.kutluoglu.namazvakitleri.bottom_navigation.NavButton
 import com.kutluoglu.prayer_feature.prayertimes.navigation.prayerTimesGraph
 
@@ -151,18 +144,18 @@ private fun MainAppScreen() {
                 .fillMaxSize()
                 .padding(contentPadding),
             navController = navController,
-            startDestination = NestedGraph.HOME
+            startDestination = PrayerNestedGraph.HOME
         ) {
             // Define the nested graphs with their new routes
             navigation(
-                route = NestedGraph.HOME,
+                route = PrayerNestedGraph.HOME,
                 startDestination = Screen.HomeScreen.route
             ) {
                 homeGraph(navController)
             }
 
             navigation(
-                route = NestedGraph.PRAYER_TIMES,
+                route = PrayerNestedGraph.PRAYER_TIMES,
                 startDestination = Screen.PayerTimesScreen.route
             ) {
                 prayerTimesGraph(navController)

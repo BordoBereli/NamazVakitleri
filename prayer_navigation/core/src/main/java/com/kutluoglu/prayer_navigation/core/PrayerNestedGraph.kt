@@ -1,6 +1,6 @@
-package com.kutluoglu.core.ui.theme.navigation
+package com.kutluoglu.prayer_navigation.core
 
-object NestedGraph {
+object PrayerNestedGraph {
     const val HOME = "home_graph"
     const val PRAYER_TIMES = "prayer_times_graph"
 }
