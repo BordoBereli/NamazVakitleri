@@ -5,4 +5,5 @@ package com.kutluoglu.prayer_feature.home
  */
 sealed class HomeEvent {
     object OnRefresh : HomeEvent()
+    object OnCountDown : HomeEvent()
 }

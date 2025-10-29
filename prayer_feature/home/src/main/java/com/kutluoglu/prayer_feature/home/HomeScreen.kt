@@ -19,7 +19,7 @@ import com.kutluoglu.prayer_feature.home.components.TopContainer
 fun HomeScreen(
         navController: NavController,
         uiState: HomeUiState,
-        onEvent: (HomeEvent) -> Unit = {}
+        onEvent: (HomeEvent) -> Unit
 ) {
     // Determine if the UI is in a refreshing state
     val isRefreshing = uiState is HomeUiState.Loading
@@ -43,7 +43,8 @@ fun HomeScreen(
             ) {
                 TopContainer(
                     painter = painterResource(id = R.drawable.home_page_fallback),
-                    uiState = uiState
+                    uiState = uiState,
+                    onStartCount = { onEvent(HomeEvent.OnCountDown) }
                 )
             }
 

@@ -1,4 +1,4 @@
-package com.kutluoglu.namazvakitleri
+package com.kutluoglu.prayer_feature.home
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -9,9 +9,6 @@ import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.extension.AfterEachCallback
 import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
-import org.junit.rules.TestWatcher
-import org.junit.runner.Description
-
 
 @ExperimentalCoroutinesApi
 class MainCoroutineRule(

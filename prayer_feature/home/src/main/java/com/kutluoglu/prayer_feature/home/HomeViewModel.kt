@@ -1,16 +1,9 @@
 package com.kutluoglu.prayer_feature.home
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kutluoglu.core.common.gregorianFormatter
-import com.kutluoglu.core.common.hijriFormatter
 import com.kutluoglu.core.common.now
-import com.kutluoglu.core.common.timeFormatter
-import com.kutluoglu.core.ui.R.*
-import com.kutluoglu.core.ui.theme.StringResourcesProvider
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
-import com.kutluoglu.prayer.model.Prayer
 import com.kutluoglu.prayer.usecases.GetPrayerTimesUseCase
 import com.kutluoglu.prayer_feature.home.common.PrayerFormatter
 import kotlinx.coroutines.Job
@@ -21,19 +14,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.LocalTime
-import kotlinx.datetime.toJavaLocalTime
 import org.koin.android.annotation.KoinViewModel
-import java.time.LocalDate
-import java.time.ZoneId
-import java.time.chrono.HijrahDate
-import java.time.Duration
-import kotlin.time.toKotlinDuration
 
 @KoinViewModel
 class HomeViewModel(
         private val getPrayerTimesUseCase: GetPrayerTimesUseCase,
-        private val resProvider: StringResourcesProvider,
         private val calculator: PrayerLogicEngine,
         private val formatter: PrayerFormatter
 ) : ViewModel() {
@@ -58,6 +43,9 @@ class HomeViewModel(
                 // This will show the loading indicator and refetch all data.
                 loadPrayerTimes()
             }
+            HomeEvent.OnCountDown -> {
+                startPrayerCountdown()
+            }
         }
     }
 
@@ -71,18 +59,18 @@ class HomeViewModel(
 
             getPrayerTimesUseCase(LocalDateTime.now(), latitude, longitude)
                 .onSuccess { prayerTimes ->
-                    val langDetectedPrayerTimes = withLocalizedNames(prayerTimes)
-                    _uiState.value = HomeUiState.Success(
+                    val langDetectedPrayerTimes = formatter.withLocalizedNames(prayerTimes)
+                    val successState = HomeUiState.Success(
                         data = HomeDataUiState(
                             prayers = langDetectedPrayerTimes,
                             timeInfo = formatter.getInitialTimeInfo()
                         )
                     )
-                    startPrayerCountdown()
+                    _uiState.value = successState
                 }
                 .onFailure { error ->
-                    _uiState.value =
-                        HomeUiState.Error(message = error.message ?: "An unknown error occurred")
+                    val errorState = HomeUiState.Error(message = error.message ?: "An unknown error occurred")
+                    _uiState.value = errorState
                 }
         }
     }
@@ -124,13 +112,6 @@ class HomeViewModel(
                     )
                 )
             )
-        }
-    }
-
-    private fun withLocalizedNames(prayerTimes: List<Prayer>): List<Prayer> {
-        val prayerNames = resProvider.getStringArray(array.prayers)
-        return prayerTimes.mapIndexed { index, prayer ->
-            prayer.copy(name = prayerNames[index])
         }
     }
 

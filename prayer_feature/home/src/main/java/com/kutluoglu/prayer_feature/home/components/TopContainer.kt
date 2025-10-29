@@ -1,4 +1,3 @@
-// prayer_feature/home/src/main/java/com/kutluoglu/prayer_feature/home/components/TopContainer.kt
 package com.kutluoglu.prayer_feature.home.components
 
 import androidx.compose.foundation.Image
@@ -25,21 +24,28 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kutluoglu.prayer_feature.home.HomeEvent
 import com.kutluoglu.prayer_feature.home.HomeUiState
 import com.kutluoglu.prayer_feature.home.R
+import com.kutluoglu.prayer_feature.home.TimeInfo
 import com.kutluoglu.prayer_feature.home.common.getPrayerDrawableIdFrom
 
 @Composable
 fun TopContainer(
-    modifier: Modifier = Modifier,
-    painter: Painter,
-    uiState: HomeUiState
+        modifier: Modifier = Modifier,
+        painter: Painter,
+        uiState: HomeUiState,
+        onStartCount: () -> Unit
 ) {
+
     val borderColorFromTheme = MaterialTheme.colorScheme.onSecondaryContainer
     Box(
         modifier = modifier.fillMaxWidth(),
         contentAlignment = Alignment.Center
     ) {
+        if (uiState is HomeUiState.Success) {
+            onStartCount()
+        }
         Image(
             painter = painter,
             contentDescription = stringResource(id = R.string.home_page_fallback),
@@ -152,7 +158,11 @@ fun NextPrayerInfo(uiState: HomeUiState) {
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Icon(
-                    painter = painterResource(id = getPrayerDrawableIdFrom(uiState.data.currentPrayer?.name ?: "")),
+                    painter = painterResource(
+                        id = getPrayerDrawableIdFrom(
+                            uiState.data.currentPrayer?.name ?: ""
+                        )
+                    ),
                     contentDescription = stringResource(id = R.string.time_until_message),
                     tint = Color.Unspecified,
                     modifier = Modifier.size(16.dp)
@@ -178,7 +188,10 @@ private fun DrawScope.defineCustomBorderShapeForCurrentPrayerContainer(): Path =
     moveTo(size.width, size.height)
     lineTo(size.width, cornerRadius)
     arcTo(
-        rect = Rect(Offset(size.width - 2 * cornerRadius, 0f), Size(2 * cornerRadius, 2 * cornerRadius)),
+        rect = Rect(
+            Offset(size.width - 2 * cornerRadius, 0f),
+            Size(2 * cornerRadius, 2 * cornerRadius)
+        ),
         startAngleDegrees = 0f,
         sweepAngleDegrees = -90f,
         forceMoveTo = false
