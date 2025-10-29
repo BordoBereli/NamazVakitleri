@@ -164,7 +164,7 @@ fun NextPrayerInfo(uiState: HomeUiState) {
                         )
                     ),
                     contentDescription = stringResource(id = R.string.time_until_message),
-                    tint = Color.Unspecified,
+                    tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(16.dp)
                 )
                 Text(
@@ -176,8 +176,8 @@ fun NextPrayerInfo(uiState: HomeUiState) {
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = uiState.data.timeRemaining,
-                style = MaterialTheme.typography.displayMedium,
-                color = MaterialTheme.colorScheme.onSecondaryContainer
+                style = MaterialTheme.typography.displaySmall,
+                color = MaterialTheme.colorScheme.primary
             )
         }
     }
