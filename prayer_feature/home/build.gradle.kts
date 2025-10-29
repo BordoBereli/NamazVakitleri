@@ -61,7 +61,7 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
-    implementation("androidx.compose.material:material:1.9.4") // Or a newer version
+    implementation(libs.androidx.material)
 
     implementation(libs.compose.navigation)
 

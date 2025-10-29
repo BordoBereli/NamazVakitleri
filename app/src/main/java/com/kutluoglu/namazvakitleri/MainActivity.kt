@@ -21,7 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.kutluoglu.core.ui.theme.NamazVakitleriTheme
-import com.kutluoglu.namazvakitleri.bottom_navigation.Destination
+import com.kutluoglu.prayer_navigation.core.Destination
 import com.kutluoglu.prayer_feature.home.navigation.homeGraph
 import com.kutluoglu.prayer_navigation.core.Screen
 import androidx.compose.runtime.getValue
@@ -30,7 +30,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import com.kutluoglu.prayer_navigation.core.PrayerNestedGraph
-import com.kutluoglu.namazvakitleri.bottom_navigation.NavButton
+import com.kutluoglu.prayer_navigation.core.NavButton
 import com.kutluoglu.prayer_feature.prayertimes.navigation.prayerTimesGraph
 
 class MainActivity : ComponentActivity() {
@@ -39,9 +39,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            NamazVakitleriTheme(
-                darkTheme = true
-            ) {
+            NamazVakitleriTheme(darkTheme = true) {
                MainAppScreen()
             }
         }
@@ -75,7 +73,7 @@ private fun MainAppScreen() {
                 Spacer(modifier = Modifier.width(8.dp))
                 Destination.entries.forEach { destination ->
                     val isSelected = currentGraph == destination.graph
-                    // USE YOUR NEW CUSTOM BUTTON
+                    // NEW CUSTOM BUTTON
                     NavButton(
                         destination = destination,
                         isSelected = isSelected,
@@ -89,52 +87,8 @@ private fun MainAppScreen() {
                             }
                         }
                     )
-
                     // Add spacing between the buttons
                     Spacer(modifier = Modifier.width(8.dp))
-                   /* NavigationBarItem(
-                        modifier = Modifier.fillMaxHeight(),
-                        selected = isSelected,
-                        onClick = {
-                            // This ensures you don't build up a large back stack
-                            navController.navigate(route = destination.graph) {
-                                // Pop up to the start destination of the graph to
-                                // avoid building up a large stack of destinations
-                                // on the back stack as users select items
-                                popUpTo(navController.graph.findStartDestination().id) {
-                                    saveState = true
-                                }
-                                // Avoid multiple copies of the same destination when
-                                // re-selecting the same item
-                                launchSingleTop = true
-                                // Restore state when re-selecting a previously selected item
-                                restoreState = true
-                            }
-                        },
-                        icon = {
-                            Icon(
-                                ImageVector.vectorResource(destination.iconDrawable),
-                                contentDescription = destination.contentDescription
-                            )
-                        },
-                        label = {
-                            Text(
-                                text =  destination.label,
-                            )
-                        },
-                        // Force the label to always be visible, which changes the item's
-                        // layout to be more compact.
-                        alwaysShowLabel = true,
-                        // OPTIONAL BUT RECOMMENDED: Customize the colors
-                        colors = NavigationBarItemDefaults.colors(
-                            // Set the selected indicator color to your theme's primary color
-                            selectedIconColor = MaterialTheme.colorScheme.primary,
-                            selectedTextColor = MaterialTheme.colorScheme.primary,
-                            // Set the unselected icon/text color if needed
-                            unselectedIconColor = Color.Gray,
-                            unselectedTextColor = Color.Gray
-                        )
-                    )*/
                 }
             }
         }
@@ -162,9 +116,6 @@ private fun MainAppScreen() {
             }
         }
     }
-    /*Box(modifier = Modifier.fillMaxSize()) {
-
-    }*/
 }
 
 @Composable

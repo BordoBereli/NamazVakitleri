@@ -1,4 +1,4 @@
-package com.kutluoglu.namazvakitleri.bottom_navigation
+package com.kutluoglu.prayer_navigation.core
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
