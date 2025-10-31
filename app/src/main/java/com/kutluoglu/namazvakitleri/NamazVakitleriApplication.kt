@@ -5,6 +5,7 @@ import com.kutluoglu.core.ui.theme.di.CoreCommonModule
 import com.kutluoglu.prayer.data.di.PrayerDataModule
 import com.kutluoglu.prayer.di.PrayerDomainModule
 import com.kutluoglu.prayer_feature.home.di.PrayerFeatureHomeModule
+import com.kutluoglu.prayer_location.di.PrayerLocationModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.GlobalContext.startKoin
@@ -20,7 +21,8 @@ class NamazVakitleriApplication : Application() {
                 PrayerDomainModule.module,
                 PrayerDataModule.module,
                 PrayerFeatureHomeModule.module,
-                CoreCommonModule.module
+                CoreCommonModule.module,
+                PrayerLocationModule.module
             )
         }
     }

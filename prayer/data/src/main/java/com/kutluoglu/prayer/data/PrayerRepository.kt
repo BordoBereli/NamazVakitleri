@@ -7,6 +7,7 @@ import com.kutluoglu.prayer.repository.IPrayerRepository
 import com.kutluoglu.prayer.services.PrayerCalculationService
 import kotlinx.datetime.LocalDateTime
 import org.koin.core.annotation.Single
+import java.time.ZoneId
 
 
 @Single
@@ -17,7 +18,8 @@ class PrayerRepository(
     override suspend fun getPrayerTimes(
         date: LocalDateTime,
         latitude: Double,
-        longitude: Double
+        longitude: Double,
+        zoneId: ZoneId,
     ): List<Prayer> {
         // TODO: Step 1 - Check Room database for cached prayer times for this date/location.
         // If found, return cached data.
@@ -27,6 +29,7 @@ class PrayerRepository(
         val prayerTimes =  prayerCalculationService.calculateDailyPrayerTimes(
             latitude = latitude,
             longitude = longitude,
+            zoneId = zoneId,
             date = date,
             calculationMethod = CalculationMethod.TURKEY_DIYANET, // Using placeholder values
             juristicMethod = JuristicMethod.STANDARD

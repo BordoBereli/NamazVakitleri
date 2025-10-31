@@ -45,7 +45,10 @@ fun DailyPrayers(
         refreshing = isRefreshing,
         onRefresh = onRefresh // This calls the lambda that triggers the ViewModel event
     )
-    Box(modifier = Modifier.pullRefresh(pullRefreshState)) {
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .pullRefresh(pullRefreshState)
+    ) {
 
         when (val state = uiState) {
             is HomeUiState.Loading -> {

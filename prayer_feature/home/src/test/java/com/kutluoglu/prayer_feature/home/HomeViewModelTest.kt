@@ -2,11 +2,12 @@ package com.kutluoglu.prayer_feature.home
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import com.kutluoglu.core.ui.theme.StringResourcesProvider
+import com.kutluoglu.core.ui.theme.common.StringResourcesProvider
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
 import com.kutluoglu.prayer.model.Prayer
 import com.kutluoglu.prayer.usecases.GetPrayerTimesUseCase
 import com.kutluoglu.prayer_feature.home.common.PrayerFormatter
+import com.kutluoglu.prayer_location.LocationService
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -25,6 +26,7 @@ class HomeViewModelTest {
     private lateinit var getPrayerTimesUseCase: GetPrayerTimesUseCase
     private lateinit var calculator: PrayerLogicEngine
     private lateinit var formatter: PrayerFormatter
+    private lateinit var locationService: LocationService
     private lateinit var viewModel: HomeViewModel
 
     @BeforeEach
@@ -33,6 +35,7 @@ class HomeViewModelTest {
         getPrayerTimesUseCase = mockk()
         calculator = mockk(relaxed = true)
         formatter = mockk(relaxed = true)
+        locationService = mockk(relaxed = true)
     }
 
     @Test
@@ -47,7 +50,7 @@ class HomeViewModelTest {
             Prayer(name = "Sabah", arabicName = "الفجر", time = LocalTime(5, 0), date = testDate)
         )
         // 1. Mock the use case to return the initial list
-        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any()) } returns Result.success(initialPrayerList)
+        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any()) } returns Result.success(initialPrayerList)
 
         // 2. Mock the formatter to perform the name change
         every { formatter.withLocalizedNames(initialPrayerList) } returns localizedPrayerList
@@ -57,7 +60,8 @@ class HomeViewModelTest {
         viewModel = HomeViewModel(
             getPrayerTimesUseCase, // ViewModel calls loadPrayerTimes in init
             calculator,
-            formatter
+            formatter,
+            locationService
         )
 
         // Assert / Then
@@ -81,13 +85,14 @@ class HomeViewModelTest {
         // Arrange
         val errorMessage = "Failed to fetch times"
         val exception = RuntimeException(errorMessage)
-        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any()) } returns Result.failure(exception)
+        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any()) } returns Result.failure(exception)
 
         // Act
         viewModel = HomeViewModel(
             getPrayerTimesUseCase,
             calculator,
-            formatter
+            formatter,
+            locationService
         )
 
         // Assert

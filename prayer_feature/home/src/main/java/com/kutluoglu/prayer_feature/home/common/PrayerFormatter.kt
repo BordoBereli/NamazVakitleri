@@ -3,10 +3,11 @@ package com.kutluoglu.prayer_feature.home.common
 import com.kutluoglu.core.common.gregorianFormatter
 import com.kutluoglu.core.common.hijriFormatter
 import com.kutluoglu.core.common.timeFormatter
-import com.kutluoglu.core.ui.theme.StringResourcesProvider
+import com.kutluoglu.core.ui.theme.common.StringResourcesProvider
 import com.kutluoglu.core.ui.R.*
 import com.kutluoglu.prayer.model.Prayer
 import com.kutluoglu.prayer_feature.home.TimeInfo
+import com.kutluoglu.prayer_location.LocationData
 import org.koin.core.annotation.Factory
 import java.time.Duration
 import java.time.LocalDate
@@ -23,19 +24,19 @@ import kotlin.time.toKotlinDuration
 class PrayerFormatter(
     private val resProvider: StringResourcesProvider
 ) {
-    fun getInitialTimeInfo(): TimeInfo {
-        val today = LocalDate.now(ZoneId.systemDefault())
-        val hijrahDate = HijrahDate.now(ZoneId.systemDefault())
+    fun getInitialTimeInfo(zoneId: ZoneId): TimeInfo {
+        val today = LocalDate.now(zoneId)
+        val hijrahDate = HijrahDate.now(zoneId)
 
         return TimeInfo(
             hijriDate = hijrahDate.format(hijriFormatter),
             gregorianDate = today.format(gregorianFormatter),
-            currentTime = getFormattedCurrentTime()
+            currentTime = getFormattedCurrentTime(zoneId)
         )
     }
 
-    fun getFormattedCurrentTime(): String {
-        return java.time.LocalTime.now(ZoneId.systemDefault()).format(timeFormatter)
+    fun getFormattedCurrentTime(zoneId: ZoneId): String {
+        return java.time.LocalTime.now(zoneId).format(timeFormatter)
     }
 
     fun formatTimeRemaining(duration: Duration): String {
@@ -59,5 +60,14 @@ class PrayerFormatter(
         return prayerTimes.mapIndexed { index, prayer ->
             prayer.copy(name = prayerNames[index])
         }
+    }
+
+    fun locationInfo(locationData: LocationData): String {
+        val countryCode = locationData.countryCode ?: ""
+        val city = locationData.city ?: ""
+        val county = locationData.county
+
+        return county?.let { "$county, $city - $countryCode" }
+            ?: "$city, $countryCode"
     }
 }

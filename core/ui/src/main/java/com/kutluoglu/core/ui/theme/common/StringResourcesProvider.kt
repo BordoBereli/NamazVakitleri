@@ -1,9 +1,8 @@
-package com.kutluoglu.core.ui.theme
+package com.kutluoglu.core.ui.theme.common
 
 import android.content.Context
 import androidx.annotation.StringRes
 import org.koin.core.annotation.Single
-
 
 @Single
 class StringResourcesProvider(

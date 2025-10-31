@@ -1,6 +1,7 @@
 package com.kutluoglu.prayer_feature.home
 
 import com.kutluoglu.prayer.model.Prayer
+import com.kutluoglu.prayer_location.LocationData
 
 /**
  * Created by F.K. on 28.10.2025.
@@ -18,7 +19,8 @@ data class HomeDataUiState(
         val currentPrayer: Prayer? = null,
         val nextPrayer: Prayer? = null,
         val timeRemaining: String = "",
-        val timeInfo: TimeInfo = TimeInfo()
+        val timeInfo: TimeInfo = TimeInfo(),
+        val locationInfo: String = ""
 )
 
 data class TimeInfo(

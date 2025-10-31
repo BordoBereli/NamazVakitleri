@@ -24,7 +24,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kutluoglu.prayer_feature.home.HomeEvent
 import com.kutluoglu.prayer_feature.home.HomeUiState
 import com.kutluoglu.prayer_feature.home.R
 import com.kutluoglu.prayer_feature.home.TimeInfo
@@ -63,7 +62,7 @@ fun TopContainer(
                     .weight(0.2F)
                     .padding(start = 16.dp, top = 16.dp)
             ) {
-                LocationInfoSection()
+                LocationInfoSection(uiState = uiState)
             }
             Box(
                 modifier = Modifier
@@ -99,22 +98,24 @@ fun TopContainer(
 }
 
 @Composable
-fun LocationInfoSection() {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(
-            painterResource(R.drawable.konum),
-            contentDescription = stringResource(id = R.string.home_page_fallback),
-            tint = Color.Unspecified
-        )
-        Text(
-            text = "Konum Bilgisi",
-            fontSize = 16.sp,
-            color = MaterialTheme.colorScheme.primary
-        )
+fun LocationInfoSection(uiState: HomeUiState) {
+    if (uiState is HomeUiState.Success) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                painterResource(R.drawable.konum),
+                contentDescription = stringResource(id = R.string.home_page_fallback),
+                tint = Color.Unspecified
+            )
+            Text(
+                text = uiState.data.locationInfo,
+                fontSize = 16.sp,
+                color = MaterialTheme.colorScheme.primary
+            )
+        }
     }
 }
 

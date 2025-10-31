@@ -11,8 +11,8 @@ import kotlin.time.Instant
  *
  */
 
-fun LocalDateTime.Companion.now(): LocalDateTime {
-    val javaLocalDateTime = java.time.LocalDateTime.now(ZoneId.systemDefault())
+fun LocalDateTime.Companion.now(zoneId: ZoneId): LocalDateTime {
+    val javaLocalDateTime = java.time.LocalDateTime.now(zoneId)
     return LocalDateTime(
         year = javaLocalDateTime.year,
         month = javaLocalDateTime.monthValue,

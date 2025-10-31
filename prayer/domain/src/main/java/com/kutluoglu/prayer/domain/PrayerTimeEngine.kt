@@ -25,6 +25,7 @@ class PrayerTimeEngine : PrayerCalculationService {
     override fun calculateDailyPrayerTimes(
         latitude: Double,
         longitude: Double,
+        zoneId: ZoneId,
         date: LocalDateTime,
         calculationMethod: CalculationMethod,
         juristicMethod: JuristicMethod
@@ -34,60 +35,45 @@ class PrayerTimeEngine : PrayerCalculationService {
         val params = getCalculationParameters(calculationMethod, juristicMethod)
         val prayerTimes = PrayerTimes(coordinates, dateComponents, params)
 
+        // Use the provided zoneId for conversion
+        val kotlinTimeZone = zoneId.toKotlinTimeZone()
+
         return listOf(
             Prayer(
                 name = "Fajr",
                 arabicName = "الفجر",
-                time = prayerTimes.fajr.toLocalDateTime(ZoneId.systemDefault().toKotlinTimeZone()).time,
-                date = date.date,
-                isCurrent = prayerTimes.currentPrayer(
-                    Instant.fromEpochMilliseconds(System.currentTimeMillis())
-                ) == FAJR
+                time = prayerTimes.fajr.toLocalDateTime(kotlinTimeZone).time,
+                date = date.date
             ),
             Prayer(
                 name = "Sunrise",
                 arabicName = "الشروق",
-                time = prayerTimes.sunrise.toLocalDateTime(ZoneId.systemDefault().toKotlinTimeZone()).time,
-                date = date.date,
-                isCurrent = prayerTimes.currentPrayer(
-                    Instant.fromEpochMilliseconds(System.currentTimeMillis())
-                ) == SUNRISE
+                time = prayerTimes.sunrise.toLocalDateTime(kotlinTimeZone).time,
+                date = date.date
             ),
             Prayer(
                 name = "Dhuhr",
                 arabicName = "الظهر",
-                time = prayerTimes.dhuhr.toLocalDateTime(ZoneId.systemDefault().toKotlinTimeZone()).time,
-                date = date.date,
-                isCurrent = prayerTimes.currentPrayer(
-                    Instant.fromEpochMilliseconds(System.currentTimeMillis())
-                ) == DHUHR
+                time = prayerTimes.dhuhr.toLocalDateTime(kotlinTimeZone).time,
+                date = date.date
             ),
             Prayer(
                 name = "Asr",
                 arabicName = "العصر",
-                time = prayerTimes.asr.toLocalDateTime(ZoneId.systemDefault().toKotlinTimeZone()).time,
-                date = date.date,
-                isCurrent = prayerTimes.currentPrayer(
-                    Instant.fromEpochMilliseconds(System.currentTimeMillis())
-                ) == ASR
+                time = prayerTimes.asr.toLocalDateTime(kotlinTimeZone).time,
+                date = date.date
             ),
             Prayer(
                 name = "Maghrib",
                 arabicName = "المغرب",
-                time = prayerTimes.maghrib.toLocalDateTime(ZoneId.systemDefault().toKotlinTimeZone()).time,
-                date = date.date,
-                isCurrent = prayerTimes.currentPrayer(
-                    Instant.fromEpochMilliseconds(System.currentTimeMillis())
-                ) == MAGHRIB
+                time = prayerTimes.maghrib.toLocalDateTime(kotlinTimeZone).time,
+                date = date.date
             ),
             Prayer(
                 name = "Isha",
                 arabicName = "العشاء",
-                time = prayerTimes.isha.toLocalDateTime(ZoneId.systemDefault().toKotlinTimeZone()).time,
-                date = date.date,
-                isCurrent = prayerTimes.currentPrayer(
-                    Instant.fromEpochMilliseconds(System.currentTimeMillis())
-                ) == ISHA
+                time = prayerTimes.isha.toLocalDateTime(kotlinTimeZone).time,
+                date = date.date
             )
         )
     }

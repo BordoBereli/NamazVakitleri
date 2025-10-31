@@ -8,4 +8,11 @@
         <item>Akşam</item>
         <item>Yatsı</item>
     </string-array>
+    <string name="unknown_error_message">Bilinmeyen bir hata oluştu.</string>
+    <string name="permission_required">İzin Kalıcı Olarak Reddedildi</string>
+    <string name="settings_dialog_info">Namaz vakitlerini göstermek için konum izni gereklidir. Lütfen uygulama ayarlarından manuel olarak izin verin.</string>
+    <string name="open_settings">Ayarları Aç</string>
+    <string name="location_permission_needed">Konum İzni Gerekiyor</string>
+    <string name="permission_grant_message">Namaz vakitlerini bulunduğunuz yere göre doğru bir şekilde hesaplamak için konum izninize ihtiyacımız var.</string>
+    <string name="grant_permission">İzin Ver</string>
 </resources>
