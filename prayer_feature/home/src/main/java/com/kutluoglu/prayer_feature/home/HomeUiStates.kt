@@ -1,7 +1,6 @@
 package com.kutluoglu.prayer_feature.home
 
-import com.kutluoglu.prayer.model.Prayer
-import com.kutluoglu.prayer_location.LocationData
+import com.kutluoglu.prayer.model.prayer.Prayer
 
 /**
  * Created by F.K. on 28.10.2025.

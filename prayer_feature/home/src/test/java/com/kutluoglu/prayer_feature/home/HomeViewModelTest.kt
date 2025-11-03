@@ -2,9 +2,8 @@ package com.kutluoglu.prayer_feature.home
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import com.kutluoglu.core.ui.theme.common.StringResourcesProvider
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
-import com.kutluoglu.prayer.model.Prayer
+import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer.usecases.GetPrayerTimesUseCase
 import com.kutluoglu.prayer_feature.home.common.PrayerFormatter
 import com.kutluoglu.prayer_location.LocationService

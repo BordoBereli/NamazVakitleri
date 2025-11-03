@@ -4,7 +4,7 @@ import com.kutluoglu.prayer.services.PrayerLogic
 import org.koin.core.annotation.Factory
 import kotlin.collections.firstOrNull
 import kotlin.collections.getOrNull
-import com.kutluoglu.prayer.model.Prayer
+import com.kutluoglu.prayer.model.prayer.Prayer
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.toJavaLocalTime
 import java.time.Duration

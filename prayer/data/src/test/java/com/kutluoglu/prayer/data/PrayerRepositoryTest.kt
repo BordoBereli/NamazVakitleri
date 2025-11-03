@@ -2,7 +2,7 @@ package com.kutluoglu.prayer.data
 
 import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.core.common.createBy
-import com.kutluoglu.prayer.model.Prayer
+import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer.services.PrayerCalculationService
 import io.mockk.coEvery
 import io.mockk.coVerify

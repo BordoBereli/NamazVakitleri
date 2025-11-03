@@ -1,6 +1,6 @@
 package com.kutluoglu.prayer.services
 
-import com.kutluoglu.prayer.model.Prayer
+import com.kutluoglu.prayer.model.prayer.Prayer
 import kotlinx.datetime.LocalTime
 import java.time.Duration
 

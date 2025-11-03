@@ -1,4 +1,4 @@
-package com.kutluoglu.prayer.model
+package com.kutluoglu.prayer.model.prayer
 
 enum class CalculationMethod {
     TURKEY_DIYANET,

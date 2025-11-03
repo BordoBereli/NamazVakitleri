@@ -40,13 +40,15 @@ android {
 
 dependencies {
     implementation(project(":core:ui"))
+    implementation(project(":prayer:model"))
+    implementation(project(":prayer:data"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.play.services.location)
 
     // Dependency Injection - Koin
-    implementation(platform(libs.koin.bom))
-    implementation(libs.koin.core)
-    implementation(libs.koin.annotations)
+    api(platform(libs.koin.bom))
+    api(libs.koin.core)
+    api(libs.koin.annotations)
     ksp(libs.koin.ksp)
 
     // --- Testing Dependencies ---

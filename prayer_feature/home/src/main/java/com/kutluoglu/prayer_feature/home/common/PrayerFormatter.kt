@@ -5,9 +5,9 @@ import com.kutluoglu.core.common.hijriFormatter
 import com.kutluoglu.core.common.timeFormatter
 import com.kutluoglu.core.ui.theme.common.StringResourcesProvider
 import com.kutluoglu.core.ui.R.*
-import com.kutluoglu.prayer.model.Prayer
+import com.kutluoglu.prayer.model.location.LocationData
+import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer_feature.home.TimeInfo
-import com.kutluoglu.prayer_location.LocationData
 import org.koin.core.annotation.Factory
 import java.time.Duration
 import java.time.LocalDate

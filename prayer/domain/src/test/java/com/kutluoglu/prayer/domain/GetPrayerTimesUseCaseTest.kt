@@ -2,7 +2,7 @@ package com.kutluoglu.prayer.domain
 
 import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.core.common.createBy
-import com.kutluoglu.prayer.model.Prayer
+import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer.repository.IPrayerRepository
 import com.kutluoglu.prayer.usecases.GetPrayerTimesUseCase
 import io.mockk.coEvery

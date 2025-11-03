@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -43,6 +44,10 @@ dependencies {
     implementation(project(":prayer:model"))
     implementation(libs.kotlinx.datetime)
 
+    //region Data Store
+    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.kotlinx.serialization.json) // For object serialization
+    //endregion
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

@@ -2,6 +2,8 @@
 accompanistPermissions = "0.34.0"
 agp = "8.10.1"
 adhan2 = "0.0.6"
+datastorePreferences = "1.1.7"
+kotlinxSerializationJson = "1.8.1"
 ksp = "2.2.20-2.0.3"
 jetbrainsKotlinJvm = "2.2.20"
 kotlin = "2.2.20"
@@ -51,7 +53,9 @@ androidx-compose-material3 = { group = "androidx.compose.material3", name = "mat
 androidx-material = { module = "androidx.compose.material:material", version.ref = "materialVersion" }
 compose-navigation = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
 
 adhan = { module = "com.batoulapps.adhan:adhan2", version.ref = "adhan2" }
@@ -69,10 +73,12 @@ koin-androidx-compose-navigation = { module = "io.insert-koin:koin-androidx-comp
 koin-androidx-workmanager = { module = "io.insert-koin:koin-androidx-workmanager" }
 koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel"}
 koin-compose-viewmodel-android = { module = "io.insert-koin:koin-compose-viewmodel-android"}
+#koin-ksp = { module = "io.insert-koin:koin-ksp-compiler" }
+#koin-annotations = { module = "io.insert-koin:koin-annotations"}
 
 koin-ksp = { module = "io.insert-koin:koin-ksp-compiler", version.ref = "koin-annotation" }
 koin-annotations = { module = "io.insert-koin:koin-annotations", version.ref = "koin-annotation" }
-
+#
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
@@ -98,4 +104,5 @@ android-library = { id = "com.android.library", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp"}

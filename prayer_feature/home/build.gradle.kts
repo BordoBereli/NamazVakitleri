@@ -49,6 +49,7 @@ dependencies {
     implementation(project(":core:ui"))
     implementation(project(":core:common"))
     implementation(project(":prayer:domain"))
+    implementation(project(":prayer:data"))
     implementation(project(":prayer:model"))
     implementation(project(":prayer_navigation:core"))
     implementation(project(":prayer_location"))

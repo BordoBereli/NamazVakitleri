@@ -28,7 +28,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.kutluoglu.core.ui.theme.components.ErrorMessage
 import com.kutluoglu.core.ui.theme.components.LoadingIndicator
 import com.kutluoglu.prayer_navigation.core.PrayerNestedGraph
-import com.kutluoglu.prayer.model.Prayer
+import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer_feature.home.HomeUiState
 import com.kutluoglu.prayer_feature.home.R
 

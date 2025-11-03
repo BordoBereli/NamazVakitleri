@@ -1,10 +1,9 @@
 package com.kutluoglu.prayer.services
 
-import com.kutluoglu.prayer.model.CalculationMethod
-import com.kutluoglu.prayer.model.JuristicMethod
-import com.kutluoglu.prayer.model.Prayer
+import com.kutluoglu.prayer.model.prayer.CalculationMethod
+import com.kutluoglu.prayer.model.prayer.JuristicMethod
+import com.kutluoglu.prayer.model.prayer.Prayer
 import kotlinx.datetime.LocalDateTime
-import java.text.SimpleDateFormat
 import java.time.ZoneId
 
 /**

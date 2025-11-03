@@ -1,8 +1,7 @@
 package com.kutluoglu.prayer.repository
 
-import com.kutluoglu.prayer.model.Prayer
+import com.kutluoglu.prayer.model.prayer.Prayer
 import kotlinx.datetime.LocalDateTime
-import java.time.LocalDate
 import java.time.ZoneId
 
 

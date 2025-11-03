@@ -1,4 +1,4 @@
-package com.kutluoglu.prayer.model
+package com.kutluoglu.prayer.model.prayer
 
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime

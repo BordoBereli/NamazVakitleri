@@ -1,8 +1,8 @@
 package com.kutluoglu.prayer.data
 
-import com.kutluoglu.prayer.model.CalculationMethod
-import com.kutluoglu.prayer.model.JuristicMethod
-import com.kutluoglu.prayer.model.Prayer
+import com.kutluoglu.prayer.model.prayer.CalculationMethod
+import com.kutluoglu.prayer.model.prayer.JuristicMethod
+import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer.repository.IPrayerRepository
 import com.kutluoglu.prayer.services.PrayerCalculationService
 import kotlinx.datetime.LocalDateTime
