@@ -1,5 +1,6 @@
 package com.kutluoglu.prayer_feature.home
 
+import android.net.http.SslCertificate
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -23,12 +24,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.kutluoglu.core.ui.theme.components.PermissionHandler
 import com.kutluoglu.prayer_feature.home.components.BottomContainer
 import com.kutluoglu.prayer_feature.home.components.DailyPrayers
 import com.kutluoglu.prayer_feature.home.components.TopContainer
 import com.kutluoglu.prayer_feature.home.feature.VerseDetailSheetContent
+import com.kutluoglu.prayer_navigation.core.PrayerNestedGraph
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPermissionsApi::class)
@@ -136,9 +139,17 @@ private fun PrayerContent(
             ) {
                 DailyPrayers(
                     uiState = uiState,
-                    navController = navController,
                     isRefreshing = isRefreshing,
-                    onRefresh = { onEvent(HomeEvent.OnRefresh) }
+                    onRefresh = { onEvent(HomeEvent.OnRefresh) },
+                    onViewAllClicked = {
+                        navController.navigate(PrayerNestedGraph.PRAYER_TIMES) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
                 )
             }
 
