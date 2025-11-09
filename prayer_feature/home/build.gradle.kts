@@ -50,7 +50,6 @@ dependencies {
     implementation(project(":core:common"))
     implementation(project(":prayer:domain"))
     implementation(project(":prayer:data"))
-    implementation(project(":prayer:model"))
     implementation(project(":prayer_navigation:core"))
     implementation(project(":prayer_location"))
     //endregion
@@ -67,6 +66,7 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.material)
+    implementation(libs.androidx.material.icons.extended)
     //endregion
 
     implementation(libs.compose.navigation)

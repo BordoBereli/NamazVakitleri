@@ -52,6 +52,10 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
 
+    //region Network
+    implementation(libs.okhttp)
+    //endregion
+
     // Dependency Injection - Koin
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.core)

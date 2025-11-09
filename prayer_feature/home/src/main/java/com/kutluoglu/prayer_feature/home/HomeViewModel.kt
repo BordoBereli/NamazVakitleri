@@ -1,10 +1,13 @@
 package com.kutluoglu.prayer_feature.home
 
+import android.location.Location
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kutluoglu.core.common.getZoneIdFromLocation
 import com.kutluoglu.core.common.now
 import com.kutluoglu.prayer.data.LocationCache
+import com.kutluoglu.prayer.data.QuranDataSource
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.usecases.GetPrayerTimesUseCase
@@ -26,7 +29,8 @@ class HomeViewModel(
         private val calculator: PrayerLogicEngine,
         private val formatter: PrayerFormatter,
         private val locationService: LocationService,
-        private val locationCache: LocationCache
+        private val locationCache: LocationCache,
+        private val quranDataSource: QuranDataSource
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
@@ -42,6 +46,59 @@ class HomeViewModel(
             HomeEvent.OnRefresh -> { loadPrayerTimes() }
             HomeEvent.OnCountDown -> { startPrayerCountdown() }
             HomeEvent.OnPermissionsGranted -> { loadPrayerTimes() }
+            HomeEvent.OnUpdateLocationConfirmed -> { updateLocationChange() }
+            HomeEvent.OnLoadQuranVerse -> { loadRandomVerse() }
+            HomeEvent.OnVerseClicked -> {
+                val currentState = _uiState.value
+                if (currentState is HomeUiState.Success) {
+                    _uiState.value = currentState.copy(
+                        data = currentState.data.copy(isVerseDetailSheetVisible = true)
+                    )
+                }
+            }
+            HomeEvent.OnVerseDetailDismissed -> {
+                val currentState = _uiState.value
+                if (currentState is HomeUiState.Success) {
+                    _uiState.value = currentState.copy(
+                        data = currentState.data.copy(isVerseDetailSheetVisible = false)
+                    )
+                }
+            }
+        }
+    }
+
+    private fun loadRandomVerse() {
+        viewModelScope.launch {
+            quranDataSource.getRandomVerse()
+                .onSuccess {
+                    val currentState = _uiState.value
+                    if (currentState is HomeUiState.Success) {
+                        _uiState.value = currentState.copy(
+                            data = currentState.data.copy(
+                                quranVerse = it
+                            )
+                        )
+                    } else {
+                        delay(1_000)
+                        loadRandomVerse()
+                    }
+                }
+                .onFailure {
+                    Log.e("LoadRandomVerse", "Failed to load random verse --> ${it.message}")
+                }
+        }
+    }
+
+    private fun updateLocationChange() {
+        viewModelScope.launch {
+            _uiState.value = HomeUiState.Loading // Set loading state
+            val newLocation = locationService.getCurrentLocation()
+            if (newLocation != null) {
+                locationCache.saveLocation(newLocation)
+                processLocation(newLocation, showedLocationUpdatePrompt = false)
+            } else {
+                _uiState.value = HomeUiState.Error("Failed to get updated location. Please try again.")
+            }
         }
     }
 
@@ -49,33 +106,51 @@ class HomeViewModel(
         viewModelScope.launch {
             _uiState.value = HomeUiState.Loading
 
-            // 2. Try to get location from cache first
-            var location = locationCache.getSavedLocation()
+            val savedLocation = locationCache.getSavedLocation()
+            val currentLocation = locationService.getCurrentLocation()
 
-            // 3. If cache is empty, fetch from the service
-            if (location == null) {
-                location = locationService.getCurrentLocation()
-                // 4. If fetch is successful, save it to the cache for next time
-                location?.let {
-                    locationCache.saveLocation(it)
+            // If cache is empty, fetch from the service
+            if (savedLocation == null) {
+                // First time use or cache cleared: use current location and save it.
+                if (currentLocation == null) {
+                    _uiState.value = HomeUiState.Error("Could not get location. Please enable GPS and try again.")
+                } else {
+                    locationCache.saveLocation(currentLocation)
+                    processLocation(currentLocation)
                 }
-            }
-
-            if (location == null) {
-                _uiState.value = HomeUiState.Error(message = "Could not get location. Please enable GPS or check network and try again.")
             } else {
-                // The rest of the logic remains the same
-                processLocation(location)
-            }
+                // We have a saved location, load it immediately for a fast UI response.
+                processLocation(savedLocation)
 
-            // Using placeholder location values for now 41.03145023904377, 28.80314290541189
-//            val latitude = 41.03145023904377 // 41.0082
-//            val longitude = 28.80314290541189 //28.9784
+                // Now, check if the user has moved.
+                isLocationChanged(currentLocation, savedLocation)
+            }
+        }
+    }
+
+    private fun isLocationChanged(
+            currentLocation: LocationData?,
+            savedLocation: LocationData
+    ) {
+        if (currentLocation != null && isLocationSignificantlyDifferent(
+                savedLocation,
+                currentLocation
+            )
+        ) {
+            // The locations are different. Update the UI to show a prompt.
+            val currentState = _uiState.value
+            if (currentState is HomeUiState.Success) {
+                _uiState.value = currentState.copy(
+                    data = currentState.data.copy(
+                        showLocationUpdatePrompt = true
+                    )
+                )
+            }
         }
     }
 
     // Extracted the success logic into a separate private function for cleanliness
-    private suspend fun processLocation(location: LocationData) {
+    private suspend fun processLocation(location: LocationData, showedLocationUpdatePrompt: Boolean = false) {
         val zoneId = getZoneIdFromLocation(location.countryCode)
         val locationDateTime = LocalDateTime.now(zoneId)
 
@@ -90,18 +165,32 @@ class HomeViewModel(
                 data = HomeDataUiState(
                     prayers = langDetectedPrayerTimes,
                     timeInfo = formatter.getInitialTimeInfo(zoneId),
-                    locationInfo = formatter.locationInfo(location)
+                    locationInfo = formatter.locationInfo(location),
+                    showLocationUpdatePrompt = showedLocationUpdatePrompt
                 )
             )
             _uiState.value = successState
-            // Automatically start the countdown after a successful load
-//            startPrayerCountdown()
         }.onFailure { error ->
             val errorState = HomeUiState.Error(
                 message = error.message ?: "An unknown error occurred while calculating prayer times."
             )
             _uiState.value = errorState
         }
+    }
+
+    /**
+     * Helper function to check if two locations are far enough apart to warrant an update.
+     * Using a simple distance check (e.g., > 1km).
+     */
+    private fun isLocationSignificantlyDifferent(loc1: LocationData, loc2: LocationData): Boolean {
+        val results = FloatArray(1)
+        Location.distanceBetween(
+            loc1.latitude, loc1.longitude,
+            loc2.latitude, loc2.longitude,
+            results
+        )
+        val distanceInMeters = results[0]
+        return distanceInMeters > 1000 // Considered different if more than 1 kilometer apart
     }
 
     fun startPrayerCountdown() {
@@ -140,7 +229,8 @@ class HomeViewModel(
                     timeRemaining = timeRemainingString,
                     timeInfo = currentState.data.timeInfo.copy(
                         currentTime = formatter.getFormattedCurrentTime(zoneId = zoneId)
-                    )
+                    ),
+                    showLocationUpdatePrompt = false
                 )
             )
         }

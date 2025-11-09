@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home_page_fallback">Mescid-i Nebevi</string>
+    <string name="prayer_times_title">Günün Vakitleri</string>
+    <string name="view_all_prayers">Tümünü Gör >></string>
+    <string name="time_until_message">Bir sonraki vakit için kalan süre</string>
+    <string name="unknown_error_message">Bilinmeyen bir hata oluştu.</string>
+    <string name="location_update_prompt_message">Konumun değiştiğini fark ettik.</string>
+    <string name="location_update_action_label">Güncelle</string>
+    <string name="share_verse">Paylaş</string>
+</resources>

@@ -14,8 +14,8 @@ kotlin {
     }
 }
 dependencies {
-    implementation(project(":core:common"))
-    implementation(project(":prayer:model"))
+    api(project(":core:common"))
+    api(project(":prayer:model"))
     implementation(libs.adhan)
     implementation(libs.kotlinx.datetime)
 

@@ -1,6 +1,7 @@
 package com.kutluoglu.prayer_feature.home
 
 import com.kutluoglu.prayer.model.prayer.Prayer
+import com.kutluoglu.prayer.model.quran.AyahData
 
 /**
  * Created by F.K. on 28.10.2025.
@@ -19,7 +20,10 @@ data class HomeDataUiState(
         val nextPrayer: Prayer? = null,
         val timeRemaining: String = "",
         val timeInfo: TimeInfo = TimeInfo(),
-        val locationInfo: String = ""
+        val locationInfo: String = "",
+        val showLocationUpdatePrompt: Boolean = false,
+        val quranVerse: AyahData? = null,
+        val isVerseDetailSheetVisible: Boolean = false
 )
 
 data class TimeInfo(

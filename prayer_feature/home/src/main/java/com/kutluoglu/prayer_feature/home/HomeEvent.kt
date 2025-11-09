@@ -8,4 +8,8 @@ sealed interface HomeEvent {
     object OnRefresh : HomeEvent
     object OnCountDown : HomeEvent
     object OnPermissionsGranted : HomeEvent
+    object OnUpdateLocationConfirmed : HomeEvent
+    object OnLoadQuranVerse : HomeEvent
+    object OnVerseClicked : HomeEvent
+    object OnVerseDetailDismissed : HomeEvent
 }
