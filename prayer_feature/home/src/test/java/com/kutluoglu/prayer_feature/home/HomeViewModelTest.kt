@@ -2,6 +2,8 @@ package com.kutluoglu.prayer_feature.home
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
+import com.kutluoglu.prayer.data.LocationCache
+import com.kutluoglu.prayer.data.QuranDataSource
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
 import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer.usecases.GetPrayerTimesUseCase
@@ -17,6 +19,8 @@ import kotlinx.datetime.LocalTime
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import java.time.ZoneId
+import java.time.temporal.TemporalQueries.zoneId
 
 @ExperimentalCoroutinesApi
 @ExtendWith(MainCoroutineRule::class)
@@ -27,6 +31,8 @@ class HomeViewModelTest {
     private lateinit var formatter: PrayerFormatter
     private lateinit var locationService: LocationService
     private lateinit var viewModel: HomeViewModel
+    private lateinit var locationCache: LocationCache
+    private lateinit var quranDataSource: QuranDataSource
 
     @BeforeEach
     fun setUp() {
@@ -35,6 +41,8 @@ class HomeViewModelTest {
         calculator = mockk(relaxed = true)
         formatter = mockk(relaxed = true)
         locationService = mockk(relaxed = true)
+        locationCache = mockk(relaxed = true)
+        quranDataSource = mockk(relaxed = true)
     }
 
     @Test
@@ -54,20 +62,24 @@ class HomeViewModelTest {
         // 2. Mock the formatter to perform the name change
         every { formatter.withLocalizedNames(initialPrayerList) } returns localizedPrayerList
 
+        // 3. Mock location service to avoid null pointers
+        coEvery { locationService.getCurrentLocation() } returns null
+        val mockLocation = mockk<com.kutluoglu.prayer.model.location.LocationData>(relaxed = true)
+        coEvery { locationCache.getSavedLocation() } returns mockLocation
 
         // Act / When
         viewModel = HomeViewModel(
             getPrayerTimesUseCase, // ViewModel calls loadPrayerTimes in init
             calculator,
             formatter,
-            locationService
+            locationService,
+            locationCache,
+            quranDataSource
         )
+        viewModel.loadPrayerTimes()
 
         // Assert / Then
         viewModel.uiState.test {
-//            val loadingState = awaitItem() // First state is Loading
-//            assertThat(loadingState).isInstanceOf(HomeUiState.Loading::class.java)
-
             val successState = awaitItem() // Await the emission after the successful fetch
             assertThat(successState).isInstanceOf(HomeUiState.Success::class.java)
 
@@ -85,14 +97,21 @@ class HomeViewModelTest {
         val errorMessage = "Failed to fetch times"
         val exception = RuntimeException(errorMessage)
         coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any()) } returns Result.failure(exception)
+        // Mock location service to avoid null pointers and reach the use case call
+        coEvery { locationService.getCurrentLocation() } returns null
+        val mockLocation = mockk<com.kutluoglu.prayer.model.location.LocationData>(relaxed = true)
+        coEvery { locationCache.getSavedLocation() } returns mockLocation
 
         // Act
         viewModel = HomeViewModel(
             getPrayerTimesUseCase,
             calculator,
             formatter,
-            locationService
+            locationService,
+            locationCache,
+            quranDataSource
         )
+        viewModel.loadPrayerTimes()
 
         // Assert
         viewModel.uiState.test {

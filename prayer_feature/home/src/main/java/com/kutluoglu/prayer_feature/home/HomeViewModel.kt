@@ -69,23 +69,19 @@ class HomeViewModel(
 
     private fun loadRandomVerse() {
         viewModelScope.launch {
-            quranDataSource.getRandomVerse()
-                .onSuccess {
-                    val currentState = _uiState.value
-                    if (currentState is HomeUiState.Success) {
+            val currentState = _uiState.value
+            if (currentState is HomeUiState.Success) {
+                quranDataSource.getRandomVerse()
+                    .onSuccess {
                         _uiState.value = currentState.copy(
                             data = currentState.data.copy(
                                 quranVerse = it
                             )
                         )
-                    } else {
-                        delay(1_000)
-                        loadRandomVerse()
+                    }.onFailure {
+                        Log.e("LoadRandomVerse", "Failed to load random verse --> ${it.message}")
                     }
-                }
-                .onFailure {
-                    Log.e("LoadRandomVerse", "Failed to load random verse --> ${it.message}")
-                }
+            }
         }
     }
 

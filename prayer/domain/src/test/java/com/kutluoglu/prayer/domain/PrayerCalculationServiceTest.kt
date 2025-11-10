@@ -7,6 +7,7 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.junit.jupiter.api.Test
+import java.time.ZoneId
 
 class PrayerCalculationServiceTest {
 
@@ -21,11 +22,13 @@ class PrayerCalculationServiceTest {
         val longitude = 28.79004556525033
         val method = CalculationMethod.TURKEY_DIYANET
         val juristic = JuristicMethod.STANDARD
+        val zoneId = ZoneId.systemDefault()
 
         // WHEN we call the function we are about to build
         val prayers = service.calculateDailyPrayerTimes(
             latitude,
             longitude,
+            zoneId,
             date,
             method,
             juristic

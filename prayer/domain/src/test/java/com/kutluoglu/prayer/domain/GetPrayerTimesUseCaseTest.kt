@@ -12,21 +12,25 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.time.ZoneId
 
 class GetPrayerTimesUseCaseTest {
     private lateinit var prayerRepository: IPrayerRepository
     private lateinit var useCase: GetPrayerTimesUseCase
+    private lateinit var testDate: LocalDateTime
+    private lateinit var zoneId: ZoneId
 
     @BeforeEach
     fun setUp() {
         prayerRepository = mockk()
         useCase = GetPrayerTimesUseCase(prayerRepository)
+        testDate = LocalDateTime.createBy(2024, 1, 1)
+        zoneId = ZoneId.systemDefault()
     }
 
     @Test
     fun `invoke should return Success Result when repository succeeds`() = runTest {
         // Arrange
-        val testDate = LocalDateTime.createBy(2024, 1, 1)
         val mockPrayerList = listOf(
                 Prayer(
                     name = "Fajr",
@@ -37,10 +41,10 @@ class GetPrayerTimesUseCaseTest {
                     notificationEnabled = false
                 )
             )
-        coEvery { prayerRepository.getPrayerTimes(any(), any(), any()) } returns mockPrayerList
+        coEvery { prayerRepository.getPrayerTimes(any(), any(), any(), zoneId) } returns mockPrayerList
 
         // Act
-        val result = useCase(testDate, 41.0, 29.0)
+        val result = useCase(testDate, 41.0, 29.0, zoneId)
 
         // Assert
         assertThat(result.isSuccess).isTrue()
@@ -50,12 +54,11 @@ class GetPrayerTimesUseCaseTest {
     @Test
     fun `invoke should return Failure Result when repository throws exception`() = runTest {
         // Arrange
-        val testDate = LocalDateTime.createBy(2024, 1, 1)
         val exception = RuntimeException("Database error")
-        coEvery { prayerRepository.getPrayerTimes(any(), any(), any()) } throws exception
+        coEvery { prayerRepository.getPrayerTimes(any(), any(), any(), zoneId) } throws exception
 
         // Act
-        val result = useCase(testDate, 41.0, 29.0)
+        val result = useCase(testDate, 41.0, 29.0, zoneId)
 
         // Assert
         assertThat(result.isFailure).isTrue()

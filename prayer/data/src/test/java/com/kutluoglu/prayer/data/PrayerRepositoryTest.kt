@@ -12,6 +12,7 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.time.ZoneId
 
 class PrayerRepositoryTest {
 
@@ -33,6 +34,7 @@ class PrayerRepositoryTest {
         val testDate = LocalDateTime.createBy(2024, 1, 1)
         val testLatitude = 41.0
         val testLongitude = 29.0
+        val zoneId = ZoneId.systemDefault()
         val mockPrayerList = listOf(
             Prayer(
                 name = "Fajr",
@@ -46,14 +48,14 @@ class PrayerRepositoryTest {
 
         // Stub the mock: When prayerCalculationService.calculatePrayerTimes is called with ANY arguments,
         // it should return our mockPrayerList.
-        coEvery { prayerCalculationService.calculateDailyPrayerTimes(any(), any(), any(), any(), any()) } returns mockPrayerList
+        coEvery { prayerCalculationService.calculateDailyPrayerTimes(any(), any(), any(), any(), any(), any()) } returns mockPrayerList
 
         // Act (When)
-        val result = repository.getPrayerTimes(testDate, testLatitude, testLongitude)
+        val result = repository.getPrayerTimes(testDate, testLatitude, testLongitude, zoneId)
 
         // Assert (Then)
         // Verify that the service was called exactly once.
-        coVerify(exactly = 1) { prayerCalculationService.calculateDailyPrayerTimes(testLatitude, testLongitude, testDate, any(), any()) }
+        coVerify(exactly = 1) { prayerCalculationService.calculateDailyPrayerTimes(testLatitude, testLongitude, zoneId, testDate, any(), any()) }
 
         // Verify that the result from the repository is the same as the one we told the mock to return.
         assertThat(result).isEqualTo(mockPrayerList)

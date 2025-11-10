@@ -10,6 +10,6 @@ import org.junit.platform.suite.api.SuiteDisplayName
  */
 
 @Suite
-@SuiteDisplayName("Prayer Data Test Suite")
+@SuiteDisplayName("PrayerDataTestSuite")
 @SelectPackages("com.kutluoglu.prayer.data")
 class PrayerDataTestSuite

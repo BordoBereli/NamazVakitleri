@@ -10,6 +10,6 @@ import org.junit.platform.suite.api.SuiteDisplayName
  */
 
 @Suite
-@SuiteDisplayName("Feature Home Test Suite")
+@SuiteDisplayName("FeatureHomeTestSuite")
 @SelectPackages("com.kutluoglu.prayer_feature")
 class FeatureHomeTestSuite
