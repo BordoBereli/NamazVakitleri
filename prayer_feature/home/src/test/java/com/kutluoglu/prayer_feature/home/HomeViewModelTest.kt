@@ -5,6 +5,7 @@ import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.prayer.data.LocationCache
 import com.kutluoglu.prayer.data.QuranDataSource
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
+import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer.usecases.GetPrayerTimesUseCase
 import com.kutluoglu.prayer_feature.home.common.PrayerFormatter
@@ -19,8 +20,6 @@ import kotlinx.datetime.LocalTime
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import java.time.ZoneId
-import java.time.temporal.TemporalQueries.zoneId
 
 @ExperimentalCoroutinesApi
 @ExtendWith(MainCoroutineRule::class)
@@ -64,7 +63,7 @@ class HomeViewModelTest {
 
         // 3. Mock location service to avoid null pointers
         coEvery { locationService.getCurrentLocation() } returns null
-        val mockLocation = mockk<com.kutluoglu.prayer.model.location.LocationData>(relaxed = true)
+        val mockLocation = mockk<LocationData>(relaxed = true)
         coEvery { locationCache.getSavedLocation() } returns mockLocation
 
         // Act / When
