@@ -58,6 +58,14 @@ Proje, iş mantığının doğruluğunu sağlamak için birim testleri (unit tes
     -   Sınıf adının yanındaki yeşil "play" ikonuna tıklayarak tüm testleri çalıştırın.
 
 -   **Gradle ile Komut Satırından**:
+- shell
+  ./gradlew testDebugUnitTest
+    ```
+
+---
+
+Bu komut, projenizdeki tüm modüllerde bulunan "debug" derleme varyantına ait birim testlerini (unit tests) çalıştıracaktır.
+
 
 ## 🤝 Katkıda Bulunma
 
