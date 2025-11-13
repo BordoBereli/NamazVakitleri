@@ -13,7 +13,7 @@ import org.koin.core.annotation.Single
 
 @Module
 @Configuration
-@ComponentScan("com.kutluoglu.prayer.data**")
+@ComponentScan("com.kutluoglu.prayer.data**", "com.kutluoglu.prayer.data.**")
 object PrayerDataModule {
     @Single
     fun provideOkHttp(): OkHttpClient = OkHttpClient()

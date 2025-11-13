@@ -6,11 +6,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kutluoglu.core.common.getZoneIdFromLocation
 import com.kutluoglu.core.common.now
-import com.kutluoglu.prayer.data.LocationCache
-import com.kutluoglu.prayer.data.QuranDataSource
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.usecases.GetPrayerTimesUseCase
+import com.kutluoglu.prayer.usecases.GetRandomVerseUseCase
+import com.kutluoglu.prayer.usecases.location.GetSavedLocationUseCase
+import com.kutluoglu.prayer.usecases.location.SaveLocationUseCase
 import com.kutluoglu.prayer_feature.home.common.PrayerFormatter
 import com.kutluoglu.prayer_location.LocationService
 import kotlinx.coroutines.Job
@@ -26,11 +27,12 @@ import org.koin.android.annotation.KoinViewModel
 @KoinViewModel
 class HomeViewModel(
         private val getPrayerTimesUseCase: GetPrayerTimesUseCase,
+        private val getRandomVerseUseCase: GetRandomVerseUseCase,
+        private val saveLocationUseCase: SaveLocationUseCase,
+        private val getSavedLocationUseCase: GetSavedLocationUseCase,
         private val calculator: PrayerLogicEngine,
         private val formatter: PrayerFormatter,
         private val locationService: LocationService,
-        private val locationCache: LocationCache,
-        private val quranDataSource: QuranDataSource
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
@@ -71,7 +73,7 @@ class HomeViewModel(
         viewModelScope.launch {
             val currentState = _uiState.value
             if (currentState is HomeUiState.Success) {
-                quranDataSource.getRandomVerse()
+                getRandomVerseUseCase()
                     .onSuccess {
                         _uiState.value = currentState.copy(
                             data = currentState.data.copy(
@@ -90,7 +92,7 @@ class HomeViewModel(
             _uiState.value = HomeUiState.Loading // Set loading state
             val newLocation = locationService.getCurrentLocation()
             if (newLocation != null) {
-                locationCache.saveLocation(newLocation)
+                saveLocationUseCase(newLocation)
                 processLocation(newLocation, showedLocationUpdatePrompt = false)
             } else {
                 _uiState.value = HomeUiState.Error("Failed to get updated location. Please try again.")
@@ -102,7 +104,7 @@ class HomeViewModel(
         viewModelScope.launch {
             _uiState.value = HomeUiState.Loading
 
-            val savedLocation = locationCache.getSavedLocation()
+            val savedLocation = getSavedLocationUseCase()
             val currentLocation = locationService.getCurrentLocation()
 
             // If cache is empty, fetch from the service
@@ -111,7 +113,7 @@ class HomeViewModel(
                 if (currentLocation == null) {
                     _uiState.value = HomeUiState.Error("Could not get location. Please enable GPS and try again.")
                 } else {
-                    locationCache.saveLocation(currentLocation)
+                    saveLocationUseCase(currentLocation)
                     processLocation(currentLocation)
                 }
             } else {

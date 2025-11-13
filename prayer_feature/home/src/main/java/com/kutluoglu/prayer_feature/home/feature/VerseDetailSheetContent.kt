@@ -23,12 +23,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.kutluoglu.prayer.model.quran.AyahData
 import com.kutluoglu.prayer_feature.home.R
+import com.kutluoglu.prayer_feature.home.common.QuranVerseFormatter
 
 @Composable
 fun VerseDetailSheetContent(verse: AyahData) {
     val context = LocalContext.current
-    val verseInfo = "(${verse.surah.englishName} - ${verse.surah.number}:${verse.numberInSurah})"
-    val fullTextToShare = "\"${verse.text}\" \n$verseInfo"
+    val verseFormatter = QuranVerseFormatter()
+    val localizedSurahName = verseFormatter.getLocalizedNameOf(
+        quranVerse = verse,
+        context = context
+    )
+    val verseInfo = "($localizedSurahName - $verse)"
+    val fullTextToShare = "\"${verse.text}\" - $verseInfo"
 
     Column(
         modifier = Modifier
@@ -39,7 +45,7 @@ fun VerseDetailSheetContent(verse: AyahData) {
     ) {
         // Main verse text at the top
         Text(
-            text = "\"${verse.text}\"",
+            text = verse.text,
             style = MaterialTheme.typography.headlineSmall,
             textAlign = TextAlign.Center
         )

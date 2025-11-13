@@ -2,8 +2,8 @@ package com.kutluoglu.prayer_feature.home
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import com.kutluoglu.prayer.data.LocationCache
-import com.kutluoglu.prayer.data.QuranDataSource
+import com.kutluoglu.prayer.data.location.LocationCache
+import com.kutluoglu.prayer.data.quran.QuranDataSource
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.prayer.Prayer

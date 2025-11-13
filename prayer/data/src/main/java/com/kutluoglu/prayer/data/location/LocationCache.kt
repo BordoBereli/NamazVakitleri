@@ -1,4 +1,4 @@
-package com.kutluoglu.prayer.data
+package com.kutluoglu.prayer.data.location
 
 import android.content.Context
 import androidx.datastore.core.DataStore
@@ -29,7 +29,7 @@ class LocationCache(private val context: Context) {
      */
     suspend fun saveLocation(locationData: LocationData) {
         context.dataStore.edit { preferences ->
-            val jsonString = Json.encodeToString(locationData)
+            val jsonString = Json.Default.encodeToString(locationData)
             preferences[KEY_LOCATION_DATA] = jsonString
         }
     }
@@ -44,7 +44,7 @@ class LocationCache(private val context: Context) {
             .map { preferences ->
                 preferences[KEY_LOCATION_DATA]?.let { jsonString ->
                     try {
-                        Json.decodeFromString<LocationData>(jsonString)
+                        Json.Default.decodeFromString<LocationData>(jsonString)
                     } catch (e: Exception) {
                         // Handle potential deserialization errors, e.g., if the data class changes
                         null

@@ -11,5 +11,7 @@ import org.koin.core.annotation.Module
 
 @Module
 @Configuration
-@ComponentScan("com.kutluoglu.prayer**")
+@ComponentScan(
+    "com.kutluoglu.prayer",      // Scans the domain module for use cases and engine
+)
 object PrayerDomainModule

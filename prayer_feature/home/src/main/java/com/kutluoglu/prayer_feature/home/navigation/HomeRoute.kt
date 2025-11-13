@@ -20,7 +20,6 @@ fun HomeRoute(
         navController: NavController
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    // The Route connects the ViewModel to the stateless UI
     HomeScreen(
         navController = navController,
         uiState = uiState,

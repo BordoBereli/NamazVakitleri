@@ -31,7 +31,7 @@ data class AyahData(
         val numberInSurah: Int
 ) {
     override fun toString(): String {
-        return "${surah.numberOfAyahs}:$numberInSurah"
+        return "${surah.number}:$numberInSurah"
     }
 }
 

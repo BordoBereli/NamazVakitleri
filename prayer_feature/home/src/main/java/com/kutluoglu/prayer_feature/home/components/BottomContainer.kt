@@ -10,12 +10,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.text
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.kutluoglu.prayer_feature.home.HomeEvent
 import com.kutluoglu.prayer_feature.home.HomeUiState
+import com.kutluoglu.prayer_feature.home.R
+import com.kutluoglu.prayer_feature.home.common.QuranVerseFormatter
 
 @Composable
 fun BottomContainer(
@@ -31,6 +33,14 @@ fun BottomContainer(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
+                val context = LocalContext.current
+                val verseFormatter = QuranVerseFormatter()
+                val localizedSurahName = verseFormatter.getLocalizedNameOf(
+                    quranVerse = quranVerse,
+                    context = context
+                    )
+                val verseInfo = "($localizedSurahName - ${quranVerse})"
+
                 // The verse text
                 Text(
                     text = "\"${quranVerse.text}\"",
@@ -43,7 +53,7 @@ fun BottomContainer(
                 Spacer(modifier = Modifier.height(4.dp))
                 // The surah name and verse number
                 Text(
-                    text = "(${quranVerse.surah.englishName} - ${quranVerse.surah.number}:${quranVerse.numberInSurah})",
+                    text = verseInfo,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant, // A slightly less prominent color
                 )
@@ -53,7 +63,7 @@ fun BottomContainer(
     }
     else {
         Text(
-            text = "(No verse available.)",
+            text = stringResource(R.string.no_verse_available),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant, // A slightly less prominent color
         )

@@ -1,4 +1,4 @@
-package com.kutluoglu.prayer.data
+package com.kutluoglu.prayer.data.prayer
 
 import com.kutluoglu.prayer.model.prayer.CalculationMethod
 import com.kutluoglu.prayer.model.prayer.JuristicMethod
@@ -8,7 +8,6 @@ import com.kutluoglu.prayer.services.PrayerCalculationService
 import kotlinx.datetime.LocalDateTime
 import org.koin.core.annotation.Single
 import java.time.ZoneId
-
 
 @Single
 class PrayerRepository(
