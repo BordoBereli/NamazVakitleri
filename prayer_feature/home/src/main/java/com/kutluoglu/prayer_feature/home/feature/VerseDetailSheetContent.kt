@@ -3,12 +3,16 @@ package com.kutluoglu.prayer_feature.home.feature
 import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Icon
@@ -20,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.kutluoglu.prayer.model.quran.AyahData
 import com.kutluoglu.prayer_feature.home.R
@@ -46,11 +51,20 @@ fun VerseDetailSheetContent(
         verticalArrangement = Arrangement.Center
     ) {
         // Main verse text at the top
-        Text(
-            text = verse.text,
-            style = MaterialTheme.typography.headlineSmall,
-            textAlign = TextAlign.Center
-        )
+        Box(
+            modifier = Modifier
+                .heightIn(max = 200.dp) // Set a maximum height for the scrollable area
+                .verticalScroll(rememberScrollState()) // Make the Box scrollable
+        ) {
+            // 2. Put the Text inside the Box without maxLines.
+            //    The Text will now expand fully within the scrollable Box.
+            Text(
+                text = verse.text,
+                style = MaterialTheme.typography.headlineSmall,
+                textAlign = TextAlign.Center,
+                // Removed maxLines and overflow from here
+            )
+        }
         Spacer(modifier = Modifier.height(8.dp))
         // A new Row for the verse info and the share button
         Row(
