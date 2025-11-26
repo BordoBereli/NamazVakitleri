@@ -5,9 +5,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.navigation.NavController
 import org.koin.androidx.compose.koinViewModel
 import androidx.compose.runtime.getValue
-import com.kutluoglu.prayer_feature.home.HomeEvent
 import com.kutluoglu.prayer_feature.home.HomeScreen
 import com.kutluoglu.prayer_feature.home.HomeViewModel
+import com.kutluoglu.prayer_feature.home.common.QuranVerseFormatter
+import org.koin.compose.getKoin
+import org.koin.compose.koinInject
 
 /**
  * Created by F.K. on 24.10.2025.
@@ -17,12 +19,14 @@ import com.kutluoglu.prayer_feature.home.HomeViewModel
 @Composable
 fun HomeRoute(
         viewModel: HomeViewModel = koinViewModel(),
+        verseFormatter: QuranVerseFormatter = koinInject<QuranVerseFormatter>(),
         navController: NavController
 ) {
     val uiState by viewModel.uiState.collectAsState()
     HomeScreen(
         navController = navController,
         uiState = uiState,
+        quranVerseFormatter = verseFormatter,
         onEvent = { event -> viewModel.onEvent(event) }
     )
 }

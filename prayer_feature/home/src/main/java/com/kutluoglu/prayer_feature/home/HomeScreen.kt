@@ -1,6 +1,5 @@
 package com.kutluoglu.prayer_feature.home
 
-import android.net.http.SslCertificate
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -27,6 +26,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.kutluoglu.core.ui.theme.components.PermissionHandler
+import com.kutluoglu.prayer_feature.home.common.QuranVerseFormatter
 import com.kutluoglu.prayer_feature.home.components.BottomContainer
 import com.kutluoglu.prayer_feature.home.components.DailyPrayers
 import com.kutluoglu.prayer_feature.home.components.TopContainer
@@ -39,6 +39,7 @@ import kotlinx.coroutines.launch
 fun HomeScreen(
         navController: NavController,
         uiState: HomeUiState,
+        quranVerseFormatter: QuranVerseFormatter,
         onEvent: (HomeEvent) -> Unit
 ) {
     Box(
@@ -53,7 +54,7 @@ fun HomeScreen(
         PermissionHandler(
             onPermissionsGranted = { onEvent(HomeEvent.OnPermissionsGranted) }
         ) {
-            PrayerContent(navController, uiState, onEvent)
+            PrayerContent(navController, uiState, quranVerseFormatter, onEvent)
         }
     }
 }
@@ -63,6 +64,7 @@ fun HomeScreen(
 private fun PrayerContent(
         navController: NavController,
         uiState: HomeUiState,
+        quranVerseFormatter: QuranVerseFormatter,
         onEvent: (HomeEvent) -> Unit
 ) {
     // 1. Remember SnackbarHostState and CoroutineScope
@@ -99,7 +101,7 @@ private fun PrayerContent(
         ) {
             // Pass the verse data to our new content composable
             uiState.data.quranVerse?.let { verse ->
-                VerseDetailSheetContent(verse = verse)
+                VerseDetailSheetContent(verse = verse, verseFormatter = quranVerseFormatter)
             }
         }
     }
@@ -165,7 +167,7 @@ private fun PrayerContent(
                     ),
                 contentAlignment = Alignment.Center
             ) {
-                BottomContainer(uiState = uiState) {
+                BottomContainer(uiState = uiState, verseFormatter = quranVerseFormatter) {
                     onEvent(HomeEvent.OnLoadQuranVerse)
                 }
             }

@@ -22,6 +22,7 @@ import com.kutluoglu.prayer_feature.home.common.QuranVerseFormatter
 @Composable
 fun BottomContainer(
         uiState: HomeUiState,
+        verseFormatter: QuranVerseFormatter,
         onLoadQuranVerse: () -> Unit = {}
 ) {
     if (uiState is HomeUiState.Success) {
@@ -34,7 +35,6 @@ fun BottomContainer(
                 verticalArrangement = Arrangement.Center
             ) {
                 val context = LocalContext.current
-                val verseFormatter = QuranVerseFormatter()
                 val localizedSurahName = verseFormatter.getLocalizedNameOf(
                     quranVerse = quranVerse,
                     context = context

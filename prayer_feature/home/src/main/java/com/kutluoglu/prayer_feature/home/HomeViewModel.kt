@@ -13,6 +13,7 @@ import com.kutluoglu.prayer.usecases.GetRandomVerseUseCase
 import com.kutluoglu.prayer.usecases.location.GetSavedLocationUseCase
 import com.kutluoglu.prayer.usecases.location.SaveLocationUseCase
 import com.kutluoglu.prayer_feature.home.common.PrayerFormatter
+import com.kutluoglu.prayer_feature.home.common.QuranVerseFormatter
 import com.kutluoglu.prayer_location.LocationService
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -32,7 +33,7 @@ class HomeViewModel(
         private val getSavedLocationUseCase: GetSavedLocationUseCase,
         private val calculator: PrayerLogicEngine,
         private val formatter: PrayerFormatter,
-        private val locationService: LocationService,
+        private val locationService: LocationService
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()

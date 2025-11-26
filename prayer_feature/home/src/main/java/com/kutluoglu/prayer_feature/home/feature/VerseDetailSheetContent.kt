@@ -26,9 +26,11 @@ import com.kutluoglu.prayer_feature.home.R
 import com.kutluoglu.prayer_feature.home.common.QuranVerseFormatter
 
 @Composable
-fun VerseDetailSheetContent(verse: AyahData) {
+fun VerseDetailSheetContent(
+        verse: AyahData,
+        verseFormatter: QuranVerseFormatter,
+) {
     val context = LocalContext.current
-    val verseFormatter = QuranVerseFormatter()
     val localizedSurahName = verseFormatter.getLocalizedNameOf(
         quranVerse = verse,
         context = context
