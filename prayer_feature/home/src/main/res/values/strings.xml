@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">NamazVakitleri</string>
     <string name="home_page_fallback">Mescid-i Nebevi</string>
     <string name="prayer_times_title">Daily Prayers</string>
     <string name="view_all_prayers">View All >></string>
@@ -126,5 +127,6 @@
     <string name="surah_an_nas">An-Nas</string>
     <!-- End of Surah Name -->
     <string name="no_verse_available">(No verse available.)</string>
+    <string name="shared_from_app">Shared from %1$s</string>
 
 </resources>

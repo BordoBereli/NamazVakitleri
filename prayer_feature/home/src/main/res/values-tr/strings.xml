@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">NamazVakitleri</string>
     <string name="home_page_fallback">Mescid-i Nebevi</string>
     <string name="prayer_times_title">Günün Vakitleri</string>
     <string name="view_all_prayers">Tümünü Gör >></string>
@@ -126,5 +127,6 @@
     <string name="surah_an_nas">Nâs</string>
     <!-- Süre isimleri sonu -->
     <string name="no_verse_available">(Ayet bilgisi henüz hazır değil.)</string>
+    <string name="shared_from_app">%1$s Uygulaması</string>
 
 </resources>
