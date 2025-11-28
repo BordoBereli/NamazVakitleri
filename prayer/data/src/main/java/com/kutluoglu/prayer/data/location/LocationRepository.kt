@@ -2,6 +2,7 @@ package com.kutluoglu.prayer.data.location
 
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.repository.ILocationRepository
+import com.kutluoglu.prayer_cache.LocationCache
 import org.koin.core.annotation.Single
 
 /**

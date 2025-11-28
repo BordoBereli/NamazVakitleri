@@ -53,6 +53,7 @@ dependencies {
     implementation(project(":prayer_feature:home"))
     implementation(project(":prayer_feature:prayertimes"))
     implementation(project(":prayer_location"))
+    implementation(project(":prayer_cache"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

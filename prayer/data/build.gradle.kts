@@ -41,12 +41,9 @@ android {
 dependencies {
     implementation(project(":core:common"))
     implementation(project(":prayer:domain"))
+    implementation(project(":prayer_cache"))
     implementation(libs.kotlinx.datetime)
 
-    //region Data Store
-    implementation(libs.androidx.datastore.preferences)
-    implementation(libs.kotlinx.serialization.json) // For object serialization
-    //endregion
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -55,11 +52,14 @@ dependencies {
     implementation(libs.okhttp)
     //endregion
 
-    // Dependency Injection - Koin
+    //region Dependency Injection - Koin
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.core)
     implementation(libs.koin.annotations)
     ksp(libs.koin.ksp)
+    //endregion
+
+    implementation(libs.kotlinx.serialization.json) // For object serialization
 
     // --- Testing Dependencies ---
     // Standard JUnit 5 for running tests

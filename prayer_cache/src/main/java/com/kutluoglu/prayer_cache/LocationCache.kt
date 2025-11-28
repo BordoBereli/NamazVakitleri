@@ -1,4 +1,4 @@
-package com.kutluoglu.prayer.data.location
+package com.kutluoglu.prayer_cache
 
 import android.content.Context
 import androidx.datastore.core.DataStore
