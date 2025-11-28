@@ -1,10 +1,12 @@
 package com.kutluoglu.prayer_feature.home.feature
 
+import android.R.attr.bitmap
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
+import android.util.Log.e
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,6 +39,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import androidx.core.graphics.createBitmap
+import androidx.core.graphics.scale
 
 @Composable
 fun VerseDetailSheetContent(
@@ -129,19 +132,19 @@ private fun getIconUri(context: Context): Uri? {
         // Get the launcher icon drawable
         val drawable = context.packageManager.getApplicationIcon(context.packageName)
 
-        val bitmap = if (drawable is BitmapDrawable) {
+        val originalBitmap = if (drawable is BitmapDrawable) {
             drawable.bitmap
         } else {
             // Create a bitmap from the drawable
-            val bmp = createBitmap(
+            createBitmap(
                 drawable.intrinsicWidth,
                 drawable.intrinsicHeight,
                 Bitmap.Config.ARGB_8888
-            )
-            val canvas = android.graphics.Canvas(bmp)
-            drawable.setBounds(0, 0, canvas.width, canvas.height)
-            drawable.draw(canvas)
-            bmp
+            ).also {
+                val canvas = android.graphics.Canvas(it)
+                drawable.setBounds(0, 0, canvas.width, canvas.height)
+                drawable.draw(canvas)
+            }
         }
 
         // Save the bitmap to the cache directory
@@ -150,7 +153,9 @@ private fun getIconUri(context: Context): Uri? {
         val imageFile = File(imagesDir, "app_icon.png")
 
         FileOutputStream(imageFile).use {
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)
+            originalBitmap.compress(
+                Bitmap.CompressFormat.PNG, 100, it
+            )
         }
 
         // Get the content URI using FileProvider
