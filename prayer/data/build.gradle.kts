@@ -41,7 +41,6 @@ android {
 dependencies {
     implementation(project(":core:common"))
     implementation(project(":prayer:domain"))
-    implementation(project(":prayer_cache"))
     implementation(libs.kotlinx.datetime)
 
     implementation(libs.androidx.core.ktx)

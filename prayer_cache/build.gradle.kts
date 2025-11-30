@@ -40,6 +40,7 @@ android {
 dependencies {
     implementation(project(":core:common"))
     implementation(project(":prayer:model"))
+    implementation(project(":prayer:data"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

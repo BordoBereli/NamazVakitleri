@@ -2,7 +2,7 @@ package com.kutluoglu.prayer.model.location
 
 import kotlinx.serialization.Serializable
 
-@Serializable // Add this annotation
+@Serializable
 data class LocationData(
     val latitude: Double,
     val longitude: Double,
