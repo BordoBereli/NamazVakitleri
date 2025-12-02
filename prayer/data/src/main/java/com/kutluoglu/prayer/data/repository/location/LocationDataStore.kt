@@ -1,16 +1,14 @@
-package com.kutluoglu.prayer.repository
+package com.kutluoglu.prayer.data.repository.location
 
+import com.kutluoglu.prayer.common.Result
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.usecases.location.GetLocationError
-import com.kutluoglu.prayer.common.Result
-
-
 
 /**
- * Created by F.K. on 11.11.2025.
+ * Created by F.K. on 2.12.2025.
  *
  */
-interface ILocationRepository {
+interface LocationDataStore {
     suspend fun saveLocation(locationData: LocationData)
     suspend fun getSavedLocation(): Result<LocationData, GetLocationError>
 }

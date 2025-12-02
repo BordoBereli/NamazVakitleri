@@ -1,6 +1,5 @@
-package com.kutluoglu.prayer.data.repository
+package com.kutluoglu.prayer.data.repository.prayer
 
-import com.kutluoglu.prayer.data.model.LocationDataModel
 import com.kutluoglu.prayer.model.prayer.Prayer
 import kotlinx.datetime.LocalDateTime
 import java.time.ZoneId
@@ -16,12 +15,7 @@ import java.time.ZoneId
  * operations that need to be implemented
  */
 
-interface DataStore {
-    /* Location */
-    suspend fun saveLocation(locationDataModel: LocationDataModel)
-    suspend fun getSavedLocation(): LocationDataModel?
-
-    /* Prayer */
+interface PrayerDataStore {
     suspend fun getPrayerTimes(
         date: LocalDateTime,
         latitude: Double,

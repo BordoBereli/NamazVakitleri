@@ -1,11 +1,11 @@
 package com.kutluoglu.prayer_feature.home
 
-import android.location.Location
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kutluoglu.core.common.getZoneIdFromLocation
 import com.kutluoglu.core.common.now
+import com.kutluoglu.prayer.common.Result
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.usecases.GetPrayerTimesUseCase
@@ -13,7 +13,6 @@ import com.kutluoglu.prayer.usecases.GetRandomVerseUseCase
 import com.kutluoglu.prayer.usecases.location.GetSavedLocationUseCase
 import com.kutluoglu.prayer.usecases.location.SaveLocationUseCase
 import com.kutluoglu.prayer_feature.home.common.PrayerFormatter
-import com.kutluoglu.prayer_feature.home.common.QuranVerseFormatter
 import com.kutluoglu.prayer_location.LocationService
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -105,50 +104,34 @@ class HomeViewModel(
         viewModelScope.launch {
             _uiState.value = HomeUiState.Loading
 
-            val savedLocation = getSavedLocationUseCase()
-            val currentLocation = locationService.getCurrentLocation()
+            when (val savedLocationResult = getSavedLocationUseCase()) {
+                is Result.Success -> {
+                    val savedLocation = savedLocationResult.data
+                    processLocation(savedLocation)
 
-            // If cache is empty, fetch from the service
-            if (savedLocation == null) {
-                // First time use or cache cleared: use current location and save it.
-                if (currentLocation == null) {
-                    _uiState.value = HomeUiState.Error("Could not get location. Please enable GPS and try again.")
-                } else {
-                    saveLocationUseCase(currentLocation)
-                    processLocation(currentLocation)
+                    val currentLocation = locationService.getCurrentLocation()
+                    if (currentLocation != null && locationService.isDifferentThen(savedLocation)) {
+                        val currentState = _uiState.value
+                        if (currentState is HomeUiState.Success) {
+                            _uiState.value = currentState.copy(
+                                data = currentState.data.copy(showLocationUpdatePrompt = true)
+                            )
+                        }
+                    }
                 }
-            } else {
-                // We have a saved location, load it immediately for a fast UI response.
-                processLocation(savedLocation)
-
-                // Now, check if the user has moved.
-                isLocationChanged(currentLocation, savedLocation)
+                is Result.Error -> {
+                    val currentLocation = locationService.getCurrentLocation()
+                    if (currentLocation != null) {
+                        saveLocationUseCase(currentLocation)
+                        processLocation(currentLocation)
+                    } else {
+                        _uiState.value = HomeUiState.Error("Could not get location. Please enable GPS and restart the app.")
+                    }
+                }
             }
         }
     }
 
-    private fun isLocationChanged(
-            currentLocation: LocationData?,
-            savedLocation: LocationData
-    ) {
-        if (currentLocation != null && isLocationSignificantlyDifferent(
-                savedLocation,
-                currentLocation
-            )
-        ) {
-            // The locations are different. Update the UI to show a prompt.
-            val currentState = _uiState.value
-            if (currentState is HomeUiState.Success) {
-                _uiState.value = currentState.copy(
-                    data = currentState.data.copy(
-                        showLocationUpdatePrompt = true
-                    )
-                )
-            }
-        }
-    }
-
-    // Extracted the success logic into a separate private function for cleanliness
     private suspend fun processLocation(location: LocationData, showedLocationUpdatePrompt: Boolean = false) {
         val zoneId = getZoneIdFromLocation(location.countryCode)
         val locationDateTime = LocalDateTime.now(zoneId)
@@ -175,21 +158,6 @@ class HomeViewModel(
             )
             _uiState.value = errorState
         }
-    }
-
-    /**
-     * Helper function to check if two locations are far enough apart to warrant an update.
-     * Using a simple distance check (e.g., > 1km).
-     */
-    private fun isLocationSignificantlyDifferent(loc1: LocationData, loc2: LocationData): Boolean {
-        val results = FloatArray(1)
-        Location.distanceBetween(
-            loc1.latitude, loc1.longitude,
-            loc2.latitude, loc2.longitude,
-            results
-        )
-        val distanceInMeters = results[0]
-        return distanceInMeters > 1000 // Considered different if more than 1 kilometer apart
     }
 
     fun startPrayerCountdown() {

@@ -2,6 +2,7 @@ package com.kutluoglu.prayer_feature.home
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
+import com.kutluoglu.prayer.common.Result.*
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.prayer.Prayer
@@ -78,7 +79,7 @@ class HomeViewModelTest {
         // 3. Mock location service to avoid null pointers
         coEvery { locationService.getCurrentLocation() } returns null
         val mockLocation = mockk<LocationData>(relaxed = true)
-        coEvery { getSavedLocationUseCase() } returns mockLocation
+        coEvery { getSavedLocationUseCase() } returns Success(mockLocation)
 
         // Act / When
         viewModel.loadPrayerTimes()
@@ -104,8 +105,8 @@ class HomeViewModelTest {
         coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any()) } returns Result.failure(exception)
         // Mock location service to avoid null pointers and reach the use case call
         coEvery { locationService.getCurrentLocation() } returns null
-        val mockLocation = mockk<com.kutluoglu.prayer.model.location.LocationData>(relaxed = true)
-        coEvery { getSavedLocationUseCase() } returns mockLocation
+        val mockLocation = mockk<LocationData>(relaxed = true)
+        coEvery { getSavedLocationUseCase() } returns Success(mockLocation)
 
         // Act
         viewModel.loadPrayerTimes()

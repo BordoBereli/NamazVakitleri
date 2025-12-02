@@ -25,6 +25,7 @@ class LocationService(private val context: Context) {
 
     private val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
     private val geocoder = Geocoder(context, Locale.getDefault())
+    private var currentLocation: LocationData? = null
 
     // This is the main public function that will be called from the ViewModel
     @SuppressLint("MissingPermission") // Permissions are handled at the UI layer
@@ -44,8 +45,27 @@ class LocationService(private val context: Context) {
                 countryCode = address?.countryCode,
                 city = address?.adminArea, // Often the state/province
                 county = address?.subAdminArea // Often the city/county
-            )
+            ).also {
+                currentLocation = it
+            }
         }
+    }
+
+    /**
+     * Helper function to check if two locations are far enough apart to warrant an update.
+     * Using a simple distance check (e.g., > 1km).
+     */
+    fun isDifferentThen(savedLocation: LocationData): Boolean {
+        return currentLocation?.let { curr ->
+            val results = FloatArray(1)
+            Location.distanceBetween(
+                curr.latitude, curr.longitude,
+                savedLocation.latitude, savedLocation.longitude,
+                results
+            )
+            val distanceInMeters = results[0]
+            return distanceInMeters > 1000 // Considered different if more than 1 kilometer apart
+        } ?: false
     }
 
     // A helper function to promisify the Google Play Services location API

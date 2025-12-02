@@ -1,6 +1,6 @@
 package com.kutluoglu.prayer.data.source
 
-import com.kutluoglu.prayer.data.source.location.LocationDataStore
+import com.kutluoglu.prayer.data.source.location.LocationDataStoreImp
 import org.koin.core.annotation.Single
 
 /**
@@ -10,7 +10,7 @@ import org.koin.core.annotation.Single
 
 @Single
 class DataStoreFactory(
-    private val locationDataStore: LocationDataStore
+    private val locationDataStore: LocationDataStoreImp
 ) {
     fun retrieveLocationDataStore() = locationDataStore
 }
