@@ -1,8 +1,7 @@
-package com.kutluoglu.prayer.data.source.location
+package com.kutluoglu.prayer.data.source.prayer
 
 import com.kutluoglu.prayer.data.model.LocationDataModel
 import com.kutluoglu.prayer.data.repository.DataStore
-import com.kutluoglu.prayer.data.repository.location.LocationCache
 import com.kutluoglu.prayer.model.prayer.Prayer
 import kotlinx.datetime.LocalDateTime
 import org.koin.core.annotation.Single
@@ -14,20 +13,23 @@ import java.time.ZoneId
  */
 
 @Single
-class LocationDataStore(
-    private val locationCache: LocationCache
+class PrayerDataStore(
+
 ): DataStore {
     override suspend fun saveLocation(locationDataModel: LocationDataModel) {
-        locationCache.saveLocation(locationDataModel)
+        TODO("Not yet implemented")
     }
 
-    override suspend fun getSavedLocation() = locationCache.getSavedLocation()
+    override suspend fun getSavedLocation(): LocationDataModel? {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun getPrayerTimes(
             date: LocalDateTime,
             latitude: Double,
             longitude: Double,
             zoneId: ZoneId
     ): List<Prayer> {
-        throw UnsupportedOperationException("LocationDataStore does not support getPrayerTimes() operation!!!")
+        TODO("Not yet implemented")
     }
 }

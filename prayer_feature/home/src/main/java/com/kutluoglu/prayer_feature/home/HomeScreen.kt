@@ -118,11 +118,11 @@ private fun PrayerContent(
                 .fillMaxSize()
                 .padding(innerPadding) // Apply padding from the Scaffold
         ) {
-            // --- 1. Top Container (35%) ---
+            // --- 1. Top Container (33%) ---
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(0.35f),
+                    .weight(0.33f),
                 contentAlignment = Alignment.Center
             ) {
                 TopContainer(
@@ -132,7 +132,7 @@ private fun PrayerContent(
                 )
             }
 
-            // --- 2. Middle Container (57%) ---
+            // --- 2. Middle Container (50%) ---
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -155,11 +155,11 @@ private fun PrayerContent(
                 )
             }
 
-            // --- 3. Bottom Container (8%) ---
+            // --- 3. Bottom Container (17%) ---
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(0.15f)
+                    .weight(0.17f)
                     .padding(8.dp)
                     .background(MaterialTheme.colorScheme.secondary)
                     .clickable(
