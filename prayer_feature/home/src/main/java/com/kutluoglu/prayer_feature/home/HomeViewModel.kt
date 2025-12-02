@@ -45,9 +45,9 @@ class HomeViewModel(
      */
     fun onEvent(event: HomeEvent) {
         when (event) {
-            HomeEvent.OnRefresh -> { loadPrayerTimes() }
+            HomeEvent.OnRefresh -> { loadPrayerTimesForCurrentLocation() }
             HomeEvent.OnCountDown -> { startPrayerCountdown() }
-            HomeEvent.OnPermissionsGranted -> { loadPrayerTimes() }
+            HomeEvent.OnPermissionsGranted -> { loadPrayerTimesForCurrentLocation() }
             HomeEvent.OnUpdateLocationConfirmed -> { updateLocationChange() }
             HomeEvent.OnLoadQuranVerse -> { loadRandomVerse() }
             HomeEvent.OnVerseClicked -> {
@@ -100,7 +100,7 @@ class HomeViewModel(
         }
     }
 
-    fun loadPrayerTimes() {
+    fun loadPrayerTimesForCurrentLocation() {
         viewModelScope.launch {
             _uiState.value = HomeUiState.Loading
 

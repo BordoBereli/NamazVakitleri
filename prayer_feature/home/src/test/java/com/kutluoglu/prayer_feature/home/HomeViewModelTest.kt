@@ -82,7 +82,7 @@ class HomeViewModelTest {
         coEvery { getSavedLocationUseCase() } returns Success(mockLocation)
 
         // Act / When
-        viewModel.loadPrayerTimes()
+        viewModel.loadPrayerTimesForCurrentLocation()
 
         // Assert / Then
         viewModel.uiState.test {
@@ -109,7 +109,7 @@ class HomeViewModelTest {
         coEvery { getSavedLocationUseCase() } returns Success(mockLocation)
 
         // Act
-        viewModel.loadPrayerTimes()
+        viewModel.loadPrayerTimesForCurrentLocation()
 
         // Assert
         viewModel.uiState.test {
