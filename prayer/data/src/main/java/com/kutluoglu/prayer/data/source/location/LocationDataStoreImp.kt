@@ -1,11 +1,10 @@
 package com.kutluoglu.prayer.data.source.location
 
-import com.kutluoglu.prayer.common.Result
 import com.kutluoglu.prayer.data.mapper.location.LocationMapper
 import com.kutluoglu.prayer.data.repository.location.LocationCache
 import com.kutluoglu.prayer.data.repository.location.LocationDataStore
 import com.kutluoglu.prayer.model.location.LocationData
-import com.kutluoglu.prayer.usecases.location.GetLocationError
+import com.kutluoglu.prayer.usecases.location.LocationError
 import org.koin.core.annotation.Single
 
 /**
@@ -27,11 +26,11 @@ class LocationDataStoreImp(
     override suspend fun getSavedLocation() =  try {
         val locationDataModel = locationCache.getSavedLocation()
         if (locationDataModel != null) {
-            Result.Success(locationMapper.mapToDomain(locationDataModel))
+            Result.success(locationMapper.mapToDomain(locationDataModel))
         } else {
-            Result.Error(GetLocationError.NOT_FOUND)
+            Result.failure(Exception(LocationError.NOT_FOUND().message))
         }
     } catch (e: Exception) {
-        Result.Error(GetLocationError.UNKNOWN(e.message))
+        Result.failure(Exception(LocationError.UNKNOWN(e.message).message))
     }
 }

@@ -1,9 +1,6 @@
 package com.kutluoglu.prayer.repository
 
 import com.kutluoglu.prayer.model.location.LocationData
-import com.kutluoglu.prayer.usecases.location.GetLocationError
-import com.kutluoglu.prayer.common.Result
-
 
 
 /**
@@ -12,5 +9,5 @@ import com.kutluoglu.prayer.common.Result
  */
 interface ILocationRepository {
     suspend fun saveLocation(locationData: LocationData)
-    suspend fun getSavedLocation(): Result<LocationData, GetLocationError>
+    suspend fun getSavedLocation(): Result<LocationData>
 }

@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kutluoglu.core.common.getZoneIdFromLocation
 import com.kutluoglu.core.common.now
-import com.kutluoglu.prayer.common.Result
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.usecases.GetPrayerTimesUseCase
@@ -95,7 +94,9 @@ class HomeViewModel(
                 saveLocationUseCase(newLocation)
                 processLocation(newLocation, showedLocationUpdatePrompt = false)
             } else {
-                _uiState.value = HomeUiState.Error("Failed to get updated location. Please try again.")
+                _uiState.value = HomeUiState.Error(
+                    "Failed to get updated location. Please try again."
+                )
             }
         }
     }
@@ -104,11 +105,9 @@ class HomeViewModel(
         viewModelScope.launch {
             _uiState.value = HomeUiState.Loading
 
-            when (val savedLocationResult = getSavedLocationUseCase()) {
-                is Result.Success -> {
-                    val savedLocation = savedLocationResult.data
+            getSavedLocationUseCase()
+                .onSuccess{ savedLocation ->
                     processLocation(savedLocation)
-
                     val currentLocation = locationService.getCurrentLocation()
                     if (currentLocation != null && locationService.isDifferentThen(savedLocation)) {
                         val currentState = _uiState.value
@@ -118,17 +117,17 @@ class HomeViewModel(
                             )
                         }
                     }
-                }
-                is Result.Error -> {
+                }.onFailure {
                     val currentLocation = locationService.getCurrentLocation()
                     if (currentLocation != null) {
                         saveLocationUseCase(currentLocation)
                         processLocation(currentLocation)
                     } else {
-                        _uiState.value = HomeUiState.Error("Could not get location. Please enable GPS and restart the app.")
+                        _uiState.value = HomeUiState.Error(
+                            "Could not get location. Please enable GPS and restart the app."
+                        )
                     }
                 }
-            }
         }
     }
 
