@@ -22,7 +22,6 @@ class GetPrayerTimesUseCase(
             )
             Result.success(prayerTimes)
         } catch (e: Exception) {
-            // You can wrap exceptions here for better error handling in the ViewModel
             Result.failure(e)
         }
     }

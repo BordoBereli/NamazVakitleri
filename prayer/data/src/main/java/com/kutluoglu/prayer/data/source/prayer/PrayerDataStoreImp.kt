@@ -12,7 +12,7 @@ import java.time.ZoneId
  */
 
 @Single
-class PrayerDataStore(
+class PrayerDataStoreImp(
 
 ): PrayerDataStore {
     override suspend fun getPrayerTimes(
