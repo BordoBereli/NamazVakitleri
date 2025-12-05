@@ -1,7 +1,7 @@
 package com.kutluoglu.prayer.usecases.location
 
 import com.kutluoglu.prayer.model.location.LocationData
-import com.kutluoglu.prayer.repository.ILocationRepository
+import com.kutluoglu.prayer.repository.LocationRepository
 import org.koin.core.annotation.Factory
 
 /**
@@ -11,7 +11,7 @@ import org.koin.core.annotation.Factory
 
 @Factory
 class SaveLocationUseCase(
-    private val repository: ILocationRepository
+    private val repository: LocationRepository
 ) {
     suspend operator fun invoke(locationData: LocationData) {
         repository.saveLocation(locationData)

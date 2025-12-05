@@ -7,8 +7,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.kutluoglu.prayer.data.model.LocationDataModel
-import com.kutluoglu.prayer.data.repository.location.LocationCache
-import com.kutluoglu.prayer.model.location.LocationData
+import com.kutluoglu.prayer.data.repository.location.LocationDataStore
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.json.Json
@@ -18,9 +17,9 @@ import org.koin.core.annotation.Single
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "location_cache")
 
 @Single
-class LocationCacheImp(
+class LocationDataStoreImp(
     private val context: Context
-): LocationCache {
+): LocationDataStore {
 
     companion object {
         // Define a key for storing the location data as a JSON string

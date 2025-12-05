@@ -1,8 +1,10 @@
 package com.kutluoglu.prayer_feature.home.components
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -29,15 +31,10 @@ fun BottomContainer(
 ) {
     if (uiState is HomeUiState.Success) {
         val quranVerse = uiState.data.quranVerse
-        // 2. Display the verse if it's not null
         if (quranVerse != null) {
-            val scrollState = rememberScrollState()
             Column(
                 modifier = Modifier
-                    .padding(horizontal = 24.dp, vertical = 8.dp)
-                    .verticalScroll(scrollState) ,
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                    .padding(horizontal = 24.dp, vertical = 8.dp),
             ) {
                 val context = LocalContext.current
                 val localizedSurahName = verseFormatter.getLocalizedNameOf(
@@ -46,21 +43,23 @@ fun BottomContainer(
                     )
                 val verseInfo = "($localizedSurahName - ${quranVerse})"
 
-                // The verse text
                 Text(
+                    modifier = Modifier.fillMaxWidth(),
                     text = "\"${quranVerse.text}\"",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSecondary, // Use onSecondary for text on the container
+                    color = MaterialTheme.colorScheme.onSecondary,
                     textAlign = TextAlign.Start,
-                    maxLines = 3,
+                    maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 // The surah name and verse number
                 Text(
+                    modifier = Modifier.fillMaxWidth(),
                     text = verseInfo,
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant, // A slightly less prominent color
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.End
                 )
             }
         }

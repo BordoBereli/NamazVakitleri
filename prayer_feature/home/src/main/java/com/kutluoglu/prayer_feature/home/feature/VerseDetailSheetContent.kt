@@ -69,20 +69,18 @@ fun VerseDetailSheetContent(
                 .heightIn(max = 200.dp) // Set a maximum height for the scrollable area
                 .verticalScroll(rememberScrollState()) // Make the Box scrollable
         ) {
-            // 2. Put the Text inside the Box without maxLines.
-            //    The Text will now expand fully within the scrollable Box.
             Text(
+                modifier = Modifier.fillMaxWidth(),
                 text = verse.text,
                 style = MaterialTheme.typography.headlineSmall,
-                textAlign = TextAlign.Center,
-                // Removed maxLines and overflow from here
+                textAlign = TextAlign.Start,
             )
         }
         Spacer(modifier = Modifier.height(8.dp))
         // A new Row for the verse info and the share button
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center, // Pushes items to the ends
+            horizontalArrangement = Arrangement.End, // Pushes items to the ends
             verticalAlignment = Alignment.CenterVertically
         ) {
             // Verse Info on the left
@@ -90,7 +88,6 @@ fun VerseDetailSheetContent(
                 text = verseInfo,
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center
             )
 
             // Share Button on the right

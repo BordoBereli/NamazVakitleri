@@ -1,10 +1,9 @@
-package com.kutluoglu.prayer.data
+package com.kutluoglu.prayer.data.source.location
 
 import com.kutluoglu.prayer.data.mapper.location.LocationMapper
-import com.kutluoglu.prayer.data.repository.location.LocationCache
 import com.kutluoglu.prayer.data.repository.location.LocationDataStore
 import com.kutluoglu.prayer.model.location.LocationData
-import com.kutluoglu.prayer.repository.ILocationRepository
+import com.kutluoglu.prayer.repository.LocationRepository
 import com.kutluoglu.prayer.usecases.location.LocationError
 import org.koin.core.annotation.Single
 
@@ -15,9 +14,9 @@ import org.koin.core.annotation.Single
 
 @Single
 class LocationRepositoryImp(
-        private val locationCache: LocationCache,
+        private val locationCache: LocationDataStore,
         private val locationMapper: LocationMapper
-): ILocationRepository {
+): LocationRepository {
     override suspend fun saveLocation(locationData: LocationData) {
         locationCache.saveLocation(
             locationMapper.mapFromDomain(locationData)

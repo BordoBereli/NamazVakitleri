@@ -1,12 +1,12 @@
 package com.kutluoglu.prayer.data.repository.location
 
-import com.kutluoglu.prayer.model.location.LocationData
+import com.kutluoglu.prayer.data.model.LocationDataModel
 
 /**
- * Created by F.K. on 2.12.2025.
+ * Created by F.K. on 30.11.2025.
  *
  */
 interface LocationDataStore {
-    suspend fun saveLocation(locationData: LocationData)
-    suspend fun getSavedLocation(): Result<LocationData>
+    suspend fun saveLocation(locationDataModel: LocationDataModel)
+    suspend fun getSavedLocation(): LocationDataModel?
 }

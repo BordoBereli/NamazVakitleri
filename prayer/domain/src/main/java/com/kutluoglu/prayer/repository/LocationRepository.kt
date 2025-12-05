@@ -7,7 +7,7 @@ import com.kutluoglu.prayer.model.location.LocationData
  * Created by F.K. on 11.11.2025.
  *
  */
-interface ILocationRepository {
+interface LocationRepository {
     suspend fun saveLocation(locationData: LocationData)
     suspend fun getSavedLocation(): Result<LocationData>
 }
