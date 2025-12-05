@@ -92,7 +92,7 @@ class HomeViewModel(
             val newLocation = locationService.getCurrentLocation()
             if (newLocation != null) {
                 saveLocationUseCase(newLocation)
-                processLocation(newLocation, showedLocationUpdatePrompt = false)
+                processLocationForPrayerTimes(newLocation, showedLocationUpdatePrompt = false)
             } else {
                 _uiState.value = HomeUiState.Error(
                     "Failed to get updated location. Please try again."
@@ -107,7 +107,7 @@ class HomeViewModel(
 
             getSavedLocationUseCase()
                 .onSuccess{ savedLocation ->
-                    processLocation(savedLocation)
+                    processLocationForPrayerTimes(savedLocation)
                     val currentLocation = locationService.getCurrentLocation()
                     if (currentLocation != null && locationService.isDifferentThen(savedLocation)) {
                         val currentState = _uiState.value
@@ -121,7 +121,7 @@ class HomeViewModel(
                     val currentLocation = locationService.getCurrentLocation()
                     if (currentLocation != null) {
                         saveLocationUseCase(currentLocation)
-                        processLocation(currentLocation)
+                        processLocationForPrayerTimes(currentLocation)
                     } else {
                         _uiState.value = HomeUiState.Error(
                             "Could not get location. Please enable GPS and restart the app."
@@ -131,7 +131,7 @@ class HomeViewModel(
         }
     }
 
-    private suspend fun processLocation(location: LocationData, showedLocationUpdatePrompt: Boolean = false) {
+    private suspend fun processLocationForPrayerTimes(location: LocationData, showedLocationUpdatePrompt: Boolean = false) {
         val zoneId = getZoneIdFromLocation(location.countryCode)
         val locationDateTime = LocalDateTime.now(zoneId)
 
@@ -146,11 +146,12 @@ class HomeViewModel(
                 data = HomeDataUiState(
                     prayers = langDetectedPrayerTimes,
                     timeInfo = formatter.getInitialTimeInfo(zoneId),
-                    locationInfo = formatter.locationInfo(location),
+                    locationInfo = location,
                     showLocationUpdatePrompt = showedLocationUpdatePrompt
                 )
             )
             _uiState.value = successState
+            updatePrayerState()
         }.onFailure { error ->
             val errorState = HomeUiState.Error(
                 message = error.message ?: "An unknown error occurred while calculating prayer times."
@@ -158,6 +159,27 @@ class HomeViewModel(
             _uiState.value = errorState
         }
     }
+
+    private fun updatePrayerState() {
+        val currentState = _uiState.value
+        if (currentState is HomeUiState.Success) {
+            val (currentPrayer, nextPrayer) = calculator.findCurrentAndNextPrayer(
+                prayers = currentState.data.prayers
+            )
+            val prayersWithCurrent = currentState.data.prayers.map { prayer ->
+                prayer.copy(isCurrent = prayer.name == currentPrayer?.name)
+            }
+
+            _uiState.value = currentState.copy(
+                data = currentState.data.copy(
+                    prayers = prayersWithCurrent,
+                    currentPrayer = currentPrayer,
+                    nextPrayer = nextPrayer
+                )
+            )
+        }
+    }
+
 
     fun startPrayerCountdown() {
         countdownJob?.cancel()
@@ -169,7 +191,32 @@ class HomeViewModel(
         }
     }
 
-    private suspend fun updateCountdown() {
+    private fun updateCountdown() {
+        val currentState = _uiState.value
+        // We only proceed if we have a valid success state with a nextPrayer to count down to.
+        if (currentState is HomeUiState.Success && currentState.data.nextPrayer != null) {
+            // 1. Calculate the new time remaining string
+            val duration = calculator.calculateTimeRemaining(currentState.data.nextPrayer.time)
+            val timeRemainingString = formatter.formatTimeRemaining(duration)
+
+            // 2. Get the new current time string (This is lightweight)
+            val zoneId = getZoneIdFromLocation(currentState.data.locationInfo?.countryCode)
+            val currentTimeString = formatter.getFormattedCurrentTime(zoneId)
+
+            // 3. Update only the time-related fields
+            _uiState.value = currentState.copy(
+                data = currentState.data.copy(
+                    timeRemaining = timeRemainingString,
+                    timeInfo = currentState.data.timeInfo.copy(
+                        currentTime = currentTimeString
+                    )
+                )
+            )
+        }
+    }
+
+
+    /*private suspend fun updateCountdown() {
         val currentState = _uiState.value
         if (currentState is HomeUiState.Success) {
             val (currentPrayer, nextPrayer) = calculator.findCurrentAndNextPrayer(
@@ -200,7 +247,7 @@ class HomeViewModel(
                 )
             )
         }
-    }
+    }*/
 
     override fun onCleared() {
         super.onCleared()

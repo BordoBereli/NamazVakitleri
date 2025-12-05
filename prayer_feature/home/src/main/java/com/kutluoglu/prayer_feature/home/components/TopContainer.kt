@@ -24,6 +24,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer_feature.home.HomeUiState
 import com.kutluoglu.prayer_feature.home.R
 import com.kutluoglu.prayer_feature.home.TimeInfo
@@ -111,12 +112,21 @@ fun LocationInfoSection(uiState: HomeUiState) {
                 tint = Color.Unspecified
             )
             Text(
-                text = uiState.data.locationInfo,
+                text = locationInfoOf(uiState.data.locationInfo),
                 fontSize = 16.sp,
                 color = MaterialTheme.colorScheme.primary
             )
         }
     }
+}
+
+private fun locationInfoOf(locationData: LocationData): String {
+    val countryCode = locationData.countryCode ?: ""
+    val city = locationData.city ?: ""
+    val county = locationData.county
+
+    return county?.let { "$county, $city - $countryCode" }
+        ?: "$city, $countryCode"
 }
 
 @Composable

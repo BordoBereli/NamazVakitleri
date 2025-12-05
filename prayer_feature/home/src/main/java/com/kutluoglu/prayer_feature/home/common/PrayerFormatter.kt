@@ -61,13 +61,4 @@ class PrayerFormatter(
             prayer.copy(name = prayerNames[index])
         }
     }
-
-    fun locationInfo(locationData: LocationData): String {
-        val countryCode = locationData.countryCode ?: ""
-        val city = locationData.city ?: ""
-        val county = locationData.county
-
-        return county?.let { "$county, $city - $countryCode" }
-            ?: "$city, $countryCode"
-    }
 }
