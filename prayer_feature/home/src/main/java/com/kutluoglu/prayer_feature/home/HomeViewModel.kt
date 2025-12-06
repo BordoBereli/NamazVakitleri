@@ -22,6 +22,8 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDateTime
 import org.koin.android.annotation.KoinViewModel
+import java.time.ZoneId
+import java.time.temporal.TemporalQueries.zoneId
 
 @KoinViewModel
 class HomeViewModel(
@@ -68,20 +70,28 @@ class HomeViewModel(
         }
     }
 
-    private fun loadRandomVerse() {
+    private fun loadRandomVerse(delayMillis: Long = 1000L) {
         viewModelScope.launch {
             val currentState = _uiState.value
-            if (currentState is HomeUiState.Success) {
-                getRandomVerseUseCase()
-                    .onSuccess {
-                        _uiState.value = currentState.copy(
-                            data = currentState.data.copy(
-                                quranVerse = it
+            when(currentState) {
+                is HomeUiState.Success -> {
+                    getRandomVerseUseCase()
+                        .onSuccess {
+                            _uiState.value = currentState.copy(
+                                data = currentState.data.copy(
+                                    quranVerse = it
+                                )
                             )
-                        )
-                    }.onFailure {
-                        Log.e("LoadRandomVerse", "Failed to load random verse --> ${it.message}")
-                    }
+                        }.onFailure {
+                            Log.e("LoadRandomVerse", "Failed to load random verse --> ${it.message}")
+                        }
+                }
+                is HomeUiState.Loading, is HomeUiState.Error -> {
+                    delay(delayMillis)
+                    // Calculate the next delay, doubling it but capping at 30 seconds.
+                    val nextDelay = (delayMillis * 2).coerceAtMost(30_000L)
+                    loadRandomVerse(nextDelay)
+                }
             }
         }
     }
@@ -193,17 +203,19 @@ class HomeViewModel(
 
     private fun updateCountdown() {
         val currentState = _uiState.value
-        // We only proceed if we have a valid success state with a nextPrayer to count down to.
         if (currentState is HomeUiState.Success && currentState.data.nextPrayer != null) {
-            // 1. Calculate the new time remaining string
             val duration = calculator.calculateTimeRemaining(currentState.data.nextPrayer.time)
-            val timeRemainingString = formatter.formatTimeRemaining(duration)
+            val zoneId = getZoneIdFromLocation(currentState.data.locationInfo.countryCode)
 
-            // 2. Get the new current time string (This is lightweight)
-            val zoneId = getZoneIdFromLocation(currentState.data.locationInfo?.countryCode)
+            // If the duration is zero or negative, it's time to recalculate the current/next prayer.
+            if (duration.isNegative || duration.isZero) {
+                updatePrayerState() // Recalculate which prayer is current/next
+                return
+            }
+
+            val timeRemainingString = formatter.formatTimeRemaining(duration)
             val currentTimeString = formatter.getFormattedCurrentTime(zoneId)
 
-            // 3. Update only the time-related fields
             _uiState.value = currentState.copy(
                 data = currentState.data.copy(
                     timeRemaining = timeRemainingString,
@@ -215,6 +227,16 @@ class HomeViewModel(
         }
     }
 
+    private fun isDayChanged(currentState: HomeUiState.Success, zoneId: ZoneId) {
+        // The day might have rolled over. Check if the current date is different from the prayer date.
+        val currentDeviceDate = LocalDateTime.now(zoneId).date
+        val prayerDate = currentState.data.prayers.firstOrNull()?.date
+
+        if (prayerDate != null && currentDeviceDate != prayerDate) {
+            // The day has changed! Reload everything for the new day.
+            loadPrayerTimesForCurrentLocation()
+        }
+    }
 
     /*private suspend fun updateCountdown() {
         val currentState = _uiState.value

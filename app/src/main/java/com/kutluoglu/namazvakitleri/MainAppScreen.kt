@@ -46,7 +46,6 @@ fun MainAppScreen() {
                 windowInsets = WindowInsets(0, 0, 0, 0),
                 containerColor = MaterialTheme.colorScheme.background
             ) {
-                // Add a spacer to create padding from the screen edges
                 Spacer(modifier = Modifier.width(8.dp))
                 Destination.entries.forEach { destination ->
                     val isSelected = currentGraph == destination.graph
@@ -64,7 +63,6 @@ fun MainAppScreen() {
                             }
                         }
                     )
-                    // Add spacing between the buttons
                     Spacer(modifier = Modifier.width(8.dp))
                 }
             }

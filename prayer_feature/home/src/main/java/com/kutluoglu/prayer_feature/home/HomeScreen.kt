@@ -1,5 +1,7 @@
 package com.kutluoglu.prayer_feature.home
 
+import android.net.http.SslCertificate.restoreState
+import android.net.http.SslCertificate.saveState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -14,6 +16,8 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -67,14 +71,25 @@ private fun PrayerContent(
         quranVerseFormatter: QuranVerseFormatter,
         onEvent: (HomeEvent) -> Unit
 ) {
-    // 1. Remember SnackbarHostState and CoroutineScope
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
-    // 2. Add LaunchedEffect to show the snackbar when the state changes
-    LaunchedEffect(uiState) {
-        if (uiState is HomeUiState.Success && uiState.data.showLocationUpdatePrompt) {
+    val showLocationUpdatePrompt by remember(uiState) {
+        derivedStateOf { (uiState as? HomeUiState.Success)?.data?.showLocationUpdatePrompt ?: false }
+    }
+    val quranVerse by remember(uiState) {
+        derivedStateOf { (uiState as? HomeUiState.Success)?.data?.quranVerse }
+    }
+    val isVerseSheetVisible by remember(uiState) {
+        derivedStateOf { (uiState as? HomeUiState.Success)?.data?.isVerseDetailSheetVisible ?: false }
+    }
+    val isRefreshing by remember(uiState) {
+        derivedStateOf { uiState is HomeUiState.Loading }
+    }
+
+    LaunchedEffect(showLocationUpdatePrompt) {
+        if (showLocationUpdatePrompt) {
             scope.launch {
                 val result = snackbarHostState.showSnackbar(
                     message = context.getString(R.string.location_update_prompt_message),
@@ -92,15 +107,12 @@ private fun PrayerContent(
 
     // --- Modal Bottom Sheet Logic ---
     val sheetState = rememberModalBottomSheetState()
-
-    // Show the bottom sheet when the state says so
-    if (uiState is HomeUiState.Success && uiState.data.isVerseDetailSheetVisible) {
+    if (isVerseSheetVisible) {
         ModalBottomSheet(
             onDismissRequest = { onEvent(HomeEvent.OnVerseDetailDismissed) },
             sheetState = sheetState
         ) {
-            // Pass the verse data to our new content composable
-            uiState.data.quranVerse?.let { verse ->
+            quranVerse?.let { verse ->
                 VerseDetailSheetContent(verse = verse, verseFormatter = quranVerseFormatter)
             }
         }
@@ -110,9 +122,6 @@ private fun PrayerContent(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         containerColor = Color.Transparent
     ) { innerPadding ->
-        // Determine if the UI is in a refreshing state
-        val isRefreshing = uiState is HomeUiState.Loading
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -163,11 +172,15 @@ private fun PrayerContent(
                     .padding(8.dp)
                     .background(MaterialTheme.colorScheme.secondary)
                     .clickable(
-                        onClick = { onEvent(HomeEvent.OnVerseClicked) } // Trigger the sheet
+                        onClick = {
+                            if (quranVerse != null) {
+                                onEvent(HomeEvent.OnVerseClicked)
+                            }
+                        }
                     ),
                 contentAlignment = Alignment.Center
             ) {
-                BottomContainer(uiState = uiState, verseFormatter = quranVerseFormatter) {
+                BottomContainer(quranVerse = quranVerse, verseFormatter = quranVerseFormatter) {
                     onEvent(HomeEvent.OnLoadQuranVerse)
                 }
             }
