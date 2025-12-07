@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import org.koin.android.annotation.KoinViewModel
 import java.time.ZoneId
@@ -192,22 +193,19 @@ class HomeViewModel(
             val duration = calculator.calculateTimeRemaining(nextPrayer.time)
             if (duration.isNegative || duration.isZero) {
                 updatePrayerState()
-                return // Recalculate and exit for the next tick
+                return
             }
             val timeRemainingString = formatter.formatTimeRemaining(duration)
-            // Update both timeState and prayerState's timeRemaining
             _uiState.value = currentState.copy(
                 prayerState = currentState.prayerState.copy(timeRemaining = timeRemainingString),
                 timeState = currentState.timeState.copy(currentTime = currentTimeString)
             )
-        } else { // After Isha, nextPrayer is null
+        } else {
             val currentDeviceDate = LocalDateTime.now(zoneId).date
             val prayerDate = currentState.prayerState.prayers.firstOrNull()?.date
-            if (prayerDate != null && currentDeviceDate != prayerDate) {
-                // Day has changed, reload everything
+            if (isDayChanged(prayerDate, currentDeviceDate)) {
                 loadPrayerTimesForCurrentLocation()
             } else {
-                // Day has not changed, just tick the clock and clear countdown
                 _uiState.value = currentState.copy(
                     prayerState = currentState.prayerState.copy(timeRemaining = "--:--:--"),
                     timeState = currentState.timeState.copy(currentTime = currentTimeString)
@@ -215,6 +213,11 @@ class HomeViewModel(
             }
         }
     }
+
+    private fun isDayChanged(
+            prayerDate: LocalDate?,
+            currentDeviceDate: LocalDate
+    ): Boolean = prayerDate != null && currentDeviceDate != prayerDate
 
     override fun onCleared() {
         super.onCleared()

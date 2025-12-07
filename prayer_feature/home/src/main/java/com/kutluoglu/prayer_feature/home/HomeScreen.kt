@@ -1,7 +1,5 @@
 package com.kutluoglu.prayer_feature.home
 
-import android.net.http.SslCertificate.restoreState
-import android.net.http.SslCertificate.saveState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -53,8 +51,6 @@ fun HomeScreen(
             // that are currently visible, like when the user swipes them into view.
             .windowInsetsPadding(WindowInsets.systemBars)
     ) {
-        // Use the PermissionHandler to wrap the main content.
-        // It will only show PrayerContent when permissions are granted.
         PermissionHandler(
             onPermissionsGranted = { onEvent(HomeEvent.OnPermissionsGranted) }
         ) {

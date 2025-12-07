@@ -48,7 +48,6 @@ class PrayerFormatter(
      * Maps a list of Prayer objects to include localized names from string resources.
      */
     fun withLocalizedNames(prayerTimes: List<Prayer>): List<Prayer> {
-        // Get the localized prayer names from the resources provider.
         val prayerNames = resProvider.getStringArray(array.prayers)
 
         // Ensure the lists can be safely zipped.

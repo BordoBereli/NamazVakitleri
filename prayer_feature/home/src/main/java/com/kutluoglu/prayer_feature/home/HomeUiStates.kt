@@ -15,9 +15,8 @@ sealed class HomeUiState {
     data class Success(
         val timeState: TimeUiState = TimeUiState(),
         val prayerState: PrayerUiState = PrayerUiState(),
-        val locationState: LocationUiState, // Location is mandatory for success
+        val locationState: LocationUiState,
 
-        // UI-specific state that doesn't fit into the above categories.
         val quranVerse: AyahData? = null,
         val isVerseDetailSheetVisible: Boolean = false,
         val showLocationUpdatePrompt: Boolean = false

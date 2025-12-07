@@ -1,7 +1,5 @@
 package com.kutluoglu.prayer_feature.home.components
 
-import android.net.http.SslCertificate.restoreState
-import android.net.http.SslCertificate.saveState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -28,11 +26,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.kutluoglu.core.ui.theme.components.ErrorMessage
 import com.kutluoglu.core.ui.theme.components.LoadingIndicator
-import com.kutluoglu.prayer_navigation.core.PrayerNestedGraph
 import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer_feature.home.HomeUiState
 import com.kutluoglu.prayer_feature.home.R
@@ -48,7 +43,6 @@ fun DailyPrayers(
     val prayerState by remember(uiState) {
         derivedStateOf { (uiState as? HomeUiState.Success)?.prayerState }
     }
-
     val pullRefreshState = rememberPullRefreshState(
         refreshing = isRefreshing,
         onRefresh = onRefresh
@@ -57,7 +51,6 @@ fun DailyPrayers(
         .fillMaxSize()
         .pullRefresh(pullRefreshState)
     ) {
-
         when (val state = uiState) {
             is HomeUiState.Loading -> {
                 if (!isRefreshing) { LoadingIndicator() }
@@ -94,11 +87,9 @@ private fun PrayerGrid(prayers: List<Prayer>, onViewAllClicked: () -> Unit) {
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        // The header is now in its own item with a clear name.
         item(span = { GridItemSpan(3) }) {
             PrayerGridHeader(onViewAllClicked = onViewAllClicked)
         }
-        // The list of prayers remains clean and simple.
         items(prayers, key = { it.name }) { prayer ->
             PrayerCard(
                 prayer = prayer,
