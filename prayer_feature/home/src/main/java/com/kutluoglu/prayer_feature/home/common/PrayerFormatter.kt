@@ -7,7 +7,7 @@ import com.kutluoglu.core.ui.theme.common.StringResourcesProvider
 import com.kutluoglu.core.ui.R.*
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.prayer.Prayer
-import com.kutluoglu.prayer_feature.home.TimeInfo
+import com.kutluoglu.prayer_feature.home.TimeUiState
 import org.koin.core.annotation.Factory
 import java.time.Duration
 import java.time.LocalDate
@@ -24,11 +24,11 @@ import kotlin.time.toKotlinDuration
 class PrayerFormatter(
     private val resProvider: StringResourcesProvider
 ) {
-    fun getInitialTimeInfo(zoneId: ZoneId): TimeInfo {
+    fun getInitialTimeInfo(zoneId: ZoneId): TimeUiState {
         val today = LocalDate.now(zoneId)
         val hijrahDate = HijrahDate.now(zoneId)
 
-        return TimeInfo(
+        return TimeUiState(
             hijriDate = hijrahDate.format(hijriFormatter),
             gregorianDate = today.format(gregorianFormatter),
             currentTime = getFormattedCurrentTime(zoneId)
@@ -60,5 +60,14 @@ class PrayerFormatter(
         return prayerTimes.mapIndexed { index, prayer ->
             prayer.copy(name = prayerNames[index])
         }
+    }
+
+    fun locationInfo(locationData: LocationData): String {
+        val countryCode = locationData.countryCode ?: ""
+        val city = locationData.city ?: ""
+        val county = locationData.county
+
+        return county?.let { "$county, $city - $countryCode" }
+            ?: "$city, $countryCode"
     }
 }

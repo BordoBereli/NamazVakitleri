@@ -75,14 +75,15 @@ private fun PrayerContent(
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
-    val showLocationUpdatePrompt by remember(uiState) {
-        derivedStateOf { (uiState as? HomeUiState.Success)?.data?.showLocationUpdatePrompt ?: false }
+    val successState by remember(uiState) { derivedStateOf { uiState as? HomeUiState.Success } }
+    val showLocationUpdatePrompt by remember(successState) {
+        derivedStateOf { successState?.showLocationUpdatePrompt ?: false }
     }
-    val quranVerse by remember(uiState) {
-        derivedStateOf { (uiState as? HomeUiState.Success)?.data?.quranVerse }
+    val quranVerse by remember(successState) {
+        derivedStateOf { successState?.quranVerse }
     }
-    val isVerseSheetVisible by remember(uiState) {
-        derivedStateOf { (uiState as? HomeUiState.Success)?.data?.isVerseDetailSheetVisible ?: false }
+    val isVerseSheetVisible by remember(successState) {
+        derivedStateOf { successState?.isVerseDetailSheetVisible ?: false }
     }
     val isRefreshing by remember(uiState) {
         derivedStateOf { uiState is HomeUiState.Loading }
@@ -125,7 +126,7 @@ private fun PrayerContent(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding) // Apply padding from the Scaffold
+                .padding(innerPadding)
         ) {
             // --- 1. Top Container (37%) ---
             Box(

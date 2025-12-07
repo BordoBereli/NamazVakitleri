@@ -21,6 +21,9 @@ import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -42,10 +45,13 @@ fun DailyPrayers(
         onRefresh: () -> Unit,
         onViewAllClicked: () -> Unit
 ) {
-    // Create the state for the pull-to-refresh component
+    val prayerState by remember(uiState) {
+        derivedStateOf { (uiState as? HomeUiState.Success)?.prayerState }
+    }
+
     val pullRefreshState = rememberPullRefreshState(
         refreshing = isRefreshing,
-        onRefresh = onRefresh // This calls the lambda that triggers the ViewModel event
+        onRefresh = onRefresh
     )
     Box(modifier = Modifier
         .fillMaxSize()
@@ -54,24 +60,20 @@ fun DailyPrayers(
 
         when (val state = uiState) {
             is HomeUiState.Loading -> {
-                // Show a centered indicator only on initial load, not on pull-refresh
-                // The PullRefreshIndicator will show for subsequent loads.
-                if (!isRefreshing) { // This check can be refined if needed
-                    LoadingIndicator()
-                }
+                if (!isRefreshing) { LoadingIndicator() }
             }
 
             is HomeUiState.Error   -> {
-                // A reusable composable for showing an error message.
                 ErrorMessage(message = state.message)
             }
 
             is HomeUiState.Success -> {
-                // The success state delegates the complex grid logic to a dedicated composable.
-                PrayerGrid(
-                    prayers = state.data.prayers,
-                    onViewAllClicked = onViewAllClicked
-                )
+                prayerState?.let {
+                    PrayerGrid(
+                        prayers = it.prayers,
+                        onViewAllClicked = onViewAllClicked
+                    )
+                }
             }
         }
         // Place the indicator at the top center of the Box
@@ -111,7 +113,7 @@ private fun PrayerGridHeader(onViewAllClicked: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp), // Add padding for alignment
+            .padding(horizontal = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(

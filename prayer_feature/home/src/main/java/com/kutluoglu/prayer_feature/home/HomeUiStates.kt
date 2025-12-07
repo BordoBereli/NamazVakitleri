@@ -12,24 +12,33 @@ import com.kutluoglu.prayer.model.quran.AyahData
 sealed class HomeUiState {
     data object Loading : HomeUiState()
     data class Error(val message: String) : HomeUiState()
-    data class Success(val data: HomeDataUiState) : HomeUiState()
+    data class Success(
+        val timeState: TimeUiState = TimeUiState(),
+        val prayerState: PrayerUiState = PrayerUiState(),
+        val locationState: LocationUiState, // Location is mandatory for success
+
+        // UI-specific state that doesn't fit into the above categories.
+        val quranVerse: AyahData? = null,
+        val isVerseDetailSheetVisible: Boolean = false,
+        val showLocationUpdatePrompt: Boolean = false
+    ) : HomeUiState()
 }
 
-data class HomeDataUiState(
+data class PrayerUiState(
         val prayers: List<Prayer> = emptyList(),
         val currentPrayer: Prayer? = null,
         val nextPrayer: Prayer? = null,
-        val timeRemaining: String = "",
-        val timeInfo: TimeInfo = TimeInfo(),
-        val locationInfo: LocationData,
-        val showLocationUpdatePrompt: Boolean = false,
-        val quranVerse: AyahData? = null,
-        val isVerseDetailSheetVisible: Boolean = false
+        val timeRemaining: String = "--:--:--"
 )
 
-data class TimeInfo(
+data class TimeUiState(
         val hijriDate: String = "",
         val gregorianDate: String = "",
         val currentTime: String = ""
+)
+
+data class LocationUiState(
+        val locationData: LocationData,
+        val locationInfoText: String
 )
 

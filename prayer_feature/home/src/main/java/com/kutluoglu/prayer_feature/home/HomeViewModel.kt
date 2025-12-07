@@ -51,22 +51,15 @@ class HomeViewModel(
             HomeEvent.OnPermissionsGranted -> { loadPrayerTimesForCurrentLocation() }
             HomeEvent.OnUpdateLocationConfirmed -> { updateLocationChange() }
             HomeEvent.OnLoadQuranVerse -> { loadRandomVerse() }
-            HomeEvent.OnVerseClicked -> {
-                val currentState = _uiState.value
-                if (currentState is HomeUiState.Success) {
-                    _uiState.value = currentState.copy(
-                        data = currentState.data.copy(isVerseDetailSheetVisible = true)
-                    )
-                }
-            }
-            HomeEvent.OnVerseDetailDismissed -> {
-                val currentState = _uiState.value
-                if (currentState is HomeUiState.Success) {
-                    _uiState.value = currentState.copy(
-                        data = currentState.data.copy(isVerseDetailSheetVisible = false)
-                    )
-                }
-            }
+            HomeEvent.OnVerseClicked -> { setVerseSheetVisibility(isVisible = true) }
+            HomeEvent.OnVerseDetailDismissed -> { setVerseSheetVisibility(isVisible = false) }
+        }
+    }
+
+    private fun setVerseSheetVisibility(isVisible: Boolean) {
+        val currentState = _uiState.value
+        if (currentState is HomeUiState.Success) {
+            _uiState.value = currentState.copy(isVerseDetailSheetVisible = isVisible)
         }
     }
 
@@ -76,19 +69,14 @@ class HomeViewModel(
             when(currentState) {
                 is HomeUiState.Success -> {
                     getRandomVerseUseCase()
-                        .onSuccess {
-                            _uiState.value = currentState.copy(
-                                data = currentState.data.copy(
-                                    quranVerse = it
-                                )
-                            )
+                        .onSuccess { verse ->
+                            _uiState.value = currentState.copy(quranVerse = verse)
                         }.onFailure {
-                            Log.e("LoadRandomVerse", "Failed to load random verse --> ${it.message}")
+                            Log.e("LoadRandomVerse", "Failed to load random verse -> ${it.message}")
                         }
                 }
                 is HomeUiState.Loading, is HomeUiState.Error -> {
                     delay(delayMillis)
-                    // Calculate the next delay, doubling it but capping at 30 seconds.
                     val nextDelay = (delayMillis * 2).coerceAtMost(30_000L)
                     loadRandomVerse(nextDelay)
                 }
@@ -98,11 +86,11 @@ class HomeViewModel(
 
     private fun updateLocationChange() {
         viewModelScope.launch {
-            _uiState.value = HomeUiState.Loading // Set loading state
+            _uiState.value = HomeUiState.Loading
             val newLocation = locationService.getCurrentLocation()
             if (newLocation != null) {
                 saveLocationUseCase(newLocation)
-                processLocationForPrayerTimes(newLocation, showedLocationUpdatePrompt = false)
+                processLocationForPrayerTimes(newLocation)
             } else {
                 _uiState.value = HomeUiState.Error(
                     "Failed to get updated location. Please try again."
@@ -114,17 +102,14 @@ class HomeViewModel(
     fun loadPrayerTimesForCurrentLocation() {
         viewModelScope.launch {
             _uiState.value = HomeUiState.Loading
-
             getSavedLocationUseCase()
                 .onSuccess{ savedLocation ->
                     processLocationForPrayerTimes(savedLocation)
                     val currentLocation = locationService.getCurrentLocation()
                     if (currentLocation != null && locationService.isDifferentThen(savedLocation)) {
-                        val currentState = _uiState.value
-                        if (currentState is HomeUiState.Success) {
-                            _uiState.value = currentState.copy(
-                                data = currentState.data.copy(showLocationUpdatePrompt = true)
-                            )
+                        val successState = _uiState.value as? HomeUiState.Success
+                        if (successState != null) {
+                            _uiState.value = successState.copy(showLocationUpdatePrompt = true)
                         }
                     }
                 }.onFailure {
@@ -141,7 +126,7 @@ class HomeViewModel(
         }
     }
 
-    private suspend fun processLocationForPrayerTimes(location: LocationData, showedLocationUpdatePrompt: Boolean = false) {
+    private suspend fun processLocationForPrayerTimes(location: LocationData) {
         val zoneId = getZoneIdFromLocation(location.countryCode)
         val locationDateTime = LocalDateTime.now(zoneId)
 
@@ -153,41 +138,37 @@ class HomeViewModel(
         ).onSuccess { prayerTimes ->
             val langDetectedPrayerTimes = formatter.withLocalizedNames(prayerTimes)
             val successState = HomeUiState.Success(
-                data = HomeDataUiState(
-                    prayers = langDetectedPrayerTimes,
-                    timeInfo = formatter.getInitialTimeInfo(zoneId),
-                    locationInfo = location,
-                    showLocationUpdatePrompt = showedLocationUpdatePrompt
+                prayerState = PrayerUiState(prayers = langDetectedPrayerTimes),
+                timeState = formatter.getInitialTimeInfo(zoneId),
+                locationState = LocationUiState(
+                    locationData = location,
+                    locationInfoText = formatter.locationInfo(location)
                 )
             )
             _uiState.value = successState
             updatePrayerState()
         }.onFailure { error ->
-            val errorState = HomeUiState.Error(
+            _uiState.value = HomeUiState.Error(
                 message = error.message ?: "An unknown error occurred while calculating prayer times."
             )
-            _uiState.value = errorState
         }
     }
 
     private fun updatePrayerState() {
-        val currentState = _uiState.value
-        if (currentState is HomeUiState.Success) {
-            val (currentPrayer, nextPrayer) = calculator.findCurrentAndNextPrayer(
-                prayers = currentState.data.prayers
-            )
-            val prayersWithCurrent = currentState.data.prayers.map { prayer ->
-                prayer.copy(isCurrent = prayer.name == currentPrayer?.name)
-            }
-
-            _uiState.value = currentState.copy(
-                data = currentState.data.copy(
-                    prayers = prayersWithCurrent,
-                    currentPrayer = currentPrayer,
-                    nextPrayer = nextPrayer
-                )
-            )
+        val currentState = _uiState.value as? HomeUiState.Success ?: return
+        val (currentPrayer, nextPrayer) =
+            calculator.findCurrentAndNextPrayer(currentState.prayerState.prayers)
+        val prayersWithCurrent = currentState.prayerState.prayers.map { prayer ->
+            prayer.copy(isCurrent = prayer.name == currentPrayer?.name)
         }
+
+        _uiState.value = currentState.copy(
+            prayerState = currentState.prayerState.copy(
+                prayers = prayersWithCurrent,
+                currentPrayer = currentPrayer,
+                nextPrayer = nextPrayer
+            )
+        )
     }
 
 
@@ -202,74 +183,38 @@ class HomeViewModel(
     }
 
     private fun updateCountdown() {
-        val currentState = _uiState.value
-        if (currentState is HomeUiState.Success && currentState.data.nextPrayer != null) {
-            val duration = calculator.calculateTimeRemaining(currentState.data.nextPrayer.time)
-            val zoneId = getZoneIdFromLocation(currentState.data.locationInfo.countryCode)
+        val currentState = _uiState.value as? HomeUiState.Success ?: return
+        val nextPrayer = currentState.prayerState.nextPrayer
+        val zoneId = getZoneIdFromLocation(currentState.locationState.locationData.countryCode)
+        val currentTimeString = formatter.getFormattedCurrentTime(zoneId)
 
-            // If the duration is zero or negative, it's time to recalculate the current/next prayer.
+        if (nextPrayer != null) {
+            val duration = calculator.calculateTimeRemaining(nextPrayer.time)
             if (duration.isNegative || duration.isZero) {
-                updatePrayerState() // Recalculate which prayer is current/next
-                return
+                updatePrayerState()
+                return // Recalculate and exit for the next tick
             }
-
             val timeRemainingString = formatter.formatTimeRemaining(duration)
-            val currentTimeString = formatter.getFormattedCurrentTime(zoneId)
-
+            // Update both timeState and prayerState's timeRemaining
             _uiState.value = currentState.copy(
-                data = currentState.data.copy(
-                    timeRemaining = timeRemainingString,
-                    timeInfo = currentState.data.timeInfo.copy(
-                        currentTime = currentTimeString
-                    )
-                )
+                prayerState = currentState.prayerState.copy(timeRemaining = timeRemainingString),
+                timeState = currentState.timeState.copy(currentTime = currentTimeString)
             )
-        }
-    }
-
-    private fun isDayChanged(currentState: HomeUiState.Success, zoneId: ZoneId) {
-        // The day might have rolled over. Check if the current date is different from the prayer date.
-        val currentDeviceDate = LocalDateTime.now(zoneId).date
-        val prayerDate = currentState.data.prayers.firstOrNull()?.date
-
-        if (prayerDate != null && currentDeviceDate != prayerDate) {
-            // The day has changed! Reload everything for the new day.
-            loadPrayerTimesForCurrentLocation()
-        }
-    }
-
-    /*private suspend fun updateCountdown() {
-        val currentState = _uiState.value
-        if (currentState is HomeUiState.Success) {
-            val (currentPrayer, nextPrayer) = calculator.findCurrentAndNextPrayer(
-                prayers = currentState.data.prayers
-            )
-            val prayersWithCurrent = currentState.data.prayers.map { prayer ->
-                prayer.copy(isCurrent = prayer.name == currentPrayer?.name)
-            }
-            val timeRemainingString = if (nextPrayer != null) {
-                val duration = calculator.calculateTimeRemaining(nextPrayer.time)
-                formatter.formatTimeRemaining(duration)
+        } else { // After Isha, nextPrayer is null
+            val currentDeviceDate = LocalDateTime.now(zoneId).date
+            val prayerDate = currentState.prayerState.prayers.firstOrNull()?.date
+            if (prayerDate != null && currentDeviceDate != prayerDate) {
+                // Day has changed, reload everything
+                loadPrayerTimesForCurrentLocation()
             } else {
-                "--:--:--" // Use a placeholder that matches the format
-            }
-
-            val location = locationService.getCurrentLocation()
-            val zoneId = getZoneIdFromLocation(location?.countryCode)
-            _uiState.value = currentState.copy(
-                data = currentState.data.copy(
-                    prayers = prayersWithCurrent,
-                    currentPrayer = currentPrayer,
-                    nextPrayer = nextPrayer,
-                    timeRemaining = timeRemainingString,
-                    timeInfo = currentState.data.timeInfo.copy(
-                        currentTime = formatter.getFormattedCurrentTime(zoneId = zoneId)
-                    ),
-                    showLocationUpdatePrompt = false
+                // Day has not changed, just tick the clock and clear countdown
+                _uiState.value = currentState.copy(
+                    prayerState = currentState.prayerState.copy(timeRemaining = "--:--:--"),
+                    timeState = currentState.timeState.copy(currentTime = currentTimeString)
                 )
-            )
+            }
         }
-    }*/
+    }
 
     override fun onCleared() {
         super.onCleared()
