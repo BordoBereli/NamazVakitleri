@@ -1,8 +1,8 @@
 package com.kutluoglu.prayer_feature.home
 
+import android.R.attr.name
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import com.kutluoglu.prayer.common.Result.*
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.prayer.Prayer
@@ -15,6 +15,7 @@ import com.kutluoglu.prayer_location.LocationService
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.spyk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.LocalDate
@@ -22,6 +23,8 @@ import kotlinx.datetime.LocalTime
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import java.time.temporal.TemporalQueries.zoneId
+import kotlin.Result.Companion.success
 
 @ExperimentalCoroutinesApi
 @ExtendWith(MainCoroutineRule::class)
@@ -63,36 +66,44 @@ class HomeViewModelTest {
     fun `loadPrayerTimes success should update uiState with prayer list`() = runTest {
         // Arrange / Given
         val testDate = LocalDate(2024, 1, 1)
-        val initialPrayerList = listOf(
-            Prayer(name = "Fajr", arabicName = "الفجر", time = LocalTime(5, 0), date = testDate)
-        )
-        // This is the list *after* localization, which the ViewModel should expose
-        val localizedPrayerList = listOf(
-            Prayer(name = "Sabah", arabicName = "الفجر", time = LocalTime(5, 0), date = testDate)
-        )
-        // 1. Mock the use case to return the initial list
-        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any()) } returns Result.success(initialPrayerList)
+        val fajrPrayer = spyk(Prayer(name = "Fajr", arabicName = "الفجر", time = LocalTime(5, 0), date = testDate))
+        val initialPrayerList = listOf(fajrPrayer)
+        val sabahPrayer = spyk(Prayer(name = "Sabah", arabicName = "الفجر", time = LocalTime(5, 0), date = testDate, isCurrent = false))
+        val localizedPrayerList = listOf(sabahPrayer)
+        val finalPrayerList = listOf(sabahPrayer.copy(isCurrent = true))
 
-        // 2. Mock the formatter to perform the name change
+
+        // 1. Mock UseCases and Services
+        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any()) } returns success(initialPrayerList)
+        coEvery { getSavedLocationUseCase() } returns success(mockk(relaxed = true))
+
+        // 2. Mock Formatters
         every { formatter.withLocalizedNames(initialPrayerList) } returns localizedPrayerList
+        every { formatter.getInitialTimeInfo(any()) } returns mockk(relaxed = true)
+        every { formatter.locationInfo(any()) } returns "Mock Location"
 
-        // 3. Mock location service to avoid null pointers
-        coEvery { locationService.getCurrentLocation() } returns null
-        val mockLocation = mockk<LocationData>(relaxed = true)
-        coEvery { getSavedLocationUseCase() } returns Success(mockLocation)
+        // 3. Mock Calculator
+        every { calculator.findCurrentAndNextPrayer(localizedPrayerList) } returns Pair(sabahPrayer, null)
+
+        // 4. Mock the data class 'copy' method
+        every { sabahPrayer.copy(isCurrent = true) } returns finalPrayerList.first()
+
 
         // Act / When
         viewModel.loadPrayerTimesForCurrentLocation()
 
         // Assert / Then
         viewModel.uiState.test {
-            val successState = awaitItem() // Await the emission after the successful fetch
+            // Await the final Success state
+            val successState = awaitItem()
             assertThat(successState).isInstanceOf(HomeUiState.Success::class.java)
 
-            // Cast to Success to access its data
-            val data = (successState as HomeUiState.Success).data
-            assertThat(data.prayers).isEqualTo(localizedPrayerList)
+            // Assert the data within the success state
+            val prayerState = (successState as HomeUiState.Success).prayerState
+            assertThat(prayerState.prayers).isEqualTo(finalPrayerList)
+            assertThat(prayerState.prayers.first().isCurrent).isTrue()
 
+            // Ensure no other events are emitted
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -106,7 +117,7 @@ class HomeViewModelTest {
         // Mock location service to avoid null pointers and reach the use case call
         coEvery { locationService.getCurrentLocation() } returns null
         val mockLocation = mockk<LocationData>(relaxed = true)
-        coEvery { getSavedLocationUseCase() } returns Success(mockLocation)
+        coEvery { getSavedLocationUseCase() } returns success(mockLocation)
 
         // Act
         viewModel.loadPrayerTimesForCurrentLocation()

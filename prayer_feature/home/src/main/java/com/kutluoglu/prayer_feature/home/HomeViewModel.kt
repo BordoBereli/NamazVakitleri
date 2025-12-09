@@ -160,7 +160,7 @@ class HomeViewModel(
         val (currentPrayer, nextPrayer) =
             calculator.findCurrentAndNextPrayer(currentState.prayerState.prayers)
         val prayersWithCurrent = currentState.prayerState.prayers.map { prayer ->
-            prayer.copy(isCurrent = prayer.name == currentPrayer?.name)
+            prayer.copy(isCurrent = prayer.name == (currentPrayer?.name ?: ""))
         }
 
         _uiState.value = currentState.copy(
