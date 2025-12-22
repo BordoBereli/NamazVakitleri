@@ -1,16 +1,16 @@
-package com.kutluoglu.prayer_feature.home.common
+package com.kutluoglu.prayer_feature.common
 
 import com.kutluoglu.core.common.gregorianFormatter
 import com.kutluoglu.core.common.hijriFormatter
 import com.kutluoglu.core.common.timeFormatter
+import com.kutluoglu.core.ui.R
 import com.kutluoglu.core.ui.theme.common.StringResourcesProvider
-import com.kutluoglu.core.ui.R.*
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.prayer.Prayer
-import com.kutluoglu.prayer_feature.home.TimeUiState
 import org.koin.core.annotation.Factory
 import java.time.Duration
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.ZoneId
 import java.time.chrono.HijrahDate
 import kotlin.collections.mapIndexed
@@ -36,7 +36,7 @@ class PrayerFormatter(
     }
 
     fun getFormattedCurrentTime(zoneId: ZoneId): String {
-        return java.time.LocalTime.now(zoneId).format(timeFormatter)
+        return LocalTime.now(zoneId).format(timeFormatter)
     }
 
     fun formatTimeRemaining(duration: Duration): String {
@@ -48,7 +48,7 @@ class PrayerFormatter(
      * Maps a list of Prayer objects to include localized names from string resources.
      */
     fun withLocalizedNames(prayerTimes: List<Prayer>): List<Prayer> {
-        val prayerNames = resProvider.getStringArray(array.prayers)
+        val prayerNames = resProvider.getStringArray(R.array.prayers)
 
         // Ensure the lists can be safely zipped.
         if (prayerTimes.size != prayerNames.size) {

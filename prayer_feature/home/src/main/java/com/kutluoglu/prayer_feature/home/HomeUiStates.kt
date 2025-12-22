@@ -3,6 +3,7 @@ package com.kutluoglu.prayer_feature.home
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer.model.quran.AyahData
+import com.kutluoglu.prayer_feature.common.TimeUiState
 
 /**
  * Created by F.K. on 28.10.2025.
@@ -28,12 +29,6 @@ data class PrayerUiState(
         val currentPrayer: Prayer? = null,
         val nextPrayer: Prayer? = null,
         val timeRemaining: String = "--:--:--"
-)
-
-data class TimeUiState(
-        val hijriDate: String = "",
-        val gregorianDate: String = "",
-        val currentTime: String = ""
 )
 
 data class LocationUiState(

@@ -11,4 +11,4 @@ import org.koin.core.annotation.Module
 @Module
 @Configuration
 @ComponentScan("com.kutluoglu.prayer_location**")
-object PrayerLocationModule
+object  PrayerLocationModule

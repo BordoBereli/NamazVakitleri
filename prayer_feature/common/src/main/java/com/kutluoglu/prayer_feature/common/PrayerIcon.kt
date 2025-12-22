@@ -1,10 +1,10 @@
-package com.kutluoglu.prayer_feature.home.common
+package com.kutluoglu.prayer_feature.common
 
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.res.stringArrayResource
 import com.kutluoglu.core.ui.R.array
-import com.kutluoglu.prayer_feature.home.R
+
 
 /**
  * Created by F.K. on 28.10.2025.
@@ -17,7 +17,7 @@ import com.kutluoglu.prayer_feature.home.R
  */
 @Composable
 fun getPrayerDrawableIdFrom(prayerName: String): Int {
-    val prayerNames = stringArrayResource(array.prayers)
+    val prayerNames = stringArrayResource(id = array.prayers)
     // Use 'remember' to create and cache the map of prayer names to drawable IDs.
     // This map is created only once and reused across recompositions, improving performance.
     val prayerIconMap = remember(prayerNames) {

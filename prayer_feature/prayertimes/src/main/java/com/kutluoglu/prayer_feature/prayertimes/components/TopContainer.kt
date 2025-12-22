@@ -1,8 +1,9 @@
-package com.kutluoglu.prayer_feature.home.components
+package com.kutluoglu.prayer_feature.prayertimes.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -29,37 +30,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kutluoglu.prayer_feature.common.TimeUiState
-import com.kutluoglu.prayer_feature.common.getPrayerDrawableIdFrom
-import com.kutluoglu.prayer_feature.home.HomeUiState
-import com.kutluoglu.prayer_feature.home.LocationUiState
-import com.kutluoglu.prayer_feature.home.PrayerUiState
-import com.kutluoglu.prayer_feature.home.R
 
 @Composable
 fun TopContainer(
         modifier: Modifier = Modifier,
         painter: Painter,
-        uiState: HomeUiState,
         onStartCount: () -> Unit
 ) {
-    val locationState by remember(uiState) {
-        derivedStateOf { (uiState as? HomeUiState.Success)?.locationState }
-    }
-    val timeState by remember(uiState) {
-        derivedStateOf { (uiState as? HomeUiState.Success)?.timeState }
-    }
-    val prayerState by remember(uiState) {
-        derivedStateOf { (uiState as? HomeUiState.Success)?.prayerState }
-    }
 
     val borderColorFromTheme = MaterialTheme.colorScheme.onSecondaryContainer
-
-    LaunchedEffect(uiState) {
-        if (uiState is HomeUiState.Success) {
-            onStartCount()
-        }
-    }
 
     Box(
         modifier = modifier.fillMaxWidth(),
@@ -67,7 +46,8 @@ fun TopContainer(
     ) {
         Image(
             painter = painter,
-            contentDescription = stringResource(id = R.string.home_page_fallback),
+//            contentDescription = stringResource(id = R.string.home_page_fallback),
+            contentDescription = "",
             alpha = 0.9F,
             contentScale = ContentScale.FillWidth,
             modifier = Modifier.fillMaxWidth()
@@ -79,10 +59,23 @@ fun TopContainer(
         ) {
             Box(
                 modifier = Modifier
-                    .weight(0.2F)
+                    .weight(0.3F)
                     .padding(start = 16.dp, top = 16.dp)
             ) {
-                locationState?.let { LocationInfoSection(locationState = it) }
+
+            }
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(0.3F)
+                    .padding(start = 16.dp, end = 16.dp)
+                    .background(
+                        Color.Transparent.copy(alpha = 0.2F),
+                        shape = RoundedCornerShape(corner = CornerSize(16.dp)),
+                    ),
+                contentAlignment = Alignment.Center,
+            ) {
+
             }
             Box(
                 modifier = Modifier
@@ -91,33 +84,13 @@ fun TopContainer(
                     .weight(0.4F),
                 contentAlignment = Alignment.Center
             ) {
-                timeState?.let { TimeInfoSection(timeState = it) }
-            }
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(0.4F)
-                    .padding(start = 16.dp, end = 16.dp)
-                    .background(
-                        Color.Black.copy(alpha = 0.3F),
-                        shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
-                    )
-                    .drawBehind {
-                        drawPath(
-                            path = defineCustomBorderShapeForCurrentPrayerContainer(),
-                            color = borderColorFromTheme.copy(alpha = 0.7F),
-                            style = Stroke(width = 1.dp.toPx())
-                        )
-                    },
-                contentAlignment = Alignment.Center,
-            ) {
-                prayerState?.let { NextPrayerInfo(prayerState = it) }
+
             }
         }
     }
 }
 
-@Composable
+/*@Composable
 private fun LocationInfoSection(locationState: LocationUiState) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -135,9 +108,9 @@ private fun LocationInfoSection(locationState: LocationUiState) {
             color = MaterialTheme.colorScheme.primary
         )
     }
-}
+}*/
 
-@Composable
+/*@Composable
 private fun TimeInfoSection(timeState: TimeUiState) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -161,9 +134,9 @@ private fun TimeInfoSection(timeState: TimeUiState) {
             color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
         )
     }
-}
+}*/
 
-@Composable
+/*@Composable
 private fun NextPrayerInfo(prayerState: PrayerUiState) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -196,27 +169,4 @@ private fun NextPrayerInfo(prayerState: PrayerUiState) {
             color = MaterialTheme.colorScheme.primary
         )
     }
-}
-
-private fun DrawScope.defineCustomBorderShapeForCurrentPrayerContainer(): Path = Path().apply {
-    val cornerRadius = 16.dp.toPx()
-    moveTo(size.width, size.height)
-    lineTo(size.width, cornerRadius)
-    arcTo(
-        rect = Rect(
-            Offset(size.width - 2 * cornerRadius, 0f),
-            Size(2 * cornerRadius, 2 * cornerRadius)
-        ),
-        startAngleDegrees = 0f,
-        sweepAngleDegrees = -90f,
-        forceMoveTo = false
-    )
-    lineTo(cornerRadius, 0f)
-    arcTo(
-        rect = Rect(Offset(0f, 0f), Size(2 * cornerRadius, 2 * cornerRadius)),
-        startAngleDegrees = 270f,
-        sweepAngleDegrees = -90f,
-        forceMoveTo = false
-    )
-    lineTo(0f, size.height)
-}
+}*/

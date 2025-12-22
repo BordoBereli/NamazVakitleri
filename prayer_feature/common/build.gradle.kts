@@ -8,7 +8,7 @@ plugins {
 }
 
 android {
-    namespace = "com.kutluoglu.prayer_feature.prayertimes"
+    namespace = "com.kutluoglu.prayer_feature.common"
     compileSdk = 36
 
     defaultConfig {
@@ -39,38 +39,41 @@ android {
     buildFeatures {
         compose = true
     }
+    composeOptions {
+        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
+    }
 }
 
 dependencies {
-    implementation(project(":core:ui"))
+    //region --- Project Dependencies ---
     implementation(project(":core:common"))
-    implementation(project(":prayer:domain"))
+    implementation(project(":core:ui"))
     implementation(project(":prayer:model"))
-    implementation(project(":prayer_navigation:core"))
-    implementation(project(":prayer_feature:common"))
+    //endregion
+
+    implementation(libs.kotlinx.datetime)
+
+    //region Compose
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.graphics)
+    debugImplementation(libs.androidx.compose.ui.tooling)
+    debugImplementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.material)
+    implementation(libs.androidx.material.icons.extended)
+    //endregion
+
+    //region Dependency Injection - Koin
+    api(platform(libs.koin.bom))
+    api(libs.koin.core)
+    api(libs.koin.annotations)
+    ksp(libs.koin.ksp)
+    //endregion
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.compose.ui)
-    implementation(libs.androidx.compose.ui.graphics)
-    implementation(libs.androidx.compose.ui.tooling.preview)
-    implementation(libs.androidx.compose.material3)
-
-    implementation(libs.compose.navigation)
-
-    implementation(libs.kotlinx.datetime)
-
-    // Koin
-    implementation(platform(libs.koin.bom))
-    implementation(libs.koin.core)
-    implementation(libs.koin.android)
-    implementation(libs.koin.android.compose)
-    implementation(libs.koin.annotations)
-    ksp(libs.koin.ksp)
-
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

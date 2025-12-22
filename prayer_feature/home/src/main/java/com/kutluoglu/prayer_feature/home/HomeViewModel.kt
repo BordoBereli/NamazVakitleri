@@ -11,7 +11,7 @@ import com.kutluoglu.prayer.usecases.GetPrayerTimesUseCase
 import com.kutluoglu.prayer.usecases.GetRandomVerseUseCase
 import com.kutluoglu.prayer.usecases.location.GetSavedLocationUseCase
 import com.kutluoglu.prayer.usecases.location.SaveLocationUseCase
-import com.kutluoglu.prayer_feature.home.common.PrayerFormatter
+import com.kutluoglu.prayer_feature.common.PrayerFormatter
 import com.kutluoglu.prayer_location.LocationService
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -23,8 +23,6 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import org.koin.android.annotation.KoinViewModel
-import java.time.ZoneId
-import java.time.temporal.TemporalQueries.zoneId
 
 @KoinViewModel
 class HomeViewModel(

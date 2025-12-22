@@ -25,19 +25,19 @@ include(":app")
 include(":core:common")          // Shared utilities, extensions, base classes
 include(":core:ui")              // Reusable composables/views - MaterialTheme, colors, typography
 include(":prayer_navigation:core") // Navigation setup, destinations
-//include(":core:network")         // Retrofit, API interfaces, network utils
 //include(":core:database")        // Room database, DAOs
 //include(":core:preferences")     // DataStore/SharedPreferences wrapper
 //include(":core:di")              // Dependency injection setup (Hilt/Koin)
 
 // Domain Modules
-//include(":core:model")           // Data classes, entities
-//include(":core:repository")      // Repository implementations
-//include(":core:datasource")      // Local and remote data sources
+include(":prayer:domain") // Prayer calculations, business logic
+include(":prayer:model")  // Data classes
+include(":prayer:data")   // Repository implementations
+include(":prayer_cache")  // Local data sources
+include(":prayer_remote") // Remote data sources, Retrofit, API interfaces, network utils
 
 // Feature-specific Core
-//include(":core:location")        // Location services wrapper
-//include(":core:prayer")          // Prayer calculations, business logic
+include(":prayer_location") // Location services wrapper
 //include(":core:qibla")           // Qibla direction calculations
 
 
@@ -46,11 +46,7 @@ include(":prayer_navigation:core") // Navigation setup, destinations
 //include(":feature:prayertimes")
 //include(":feature:qibla")
 //include(":feature:settings")
-include(":prayer:domain")
-include(":prayer:model")
-include(":prayer:data")
+include(":prayer_feature:common")
 include(":prayer_feature:home")
 include(":prayer_feature:prayertimes")
-include(":prayer_location")
-include(":prayer_cache")
-include(":prayer_remote")
+
