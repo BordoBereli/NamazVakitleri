@@ -1,21 +1,22 @@
 package com.kutluoglu.prayer_feature.home.feature
 
-import android.R.attr.bitmap
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
-import android.util.Log.e
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -28,8 +29,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import com.kutluoglu.prayer.model.quran.AyahData
@@ -39,7 +40,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import androidx.core.graphics.createBitmap
-import androidx.core.graphics.scale
+import androidx.compose.ui.platform.LocalResources
 
 @Composable
 fun VerseDetailSheetContent(
@@ -56,31 +57,33 @@ fun VerseDetailSheetContent(
     val sharedApp = "\n\n${context.getString(R.string.shared_from_app, appName)}"
     val fullTextToShare = "\"${verse.text}\" - $verseInfo $sharedApp"
 
+    // Get screen height to calculate max height in Dp
+    val screenHeight =
+        LocalResources.current.displayMetrics.heightPixels.dp / LocalDensity.current.density
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 32.dp),
+            // Set a maximum height. The content will be scrollable if it exceeds this.
+            // For short content, the Column will be smaller.
+            .heightIn(min = 0.dp, max = screenHeight * 0.65f)
+            // Make the entire column scrollable if content overflows
+            .verticalScroll(rememberScrollState())
+            .padding(start = 16.dp, end = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Top
     ) {
-        // Main verse text at the top
-        Box(
-            modifier = Modifier
-                .heightIn(max = 200.dp) // Set a maximum height for the scrollable area
-                .verticalScroll(rememberScrollState()) // Make the Box scrollable
-        ) {
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = verse.text,
-                style = MaterialTheme.typography.headlineSmall,
-                textAlign = TextAlign.Start,
-            )
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-        // A new Row for the verse info and the share button
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = verse.text,
+            style = MaterialTheme.typography.headlineSmall,
+            textAlign = TextAlign.Start,
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        // for the verse info and the share button
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End, // Pushes items to the ends
+            horizontalArrangement = Arrangement.SpaceBetween, // Pushes items to the ends
             verticalAlignment = Alignment.CenterVertically
         ) {
             // Verse Info on the left
