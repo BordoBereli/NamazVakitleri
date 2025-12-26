@@ -18,7 +18,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.kutluoglu.prayer.model.prayer.Prayer
-import com.kutluoglu.prayer_feature.common.getPrayerDrawableIdFrom
+import com.kutluoglu.prayer_feature.common.prayerUtils.getPrayerDrawableIdFrom
 
 @Composable
 fun PrayerCard(

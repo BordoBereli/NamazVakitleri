@@ -1,19 +1,20 @@
-package com.kutluoglu.prayer_feature.common
+package com.kutluoglu.prayer_feature.common.prayerUtils
 
-import com.kutluoglu.core.common.gregorianFormatter
+import com.kutluoglu.core.common.gregorianFullFormatter
+import com.kutluoglu.core.common.gregorianShortFormatter
 import com.kutluoglu.core.common.hijriFormatter
 import com.kutluoglu.core.common.timeFormatter
 import com.kutluoglu.core.ui.R
 import com.kutluoglu.core.ui.theme.common.StringResourcesProvider
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.prayer.Prayer
+import com.kutluoglu.prayer_feature.common.states.TimeUiState
 import org.koin.core.annotation.Factory
 import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.chrono.HijrahDate
-import kotlin.collections.mapIndexed
 import kotlin.time.toKotlinDuration
 
 /**
@@ -30,7 +31,8 @@ class PrayerFormatter(
 
         return TimeUiState(
             hijriDate = hijrahDate.format(hijriFormatter),
-            gregorianDate = today.format(gregorianFormatter),
+            gregorianFullDate = today.format(gregorianFullFormatter),
+            gregorianShortDate = today.format(gregorianShortFormatter),
             currentTime = getFormattedCurrentTime(zoneId)
         )
     }

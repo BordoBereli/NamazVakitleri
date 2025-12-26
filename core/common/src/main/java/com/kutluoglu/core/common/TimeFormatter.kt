@@ -1,10 +1,7 @@
 package com.kutluoglu.core.common
 
-import java.text.SimpleDateFormat
-import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
-import java.util.TimeZone
 
 /**
  * Created by F.K. on 22.10.2025.
@@ -32,6 +29,14 @@ val hijriFormatter = DateTimeFormatter
  * - "d" for the day of the month.
  * - "yyyy" for the year.
  */
-val gregorianFormatter = DateTimeFormatter
+val gregorianFullFormatter = DateTimeFormatter
     .ofPattern("dd MMMM yyyy, EEEE")
+    .withLocale(Locale.getDefault())
+
+/* Create a formatter with the desired pattern and locale.
+ * - "MMMM" for the full month name (e.g., "October").
+ * - "yyyy" for the year.
+ */
+val gregorianShortFormatter = DateTimeFormatter
+    .ofPattern("MMMM yyyy")
     .withLocale(Locale.getDefault())

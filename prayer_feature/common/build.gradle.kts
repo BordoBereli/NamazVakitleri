@@ -49,6 +49,7 @@ dependencies {
     implementation(project(":core:common"))
     implementation(project(":core:ui"))
     implementation(project(":prayer:model"))
+    implementation(project(":prayer_location"))
     //endregion
 
     implementation(libs.kotlinx.datetime)

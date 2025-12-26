@@ -4,6 +4,9 @@ package com.kutluoglu.prayer_feature.prayertimes.components
  * Created by F.K. on 20.12.2025.
  *
  */
+/**
+ * Copyright © 2025 F.K. All rights reserved.
+ */
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,6 +14,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,6 +22,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -26,32 +32,28 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.kutluoglu.core.ui.theme.components.ErrorMessage
 import com.kutluoglu.core.ui.theme.components.LoadingIndicator
 import com.kutluoglu.prayer.model.prayer.Prayer
-import com.kutluoglu.prayer_feature.common.getPrayerDrawableIdFrom
+import com.kutluoglu.prayer_feature.common.prayerUtils.getPrayerDrawableIdFrom
 import com.kutluoglu.prayer_feature.prayertimes.PrayerTimesUiState
-
-/**
- * Copyright © 2025 F.K. All rights reserved.
- */
+import com.kutluoglu.prayer_feature.prayertimes.R
 
 @Composable
 fun PrayerContainer(
         modifier: Modifier = Modifier,
         uiState: PrayerTimesUiState
 ) {
-    Box(modifier = modifier.fillMaxSize()) {
-        when (uiState) {
-            is PrayerTimesUiState.Loading -> LoadingIndicator()
-            is PrayerTimesUiState.Error   -> ErrorMessage(message = uiState.message)
-            is PrayerTimesUiState.Success -> PrayerTimesContent(
-                prayers = uiState.prayers,
-                gregorianDate = uiState.gregorianDate
-            )
-        }
+    when (uiState) {
+        is PrayerTimesUiState.Loading -> LoadingIndicator()
+        is PrayerTimesUiState.Error -> ErrorMessage(message = uiState.message)
+        is PrayerTimesUiState.Success -> PrayerTimesContent(
+            prayers = uiState.prayers,
+            gregorianDate = uiState.timeState.gregorianShortDate
+        )
     }
 }
 
@@ -66,7 +68,7 @@ private fun PrayerTimesContent(prayers: List<Prayer>, gregorianDate: String) {
         item {
             Column {
                 Text(
-                    text = "Prayer Times",
+                    text = stringResource(R.string.page_title),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold
                 )
@@ -90,9 +92,9 @@ private fun PrayerTimesContent(prayers: List<Prayer>, gregorianDate: String) {
 private fun PrayerRow(prayer: Prayer) {
     val isCurrent = prayer.isCurrent
     val containerColor = if (isCurrent) {
-        MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6f)
+        MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.8f)
     } else {
-        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
+        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
     }
     val contentColor = if (isCurrent) {
         MaterialTheme.colorScheme.onPrimaryContainer

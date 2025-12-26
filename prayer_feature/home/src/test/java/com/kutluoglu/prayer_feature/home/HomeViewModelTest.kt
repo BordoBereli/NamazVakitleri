@@ -10,7 +10,7 @@ import com.kutluoglu.prayer.usecases.GetPrayerTimesUseCase
 import com.kutluoglu.prayer.usecases.GetRandomVerseUseCase
 import com.kutluoglu.prayer.usecases.location.GetSavedLocationUseCase
 import com.kutluoglu.prayer.usecases.location.SaveLocationUseCase
-import com.kutluoglu.prayer_feature.common.PrayerFormatter
+import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
 import com.kutluoglu.prayer_location.LocationService
 import io.mockk.coEvery
 import io.mockk.every

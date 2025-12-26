@@ -28,11 +28,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.kutluoglu.prayer_feature.common.TimeUiState
-import com.kutluoglu.prayer_feature.common.getPrayerDrawableIdFrom
+import com.kutluoglu.prayer_feature.common.components.LocationInfoSection
+import com.kutluoglu.prayer_feature.common.states.TimeUiState
+import com.kutluoglu.prayer_feature.common.prayerUtils.getPrayerDrawableIdFrom
 import com.kutluoglu.prayer_feature.home.HomeUiState
-import com.kutluoglu.prayer_feature.home.LocationUiState
 import com.kutluoglu.prayer_feature.home.PrayerUiState
 import com.kutluoglu.prayer_feature.home.R
 
@@ -117,7 +116,7 @@ fun TopContainer(
     }
 }
 
-@Composable
+/*@Composable
 private fun LocationInfoSection(locationState: LocationUiState) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -135,7 +134,7 @@ private fun LocationInfoSection(locationState: LocationUiState) {
             color = MaterialTheme.colorScheme.primary
         )
     }
-}
+}*/
 
 @Composable
 private fun TimeInfoSection(timeState: TimeUiState) {
@@ -150,7 +149,7 @@ private fun TimeInfoSection(timeState: TimeUiState) {
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = timeState.gregorianDate,
+            text = timeState.gregorianFullDate,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onPrimaryContainer,
             fontWeight = FontWeight.Medium

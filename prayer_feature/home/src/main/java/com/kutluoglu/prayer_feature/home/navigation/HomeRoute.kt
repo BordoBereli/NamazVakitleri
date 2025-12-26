@@ -8,7 +8,6 @@ import androidx.compose.runtime.getValue
 import com.kutluoglu.prayer_feature.home.HomeScreen
 import com.kutluoglu.prayer_feature.home.HomeViewModel
 import com.kutluoglu.prayer_feature.home.common.QuranVerseFormatter
-import org.koin.compose.getKoin
 import org.koin.compose.koinInject
 
 /**

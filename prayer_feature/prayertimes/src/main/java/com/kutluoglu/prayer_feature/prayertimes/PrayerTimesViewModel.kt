@@ -11,7 +11,8 @@ import com.kutluoglu.core.common.now
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
 import com.kutluoglu.prayer.usecases.GetPrayerTimesUseCase
 import com.kutluoglu.prayer.usecases.location.GetSavedLocationUseCase
-import com.kutluoglu.prayer_feature.common.PrayerFormatter
+import com.kutluoglu.prayer_feature.common.states.LocationUiState
+import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -58,7 +59,11 @@ class PrayerTimesViewModel(
 
                         _uiState.value = PrayerTimesUiState.Success(
                             prayers = prayersWithCurrent,
-                            gregorianDate = formatter.getInitialTimeInfo(zoneId).gregorianDate
+                            timeState = formatter.getInitialTimeInfo(zoneId),
+                            locationState = LocationUiState(
+                                locationData = savedLocation,
+                                locationInfoText = formatter.locationInfo(savedLocation)
+                            )
                         )
                     }.onFailure {
                         _uiState.value =

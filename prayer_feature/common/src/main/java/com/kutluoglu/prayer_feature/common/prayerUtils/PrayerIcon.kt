@@ -1,9 +1,10 @@
-package com.kutluoglu.prayer_feature.common
+package com.kutluoglu.prayer_feature.common.prayerUtils
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.res.stringArrayResource
 import com.kutluoglu.core.ui.R.array
+import com.kutluoglu.prayer_feature.common.R
 
 
 /**
