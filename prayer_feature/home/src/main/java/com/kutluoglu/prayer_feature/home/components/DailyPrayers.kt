@@ -51,22 +51,14 @@ fun DailyPrayers(
         .fillMaxSize()
         .pullRefresh(pullRefreshState)
     ) {
-        when (val state = uiState) {
-            is HomeUiState.Loading -> {
-                if (!isRefreshing) { LoadingIndicator() }
-            }
-
-            is HomeUiState.Error   -> {
-                ErrorMessage(message = state.message)
-            }
-
-            is HomeUiState.Success -> {
-                prayerState?.let {
-                    PrayerGrid(
-                        prayers = it.prayers,
-                        onViewAllClicked = onViewAllClicked
-                    )
-                }
+        when (uiState) {
+            is HomeUiState.Loading -> if (!isRefreshing) { LoadingIndicator() }
+            is HomeUiState.Error -> ErrorMessage(message = uiState.message)
+            is HomeUiState.Success -> prayerState?.let {
+                PrayerGrid(
+                    prayers = it.prayers,
+                    onViewAllClicked = onViewAllClicked
+                )
             }
         }
         // Place the indicator at the top center of the Box

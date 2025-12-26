@@ -62,7 +62,7 @@ private fun PrayerTimesContent(prayers: List<Prayer>, gregorianDate: String) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         // --- Header Item ---
         item {

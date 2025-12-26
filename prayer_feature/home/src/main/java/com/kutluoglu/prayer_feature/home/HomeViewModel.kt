@@ -17,8 +17,10 @@ import com.kutluoglu.prayer_location.LocationService
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
@@ -36,7 +38,13 @@ class HomeViewModel(
         private val locationService: LocationService
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
-    val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
+    val uiState: StateFlow<HomeUiState>
+        get() = _uiState
+            .stateIn(
+                scope = viewModelScope,
+                initialValue = HomeUiState.Loading,
+                started = SharingStarted.WhileSubscribed(5_000)
+            )
 
     private var countdownJob: Job? = null
 
