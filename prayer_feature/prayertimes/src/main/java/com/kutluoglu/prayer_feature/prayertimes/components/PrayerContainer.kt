@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -33,7 +34,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -62,34 +65,29 @@ fun PrayerContainer(
 
 @Composable
 private fun PrayerTimesContent(prayers: List<Prayer>, gregorianDate: String) {
-    LazyColumn(
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.secondary),
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+            .background(MaterialTheme.colorScheme.secondary), // Apply background to the whole container
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // --- Header Item ---
-        item {
-            TitleHeader(gregorianDate)
-        }
-        item {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
-                    .padding(horizontal = 16.dp, vertical = 20.dp)
-            ) {
-                PrayersHeader(prayers)
+        // --- Header Items ---
+        TitleHeader(gregorianDate)
+        PrayersHeader(prayers)
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.secondary),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            // --- Prayer List Items ---
+            items(prayers, key = { it.name }) { prayer ->
+                PrayerRow(prayer = prayer)
             }
         }
-
-        // --- Prayer List Items ---
-        items(prayers, key = { it.name }) { prayer ->
-            PrayerRow(prayer = prayer)
-        }
     }
+
 }
 
 @Composable
@@ -97,7 +95,8 @@ private fun TitleHeader(gregorianDate: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 16.dp),
+            .background(color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1F))
+            .padding(vertical = 16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -131,17 +130,23 @@ private fun TitleHeader(gregorianDate: String) {
 @Composable
 fun PrayersHeader(prayers: List<Prayer>) {
     LazyRow(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)),
         horizontalArrangement = Arrangement.SpaceAround, // Distributes space evenly
         verticalAlignment = Alignment.CenterVertically
     ) {
         // 'items' is the correct way to build a list in LazyRow/LazyColumn
         items(prayers, key = { it.name }) { prayer ->
             Column(
+                modifier = Modifier.padding(8.dp),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Icon(
+                    modifier = Modifier.size(16.dp),
                     painter = painterResource(getPrayerDrawableIdFrom(prayer.name)),
                     contentDescription = prayer.name,
                     tint = MaterialTheme.colorScheme.primary // Use a theme color for the icon
