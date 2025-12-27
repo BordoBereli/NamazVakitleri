@@ -32,7 +32,7 @@ fun PrayerCard(
         else MaterialTheme.colorScheme.onSurface
     val backgroundColor =
         if (isCurrent) MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
-        else MaterialTheme.colorScheme.secondary
+        else MaterialTheme.colorScheme.secondary.copy(alpha = 0.7f)
     // Define the border
     val border =
         if (isCurrent) BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
