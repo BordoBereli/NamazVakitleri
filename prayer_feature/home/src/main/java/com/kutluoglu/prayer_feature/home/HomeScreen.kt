@@ -1,10 +1,8 @@
 package com.kutluoglu.prayer_feature.home
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -119,7 +117,78 @@ private fun PrayerContent(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         containerColor = Color.Transparent
     ) { innerPadding ->
-        Column(
+        BoxWithConstraints(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
+            val isLandscape = maxWidth > maxHeight
+
+            if (isLandscape) {
+                // --- Landscape Layout ---
+                Row(modifier = Modifier.fillMaxSize()) {
+                    // Lef side contains the top image/timer
+                    Box(modifier = Modifier.weight(0.4f), contentAlignment = Alignment.Center) {
+                        TopContainer(
+                            painter = painterResource(id = R.drawable.home_page_fallback),
+                            uiState = uiState,
+                            onStartCount = { onEvent(HomeEvent.OnCountDown) }
+                        )
+                    }
+                    // Right side contains prayers and verse
+                    Column(modifier = Modifier.weight(0.6f)) {
+                        Box(modifier = Modifier.weight(0.8f)) {
+                            DailyPrayers(uiState, isRefreshing, { onEvent(HomeEvent.OnRefresh) }) {
+                                navController.navigate(PrayerNestedGraph.PRAYER_TIMES) {
+                                    popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            }
+                        }
+                        Box(
+                            modifier = Modifier
+                                .weight(0.2f)
+                                .padding(8.dp)
+                                .clickable { if (quranVerse != null) onEvent(HomeEvent.OnVerseClicked) },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            BottomContainer(quranVerse, quranVerseFormatter) { onEvent(HomeEvent.OnLoadQuranVerse) }
+                        }
+                    }
+                }
+            } else {
+                // --- Portrait Layout ---
+                Column(modifier = Modifier.fillMaxSize()) {
+                    Box(modifier = Modifier.weight(0.37f), contentAlignment = Alignment.Center) {
+                        TopContainer(
+                            painter = painterResource(id = R.drawable.home_page_fallback),
+                            uiState = uiState,
+                            onStartCount = { onEvent(HomeEvent.OnCountDown) }
+                        )
+                    }
+                    Box(modifier = Modifier.weight(0.50f)) {
+                        DailyPrayers(uiState, isRefreshing, { onEvent(HomeEvent.OnRefresh) }) {
+                            navController.navigate(PrayerNestedGraph.PRAYER_TIMES) {
+                                popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        }
+                    }
+                    Box(
+                        modifier = Modifier
+                            .weight(0.13f)
+                            .padding(8.dp)
+                            .clickable { if (quranVerse != null) onEvent(HomeEvent.OnVerseClicked) },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        BottomContainer(quranVerse, quranVerseFormatter) { onEvent(HomeEvent.OnLoadQuranVerse) }
+                    }
+                }
+            }
+        }
+        /*Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
@@ -181,6 +250,6 @@ private fun PrayerContent(
                     onEvent(HomeEvent.OnLoadQuranVerse)
                 }
             }
-        }
+        }*/
     }
 }

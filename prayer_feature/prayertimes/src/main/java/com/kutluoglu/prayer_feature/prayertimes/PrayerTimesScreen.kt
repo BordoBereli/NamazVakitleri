@@ -1,7 +1,9 @@
 package com.kutluoglu.prayer_feature.prayertimes
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,7 +29,7 @@ fun PayerTimesScreen(
     modifier: Modifier = Modifier,
     uiState: PrayerTimesUiState
 ){
-    Box(modifier = modifier.fillMaxSize()) {
+    /*Box(modifier = modifier.fillMaxSize()) {
         // Assume TopContainer is your header with the image.
         // It takes up the top portion of the screen.
         TopContainer(
@@ -55,14 +57,64 @@ fun PayerTimesScreen(
            }
 
            // The content is now wrapped in a Card
-           /*Card(
+           Card(
                modifier = Modifier
                    .fillMaxWidth().padding(8.dp),
                shape = RoundedCornerShape(24.dp), // Rounded top corners
                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
            ) {
                PrayerContainer(modifier, uiState)
-           }*/
+           }
        }
+    }*/
+    // BoxWithConstraints gives us the screen dimensions to decide the layout.
+    BoxWithConstraints(modifier = modifier.fillMaxSize()) {
+        val isLandscape = maxWidth > maxHeight
+
+        if (isLandscape) {
+            // In Landscape, use a Row to place items side-by-side.
+            Row(modifier = Modifier.fillMaxSize()) {
+                TopContainer(
+                    modifier = Modifier.weight(0.43f), // Left side takes 40% of the width
+                    painter = painterResource(id = R.drawable.image_prayers),
+                    uiState = uiState
+                )
+                Card(
+                    modifier = Modifier
+                        .weight(0.57f) // Right side takes 60% of the width
+                        .fillMaxHeight()
+                        .padding(8.dp),
+                    shape = RoundedCornerShape(24.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+                ) {
+                    PrayerContainer(uiState)
+                }
+            }
+        } else {
+            // In Portrait, use the original Box layout.
+            Box(modifier = Modifier.fillMaxSize()) {
+                TopContainer(
+                    modifier = Modifier.fillMaxHeight(0.3f), // Top takes 30% of the height
+                    painter = painterResource(id = R.drawable.image_prayers),
+                    uiState = uiState
+                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight(0.75f) // The card column starts from the bottom and overlaps a bit
+                        .align(Alignment.BottomCenter)
+                ) {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(8.dp),
+                        shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+                    ) {
+                        PrayerContainer(uiState)
+                    }
+                }
+            }
+        }
     }
 }
