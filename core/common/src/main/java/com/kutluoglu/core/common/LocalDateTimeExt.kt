@@ -1,10 +1,8 @@
 package com.kutluoglu.core.common
 
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import java.time.ZoneId
-import java.util.Date
-import kotlin.time.ExperimentalTime
-import kotlin.time.Instant
 
 /**
  * Created by F.K. on 22.10.2025.
@@ -37,5 +35,8 @@ fun LocalDateTime.Companion.createBy(year: Int, month: Int, day: Int): LocalDate
     )
 }
 
-@OptIn(ExperimentalTime::class)
-fun Instant.asDate() = Date(toEpochMilliseconds())
+fun LocalDateTime.startOfMonthTime(): LocalDateTime =
+    LocalDateTime(this.year, this.month, 1, 0, 0, 0, 0)
+
+fun LocalDateTime.startOfMonth(): LocalDate =
+    LocalDate(this.year, this.month, 1)

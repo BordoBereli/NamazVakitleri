@@ -4,5 +4,6 @@ data class TimeUiState(
         val hijriDate: String = "",
         val gregorianFullDate: String = "",
         val gregorianShortDate: String = "",
+        val gregorianDayAndName: String = "",
         val currentTime: String = ""
 )

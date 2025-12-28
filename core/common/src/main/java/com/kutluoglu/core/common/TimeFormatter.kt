@@ -40,3 +40,7 @@ val gregorianFullFormatter = DateTimeFormatter
 val gregorianShortFormatter = DateTimeFormatter
     .ofPattern("MMMM yyyy")
     .withLocale(Locale.getDefault())
+
+val gregorianDayAndNameFormatter = DateTimeFormatter
+    .ofPattern("dd EEEE")  // Day number + full day name
+    .withLocale(Locale.getDefault())

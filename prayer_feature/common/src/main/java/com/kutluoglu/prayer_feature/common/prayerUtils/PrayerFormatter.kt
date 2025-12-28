@@ -1,5 +1,6 @@
 package com.kutluoglu.prayer_feature.common.prayerUtils
 
+import com.kutluoglu.core.common.gregorianDayAndNameFormatter
 import com.kutluoglu.core.common.gregorianFullFormatter
 import com.kutluoglu.core.common.gregorianShortFormatter
 import com.kutluoglu.core.common.hijriFormatter
@@ -25,14 +26,16 @@ import kotlin.time.toKotlinDuration
 class PrayerFormatter(
     private val resProvider: StringResourcesProvider
 ) {
-    fun getInitialTimeInfo(zoneId: ZoneId): TimeUiState {
-        val today = LocalDate.now(zoneId)
-        val hijrahDate = HijrahDate.now(zoneId)
-
+    fun getInitialTimeInfo(
+            zoneId: ZoneId,
+            today: LocalDate = LocalDate.now(zoneId),
+            hijrahDate:HijrahDate = HijrahDate.now(zoneId)
+    ): TimeUiState {
         return TimeUiState(
             hijriDate = hijrahDate.format(hijriFormatter),
             gregorianFullDate = today.format(gregorianFullFormatter),
             gregorianShortDate = today.format(gregorianShortFormatter),
+            gregorianDayAndName = today.format(gregorianDayAndNameFormatter),
             currentTime = getFormattedCurrentTime(zoneId)
         )
     }

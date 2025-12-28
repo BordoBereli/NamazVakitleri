@@ -17,5 +17,6 @@ fun PrayerTimesRoute(
         viewModel: PrayerTimesViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    viewModel.loadMonthlyPrayerTimes()
     PayerTimesScreen(uiState = uiState)
 }
