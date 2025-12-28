@@ -29,44 +29,6 @@ fun PayerTimesScreen(
     modifier: Modifier = Modifier,
     uiState: PrayerTimesUiState
 ){
-    /*Box(modifier = modifier.fillMaxSize()) {
-        // Assume TopContainer is your header with the image.
-        // It takes up the top portion of the screen.
-        TopContainer(
-            modifier = Modifier
-                .fillMaxHeight(0.3f), // Top container takes 40% of the height
-            painter = painterResource(id = R.drawable.image_prayers),
-            uiState = uiState
-        )
-
-       Column(
-           modifier = Modifier
-               .fillMaxWidth()
-               .fillMaxHeight(0.75f)
-               .align(Alignment.BottomCenter) // Align the card to the bottom
-       ) {
-           // The content is now wrapped in a Card
-           Card(
-               modifier = Modifier
-                   .fillMaxWidth().padding(8.dp)
-                   .fillMaxHeight(1f), // The card takes up the bottom 70% of the screen
-               shape = RoundedCornerShape(24.dp), // Rounded top corners
-               elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
-           ) {
-               PrayerContainer(uiState)
-           }
-
-           // The content is now wrapped in a Card
-           Card(
-               modifier = Modifier
-                   .fillMaxWidth().padding(8.dp),
-               shape = RoundedCornerShape(24.dp), // Rounded top corners
-               elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
-           ) {
-               PrayerContainer(modifier, uiState)
-           }
-       }
-    }*/
     // BoxWithConstraints gives us the screen dimensions to decide the layout.
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
         val isLandscape = maxWidth > maxHeight
