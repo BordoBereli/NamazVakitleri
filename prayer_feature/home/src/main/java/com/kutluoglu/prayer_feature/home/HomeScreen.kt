@@ -37,16 +37,14 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun HomeScreen(
-        navController: NavController,
-        uiState: HomeUiState,
-        quranVerseFormatter: QuranVerseFormatter,
-        onEvent: (HomeEvent) -> Unit
+    navController: NavController,
+    uiState: HomeUiState,
+    quranVerseFormatter: QuranVerseFormatter,
+    onEvent: (HomeEvent) -> Unit
 ) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            // This is the key modifier. It applies padding for any system bars
-            // that are currently visible, like when the user swipes them into view.
             .windowInsetsPadding(WindowInsets.systemBars)
     ) {
         PermissionHandler(
@@ -60,10 +58,10 @@ fun HomeScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PrayerContent(
-        navController: NavController,
-        uiState: HomeUiState,
-        quranVerseFormatter: QuranVerseFormatter,
-        onEvent: (HomeEvent) -> Unit
+    navController: NavController,
+    uiState: HomeUiState,
+    quranVerseFormatter: QuranVerseFormatter,
+    onEvent: (HomeEvent) -> Unit
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -117,6 +115,15 @@ private fun PrayerContent(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         containerColor = Color.Transparent
     ) { innerPadding ->
+        val isRefreshing = uiState is HomeUiState.Loading
+        val onPrayerTimesClick = {
+            navController.navigate(PrayerNestedGraph.PRAYER_TIMES) {
+                popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                launchSingleTop = true
+                restoreState = true
+            }
+        }
+
         BoxWithConstraints(
             modifier = Modifier
                 .fillMaxSize()
@@ -124,7 +131,60 @@ private fun PrayerContent(
         ) {
             val isLandscape = maxWidth > maxHeight
 
+            val topContainer = @Composable { modifier: Modifier ->
+                Box(modifier = modifier, contentAlignment = Alignment.Center) {
+                    TopContainer(
+                        painter = painterResource(id = R.drawable.home_page_fallback),
+                        uiState = uiState,
+                        onStartCount = { onEvent(HomeEvent.OnCountDown) }
+                    )
+                }
+            }
+
+            val dailyPrayers = @Composable { modifier: Modifier ->
+                Box(modifier = modifier) {
+                    DailyPrayers(uiState, isRefreshing, { onEvent(HomeEvent.OnRefresh) }, onPrayerTimesClick)
+                }
+            }
+
+            val bottomContainer = @Composable { modifier: Modifier ->
+                Box(
+                    modifier = modifier
+                        .padding(8.dp)
+                        .clickable(enabled = successState?.quranVerse != null) { onEvent(HomeEvent.OnVerseClicked) },
+                    contentAlignment = Alignment.Center
+                ) {
+                    BottomContainer(successState?.quranVerse, quranVerseFormatter) { onEvent(HomeEvent.OnLoadQuranVerse) }
+                }
+            }
+
             if (isLandscape) {
+                Row(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    topContainer(Modifier.weight(0.4f))
+                    Column(
+                        modifier = Modifier.weight(0.6f),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        dailyPrayers(Modifier.weight(0.8f))
+                        bottomContainer(Modifier.weight(0.2f))
+                    }
+                }
+            } else {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    topContainer(Modifier.weight(0.37f))
+                    dailyPrayers(Modifier.weight(0.50f))
+                    bottomContainer(Modifier.weight(0.13f))
+                }
+            }
+
+            /*if (isLandscape) {
                 // --- Landscape Layout ---
                 Row(modifier = Modifier.fillMaxSize()) {
                     // Lef side contains the top image/timer
@@ -186,7 +246,7 @@ private fun PrayerContent(
                         BottomContainer(quranVerse, quranVerseFormatter) { onEvent(HomeEvent.OnLoadQuranVerse) }
                     }
                 }
-            }
+            }*/
         }
     }
 }
