@@ -1,7 +1,10 @@
 package com.kutluoglu.prayer_feature.home
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
@@ -11,7 +14,9 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -26,6 +31,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.kutluoglu.core.ui.theme.components.PermissionHandler
+import com.kutluoglu.prayer_feature.common.LocalIsLandscape
 import com.kutluoglu.prayer_feature.home.common.QuranVerseFormatter
 import com.kutluoglu.prayer_feature.home.components.BottomContainer
 import com.kutluoglu.prayer_feature.home.components.DailyPrayers
@@ -76,9 +82,6 @@ private fun PrayerContent(
     }
     val isVerseSheetVisible by remember(successState) {
         derivedStateOf { successState?.isVerseDetailSheetVisible ?: false }
-    }
-    val isRefreshing by remember(uiState) {
-        derivedStateOf { uiState is HomeUiState.Loading }
     }
 
     LaunchedEffect(showLocationUpdatePrompt) {
@@ -131,56 +134,71 @@ private fun PrayerContent(
         ) {
             val isLandscape = maxWidth > maxHeight
 
-            val topContainer = @Composable { modifier: Modifier ->
-                Box(modifier = modifier, contentAlignment = Alignment.Center) {
-                    TopContainer(
-                        painter = painterResource(id = R.drawable.home_page_fallback),
-                        uiState = uiState,
-                        onStartCount = { onEvent(HomeEvent.OnCountDown) }
-                    )
-                }
-            }
-
-            val dailyPrayers = @Composable { modifier: Modifier ->
-                Box(modifier = modifier) {
-                    DailyPrayers(uiState, isRefreshing, { onEvent(HomeEvent.OnRefresh) }, onPrayerTimesClick)
-                }
-            }
-
-            val bottomContainer = @Composable { modifier: Modifier ->
-                Box(
-                    modifier = modifier
-                        .padding(8.dp)
-                        .clickable(enabled = successState?.quranVerse != null) { onEvent(HomeEvent.OnVerseClicked) },
-                    contentAlignment = Alignment.Center
-                ) {
-                    BottomContainer(successState?.quranVerse, quranVerseFormatter) { onEvent(HomeEvent.OnLoadQuranVerse) }
-                }
-            }
-
-            if (isLandscape) {
-                Row(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    topContainer(Modifier.weight(0.4f))
-                    Column(
-                        modifier = Modifier.weight(0.6f),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        dailyPrayers(Modifier.weight(0.8f))
-                        bottomContainer(Modifier.weight(0.2f))
+            CompositionLocalProvider(LocalIsLandscape provides isLandscape) {
+                val topContainer = @Composable { modifier: Modifier ->
+                    Box(modifier = modifier, contentAlignment = Alignment.Center) {
+                        TopContainer(
+                            painter = painterResource(id = R.drawable.home_page_fallback),
+                            uiState = uiState,
+                            onStartCount = { onEvent(HomeEvent.OnCountDown) }
+                        )
                     }
                 }
-            } else {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    topContainer(Modifier.weight(0.37f))
-                    dailyPrayers(Modifier.weight(0.50f))
-                    bottomContainer(Modifier.weight(0.13f))
+
+                val dailyPrayers = @Composable { modifier: Modifier ->
+                    Box(modifier = modifier) {
+                        DailyPrayers(
+                            uiState = uiState,
+                            isRefreshing = isRefreshing,
+                            onRefresh = { onEvent(HomeEvent.OnRefresh) },
+                            onViewAllClicked = onPrayerTimesClick
+                        )
+                    }
+                }
+
+                val bottomContainer = @Composable { modifier: Modifier ->
+                    Box(
+                        modifier = modifier
+                            .padding(8.dp)
+                            .clickable(enabled = successState?.quranVerse != null) {
+                                onEvent(
+                                    HomeEvent.OnVerseClicked
+                                )
+                            },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        BottomContainer(
+                            quranVerse = successState?.quranVerse,
+                            verseFormatter = quranVerseFormatter
+                        ) { onEvent(HomeEvent.OnLoadQuranVerse) }
+                    }
+                }
+
+                if (isLandscape) {
+                    Row(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        topContainer(Modifier.weight(0.4f))
+                        Column(
+                            modifier = Modifier
+                                .weight(0.6f),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            dailyPrayers(Modifier.weight(0.73f))
+                            bottomContainer(Modifier.weight(0.27f))
+                        }
+                    }
+                } else {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        topContainer(Modifier.weight(0.37f))
+                        dailyPrayers(Modifier.weight(0.50f))
+                        bottomContainer(Modifier.weight(0.13f))
+                    }
                 }
             }
 

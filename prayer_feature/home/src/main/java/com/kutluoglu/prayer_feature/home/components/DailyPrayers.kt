@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import com.kutluoglu.core.ui.theme.components.ErrorMessage
 import com.kutluoglu.core.ui.theme.components.LoadingIndicator
 import com.kutluoglu.prayer.model.prayer.Prayer
+import com.kutluoglu.prayer_feature.common.LocalIsLandscape
 import com.kutluoglu.prayer_feature.home.HomeUiState
 import com.kutluoglu.prayer_feature.home.R
 
@@ -47,6 +48,7 @@ fun DailyPrayers(
         refreshing = isRefreshing,
         onRefresh = onRefresh
     )
+    val isLandscape = LocalIsLandscape.current
     Box(modifier = Modifier
         .fillMaxSize()
         .pullRefresh(pullRefreshState)
@@ -57,6 +59,7 @@ fun DailyPrayers(
             is HomeUiState.Success -> prayerState?.let {
                 PrayerGrid(
                     prayers = it.prayers,
+                    isLandscape = isLandscape,
                     onViewAllClicked = onViewAllClicked
                 )
             }
@@ -71,7 +74,11 @@ fun DailyPrayers(
 }
 
 @Composable
-private fun PrayerGrid(prayers: List<Prayer>, onViewAllClicked: () -> Unit) {
+private fun PrayerGrid(
+        prayers: List<Prayer>,
+        isLandscape: Boolean,
+        onViewAllClicked: () -> Unit
+) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(3),
         modifier = Modifier.fillMaxSize(),

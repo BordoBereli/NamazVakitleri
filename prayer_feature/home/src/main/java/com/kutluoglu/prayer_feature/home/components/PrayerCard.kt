@@ -3,6 +3,7 @@ package com.kutluoglu.prayer_feature.home.components
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -18,6 +19,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.kutluoglu.prayer.model.prayer.Prayer
+import com.kutluoglu.prayer_feature.common.LocalIsLandscape
 import com.kutluoglu.prayer_feature.common.prayerUtils.getPrayerDrawableIdFrom
 
 @Composable
@@ -37,6 +39,28 @@ fun PrayerCard(
     val border =
         if (isCurrent) BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
         else null
+    // ReUsable Composable
+    val prayerIcon = @Composable {
+        Icon(
+            painter = painterResource(getPrayerDrawableIdFrom(prayer.name)),
+            contentDescription = prayer.name
+        )
+    }
+    val prayerName = @Composable {
+        Text(
+            text = prayer.name,
+            style = MaterialTheme.typography.titleSmall
+        )
+    }
+    val prayerTime = @Composable {
+        Text(
+            text = "${prayer.time}",
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold
+        )
+    }
+
+    val isLandscape = LocalIsLandscape.current
 
     Card(
         modifier = modifier.fillMaxSize(),
@@ -54,19 +78,21 @@ fun PrayerCard(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Icon(
-                painter = painterResource(getPrayerDrawableIdFrom(prayer.name)),
-                contentDescription = prayer.name
-            )
-            Text(
-                text = prayer.name,
-                style = MaterialTheme.typography.titleSmall
-            )
-            Text(
-                text = "${prayer.time}",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
-            )
+            if (isLandscape) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally)
+                ) {
+                    prayerIcon()
+                    prayerName()
+                }
+                prayerTime()
+            } else {
+                prayerIcon()
+                prayerName()
+                prayerTime()
+            }
         }
     }
 }

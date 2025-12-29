@@ -81,7 +81,7 @@ fun TopContainer(
         ) {
             Box(
                 modifier = Modifier
-                    .weight(0.3F)
+                    .weight(0.35F)
                     .padding(start = 16.dp, top = 16.dp)
             ) {
                 PageTitleSection()
@@ -89,7 +89,7 @@ fun TopContainer(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(0.3F)
+                    .weight(0.35F)
                     .padding(start = 16.dp, end = 16.dp)
                     .background(
                         Color.Transparent.copy(alpha = 0.1F),
@@ -123,7 +123,7 @@ fun TopContainer(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 16.dp, bottom = 16.dp, end = 16.dp)
-                    .weight(0.4F),
+                    .weight(0.3F),
                 contentAlignment = Alignment.Center
             ) {
 
@@ -175,7 +175,7 @@ fun PageTitleSection() {
 @Composable
 private fun TimeInfoSection(timeState: TimeUiState) {
     Column(
-        modifier = Modifier.fillMaxHeight().padding(8.dp),
+        modifier = Modifier.fillMaxHeight().padding(4.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         Row(
