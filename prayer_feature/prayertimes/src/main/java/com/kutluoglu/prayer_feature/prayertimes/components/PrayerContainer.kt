@@ -72,11 +72,8 @@ private fun PrayerTimesContent(
         currentDayOfMonth: Int,
         gregorianDate: String
 ) {
-    // 1. Create and remember the LazyListState
     val listState = rememberLazyListState()
 
-    // 2. Use LaunchedEffect to scroll when the data is ready
-    // We use monthlyPrayers as the key. When it changes (i.e., data loads), this effect runs.
     LaunchedEffect(monthlyPrayers) {
         // Find the index of the current day. The list is 0-indexed, so subtract 1.
         val todayIndex = currentDayOfMonth - 1
@@ -149,7 +146,6 @@ fun PrayersHeader(prayers: List<Prayer>) {
         horizontalArrangement = Arrangement.SpaceAround, // Distributes space evenly
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // 'items' is the correct way to build a list in LazyRow/LazyColumn
         items(prayers, key = { it.name }) { prayer ->
             Column(
                 modifier = Modifier.padding(8.dp),
@@ -160,12 +156,12 @@ fun PrayersHeader(prayers: List<Prayer>) {
                     modifier = Modifier.size(20.dp),
                     painter = painterResource(getPrayerDrawableIdFrom(prayer.name)),
                     contentDescription = prayer.name,
-                    tint = MaterialTheme.colorScheme.primary // Use a theme color for the icon
+                    tint = MaterialTheme.colorScheme.primary
                 )
                 Text(
                     text = prayer.name,
                     style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.primary // Use a theme color for the text
+                    color = MaterialTheme.colorScheme.primary
                 )
             }
         }
@@ -186,12 +182,8 @@ private fun PrayerList(
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        // For demonstration, we'll create 30 cards, one for each day.
-        // In a real app, you would use items(monthlyPrayerData)
         items(monthlyPrayers, key = { it.dayOfMonth }) { dailyPrayer ->
-            // Determine if the current item is today
             val isToday = dailyPrayer.dayOfMonth == currentDayOfMonth
-            // Each card represents a full day's prayer times.
             DailyPrayerCard(
                 dailyPrayer = dailyPrayer,
                 isToday = isToday
@@ -231,23 +223,6 @@ private fun DailyPrayerCard(dailyPrayer: DailyPrayer, isToday: Boolean) {
             )
         }
     }
-    /*Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 16.dp)
-        ) {
-            // List all prayer times for that day
-            PrayersRow(dailyPrayers)
-            Spacer(Modifier.height(12.dp))
-            // Header for the card showing the day number
-            PrayerDateInfo(dayOfMonth = dayOfMonth, hijriDate = hijriDate)
-        }
-    }*/
 }
 
 @Composable
@@ -280,7 +255,6 @@ private fun PrayerDateInfo(
         hijriDate: String,
         isToday: Boolean,
 ) {
-    // Define colors based on whether it is the current day
     val numberBackgroundColor = if (isToday) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
     val numberColor = if (isToday) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
     val dateColor = if (isToday) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
@@ -297,12 +271,11 @@ private fun PrayerDateInfo(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            // Box with rounded background for the day number
             Box(
                 modifier = Modifier
                     .size(32.dp)
                     .background(
-                        color = numberBackgroundColor, // Use conditional color
+                        color = numberBackgroundColor,
                         shape = CircleShape
                     ),
                 contentAlignment = Alignment.Center
@@ -311,21 +284,21 @@ private fun PrayerDateInfo(
                     text = "$dayOfMonth",
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Bold,
-                    color = numberColor // Use conditional color
+                    color = numberColor
                 )
             }
             Text(
                 text = nameOfMonth.split(" ").last(),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
-                color = dateColor // Use conditional color
+                color = dateColor
             )
         }
         Text(
             text = hijriDate,
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Medium,
-            color = hijriDateColor // Use conditional color
+            color = hijriDateColor
         )
     }
 }

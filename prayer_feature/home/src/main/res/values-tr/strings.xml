@@ -5,6 +5,8 @@
     <string name="prayer_times_title">Günün Vakitleri</string>
     <string name="view_all_prayers">Tümünü Gör >></string>
     <string name="time_until_message">Bir sonraki vakit için kalan süre</string>
+    <string name="time_until_prayer_format">%1$s namazına kalan süre: </string>
+    <string name="time_until_sunrise">Güneş\'in doğmasına kalan süre: </string>
     <string name="unknown_error_message">Bilinmeyen bir hata oluştu.</string>
     <string name="location_update_prompt_message">Konumun değiştiğini fark ettik.</string>
     <string name="location_update_action_label">Güncelle</string>

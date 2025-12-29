@@ -5,6 +5,8 @@
     <string name="prayer_times_title">Daily Prayers</string>
     <string name="view_all_prayers">View All >></string>
     <string name="time_until_message">Time until next prayer</string>
+    <string name="time_until_prayer_format">Time until %1$s</string>
+    <string name="time_until_sunrise">Time until Sunrise</string>
     <string name="unknown_error_message">Unknown error</string>
     <string name="location_update_prompt_message">Your location has changed.</string>
     <string name="location_update_action_label">Update</string>

@@ -164,6 +164,17 @@ private fun TimeInfoSection(timeState: TimeUiState) {
 
 @Composable
 private fun NextPrayerInfo(prayerState: PrayerUiState) {
+    val nextPrayerNameRaw = prayerState.nextPrayer?.name ?: "İmsak"
+
+    val nextPrayerDisplayName = when (nextPrayerNameRaw) {
+        "İmsak" -> "Sabah"
+        else -> nextPrayerNameRaw
+    }
+
+    val timeUntilText = when (nextPrayerNameRaw) {
+        "Güneş" -> stringResource(id = R.string.time_until_sunrise)
+        else -> stringResource(id = R.string.time_until_prayer_format, nextPrayerDisplayName)
+    }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -183,7 +194,7 @@ private fun NextPrayerInfo(prayerState: PrayerUiState) {
                 modifier = Modifier.size(16.dp)
             )
             Text(
-                text = "Time until ${prayerState.nextPrayer?.name ?: ""}",
+                text = timeUntilText,
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
             )
