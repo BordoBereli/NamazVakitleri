@@ -38,27 +38,23 @@ import com.kutluoglu.prayer_feature.home.R
 @Composable
 fun TopContainer(
         modifier: Modifier = Modifier,
+        successState: HomeUiState.Success?,
         painter: Painter,
-        uiState: HomeUiState,
         onStartCount: () -> Unit
 ) {
-    val locationState by remember(uiState) {
-        derivedStateOf { (uiState as? HomeUiState.Success)?.locationState }
+    val locationState by remember(successState) {
+        derivedStateOf { successState?.locationState }
     }
-    val timeState by remember(uiState) {
-        derivedStateOf { (uiState as? HomeUiState.Success)?.timeState }
+    val timeState by remember(successState) {
+        derivedStateOf { successState?.timeState }
     }
-    val prayerState by remember(uiState) {
-        derivedStateOf { (uiState as? HomeUiState.Success)?.prayerState }
+    val prayerState by remember(successState) {
+        derivedStateOf { successState?.prayerState }
     }
 
     val borderColorFromTheme = MaterialTheme.colorScheme.onSecondaryContainer
 
-    LaunchedEffect(uiState) {
-        if (uiState is HomeUiState.Success) {
-            onStartCount()
-        }
-    }
+    LaunchedEffect(prayerState) { onStartCount() }
 
     Box(
         modifier = modifier.fillMaxWidth(),
@@ -68,8 +64,8 @@ fun TopContainer(
             painter = painter,
             contentDescription = stringResource(id = R.string.home_page_fallback),
             alpha = 0.9F,
-            contentScale = ContentScale.FillWidth,
-            modifier = Modifier.fillMaxWidth()
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize()
         )
         Column(
             modifier = Modifier
@@ -115,26 +111,6 @@ fun TopContainer(
         }
     }
 }
-
-/*@Composable
-private fun LocationInfoSection(locationState: LocationUiState) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(
-            painterResource(R.drawable.konum),
-            contentDescription = stringResource(id = R.string.home_page_fallback),
-            tint = Color.Unspecified
-        )
-        Text(
-            text = locationState.locationInfoText,
-            fontSize = 16.sp,
-            color = MaterialTheme.colorScheme.primary
-        )
-    }
-}*/
 
 @Composable
 private fun TimeInfoSection(timeState: TimeUiState) {

@@ -1,5 +1,6 @@
 package com.kutluoglu.prayer_feature.home
 
+import android.R.attr.duration
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -194,14 +195,15 @@ class HomeViewModel(
         val currentState = _uiState.value as? HomeUiState.Success ?: return
         val nextPrayer = currentState.prayerState.nextPrayer
         val zoneId = getZoneIdFromLocation(currentState.locationState.locationData.countryCode)
+        val currentTime = LocalDateTime.now(zoneId)
         val currentTimeString = formatter.getFormattedCurrentTime(zoneId)
 
         if (nextPrayer != null) {
-            val duration = calculator.calculateTimeRemaining(nextPrayer.time)
-            if (duration.isNegative || duration.isZero) {
+            if (currentTime.time >= nextPrayer.time) {
                 updatePrayerState()
                 return
             }
+            val duration = calculator.calculateTimeRemaining(nextPrayer.time)
             val timeRemainingString = formatter.formatTimeRemaining(duration)
             _uiState.value = currentState.copy(
                 prayerState = currentState.prayerState.copy(timeRemaining = timeRemainingString),

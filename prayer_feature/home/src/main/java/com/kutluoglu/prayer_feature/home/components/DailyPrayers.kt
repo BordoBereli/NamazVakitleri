@@ -31,38 +31,31 @@ import com.kutluoglu.core.ui.theme.components.LoadingIndicator
 import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer_feature.common.LocalIsLandscape
 import com.kutluoglu.prayer_feature.home.HomeUiState
+import com.kutluoglu.prayer_feature.home.PrayerUiState
 import com.kutluoglu.prayer_feature.home.R
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun DailyPrayers(
-        uiState: HomeUiState,
+        prayerState: PrayerUiState?,
         isRefreshing: Boolean,
         onRefresh: () -> Unit,
         onViewAllClicked: () -> Unit
 ) {
-    val prayerState by remember(uiState) {
-        derivedStateOf { (uiState as? HomeUiState.Success)?.prayerState }
-    }
     val pullRefreshState = rememberPullRefreshState(
         refreshing = isRefreshing,
         onRefresh = onRefresh
     )
-    val isLandscape = LocalIsLandscape.current
+
     Box(modifier = Modifier
         .fillMaxSize()
         .pullRefresh(pullRefreshState)
     ) {
-        when (uiState) {
-            is HomeUiState.Loading -> if (!isRefreshing) { LoadingIndicator() }
-            is HomeUiState.Error -> ErrorMessage(message = uiState.message)
-            is HomeUiState.Success -> prayerState?.let {
-                PrayerGrid(
-                    prayers = it.prayers,
-                    isLandscape = isLandscape,
-                    onViewAllClicked = onViewAllClicked
-                )
-            }
+        prayerState?.let {
+            PrayerGrid(
+                prayers = it.prayers,
+                onViewAllClicked = onViewAllClicked
+            )
         }
         // Place the indicator at the top center of the Box
         PullRefreshIndicator(
@@ -76,7 +69,6 @@ fun DailyPrayers(
 @Composable
 private fun PrayerGrid(
         prayers: List<Prayer>,
-        isLandscape: Boolean,
         onViewAllClicked: () -> Unit
 ) {
     LazyVerticalGrid(

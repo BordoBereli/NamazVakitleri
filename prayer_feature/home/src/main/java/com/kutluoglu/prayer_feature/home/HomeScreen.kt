@@ -73,14 +73,18 @@ private fun PrayerContent(
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
-    val successState by remember(uiState) { derivedStateOf { uiState as? HomeUiState.Success } }
-    val showLocationUpdatePrompt by remember(successState) {
+    val successState = uiState as? HomeUiState.Success
+
+    val prayerState by remember(successState?.prayerState) {
+        derivedStateOf { successState?.prayerState }
+    }
+    val showLocationUpdatePrompt by remember(successState?.showLocationUpdatePrompt) {
         derivedStateOf { successState?.showLocationUpdatePrompt ?: false }
     }
-    val quranVerse by remember(successState) {
+    val quranVerse by remember(successState?.quranVerse) {
         derivedStateOf { successState?.quranVerse }
     }
-    val isVerseSheetVisible by remember(successState) {
+    val isVerseSheetVisible by remember(successState?.isVerseDetailSheetVisible) {
         derivedStateOf { successState?.isVerseDetailSheetVisible ?: false }
     }
 
@@ -139,7 +143,7 @@ private fun PrayerContent(
                     Box(modifier = modifier, contentAlignment = Alignment.Center) {
                         TopContainer(
                             painter = painterResource(id = R.drawable.home_page_fallback),
-                            uiState = uiState,
+                            successState = successState,
                             onStartCount = { onEvent(HomeEvent.OnCountDown) }
                         )
                     }
@@ -148,7 +152,7 @@ private fun PrayerContent(
                 val dailyPrayers = @Composable { modifier: Modifier ->
                     Box(modifier = modifier) {
                         DailyPrayers(
-                            uiState = uiState,
+                            prayerState = prayerState,
                             isRefreshing = isRefreshing,
                             onRefresh = { onEvent(HomeEvent.OnRefresh) },
                             onViewAllClicked = onPrayerTimesClick
@@ -168,7 +172,7 @@ private fun PrayerContent(
                         contentAlignment = Alignment.Center
                     ) {
                         BottomContainer(
-                            quranVerse = successState?.quranVerse,
+                            quranVerse = quranVerse,
                             verseFormatter = quranVerseFormatter
                         ) { onEvent(HomeEvent.OnLoadQuranVerse) }
                     }
@@ -201,70 +205,6 @@ private fun PrayerContent(
                     }
                 }
             }
-
-            /*if (isLandscape) {
-                // --- Landscape Layout ---
-                Row(modifier = Modifier.fillMaxSize()) {
-                    // Lef side contains the top image/timer
-                    Box(modifier = Modifier.weight(0.4f), contentAlignment = Alignment.Center) {
-                        TopContainer(
-                            painter = painterResource(id = R.drawable.home_page_fallback),
-                            uiState = uiState,
-                            onStartCount = { onEvent(HomeEvent.OnCountDown) }
-                        )
-                    }
-                    // Right side contains prayers and verse
-                    Column(modifier = Modifier.weight(0.6f)) {
-                        Box(modifier = Modifier.weight(0.8f)) {
-                            DailyPrayers(uiState, isRefreshing, { onEvent(HomeEvent.OnRefresh) }) {
-                                navController.navigate(PrayerNestedGraph.PRAYER_TIMES) {
-                                    popUpTo(navController.graph.findStartDestination().id) { saveState = true }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
-                            }
-                        }
-                        Box(
-                            modifier = Modifier
-                                .weight(0.2f)
-                                .padding(8.dp)
-                                .clickable { if (quranVerse != null) onEvent(HomeEvent.OnVerseClicked) },
-                            contentAlignment = Alignment.Center
-                        ) {
-                            BottomContainer(quranVerse, quranVerseFormatter) { onEvent(HomeEvent.OnLoadQuranVerse) }
-                        }
-                    }
-                }
-            } else {
-                // --- Portrait Layout ---
-                Column(modifier = Modifier.fillMaxSize()) {
-                    Box(modifier = Modifier.weight(0.37f), contentAlignment = Alignment.Center) {
-                        TopContainer(
-                            painter = painterResource(id = R.drawable.home_page_fallback),
-                            uiState = uiState,
-                            onStartCount = { onEvent(HomeEvent.OnCountDown) }
-                        )
-                    }
-                    Box(modifier = Modifier.weight(0.50f)) {
-                        DailyPrayers(uiState, isRefreshing, { onEvent(HomeEvent.OnRefresh) }) {
-                            navController.navigate(PrayerNestedGraph.PRAYER_TIMES) {
-                                popUpTo(navController.graph.findStartDestination().id) { saveState = true }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        }
-                    }
-                    Box(
-                        modifier = Modifier
-                            .weight(0.13f)
-                            .padding(8.dp)
-                            .clickable { if (quranVerse != null) onEvent(HomeEvent.OnVerseClicked) },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        BottomContainer(quranVerse, quranVerseFormatter) { onEvent(HomeEvent.OnLoadQuranVerse) }
-                    }
-                }
-            }*/
         }
     }
 }
