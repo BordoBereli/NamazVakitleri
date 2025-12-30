@@ -7,5 +7,5 @@ import com.kutluoglu.prayer.model.quran.AyahData
  *
  */
 interface IQuranRepository {
-    suspend fun getRandomVerse(): Result<AyahData>
+    suspend fun getRandomVerse(language: String): Result<AyahData>
 }

@@ -12,6 +12,7 @@ import com.kutluoglu.prayer.usecases.GetPrayerTimesUseCase
 import com.kutluoglu.prayer.usecases.GetRandomVerseUseCase
 import com.kutluoglu.prayer.usecases.location.GetSavedLocationUseCase
 import com.kutluoglu.prayer.usecases.location.SaveLocationUseCase
+import com.kutluoglu.prayer_feature.common.LanguageProvider
 import com.kutluoglu.prayer_feature.common.states.LocationUiState
 import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
 import com.kutluoglu.prayer_location.LocationService
@@ -36,7 +37,8 @@ class HomeViewModel(
         private val getSavedLocationUseCase: GetSavedLocationUseCase,
         private val calculator: PrayerLogicEngine,
         private val formatter: PrayerFormatter,
-        private val locationService: LocationService
+        private val locationService: LocationService,
+        private val languageProvider: LanguageProvider
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
     val uiState: StateFlow<HomeUiState>
@@ -77,7 +79,8 @@ class HomeViewModel(
             val currentState = _uiState.value
             when(currentState) {
                 is HomeUiState.Success -> {
-                    getRandomVerseUseCase()
+                    val language = languageProvider.getLanguageCode()
+                    getRandomVerseUseCase(language)
                         .onSuccess { verse ->
                             _uiState.value = currentState.copy(quranVerse = verse)
                         }.onFailure {

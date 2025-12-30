@@ -13,6 +13,6 @@ import org.koin.core.annotation.Factory
 class GetRandomVerseUseCase(
     private val repository: IQuranRepository
 ) {
-    suspend operator fun invoke(): Result<AyahData> =
-        repository.getRandomVerse()
+    suspend operator fun invoke(language: String): Result<AyahData> =
+        repository.getRandomVerse(language)
 }

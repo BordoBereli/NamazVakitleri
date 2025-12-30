@@ -13,6 +13,6 @@ import org.koin.core.annotation.Single
 class QuranRepository(
     private val quranDataSource: QuranDataSource
 ): IQuranRepository {
-    override suspend fun getRandomVerse(): Result<AyahData> =
-        quranDataSource.getRandomVerse()
+    override suspend fun getRandomVerse(langCode: String): Result<AyahData> =
+        quranDataSource.getRandomVerse(langCode)
 }

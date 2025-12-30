@@ -16,13 +16,18 @@ import kotlin.random.Random
 class QuranDataSource(private val httpClient: OkHttpClient) {
 
     private val json = Json { ignoreUnknownKeys = true }
+    private val supportedTranslations = mapOf(
+        "tr" to "tr.diyanet",
+        "en" to "en.sahih"
+    )
 
-    suspend fun getRandomVerse(): Result<AyahData> = withContext(Dispatchers.IO) {
+    suspend fun getRandomVerse(langCode: String): Result<AyahData> = withContext(Dispatchers.IO) {
         // The Quran has 6236 verses (ayahs)
         val randomAyahNumber = Random.Default.nextInt(1, 6237)
+        val translationIdentifier = supportedTranslations[langCode] ?: supportedTranslations["tr"]!!
         val request = Request.Builder()
             // Fetches a single random ayah in Turkish (translation by Türkiye Diyanet Başkanlığı)
-            .url("https://api.alquran.cloud/v1/ayah/$randomAyahNumber/tr.diyanet")
+            .url("https://api.alquran.cloud/v1/ayah/$randomAyahNumber/$translationIdentifier")
             .build()
 
         try {
