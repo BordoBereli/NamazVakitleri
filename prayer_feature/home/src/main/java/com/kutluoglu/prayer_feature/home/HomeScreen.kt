@@ -1,10 +1,7 @@
 package com.kutluoglu.prayer_feature.home
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
@@ -16,7 +13,6 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -25,7 +21,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -49,9 +47,7 @@ fun HomeScreen(
     onEvent: (HomeEvent) -> Unit
 ) {
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .windowInsetsPadding(WindowInsets.systemBars)
+        modifier = Modifier.fillMaxSize()
     ) {
         PermissionHandler(
             onPermissionsGranted = { onEvent(HomeEvent.OnPermissionsGranted) }
@@ -119,8 +115,9 @@ private fun PrayerContent(
     }
 
     Scaffold(
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
-        containerColor = Color.Transparent
+        modifier = Modifier.fillMaxSize(),
+        containerColor = Color.Transparent,
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { innerPadding ->
         val isRefreshing = uiState is HomeUiState.Loading
         val onPrayerTimesClick = {
@@ -131,12 +128,9 @@ private fun PrayerContent(
             }
         }
 
-        BoxWithConstraints(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-        ) {
+        BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
             val isLandscape = maxWidth > maxHeight
+            val layoutDirection = LocalLayoutDirection.current // Get the layout direction here
 
             CompositionLocalProvider(LocalIsLandscape provides isLandscape) {
                 val topContainer = @Composable { modifier: Modifier ->
@@ -179,32 +173,76 @@ private fun PrayerContent(
                 }
 
                 if (isLandscape) {
-                    Row(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        topContainer(Modifier.weight(0.4f))
-                        Column(
-                            modifier = Modifier
-                                .weight(0.6f),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            dailyPrayers(Modifier.weight(0.73f))
-                            bottomContainer(Modifier.weight(0.27f))
-                        }
-                    }
+                    LandscapeMode(
+                        innerPadding = innerPadding,
+                        layoutDirection = layoutDirection,
+                        topContainer = topContainer,
+                        dailyPrayers = dailyPrayers,
+                        bottomContainer = bottomContainer
+                    )
                 } else {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        topContainer(Modifier.weight(0.37f))
-                        dailyPrayers(Modifier.weight(0.50f))
-                        bottomContainer(Modifier.weight(0.13f))
-                    }
+                    PortraitMode(
+                        innerPadding = innerPadding,
+                        layoutDirection = layoutDirection,
+                        topContainer = topContainer,
+                        dailyPrayers = dailyPrayers,
+                        bottomContainer = bottomContainer
+                    )
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun LandscapeMode(
+        innerPadding: PaddingValues,
+        layoutDirection: LayoutDirection,
+        topContainer: @Composable (Modifier) -> Unit,
+        dailyPrayers: @Composable (Modifier) -> Unit,
+        bottomContainer: @Composable (Modifier) -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxSize()
+            .padding(
+                start = innerPadding.calculateStartPadding(layoutDirection),
+                end = innerPadding.calculateEndPadding(layoutDirection),
+                bottom = innerPadding.calculateBottomPadding()
+            ),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        topContainer(Modifier.weight(0.4f))
+        Column(
+            modifier = Modifier
+                .weight(0.6f),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            dailyPrayers(Modifier.weight(0.73f))
+            bottomContainer(Modifier.weight(0.27f))
+        }
+    }
+}
+
+@Composable
+private fun PortraitMode(
+        innerPadding: PaddingValues,
+        layoutDirection: LayoutDirection,
+        topContainer: @Composable (Modifier) -> Unit,
+        dailyPrayers: @Composable (Modifier) -> Unit,
+        bottomContainer: @Composable (Modifier) -> Unit
+) {
+    Column(
+        modifier = Modifier.fillMaxSize()
+            .padding(
+                start = innerPadding.calculateStartPadding(layoutDirection),
+                end = innerPadding.calculateEndPadding(layoutDirection),
+                bottom = innerPadding.calculateBottomPadding()
+            ),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        topContainer(Modifier.weight(0.37f))
+        dailyPrayers(Modifier.weight(0.50f))
+        bottomContainer(Modifier.weight(0.13f))
     }
 }

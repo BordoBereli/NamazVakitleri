@@ -36,7 +36,7 @@ fun MainAppScreen() {
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = {},
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
         bottomBar = {
             NavigationBar(
                 // Manually set the height to a smaller value. 56.dp is a common choice.

@@ -5,7 +5,9 @@ import org.koin.core.annotation.Factory
 import kotlin.collections.firstOrNull
 import kotlin.collections.getOrNull
 import com.kutluoglu.prayer.model.prayer.Prayer
+import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalTime
+import kotlinx.datetime.plus
 import kotlinx.datetime.toJavaLocalTime
 import java.time.Duration
 import java.time.ZoneId
@@ -31,7 +33,12 @@ class PrayerLogicEngine: PrayerLogic {
 
         // Handle period after the last prayer (Isha)
         return if (nextPrayer == null) {
-            Pair(currentPrayer, prayers.firstOrNull())
+            val nextPrayer = prayers.firstOrNull()?.let {
+                it.copy(
+                    date = it.date.plus(1, DateTimeUnit.DAY)
+                )
+            }
+            Pair(currentPrayer, nextPrayer)
         } else {
             Pair(currentPrayer, nextPrayer)
         }

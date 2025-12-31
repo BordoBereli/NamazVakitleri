@@ -2,6 +2,7 @@ package com.kutluoglu.prayer_feature.home.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -35,7 +36,8 @@ fun BottomContainer(
     if (quranVerse != null) {
         Column(
             modifier = Modifier
-                .padding(horizontal = 24.dp, vertical = 8.dp),
+                .fillMaxSize()
+                .padding(8.dp)
         ) {
             val context = LocalContext.current
             val localizedSurahName = verseFormatter.getLocalizedNameOf(

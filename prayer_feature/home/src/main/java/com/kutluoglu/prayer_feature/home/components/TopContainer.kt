@@ -57,26 +57,22 @@ fun TopContainer(
     LaunchedEffect(prayerState) { onStartCount() }
 
     Box(
-        modifier = modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         Image(
             painter = painter,
             contentDescription = stringResource(id = R.string.home_page_fallback),
-            alpha = 0.9F,
+            modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize()
+            alpha = 0.9F
         )
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color.Transparent)
         ) {
-            Box(
-                modifier = Modifier
-                    .weight(0.2F)
-                    .padding(start = 16.dp, top = 16.dp)
-            ) {
+            Box(modifier = Modifier.weight(0.3F).padding(24.dp)) {
                 locationState?.let { LocationInfoSection(locationState = it) }
             }
             Box(
