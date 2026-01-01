@@ -10,7 +10,7 @@ import com.kutluoglu.core.common.getZoneIdFromLocation
 import com.kutluoglu.core.common.now
 import com.kutluoglu.core.common.startOfMonth
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
-import com.kutluoglu.prayer.usecases.GetPrayerTimesUseCase
+import com.kutluoglu.prayer.usecases.prayer.GetPrayerTimesUseCase
 import com.kutluoglu.prayer.usecases.location.GetSavedLocationUseCase
 import com.kutluoglu.prayer_feature.common.states.LocationUiState
 import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter

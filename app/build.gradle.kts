@@ -52,8 +52,10 @@ dependencies {
     implementation(project(":prayer_navigation:core"))
     implementation(project(":prayer_feature:home"))
     implementation(project(":prayer_feature:prayertimes"))
+    implementation(project(":prayer_feature:qibla"))
     implementation(project(":prayer_location"))
     implementation(project(":prayer_cache"))
+    implementation(project(":prayer_qibla"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

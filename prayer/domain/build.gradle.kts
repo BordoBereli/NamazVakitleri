@@ -16,8 +16,9 @@ kotlin {
 dependencies {
     api(project(":core:common"))
     api(project(":prayer:model"))
-    implementation(libs.adhan)
     implementation(libs.kotlinx.datetime)
+    implementation(libs.adhan)
+    implementation(libs.kotlinx.coroutines.core)
 
     // Dependency Injection - Koin
     implementation(platform(libs.koin.bom))

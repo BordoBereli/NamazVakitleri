@@ -22,5 +22,11 @@ enum class Destination(
         "Prayer Times",
         R.drawable.prayertimes,
         "PrayerTimes Page"
+    ),
+    QIBLA(
+        PrayerNestedGraph.QIBLA,
+        "Qibla",
+        R.drawable.qibla_compass,
+        "Qibla Page"
     )
 }

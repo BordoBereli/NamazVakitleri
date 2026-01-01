@@ -1,4 +1,4 @@
-package com.kutluoglu.prayer.usecases
+package com.kutluoglu.prayer.usecases.quran
 
 import com.kutluoglu.prayer.model.quran.AyahData
 import com.kutluoglu.prayer.repository.IQuranRepository

@@ -50,3 +50,5 @@ include(":prayer_feature:common")
 include(":prayer_feature:home")
 include(":prayer_feature:prayertimes")
 
+include(":prayer_feature:qibla")
+include(":prayer_qibla")

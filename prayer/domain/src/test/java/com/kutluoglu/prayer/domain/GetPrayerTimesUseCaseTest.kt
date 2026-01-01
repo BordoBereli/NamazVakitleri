@@ -4,7 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.core.common.createBy
 import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer.repository.IPrayerRepository
-import com.kutluoglu.prayer.usecases.GetPrayerTimesUseCase
+import com.kutluoglu.prayer.usecases.prayer.GetPrayerTimesUseCase
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest

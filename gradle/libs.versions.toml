@@ -3,6 +3,7 @@ accompanistPermissions = "0.34.0"
 agp = "8.10.1"
 adhan2 = "0.0.6"
 datastorePreferences = "1.1.7"
+kotlinxCoroutinesCore = "1.8.0"
 kotlinxSerializationJson = "1.8.1"
 ksp = "2.2.20-2.0.3"
 jetbrainsKotlinJvm = "2.2.20"
@@ -57,6 +58,7 @@ androidx-material-icons-extended = { group = "androidx.compose.material", name =
 compose-navigation = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }

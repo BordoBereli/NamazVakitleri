@@ -175,7 +175,6 @@ private fun PrayerContent(
                 if (isLandscape) {
                     LandscapeMode(
                         innerPadding = innerPadding,
-                        layoutDirection = layoutDirection,
                         topContainer = topContainer,
                         dailyPrayers = dailyPrayers,
                         bottomContainer = bottomContainer
@@ -197,7 +196,6 @@ private fun PrayerContent(
 @Composable
 private fun LandscapeMode(
         innerPadding: PaddingValues,
-        layoutDirection: LayoutDirection,
         topContainer: @Composable (Modifier) -> Unit,
         dailyPrayers: @Composable (Modifier) -> Unit,
         bottomContainer: @Composable (Modifier) -> Unit

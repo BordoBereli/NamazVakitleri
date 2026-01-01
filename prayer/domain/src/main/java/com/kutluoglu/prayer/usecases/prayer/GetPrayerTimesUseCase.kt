@@ -1,4 +1,4 @@
-package com.kutluoglu.prayer.usecases
+package com.kutluoglu.prayer.usecases.prayer
 
 import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer.repository.IPrayerRepository
