@@ -72,7 +72,7 @@ fun TopContainer(
                 .fillMaxSize()
                 .background(Color.Transparent)
         ) {
-            Box(modifier = Modifier.weight(0.3F).padding(24.dp)) {
+            Box(modifier = Modifier.weight(0.3F).padding(start = 16.dp, top = 24.dp)) {
                 locationState?.let { LocationInfoSection(locationState = it) }
             }
             Box(

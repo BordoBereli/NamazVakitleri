@@ -205,8 +205,6 @@ private fun LandscapeMode(
     Row(
         modifier = Modifier.fillMaxSize()
             .padding(
-                start = innerPadding.calculateStartPadding(layoutDirection),
-                end = innerPadding.calculateEndPadding(layoutDirection),
                 bottom = innerPadding.calculateBottomPadding()
             ),
         horizontalArrangement = Arrangement.Center,
