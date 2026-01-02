@@ -1,6 +1,5 @@
 package com.kutluoglu.prayer_feature.home.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,12 +22,12 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.kutluoglu.prayer_feature.common.components.LocationInfoSection
+import com.kutluoglu.prayer_feature.common.components.TopContainer
 import com.kutluoglu.prayer_feature.common.states.TimeUiState
 import com.kutluoglu.prayer_feature.common.prayerUtils.getPrayerDrawableIdFrom
 import com.kutluoglu.prayer_feature.home.HomeUiState
@@ -36,7 +35,7 @@ import com.kutluoglu.prayer_feature.home.PrayerUiState
 import com.kutluoglu.prayer_feature.home.R
 
 @Composable
-fun TopContainer(
+fun HomeTopContainer(
         successState: HomeUiState.Success?,
         painter: Painter,
         onStartCount: () -> Unit
@@ -55,54 +54,41 @@ fun TopContainer(
 
     LaunchedEffect(prayerState) { onStartCount() }
 
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+    TopContainer(
+        painter = painter,
+        stringResourceId = R.string.home_page_fallback
     ) {
-        Image(
-            painter = painter,
-            contentDescription = stringResource(id = R.string.home_page_fallback),
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop,
-            alpha = 0.9F
-        )
-        Column(
+        Box(modifier = Modifier.weight(0.3F).padding(start = 16.dp, top = 24.dp)) {
+            locationState?.let { LocationInfoSection(locationState = it) }
+        }
+        Box(
             modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Transparent)
+                .fillMaxWidth()
+                .padding(start = 16.dp, bottom = 16.dp, end = 16.dp)
+                .weight(0.4F),
+            contentAlignment = Alignment.Center
         ) {
-            Box(modifier = Modifier.weight(0.3F).padding(start = 16.dp, top = 24.dp)) {
-                locationState?.let { LocationInfoSection(locationState = it) }
-            }
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp, bottom = 16.dp, end = 16.dp)
-                    .weight(0.4F),
-                contentAlignment = Alignment.Center
-            ) {
-                timeState?.let { TimeInfoSection(timeState = it) }
-            }
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(0.4F)
-                    .padding(start = 16.dp, end = 16.dp)
-                    .background(
-                        Color.Black.copy(alpha = 0.3F),
-                        shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
+            timeState?.let { TimeInfoSection(timeState = it) }
+        }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(0.4F)
+                .padding(start = 16.dp, end = 16.dp)
+                .background(
+                    Color.Black.copy(alpha = 0.3F),
+                    shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
+                )
+                .drawBehind {
+                    drawPath(
+                        path = defineCustomBorderShapeForCurrentPrayerContainer(),
+                        color = borderColorFromTheme.copy(alpha = 0.7F),
+                        style = Stroke(width = 1.dp.toPx())
                     )
-                    .drawBehind {
-                        drawPath(
-                            path = defineCustomBorderShapeForCurrentPrayerContainer(),
-                            color = borderColorFromTheme.copy(alpha = 0.7F),
-                            style = Stroke(width = 1.dp.toPx())
-                        )
-                    },
-                contentAlignment = Alignment.Center,
-            ) {
-                prayerState?.let { NextPrayerInfo(prayerState = it) }
-            }
+                },
+            contentAlignment = Alignment.Center,
+        ) {
+            prayerState?.let { NextPrayerInfo(prayerState = it) }
         }
     }
 }

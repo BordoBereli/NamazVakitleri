@@ -33,7 +33,7 @@ import com.kutluoglu.prayer_feature.common.LocalIsLandscape
 import com.kutluoglu.prayer_feature.home.common.QuranVerseFormatter
 import com.kutluoglu.prayer_feature.home.components.BottomContainer
 import com.kutluoglu.prayer_feature.home.components.DailyPrayers
-import com.kutluoglu.prayer_feature.home.components.TopContainer
+import com.kutluoglu.prayer_feature.home.components.HomeTopContainer
 import com.kutluoglu.prayer_feature.home.feature.VerseDetailSheetContent
 import com.kutluoglu.prayer_navigation.core.PrayerNestedGraph
 import kotlinx.coroutines.launch
@@ -135,7 +135,7 @@ private fun PrayerContent(
             CompositionLocalProvider(LocalIsLandscape provides isLandscape) {
                 val topContainer = @Composable { modifier: Modifier ->
                     Box(modifier = modifier, contentAlignment = Alignment.Center) {
-                        TopContainer(
+                        HomeTopContainer(
                             painter = painterResource(id = R.drawable.home_page_fallback),
                             successState = successState,
                             onStartCount = { onEvent(HomeEvent.OnCountDown) }
