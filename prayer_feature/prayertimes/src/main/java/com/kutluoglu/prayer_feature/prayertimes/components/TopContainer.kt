@@ -82,7 +82,7 @@ fun TopContainer(
             Box(
                 modifier = Modifier
                     .weight(0.35F)
-                    .padding(start = 16.dp, top = 16.dp)
+                    .padding(start = 16.dp, top = 24.dp)
             ) {
                 PageTitleSection()
             }

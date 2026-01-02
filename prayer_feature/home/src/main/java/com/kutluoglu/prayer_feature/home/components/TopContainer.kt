@@ -37,7 +37,6 @@ import com.kutluoglu.prayer_feature.home.R
 
 @Composable
 fun TopContainer(
-        modifier: Modifier = Modifier,
         successState: HomeUiState.Success?,
         painter: Painter,
         onStartCount: () -> Unit

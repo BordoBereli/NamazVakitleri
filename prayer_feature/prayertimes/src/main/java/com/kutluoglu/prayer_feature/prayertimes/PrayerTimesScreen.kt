@@ -29,21 +29,19 @@ fun PayerTimesScreen(
     modifier: Modifier = Modifier,
     uiState: PrayerTimesUiState
 ){
-    // BoxWithConstraints gives us the screen dimensions to decide the layout.
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
         val isLandscape = maxWidth > maxHeight
 
         if (isLandscape) {
-            // In Landscape, use a Row to place items side-by-side.
             Row(modifier = Modifier.fillMaxSize()) {
                 TopContainer(
-                    modifier = Modifier.weight(0.43f), // Left side takes 40% of the width
+                    modifier = Modifier.weight(0.43f),
                     painter = painterResource(id = R.drawable.image_prayers),
                     uiState = uiState
                 )
                 Card(
                     modifier = Modifier
-                        .weight(0.57f) // Right side takes 60% of the width
+                        .weight(0.57f)
                         .fillMaxHeight()
                         .padding(8.dp),
                     shape = RoundedCornerShape(24.dp),
@@ -53,17 +51,16 @@ fun PayerTimesScreen(
                 }
             }
         } else {
-            // In Portrait, use the original Box layout.
             Box(modifier = Modifier.fillMaxSize()) {
                 TopContainer(
-                    modifier = Modifier.fillMaxHeight(0.3f), // Top takes 30% of the height
+                    modifier = Modifier.fillMaxHeight(0.35f), // Top takes 30% of the height
                     painter = painterResource(id = R.drawable.image_prayers),
                     uiState = uiState
                 )
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .fillMaxHeight(0.75f) // The card column starts from the bottom and overlaps a bit
+                        .fillMaxHeight(0.7f) // The card column starts from the bottom and overlaps a bit
                         .align(Alignment.BottomCenter)
                 ) {
                     Card(
