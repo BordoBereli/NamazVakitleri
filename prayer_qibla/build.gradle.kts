@@ -39,6 +39,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:ui"))
     implementation(project(":prayer:model"))
     implementation(project(":prayer:data"))
     implementation(libs.androidx.core.ktx)

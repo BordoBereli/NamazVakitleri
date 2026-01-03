@@ -13,14 +13,15 @@ import org.koin.core.annotation.Single
 
 @Single
 class QiblaServiceImp(
-    private val qiblaService: QiblaDataStore
+    private val qiblaDataStore: QiblaDataStore
 ): QiblaService {
-    override suspend fun startCompass() = qiblaService.startCompass()
+    override fun getQiblaDirection(
+            latitude: Double,
+            longitude: Double
+    ): Flow<QiblaState> = qiblaDataStore.getQiblaDirection(latitude, longitude)
 
-    override suspend fun stopCompass() = qiblaService.stopCompass()
+    override fun start() = qiblaDataStore.start()
 
-    override suspend fun calculateQiblaBearing(latitude: Double, longitude: Double) =
-        qiblaService.calculateQiblaBearing(latitude, longitude)
+    override fun stop() = qiblaDataStore.stop()
 
-    override fun observeSensorStateAs(): Flow<QiblaState> = qiblaService.observeSensorStateAs()
 }

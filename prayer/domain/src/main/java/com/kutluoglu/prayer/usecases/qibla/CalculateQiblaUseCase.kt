@@ -7,18 +7,8 @@ import org.koin.core.annotation.Factory
 class CalculateQiblaUseCase(
     private val qiblaService: QiblaService
 ) {
+    fun observeQiblaDirection(latitude: Double, longitude: Double) =
+        qiblaService.getQiblaDirection(latitude, longitude)
 
-    suspend operator fun invoke() {
-        qiblaService.startCompass()
-    }
-
-    suspend fun stopCompass() {
-        qiblaService.stopCompass()
-    }
-
-    suspend fun calculateQiblaBearing(latitude: Double, longitude: Double) {
-        qiblaService.calculateQiblaBearing(latitude, longitude)
-    }
-
-    fun observeSensorStateAs() = qiblaService.observeSensorStateAs()
+    fun stop() = qiblaService.stop()
 }

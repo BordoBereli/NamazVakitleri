@@ -5,7 +5,7 @@ package com.kutluoglu.prayer_qibla
  *
  */
 data class SensorState(
-    val accuracy: Int = -1,
+    val sensorAccuracy: Int = -1,
     val deviceAzimuth: Float = 0.0f,
     val qiblaAngle: Float = 0.0f,
     val qiblaBearing: Double = 0.0

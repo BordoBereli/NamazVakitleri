@@ -9,8 +9,7 @@ import kotlinx.coroutines.flow.Flow
  *
  */
 interface QiblaService {
-    suspend fun startCompass()
-    suspend fun stopCompass()
-    suspend fun calculateQiblaBearing(latitude: Double, longitude: Double)
-    fun observeSensorStateAs(): Flow<QiblaState>
+    fun getQiblaDirection(latitude: Double, longitude: Double): Flow<QiblaState>
+    fun start()
+    fun stop()
 }

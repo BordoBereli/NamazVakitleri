@@ -1,13 +1,17 @@
 package com.kutluoglu.prayer_feature.qibla
 
 import android.hardware.SensorManager
+import android.util.Log
+import android.util.Log.e
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kutluoglu.prayer.usecases.qibla.CalculateQiblaUseCase
 import com.kutluoglu.prayer_location.LocationService
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -28,7 +32,6 @@ class QiblaViewModel(
     private val locationService: LocationService,
     private val calculateQiblaUseCase: CalculateQiblaUseCase
 ) : ViewModel() {
-    private val qiblaState = calculateQiblaUseCase.observeSensorStateAs()
     private val _uiState = MutableStateFlow(QiblaUiState())
     val uiState: StateFlow<QiblaUiState> = _uiState
         .stateIn(
@@ -37,41 +40,58 @@ class QiblaViewModel(
             initialValue = QiblaUiState()
         )
 
-    init {
-        calculateQiblaDirection()
+    private var observationJob: Job? = null
+
+    fun onEvent(event: QiblaEvent) {
+        when (event) {
+            QiblaEvent.OnStart -> startQiblaObservation()
+            QiblaEvent.OnStop -> stopQiblaObservation()
+        }
     }
 
-    private fun calculateQiblaDirection() {
-        viewModelScope.launch {
+    private fun startQiblaObservation() {
+        if (observationJob?.isActive == true) return
+
+        observationJob = viewModelScope.launch {
             try {
                 val location = locationService.getCurrentLocation()
                 location?.let {
-                    calculateQiblaUseCase.invoke()
-                    calculateQiblaUseCase.calculateQiblaBearing(
-                        location.latitude, location.longitude)
-                    qiblaState.collect { currQiblaState ->
-                        _uiState.update {
-                            it.copy(
-                                qiblaAngle = currQiblaState.qiblaAngle,
-                                deviceAzimuth = currQiblaState.deviceAzimuth,
-                                sensorAccuracy = currQiblaState.accuracy,
-                                qiblaBearing = currQiblaState.qiblaBearing,
-                                isLocationAvailable = true,
-                                error = null
-                            )
+                    calculateQiblaUseCase.observeQiblaDirection(it.latitude, it.longitude)
+                        .collect { currQiblaState ->
+                            _uiState.update {
+                                it.copy(
+                                    qiblaAngle = currQiblaState.qiblaAngle,
+                                    deviceAzimuth = currQiblaState.deviceAzimuth,
+                                    sensorAccuracy = currQiblaState.sensorAccuracy,
+                                    qiblaBearing = currQiblaState.qiblaBearing,
+                                    isLocationAvailable = true,
+                                    error = null
+                                )
+                            }
                         }
-                    }
-                }
+                } ?: throw Exception("Location not found")
             } catch (e: Exception) {
-                _uiState.update { it.copy(error = e.message, isLocationAvailable = false) }
+                if (e is kotlinx.coroutines.CancellationException) {
+                    // Job iptal edildiğinde bu bir hata değildir, log'a yazıp geçebiliriz.
+                    Log.i("QiblaViewModel", "Observation Job was cancelled as expected.")
+                } else {
+                    // Diğer hataları log'layıp UI'a bildirelim.
+                    Log.e("QiblaViewModel", "Error observing Qibla state", e)
+                    _uiState.update { it.copy(error = e.message, isLocationAvailable = false) }
+                }
             }
         }
     }
 
+    private fun stopQiblaObservation() {
+        observationJob?.cancel()
+        observationJob = null
+        calculateQiblaUseCase.stop()
+    }
+
+
     override fun onCleared() {
         super.onCleared()
-        viewModelScope.launch {
-            calculateQiblaUseCase.stopCompass()
-        }
+        stopQiblaObservation()
     }
 }
