@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.kutluoglu.prayer_feature.qibla.QiblaUiState
+import kotlin.math.abs
 import kotlin.math.roundToInt
 
 @Composable
@@ -32,6 +33,11 @@ fun QiblaInfoSection(
 
         // 2. Direction
         InfoRow(title = "Yön", value = "${uiState.qiblaBearing.roundToInt()}° Kuzey")
+        InfoRow(title = "Kıble Açısı", value = if(abs(uiState.qiblaAngle) < 4.9F) {
+            "${0}° Kuzey"
+        } else {
+            "${uiState.qiblaAngle.roundToInt()}° Kuzey"
+        })
 
         // 3. Measurement
         val accuracyText = when(uiState.sensorAccuracy) {

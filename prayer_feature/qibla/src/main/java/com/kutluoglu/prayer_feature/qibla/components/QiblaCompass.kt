@@ -1,6 +1,13 @@
 package com.kutluoglu.prayer_feature.qibla.components
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.graphics.Paint
+import android.graphics.Typeface
+import android.os.Build
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.os.VibratorManager
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -11,7 +18,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -22,20 +34,41 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.hapticfeedback.HapticFeedback
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.getSystemService
 import com.kutluoglu.prayer_feature.qibla.R
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
 
+@SuppressLint("ObsoleteSdkInt")
 @Composable
 fun QiblaCompass(
         deviceAzimuth: Float,
         qiblaAngle: Float,
         modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+    val vibrator = remember(context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val vibratorManager =
+                context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as? VibratorManager
+            vibratorManager?.defaultVibrator
+        } else {
+            @Suppress("DEPRECATION")
+            context.getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator
+        }
+    }
+    var hasVibrated by remember { mutableStateOf(false) }
+
+    val acceptableDifference by remember { mutableFloatStateOf(10.0f) }
+
     val compassRotation by animateFloatAsState(
         targetValue = -deviceAzimuth,
         animationSpec = tween(durationMillis = 300),
@@ -49,7 +82,7 @@ fun QiblaCompass(
     )
 
     val angleDifference = abs(qiblaAngle)
-    val isAligned = angleDifference < 5.0f
+    val isAligned = angleDifference < acceptableDifference
 
     val arrowColor by animateColorAsState(
         targetValue = if (isAligned) Color.Green else MaterialTheme.colorScheme.primary,
@@ -58,10 +91,30 @@ fun QiblaCompass(
     )
 
     val arrowScale by animateFloatAsState(
-        targetValue = if (isAligned) 1.1f else 0.8f,
+        targetValue = if (isAligned) {
+            0.8f + (1 - (angleDifference / acceptableDifference)) * 0.5f
+        } else 0.8f,
         animationSpec = tween(durationMillis = 500),
         label = "arrow_scale"
     )
+
+    // Yön hizalandığında titreşim efekti uygula
+    LaunchedEffect(isAligned) {
+        if (isAligned && !hasVibrated) {
+            vibrator?.let { v ->
+                val vibrationDuration = 200L
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    v.vibrate(VibrationEffect.createOneShot(vibrationDuration, VibrationEffect.DEFAULT_AMPLITUDE))
+                } else {
+                    @Suppress("DEPRECATION")
+                    v.vibrate(vibrationDuration)
+                }
+                hasVibrated = true
+            }
+        } else if (!isAligned) {
+            hasVibrated = false
+        }
+    }
 
     Box(
         modifier = modifier
@@ -109,7 +162,7 @@ private fun DrawScope.drawCompassDial(textColor: Color, majorColor: Color) {
         textSize = 18.sp.toPx() // Harfleri biraz daha belirgin yapalım
         color = majorColor.toArgb()
         textAlign = Paint.Align.CENTER
-        typeface = android.graphics.Typeface.create(android.graphics.Typeface.DEFAULT, android.graphics.Typeface.BOLD)
+        typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
     }
 
     (0 until 360 step 10).forEach { angle ->
@@ -130,7 +183,7 @@ private fun DrawScope.drawCompassDial(textColor: Color, majorColor: Color) {
         // Ana yön çizgilerini daha belirgin yapalım
         val color = if (isMajorLine) majorColor else Color.Gray
 
-        // --- YENİ DEĞİŞİKLİK: Açıyı -90 derece kaydırıyoruz ---
+        // --- Açıyı -90 derece kaydırıyoruz ---
         // Canvas'ta 0 derece sağ tarafı (Doğu), 270 derece üst tarafı (Kuzey) gösterir.
         // Bu yüzden tüm hesaplamaları 90 derece sola kaydırarak 0'ın üste gelmesini sağlıyoruz.
         val angleInRad = Math.toRadians(angle.toDouble() - 90)
@@ -151,7 +204,7 @@ private fun DrawScope.drawCompassDial(textColor: Color, majorColor: Color) {
             cap = StrokeCap.Round
         )
 
-        // --- YENİ DEĞİŞİKLİK: Ana Yön Harflerini Çiz (N, E, S, W) ---
+        // --- Ana Yön Harflerini Çiz (N, E, S, W) ---
         if (isMajorLine) {
             val text = when (angle) {
                 0 -> "K"   // Kuzey (North)

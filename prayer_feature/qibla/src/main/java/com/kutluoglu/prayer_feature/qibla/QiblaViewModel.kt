@@ -57,7 +57,7 @@ class QiblaViewModel(
                 val location = locationService.getCurrentLocation()
                 location?.let {
                     calculateQiblaUseCase.observeQiblaDirection(it.latitude, it.longitude)
-                        .collect { currQiblaState ->
+                        .collectLatest { currQiblaState ->
                             _uiState.update {
                                 it.copy(
                                     qiblaAngle = currQiblaState.qiblaAngle,
