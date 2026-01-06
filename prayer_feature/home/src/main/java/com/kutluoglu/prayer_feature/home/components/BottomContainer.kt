@@ -56,7 +56,6 @@ fun BottomContainer(
                 overflow = TextOverflow.Ellipsis
             )
             Spacer(modifier = Modifier.height(4.dp))
-            // The surah name and verse number
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 text = verseInfo,
