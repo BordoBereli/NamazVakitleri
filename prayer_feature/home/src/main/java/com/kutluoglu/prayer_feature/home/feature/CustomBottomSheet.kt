@@ -4,6 +4,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,14 +19,21 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 @Composable
 fun CustomBottomSheet(
@@ -33,60 +41,95 @@ fun CustomBottomSheet(
         onDismiss: () -> Unit,
         content: @Composable () -> Unit
 ) {
-    // animate*AsState, görünürlük değişimini yumuşak bir animasyonla yapmamızı sağlar.
-    val animatedVisibility by animateFloatAsState(
+    val scope = rememberCoroutineScope()
+
+    // 1. Arka planın görünürlük animasyonu
+    val animatedAlpha by animateFloatAsState(
         targetValue = if (isVisible) 1f else 0f,
-        animationSpec = tween(durationMillis = 300),
-        label = "custom_bs_visibility"
+        animationSpec = tween(100),
+        label = "background_alpha"
     )
 
-    if (animatedVisibility > 0f) {
-        // Hem karartılmış arka planı hem de Card'ı içeren bir ana Box.
-        Box(
-            modifier = Modifier.fillMaxSize()
-        ) {
+    // 2. Sheet'in dikey pozisyonunu (offset) tutan state
+    var offsetY by remember { mutableFloatStateOf(0f) }
+
+    // 3. Sheet'in tam yüksekliğini ölçmek için
+    var sheetHeight by remember { mutableFloatStateOf(0f) }
+
+    // 4. Offset'i yumuşak bir şekilde animasyona dönüştüren state
+    val animatedOffsetY by animateFloatAsState(
+        targetValue = offsetY,
+        animationSpec = tween(durationMillis = 100),
+        label = "offset_y_animation"
+    )
+
+    // 5. `isVisible` değiştiğinde animasyonu tetikle
+    LaunchedEffect(isVisible, sheetHeight) {
+        if (sheetHeight > 0) { // Sadece yükseklik bilindiğinde çalış
+            offsetY = if (isVisible) 0f else sheetHeight
+        }
+    }
+
+    if (animatedAlpha > 0f) {
+        Box(modifier = Modifier.fillMaxSize()) {
             // Karartılmış arka plan
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.5f * animatedVisibility))
+                    .alpha(animatedAlpha * 0.5f) // Alfa değerini yarıya indirerek daha şeffaf yap
+                    .background(Color.Black)
                     .clickable(
                         interactionSource = remember { MutableInteractionSource() },
-                        indication = null // Tıklama efektini kaldır
-                    ) { onDismiss() }
+                        indication = null,
+                        onClick = { onDismiss() }
+                    )
             )
 
-            // Card artık bu dış Box'ın içinde hizalanabilir.
+            // İçeriği taşıyan Card
             Card(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
-                    .padding(horizontal = 8.dp)
-                    // offset ile aşağıdan yukarıya kayma animasyonu
-                    .offset(y = (300).dp * (1 - animatedVisibility)), // Kayma mesafesini dp ile çarp
+                    .onSizeChanged { sheetHeight = it.height.toFloat() }
+                    .offset { IntOffset(0, animatedOffsetY.roundToInt()) }
+                    // 6. Sürükleme mantığı
+                    .pointerInput(Unit) {
+                        detectVerticalDragGestures(
+                            onDragEnd = {
+                                scope.launch {
+                                    // Eğer sheet'in üçte birinden fazlası sürüklendiyse kapat
+                                    if (offsetY > sheetHeight / 3) {
+                                        onDismiss()
+                                    } else {
+                                        // Değilse, geri yerine oturt
+                                        offsetY = 0f
+                                    }
+                                }
+                            }
+                        ) { change, dragAmount ->
+                            change.consume()
+                            // Sadece aşağı doğru sürüklemeye izin ver ve yeni ofseti hesapla
+                            val newOffsetY = (offsetY + dragAmount).coerceAtLeast(0f)
+                            offsetY = newOffsetY
+                        }
+                    },
                 shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
             ) {
                 Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp),
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    // 1. Tutma Çubuğu (Drag Handle / Grabber)
                     Box(
                         modifier = Modifier
                             .padding(top = 12.dp)
                             .width(32.dp)
                             .height(4.dp)
                             .clip(CircleShape)
-                            .background(
-                                MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
-                            )
+                            .background(MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f))
                     )
-
-                    Spacer(modifier = Modifier.height(16.dp)) // Tutma çubuğu ile içerik arasına boşluk
+                    Spacer(modifier = Modifier.height(16.dp))
                     content()
-                    Spacer(modifier = Modifier.height(8.dp)) // İçeriğin altında boşluk
+                    Spacer(modifier = Modifier.height(16.dp))
                 }
             }
         }

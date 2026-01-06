@@ -144,7 +144,6 @@ private fun PrayerContent(
                     val bottomContainer = @Composable { modifier: Modifier ->
                         Box(
                             modifier = modifier
-                                .padding(8.dp)
                                 .clickable(enabled = successState?.quranVerse != null) {
                                     onEvent(HomeEvent.OnVerseClicked)
                                 },
@@ -208,8 +207,8 @@ private fun LandscapeMode(
             modifier = Modifier.weight(0.6f),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            dailyPrayers(Modifier.weight(0.73f))
-            bottomContainer(Modifier.weight(0.27f))
+            dailyPrayers(Modifier.weight(0.8f))
+            bottomContainer(Modifier.weight(0.2f))
         }
     }
 }

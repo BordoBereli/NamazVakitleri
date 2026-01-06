@@ -58,14 +58,16 @@ fun HomeTopContainer(
         painter = painter,
         stringResourceId = R.string.home_page_fallback
     ) {
-        Box(modifier = Modifier.weight(0.3F).padding(start = 16.dp, top = 24.dp)) {
+        Box(modifier = Modifier.weight(0.3F)
+            .padding(start = 16.dp, top = 24.dp)
+        ) {
             locationState?.let { LocationInfoSection(locationState = it) }
         }
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 16.dp, bottom = 16.dp, end = 16.dp)
-                .weight(0.4F),
+                .weight(0.5F),
             contentAlignment = Alignment.Center
         ) {
             timeState?.let { TimeInfoSection(timeState = it) }
