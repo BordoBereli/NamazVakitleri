@@ -83,7 +83,6 @@ private fun PrayerContent(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
-    val view = LocalView.current.display
 
     val successState = uiState as? HomeUiState.Success
 
@@ -116,19 +115,6 @@ private fun PrayerContent(
             }
         }
     }
-
-    // --- Modal Bottom Sheet Logic ---
-    /*val sheetState = rememberModalBottomSheetState()
-    if (isVerseSheetVisible) {
-        ModalBottomSheet(
-            onDismissRequest = { onEvent(HomeEvent.OnVerseDetailDismissed) },
-            sheetState = sheetState
-        ) {
-            quranVerse?.let { verse ->
-                VerseDetailSheetContent(verse = verse, verseFormatter = quranVerseFormatter)
-            }
-        }
-    }*/
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
