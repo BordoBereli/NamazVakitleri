@@ -25,6 +25,7 @@ import com.kutluoglu.prayer_navigation.core.Screen
 import androidx.navigation.compose.navigation
 import com.kutluoglu.prayer_feature.prayertimes.navigation.prayerTimesGraph
 import com.kutluoglu.prayer_feature.qibla.navigation.qiblaGraph
+import com.kutluoglu.prayer_feature.settings.settingsGraph
 
 
 @Composable
@@ -93,6 +94,12 @@ fun MainAppScreen() {
                 startDestination = Screen.QiblaScreen.route
             ) {
                 qiblaGraph(navController)
+            }
+            navigation(
+                route = PrayerNestedGraph.SETTINGS,
+                startDestination = Screen.SettingsScreen.route
+            ) {
+                settingsGraph(navController)
             }
         }
     }
