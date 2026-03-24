@@ -3,7 +3,7 @@ package com.kutluoglu.namazvakitleri
 import android.app.Activity
 import android.app.Application
 import android.os.Bundle
-import com.kutluoglu.core.ui.theme.common.DisplayProvider
+import com.kutluoglu.core.designsystem.utils.DisplayProvider
 import org.koin.android.ext.android.get
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -17,7 +17,7 @@ class NamazVakitleriApplication : Application() {
         startKoin {
             androidLogger()
             androidContext(this@NamazVakitleriApplication)
-            modules(configurationModules)
+            modules(configurationModules + appModule)
         }
         setupActivityLifecycleCallbacks()
     }

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="prayers">
+        <item>الفجر</item>
+        <item>الشروق</item>
+        <item>الظهر</item>
+        <item>العصر</item>
+        <item>المغرب</item>
+        <item>العشاء</item>
+    </string-array>
+    <string name="unknown_error_message">خطأ غير معروف</string>
+    <string name="permission_required">الإذن مطلوب</string>
+    <string name="settings_dialog_info">لعرض أوقات الصلاة بناءً على موقعك، نحتاج إلى إذنك. يرجى منح الإذن في إعدادات التطبيق.</string>
+    <string name="open_settings">فتح الإعدادات</string>
+    <string name="location_permission_needed">موقع الإذن مطلوب</string>
+    <string name="permission_grant_message">يتم حساب أوقات الصلاة بناءً على موقعك الحالي. يرجى منح الإذن للمتابعة.</string>
+    <string name="grant_permission">منح الإذن</string>
+    <string name="select_location">اختر الموقع</string>
+    <string name="back">عودة</string>
+    <string name="preset_cities">المدن المحددة مسبقاً</string>
+    <string name="search">بحث</string>
+    <string name="search_city">ابحث عن مدينة…</string>
+    <string name="clear">مسح</string>
+    <string name="no_results_found">لم يتم العثور على نتائج</string>
+    <string name="select_calculation_method">اختر طريقة الحساب</string>
+    <string name="calculation_method">طريقة الحساب</string>
+    <string name="select_language">اختر اللغة</string>
+    <string name="language">اللغة</string>
+    <string name="hijri_adjustment">تعديل الهجري</string>
+    <string name="days">أيام</string>
+    <string name="settings">الإعدادات</string>
+    <string name="location">الموقع</string>
+    <string name="retry">إعادة المحاولة</string>
+    <string name="error_loading_cities">فشل تحميل المدن</string>
+    <string name="error_search_failed">فشل البحث</string>
+    <string name="no_internet">لا يوجد اتصال بالإنترنت</string>
+    <string name="recent_searches">عمليات البحث الأخيرة</string>
+    <string name="clear_all">مسح الكل</string>
+    <string name="sort">ترتيب</string>
+</resources>

@@ -4,11 +4,10 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.ksp)
 }
 
 android {
-    namespace = "com.kutluoglu.prayer_feature.qibla"
+    namespace = "com.kutluoglu.prayer_feature.settings"
     compileSdk = 36
 
     defaultConfig {
@@ -46,12 +45,13 @@ android {
 
 dependencies {
     //region --- Project Dependencies ---
-    implementation(project(":core:ui"))
+    implementation(project(":core:designsystem"))
     implementation(project(":core:common"))
     implementation(project(":prayer_feature:common"))
     implementation(project(":prayer:domain"))
     implementation(project(":prayer_navigation:core"))
     implementation(project(":prayer_location"))
+    implementation(project(":prayer_settings"))
     //endregion
 
     implementation(libs.androidx.core.ktx)
@@ -80,14 +80,16 @@ dependencies {
     //region Coil
     implementation(libs.coil)
     //endregion
+    
+    //region OSMDroid
+    implementation(libs.osmdroid)
+    //endregion
 
     //region Koin
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.core)
     implementation(libs.koin.android)
     implementation(libs.koin.android.compose)
-    implementation(libs.koin.annotations)
-    ksp(libs.koin.ksp)
     //endregion
 
     //region --- Default Testing Dependencies ---

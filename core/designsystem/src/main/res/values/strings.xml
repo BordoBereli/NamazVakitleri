@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="prayers">
+        <item>Fajr</item>
+        <item>Sunrise</item>
+        <item>Dhuhr</item>
+        <item>Asr</item>
+        <item>Maghrib</item>
+        <item>Isha</item>
+    </string-array>
+    <string name="unknown_error_message">Unknown error</string>
+    <string name="permission_required">Permission Required</string>
+    <string name="settings_dialog_info">To provide location-based prayer times, we need your permission. Please grant it in the app settings.</string>
+    <string name="open_settings">Open Settings</string>
+    <string name="location_permission_needed">Location Permission Needed</string>
+    <string name="permission_grant_message">Prayer times are calculated based on your current location. Please grant the permission to continue.</string>
+    <string name="grant_permission">Grant Permission</string>
+    <string name="back">Back</string>
+    <string name="settings">Settings</string>
+    <string name="select_calculation_method">Select Calculation Method</string>
+    <string name="calculation_method">Calculation Method</string>
+    <string name="hijri_adjustment">Hijri Adjustment</string>
+    <string name="select_language">Select Language</string>
+    <string name="language">Language</string>
+    <string name="location">Location</string>
+    <string name="select_location">Select Location</string>
+    <string name="search">Search</string>
+    <string name="search_city">Search city</string>
+    <string name="search_country">Search country</string>
+    <string name="filter">Filter</string>
+    <string name="sort">Sort</string>
+    <string name="clear">Clear</string>
+    <string name="clear_all">Clear All</string>
+    <string name="retry">Retry</string>
+    <string name="use_my_location">Use My Location</string>
+    <string name="preset_cities">Preset Cities</string>
+    <string name="all_provinces">All Provinces</string>
+    <string name="popular_countries">Popular Countries</string>
+    <string name="other_countries">Other Countries</string>
+    <string name="getting_location">Getting location...</string>
+    <string name="tap_map_to_select">Tap on map to select location</string>
+    <string name="selected_location">Selected Location</string>
+    <string name="confirm">Confirm</string>
+    <string name="recent_searches">Recent Searches</string>
+    <string name="no_results_found">No results found</string>
+    <string name="error_loading_cities">Error loading cities</string>
+    <string name="error_search_failed">Search failed</string>
+    <string name="no_internet">No internet connection</string>
+    <string name="days">days</string>
+    <string name="province_capital">Province Capital</string>
+    <string name="days_adjustment">Days Adjustment</string>
+    <string name="map">Map</string>
+    <string name="districts">Districts</string>
+    <string name="clear_cache_confirmation">This will clear the cache. Do you want to continue?</string>
+</resources>

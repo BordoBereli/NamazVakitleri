@@ -3,15 +3,67 @@ package com.kutluoglu.prayer_feature.settings
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.kutluoglu.prayer_feature.settings.calculation.CalculationMethodRoute
+import com.kutluoglu.prayer_feature.settings.hijri.HijriAdjustmentRoute
+import com.kutluoglu.prayer_feature.settings.language.LanguageSelectionRoute
+import com.kutluoglu.prayer_feature.settings.location.LocationSelectionRoute
 import com.kutluoglu.prayer_navigation.core.Screen
-
-/**
- * Created by F.K. on 10.01.2026.
- *
- */
+import com.kutluoglu.prayer_settings.domain.model.City
 
 fun NavGraphBuilder.settingsGraph(navController: NavController) {
     composable(Screen.SettingsScreen.route) {
-        SettingsRoute()
+        SettingsRoute(
+            onNavigateToLocationSelection = {
+                navController.navigate(Screen.LocationSelectionScreen.route)
+            },
+            onNavigateToCalculationMethod = {
+                navController.navigate(Screen.CalculationMethodScreen.route)
+            },
+            onNavigateToHijriAdjustment = {
+                navController.navigate(Screen.HijriAdjustmentScreen.route)
+            },
+            onNavigateToLanguage = {
+                navController.navigate(Screen.LanguageSelectionScreen.route)
+            }
+        )
+    }
+
+    composable(Screen.LocationSelectionScreen.route) {
+        LocationSelectionRoute(
+            onNavigateBack = { navController.popBackStack() },
+            onCitySelected = { city ->
+                navController.popBackStack()
+            }
+        )
+    }
+
+    composable(Screen.CalculationMethodScreen.route) {
+        CalculationMethodRoute(
+            currentMethod = "",
+            onNavigateBack = { navController.popBackStack() },
+            onMethodSelected = { method ->
+                navController.popBackStack()
+            }
+        )
+    }
+
+    composable(Screen.HijriAdjustmentScreen.route) {
+        HijriAdjustmentRoute(
+            currentAdjustment = 0,
+            onNavigateBack = { navController.popBackStack() },
+            onAdjustmentSelected = { adjustment ->
+                navController.popBackStack()
+            }
+        )
+    }
+
+    composable(Screen.LanguageSelectionScreen.route) {
+        LanguageSelectionRoute(
+            currentLanguage = "",
+            onNavigateBack = { navController.popBackStack() },
+            onLanguageSelected = { language ->
+                navController.popBackStack()
+            }
+        )
     }
 }

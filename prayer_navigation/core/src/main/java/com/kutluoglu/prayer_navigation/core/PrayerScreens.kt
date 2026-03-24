@@ -10,4 +10,8 @@ sealed class Screen(val route: String) {
     data object PayerTimesScreen: Screen("prayer_times")
     data object QiblaScreen: Screen("qibla")
     data object SettingsScreen: Screen("settings")
+    data object LocationSelectionScreen: Screen("location_selection")
+    data object CalculationMethodScreen: Screen("calculation_method")
+    data object LanguageSelectionScreen: Screen("language_selection")
+    data object HijriAdjustmentScreen: Screen("hijri_adjustment")
 }

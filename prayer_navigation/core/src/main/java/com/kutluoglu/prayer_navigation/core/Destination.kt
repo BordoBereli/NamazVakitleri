@@ -30,9 +30,9 @@ enum class Destination(
         "Qibla Page"
     ),
     SETTINGS(
-    PrayerNestedGraph.SETTINGS,
-    "Settings",
-    R.drawable.settings,
-    "Settings Page"
+        PrayerNestedGraph.SETTINGS,
+        "Settings",
+        R.drawable.settings,
+        "Settings Page"
     )
 }

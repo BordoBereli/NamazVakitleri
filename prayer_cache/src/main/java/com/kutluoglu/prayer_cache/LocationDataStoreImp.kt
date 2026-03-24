@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.kutluoglu.prayer.data.model.LocationDataModel
 import com.kutluoglu.prayer.data.repository.location.LocationDataStore
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.json.Json
@@ -54,5 +55,22 @@ class LocationDataStoreImp(
                     }
                 }
             }.firstOrNull()
+    }
+
+    /**
+     * Observes location changes as a Flow.
+     * Emits the saved location whenever it changes.
+     * Returns null if no location has been saved yet.
+     */
+    override fun observeLocation(): Flow<LocationDataModel?> {
+        return context.dataStore.data.map { preferences ->
+            preferences[KEY_LOCATION_DATA]?.let { jsonString ->
+                try {
+                    Json.Default.decodeFromString<LocationDataModel>(jsonString)
+                } catch (e: Exception) {
+                    null
+                }
+            }
+        }
     }
 }

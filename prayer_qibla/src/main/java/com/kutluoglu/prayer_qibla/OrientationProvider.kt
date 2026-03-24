@@ -2,7 +2,7 @@ package com.kutluoglu.prayer_qibla
 
 import android.hardware.SensorManager
 import android.view.Surface
-import com.kutluoglu.core.ui.theme.common.DisplayProvider
+import com.kutluoglu.core.designsystem.utils.DisplayProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow

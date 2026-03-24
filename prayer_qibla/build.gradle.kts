@@ -39,7 +39,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:ui"))
+    implementation(project(":core:designsystem"))
     implementation(project(":prayer:model"))
     implementation(project(":prayer:data"))
     implementation(libs.androidx.core.ktx)
@@ -53,6 +53,8 @@ dependencies {
     //endregion
 
     testImplementation(libs.junit)
+    testImplementation(platform(libs.junit.bom))
+    testImplementation("org.junit.jupiter:junit-jupiter-engine")
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }

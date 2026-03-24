@@ -26,8 +26,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.kutluoglu.core.ui.theme.components.ErrorMessage
-import com.kutluoglu.core.ui.theme.components.LoadingIndicator
+import com.kutluoglu.core.designsystem.components.ErrorMessage
+import com.kutluoglu.core.designsystem.components.LoadingIndicator
 import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer_feature.common.LocalIsLandscape
 import com.kutluoglu.prayer_feature.home.HomeUiState

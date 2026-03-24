@@ -1,6 +1,7 @@
 package com.kutluoglu.prayer.repository
 
 import com.kutluoglu.prayer.model.location.LocationData
+import kotlinx.coroutines.flow.Flow
 
 
 /**
@@ -10,4 +11,5 @@ import com.kutluoglu.prayer.model.location.LocationData
 interface LocationRepository {
     suspend fun saveLocation(locationData: LocationData)
     suspend fun getSavedLocation(): Result<LocationData>
+    fun observeLocation(): Flow<LocationData>
 }

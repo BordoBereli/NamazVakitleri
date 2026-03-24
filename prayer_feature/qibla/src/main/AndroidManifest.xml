@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.kutluoglu.prayer_feature.qibla">
+
+    <!-- Cihazın pusula donanımına sahip olmasını önerir -->
+    <uses-feature android:name="android.hardware.sensor.compass" android:required="true" />
+    <!-- Titreşim özelliğini etkinleştirdik -->
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+</manifest>
