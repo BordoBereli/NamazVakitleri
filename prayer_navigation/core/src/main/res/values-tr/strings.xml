@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="navigation_home">Ana Sayfa</string>
+    <string name="navigation_prayer_times">Vakitler</string>
+    <string name="navigation_qibla">Kible</string>
+    <string name="navigation_settings">Ayarlar</string>
+</resources>

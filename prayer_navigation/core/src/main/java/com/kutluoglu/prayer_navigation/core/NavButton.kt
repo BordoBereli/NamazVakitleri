@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -19,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 
@@ -52,7 +54,7 @@ fun RowScope.NavButton(
         border = border // Apply the border here
     ) {
         Column(
-            modifier = Modifier.fillMaxSize(), // Center content within the Surface
+            modifier = Modifier.fillMaxSize().padding(2.dp), // Center content within the Surface
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -62,7 +64,7 @@ fun RowScope.NavButton(
                 tint = contentColor // Use the dynamic color
             )
             Text(
-                text = destination.label,
+                text = stringResource(destination.label),
                 color = contentColor, // Use the dynamic color
                 style = MaterialTheme.typography.labelSmall,
                 maxLines = 1
