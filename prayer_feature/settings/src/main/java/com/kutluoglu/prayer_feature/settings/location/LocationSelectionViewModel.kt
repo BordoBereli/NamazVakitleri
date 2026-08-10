@@ -271,11 +271,14 @@ class LocationSelectionViewModel(
             val countryCode = getCountryCode(city.country)
             
             // Save to settings store for Home screen to use
+            // district = county (if available), otherwise use name
+            // cityName = city (if available), otherwise use name
             updateLocationUseCase(
                 LocationSettings(
                     latitude = city.latitude,
                     longitude = city.longitude,
                     cityName = city.province,
+                    district = city.county,
                     country = city.country,
                     timeZone = getTimeZoneForCountry(countryCode)
                 )
@@ -287,11 +290,11 @@ class LocationSelectionViewModel(
 
     private fun getCountryCode(country: String): String {
         return when (country.lowercase()) {
-            "turkey" -> "TR"
-            "saudi arabia" -> "SA"
-            "egypt" -> "EG"
-            "indonesia" -> "ID"
-            "malaysia" -> "MY"
+            "turkey", "türkiye", "turkiye" -> "TR"
+            "saudi arabia", "suudi arabistan" -> "SA"
+            "egypt", "mısır" -> "EG"
+            "indonesia", "endonezya" -> "ID"
+            "malaysia", "malezya" -> "MY"
             "pakistan" -> "PK"
             "india" -> "IN"
             "bangladesh" -> "BD"
@@ -408,12 +411,23 @@ class LocationSelectionViewModel(
     private fun updateMapLocation(latitude: Double, longitude: Double) {
         viewModelScope.launch {
             val city = locationRepository.reverseGeocode(latitude, longitude)
+            val cityName = city?.city ?: city?.name
+            val county = city?.county
+            val country = city?.country
+
+            val locationInfoText = when {
+                !county.isNullOrBlank() -> "$county, $cityName - $country"
+                !cityName.isNullOrBlank() -> "$cityName, $country"
+                else -> country ?: ""
+            }
+
             val mapLocation = MapLocationState(
                 latitude = latitude,
                 longitude = longitude,
-                cityName = city?.name,
-                country = city?.country,
-                county = city?.city
+                cityName = cityName,
+                country = country,
+                county = county,
+                locationInfoText = locationInfoText
             )
             _uiState.value = LocationSelectionUiState.MapView(
                 selectedLocation = mapLocation,
@@ -426,12 +440,13 @@ class LocationSelectionViewModel(
     private fun confirmMapLocation(location: MapLocationState) {
         viewModelScope.launch {
             val city = City(
-                name = location.cityName ?: "Unknown",
+                name = location.cityName ?: location.county ?: "Unknown",
+                city = location.cityName,
                 country = location.country ?: "Unknown",
                 latitude = location.latitude,
                 longitude = location.longitude,
                 timezone = "UTC",
-                city = location.county
+                county = location.county
             )
             selectCity(city)
         }

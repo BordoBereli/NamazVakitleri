@@ -20,7 +20,7 @@ This document provides essential information for agentic coding agents working o
 
 ### Testing
 ```bash
-./gradlew testDebugUnitTest    # Run all unit tests
+./gradlew testDebugUnitTest   # Run all unit tests
 ./gradlew unitTests           # Run unit tests (excludes suites)
 ./gradlew testSuites          # Run test suites only
 ./gradlew allTests            # Run all tests (units + suites)
@@ -37,7 +37,7 @@ This document provides essential information for agentic coding agents working o
 ## Project Structure
 
 ```
-:app                    # Main application module
+:app                   # Main application module
 :core:common           # Shared utilities, extensions, base classes
 :core:designsystem     # Reusable composables, MaterialTheme, colors, typography
 :prayer:domain         # Business logic, use cases
@@ -46,6 +46,7 @@ This document provides essential information for agentic coding agents working o
 :prayer:cache          # Local data sources
 :prayer:remote         # Remote data sources
 :prayer_location       # Location services wrapper
+:prayer_feature        # All UI related screens main module
 :prayer_feature:home   # Home screen feature
 :prayer_feature:prayertimes  # Prayer times feature
 :prayer_feature:qibla  # Qibla direction feature
@@ -76,10 +77,10 @@ This document provides essential information for agentic coding agents working o
 ### Imports
 
 Organize imports in this order (Android Studio default):
-1. Android imports (`androidx.*`)
-2. Kotlin imports (`kotlin.*`)
-3. Third-party libraries (`io.*`, `com.*`)
-4. Project imports (`com.kutluoglu.*`)
+1. Project imports (`com.kutluoglu.*`)
+2. Android imports (`androidx.*`)
+3. Kotlin imports (`kotlin.*`)
+4. Third-party libraries (`io.*`, `com.*`)
 
 ### Formatting
 
@@ -179,7 +180,12 @@ class GetPrayerTimesUseCase(
 
 - Use `@KoinViewModel` annotation for ViewModels
 - Use `@KoinExperimentalAPI` if needed for experimental Koin features
-- Define modules in `app/src/main/java/.../di/` or feature modules
+- Entry Dependency Module and folder in `app/src/main/java/.../di/` and the other dependency modules Define modules in `*/*/*/*/.../di/` with the config as 
+  @Module
+  @Configuration
+  @ComponentScan(
+      "com.kutluoglu.prayer",      // Scans the domain module for use cases and engine
+  )
 
 ```kotlin
 @KoinViewModel

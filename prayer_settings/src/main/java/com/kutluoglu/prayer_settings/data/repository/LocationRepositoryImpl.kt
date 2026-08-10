@@ -56,12 +56,16 @@ class LocationRepositoryImpl(
                 results.mapNotNull { result ->
                     val cityName = result.address?.getCityName() ?: return@mapNotNull null
                     val countyName = result.address?.getCountyName()
+                    val cityField = result.address?.city
+                    val countryCode = result.address?.country_code?.uppercase() ?: ""
+                    val countryName = getCountryNameFromCode(countryCode) ?: result.address.country ?: ""
                     City(
                         name = cityName,
-                        country = result.address.country ?: "",
+                        city = cityField,
+                        country = countryName,
                         latitude = result.lat.toDoubleOrNull() ?: return@mapNotNull null,
                         longitude = result.lon.toDoubleOrNull() ?: return@mapNotNull null,
-                        timezone = calculateTimezone(result.lat.toDoubleOrNull() ?: 0.0, result.lon.toDoubleOrNull() ?: 0.0),
+                        timezone = calculateTimezone(result.lat.toDoubleOrNull() ?: 0.0, result.lon.toDoubleOrNull() ?: 0.0, countryCode),
                         county = countyName
                     )
                 }.also { cities ->
@@ -116,13 +120,17 @@ class LocationRepositoryImpl(
                 val result = json.decodeFromString<GeocodingResult>(body)
                 val cityName = result.address?.getCityName() ?: return@withContext null
                 val countyName = result.address?.getCountyName()
+                val cityField = result.address?.city
+                val countryCode = result.address?.country_code?.uppercase() ?: ""
+                val countryName = getCountryNameFromCode(countryCode) ?: result.address.country ?: ""
                 
                 City(
                     name = cityName,
-                    country = result.address.country ?: "",
+                    city = cityField,
+                    country = countryName,
                     latitude = latitude,
                     longitude = longitude,
-                    timezone = calculateTimezone(latitude, longitude),
+                    timezone = calculateTimezone(latitude, longitude, countryCode),
                     county = countyName
                 ).also { city ->
                     cacheDataStore?.saveCities(listOf(city))
@@ -148,12 +156,66 @@ class LocationRepositoryImpl(
         }
     }
 
-    private fun calculateTimezone(latitude: Double, longitude: Double): String {
-        val offset = ((longitude + 180) / 30).toInt().coerceIn(-12, 12)
-        return when {
-            offset == 0 -> "UTC"
-            offset > 0 -> "UTC+$offset"
-            else -> "UTC$offset"
+    private fun calculateTimezone(latitude: Double, longitude: Double, countryCode: String): String {
+        return when (countryCode) {
+            "TR" -> "Europe/Istanbul"
+            "SA" -> "Asia/Riyadh"
+            "EG" -> "Africa/Cairo"
+            "ID" -> "Asia/Jakarta"
+            "MY" -> "Asia/Kuala_Lumpur"
+            "PK" -> "Asia/Karachi"
+            "IN" -> "Asia/Kolkata"
+            "BD" -> "Asia/Dhaka"
+            "NG" -> "Africa/Lagos"
+            "MA" -> "Africa/Casablanca"
+            "DZ" -> "Africa/Algiers"
+            "TN" -> "Africa/Tunis"
+            "JO" -> "Asia/Amman"
+            "AE" -> "Asia/Dubai"
+            "KW" -> "Asia/Kuwait"
+            "QA" -> "Asia/Qatar"
+            "BH" -> "Asia/Bahrain"
+            "OM" -> "Asia/Muscat"
+            "GB" -> "Europe/London"
+            "US" -> "America/New_York"
+            "DE" -> "Europe/Berlin"
+            "FR" -> "Europe/Paris"
+            else -> {
+                val offset = ((longitude + 180) / 30).toInt().coerceIn(-12, 12)
+                when {
+                    offset == 0 -> "UTC"
+                    offset > 0 -> "UTC+$offset"
+                    else -> "UTC$offset"
+                }
+            }
+        }
+    }
+    
+    private fun getCountryNameFromCode(code: String): String? {
+        return when (code) {
+            "TR" -> "Turkey"
+            "SA" -> "Saudi Arabia"
+            "EG" -> "Egypt"
+            "ID" -> "Indonesia"
+            "MY" -> "Malaysia"
+            "PK" -> "Pakistan"
+            "IN" -> "India"
+            "BD" -> "Bangladesh"
+            "NG" -> "Nigeria"
+            "MA" -> "Morocco"
+            "DZ" -> "Algeria"
+            "TN" -> "Tunisia"
+            "JO" -> "Jordan"
+            "AE" -> "United Arab Emirates"
+            "KW" -> "Kuwait"
+            "QA" -> "Qatar"
+            "BH" -> "Bahrain"
+            "OM" -> "Oman"
+            "GB" -> "United Kingdom"
+            "US" -> "United States"
+            "DE" -> "Germany"
+            "FR" -> "France"
+            else -> null
         }
     }
 

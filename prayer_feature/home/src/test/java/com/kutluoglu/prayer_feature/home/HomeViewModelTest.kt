@@ -13,10 +13,13 @@ import com.kutluoglu.prayer.usecases.prayer.GetPrayerTimesUseCase
 import com.kutluoglu.prayer.usecases.quran.GetRandomVerseUseCase
 import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
 import com.kutluoglu.prayer_location.LocationService
+import com.kutluoglu.prayer_settings.domain.repository
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import io.mockk.spyk
+import android.util.Log
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
@@ -41,10 +44,14 @@ class HomeViewModelTest {
     private lateinit var formatter: PrayerFormatter
     private lateinit var locationService: LocationService
     private lateinit var languageProvider: LanguageProvider
+    private lateinit var settingsRepository: SettingsRepository
     private lateinit var viewModel: HomeViewModel
 
     @BeforeEach
     fun setUp() {
+        mockkStatic(Log::class)
+        every { Log.e(any<String>(), any<String>()) } returns 0
+
         getPrayerTimesUseCase = mockk()
         calculator = mockk(relaxed = true)
         formatter = mockk(relaxed = true)
@@ -54,6 +61,7 @@ class HomeViewModelTest {
         saveLocationUseCase = mockk(relaxed = true)
         getSavedLocationUseCase = mockk(relaxed = true)
         observeLocationUseCase = mockk(relaxed = true)
+        settingsRepository = mockk(relaxed = true)
 
         val mockLocation = LocationData(
             latitude = 41.0082,
@@ -63,6 +71,21 @@ class HomeViewModelTest {
             city = "Istanbul",
             county = null
         )
+
+        val testSettings = Settings(
+            location = LocationSettings(
+                latitude = 41.0082,
+                longitude = 28.9784,
+                cityName = "Istanbul",
+                district = null,
+                country = "Turkey",
+                timeZone = "Europe/Istanbul"
+            )
+        )
+
+        coEvery { settingsRepository.getSettings() } returns testSettings
+        every { settingsRepository.observeSettings() } returns flowOf(testSettings)
+        every { observeLocationUseCase() } returns flowOf()
 
         val testDate = LocalDate(2024, 1, 1)
         val mockPrayerList = listOf(
@@ -77,6 +100,7 @@ class HomeViewModelTest {
         coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any()) } returns Result.success<List<Prayer>>(mockPrayerList)
         coEvery { getSavedLocationUseCase() } returns success(mockLocation)
         every { observeLocationUseCase() } returns flowOf(mockLocation)
+        every { calculator.findCurrentAndNextPrayer(any()) } returns Pair(mockPrayerList.first(), null)
 
         viewModel = HomeViewModel(
             getPrayerTimesUseCase,
@@ -87,7 +111,8 @@ class HomeViewModelTest {
             calculator,
             formatter,
             locationService,
-            languageProvider
+            languageProvider,
+            settingsRepository
         )
     }
 

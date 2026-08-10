@@ -5,6 +5,7 @@ import com.kutluoglu.prayer_feature.settings.calculation.CalculationMethodViewMo
 import com.kutluoglu.prayer_feature.settings.hijri.HijriAdjustmentViewModel
 import com.kutluoglu.prayer_feature.settings.language.LanguageSelectionViewModel
 import com.kutluoglu.prayer_feature.settings.location.LocationSelectionViewModel
+import com.kutluoglu.prayer.data.repository.location.LocationDataStore
 import com.kutluoglu.prayer_settings.data.local.SettingsDataStore
 import com.kutluoglu.prayer_settings.data.repository.SettingsRepositoryImpl
 import com.kutluoglu.prayer_settings.domain.repository.LocationRepository
@@ -20,11 +21,11 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 
 val appModule: Module = module {
-    // Settings DataStore
-    factory { SettingsDataStore(get()) }
+    // Settings DataStore (singleton to share data)
+    single { SettingsDataStore(get()) }
     
-    // Settings Repository
-    factory<SettingsRepository> { SettingsRepositoryImpl(get()) }
+    // Settings Repository (singleton to share flow between Settings and Home)
+    single<SettingsRepository> { SettingsRepositoryImpl(get(), get()) }
     
     // Location Repository (for LocationSelectionViewModel)
     factory<LocationRepository> { get<com.kutluoglu.prayer_settings.data.repository.LocationRepositoryImpl>() }

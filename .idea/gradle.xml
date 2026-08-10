@@ -14,8 +14,6 @@
             <option value="$PROJECT_DIR$/core" />
             <option value="$PROJECT_DIR$/core/common" />
             <option value="$PROJECT_DIR$/core/designsystem" />
-            <option value="$PROJECT_DIR$/libs" />
-            <option value="$PROJECT_DIR$/libs/time4j-aar" />
             <option value="$PROJECT_DIR$/prayer" />
             <option value="$PROJECT_DIR$/prayer/data" />
             <option value="$PROJECT_DIR$/prayer/domain" />

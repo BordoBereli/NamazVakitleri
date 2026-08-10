@@ -12,17 +12,18 @@ import com.kutluoglu.prayer_settings.domain.model.LocationSettings
 import com.kutluoglu.prayer_settings.domain.model.Settings
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import org.koin.core.annotation.Factory
+import org.koin.core.annotation.Single
 
 private val Context.settingsDataStore: DataStore<Preferences> by preferencesDataStore(name = "prayer_settings_store")
 
-@Factory
+@Single
 class SettingsDataStore(private val context: Context) {
     
     private object PreferencesKeys {
         val LATITUDE = doublePreferencesKey("latitude")
         val LONGITUDE = doublePreferencesKey("longitude")
         val CITY_NAME = stringPreferencesKey("city_name")
+        val DISTRICT = stringPreferencesKey("district")
         val COUNTRY = stringPreferencesKey("country")
         val TIME_ZONE = stringPreferencesKey("time_zone")
         val CALCULATION_METHOD = stringPreferencesKey("calculation_method")
@@ -36,6 +37,7 @@ class SettingsDataStore(private val context: Context) {
                 latitude = preferences[PreferencesKeys.LATITUDE] ?: 41.0082,
                 longitude = preferences[PreferencesKeys.LONGITUDE] ?: 28.9784,
                 cityName = preferences[PreferencesKeys.CITY_NAME] ?: "Istanbul",
+                district = preferences[PreferencesKeys.DISTRICT],
                 country = preferences[PreferencesKeys.COUNTRY] ?: "Turkey",
                 timeZone = preferences[PreferencesKeys.TIME_ZONE] ?: "Europe/Istanbul"
             ),
@@ -53,6 +55,7 @@ class SettingsDataStore(private val context: Context) {
                     latitude = preferences[PreferencesKeys.LATITUDE] ?: 41.0082,
                     longitude = preferences[PreferencesKeys.LONGITUDE] ?: 28.9784,
                     cityName = preferences[PreferencesKeys.CITY_NAME] ?: "Istanbul",
+                    district = preferences[PreferencesKeys.DISTRICT],
                     country = preferences[PreferencesKeys.COUNTRY] ?: "Turkey",
                     timeZone = preferences[PreferencesKeys.TIME_ZONE] ?: "Europe/Istanbul"
                 ),
@@ -69,6 +72,7 @@ class SettingsDataStore(private val context: Context) {
             preferences[PreferencesKeys.LATITUDE] = location.latitude
             preferences[PreferencesKeys.LONGITUDE] = location.longitude
             preferences[PreferencesKeys.CITY_NAME] = location.cityName
+            location.district?.let { preferences[PreferencesKeys.DISTRICT] = it }
             preferences[PreferencesKeys.COUNTRY] = location.country
             preferences[PreferencesKeys.TIME_ZONE] = location.timeZone
         }

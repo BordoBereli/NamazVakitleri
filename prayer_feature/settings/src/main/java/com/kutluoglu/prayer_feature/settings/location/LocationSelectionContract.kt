@@ -18,7 +18,8 @@ data class MapLocationState(
     val longitude: Double,
     val cityName: String? = null,
     val country: String? = null,
-    val county: String? = null
+    val county: String? = null,
+    val locationInfoText: String = ""
 )
 
 data class CountryInfo(

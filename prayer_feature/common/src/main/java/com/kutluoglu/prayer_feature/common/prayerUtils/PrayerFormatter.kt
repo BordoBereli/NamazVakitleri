@@ -70,7 +70,10 @@ class PrayerFormatter(
         val city = locationData.city ?: ""
         val county = locationData.county
 
-        return county?.let { "$county, $city - $countryCode" }
-            ?: "$city, $countryCode"
+        return when {
+            !county.isNullOrBlank() -> "$county, $city - $countryCode"
+            city.isNotBlank() -> "$city, $countryCode"
+            else -> countryCode
+        }
     }
 }

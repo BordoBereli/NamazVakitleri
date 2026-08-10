@@ -1265,18 +1265,10 @@ private fun LocationInfoCard(
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
-            val displayName = listOfNotNull(location.cityName, location.county, location.country)
-                .joinToString(", ")
-            
             Text(
-                text = displayName.ifEmpty { stringResource(R.string.selected_location) },
+                text = location.locationInfoText.ifEmpty { stringResource(R.string.selected_location) },
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
-            )
-            Text(
-                text = "%.4f°N, %.4f°E".format(location.latitude, location.longitude),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(12.dp))
             Row(

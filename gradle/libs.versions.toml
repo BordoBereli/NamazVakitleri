@@ -36,6 +36,7 @@ playServicesLocation = "21.3.0"
 truth = "1.1.3"
 turbine = "1.2.1"
 junit = "4.13.2"
+junitPlatformLauncher = "1.13.4"
 robolectric = "4.14"
 
 [libraries]
@@ -100,6 +101,7 @@ junit-platform-suite = { module = "org.junit.platform:junit-platform-suite", ver
 platform-junit-platform-suite-engine = { module = "org.junit.platform:junit-platform-suite-engine", version.ref = "junitPlatformSuiteEngine" }
 junit-platform-suite-api = { module = "org.junit.platform:junit-platform-suite-api" }
 junit-platform-suite-engine = { module = "org.junit.platform:junit-platform-suite-engine", version.ref = "junitPlatformSuiteEngine" }
+junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junitPlatformLauncher" }
 truth = { module = "com.google.truth:truth", version.ref = "truth" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }

@@ -40,6 +40,7 @@ android {
 
 dependencies {
     implementation(project(":prayer:model"))
+    implementation(project(":prayer:data"))
     implementation(project(":prayer_cache"))
     implementation(project(":core:common"))
     implementation(project(":prayer_location"))
@@ -60,10 +61,11 @@ dependencies {
 
     testImplementation(libs.junit)
     testImplementation(platform(libs.junit.bom))
-    testImplementation("org.junit.jupiter:junit-jupiter-engine")
-    testImplementation("org.junit.jupiter:junit-jupiter-api")
-    testImplementation("org.junit.jupiter:junit-jupiter-params")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0") {
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testImplementation(libs.junit.jupiter.params)
+    testRuntimeOnly(libs.junit.platform.launcher)
+    testImplementation(libs.kotlinx.coroutines.test) {
         exclude(group = "org.junit.jupiter", module = "junit-jupiter")
     }
     

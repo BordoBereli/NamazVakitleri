@@ -14,8 +14,10 @@ import com.kutluoglu.prayer.usecases.location.ObserveLocationUseCase
 import com.kutluoglu.prayer.usecases.location.SaveLocationUseCase
 import com.kutluoglu.core.designsystem.utils.LanguageProvider
 import com.kutluoglu.prayer_feature.common.states.LocationUiState
+import com.kutluoglu.prayer_settings.domain.repository.SettingsRepository
 import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
 import com.kutluoglu.prayer_location.LocationService
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,6 +34,7 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import org.koin.android.annotation.KoinViewModel
 
+@OptIn(FlowPreview::class)
 @KoinViewModel
 class HomeViewModel(
         private val getPrayerTimesUseCase: GetPrayerTimesUseCase,
@@ -42,7 +45,8 @@ class HomeViewModel(
         private val calculator: PrayerLogicEngine,
         private val formatter: PrayerFormatter,
         private val locationService: LocationService,
-        private val languageProvider: LanguageProvider
+        private val languageProvider: LanguageProvider,
+        private val settingsRepository: SettingsRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
     val uiState: StateFlow<HomeUiState>
@@ -55,21 +59,38 @@ class HomeViewModel(
 
     private var countdownJob: Job? = null
     private var locationObserverJob: Job? = null
+    private var settingsObserverJob: Job? = null
 
     init {
         loadInitialLocation()
         observeLocationChanges()
+        observeSettingsChanges()
     }
 
     private fun loadInitialLocation() {
         viewModelScope.launch {
-            getSavedLocationUseCase()
-                .onSuccess { cachedLocation ->
-                    processLocationForPrayerTimes(cachedLocation)
-                }
-                .onFailure {
-                    fallbackToGps()
-                }
+            try {
+                val settings = settingsRepository.getSettings()
+                val locationSettings = settings.location
+                val locationData = LocationData(
+                    latitude = locationSettings.latitude,
+                    longitude = locationSettings.longitude,
+                    country = locationSettings.country,
+                    countryCode = getCountryCode(locationSettings.timeZone),
+                    city = locationSettings.cityName,
+                    county = locationSettings.district
+                )
+                processLocationForPrayerTimes(locationData)
+            } catch (e: Exception) {
+                Log.e("HomeViewModel", "Failed to load from settings: ${e.message}")
+                getSavedLocationUseCase()
+                    .onSuccess { cachedLocation ->
+                        processLocationForPrayerTimes(cachedLocation)
+                    }
+                    .onFailure {
+                        fallbackToGps()
+                    }
+            }
         }
     }
 
@@ -87,6 +108,40 @@ class HomeViewModel(
                 .collect { locationData ->
                     processLocationForPrayerTimes(locationData)
                 }
+        }
+    }
+
+    private fun observeSettingsChanges() {
+        settingsObserverJob?.cancel()
+        settingsObserverJob = viewModelScope.launch {
+            settingsRepository.observeSettings()
+                .debounce(500)
+                .distinctUntilChanged()
+                .collect { settings ->
+                    val locationSettings = settings.location
+                    val locationData = LocationData(
+                        latitude = locationSettings.latitude,
+                        longitude = locationSettings.longitude,
+                        country = locationSettings.country,
+                        countryCode = getCountryCode(locationSettings.timeZone),
+                        city = locationSettings.cityName,
+                        county = locationSettings.district
+                    )
+                    processLocationForPrayerTimes(locationData)
+                }
+        }
+    }
+
+    private fun getCountryCode(timeZone: String): String? {
+        return when {
+            timeZone.contains("Istanbul", ignoreCase = true) ||
+            timeZone.contains("Europe/Istanbul", ignoreCase = true) -> "TR"
+            timeZone.contains("Europe/Berlin", ignoreCase = true) -> "DE"
+            timeZone.contains("Europe/London", ignoreCase = true) -> "GB"
+            timeZone.contains("Europe/Paris", ignoreCase = true) -> "FR"
+            timeZone.contains("Asia/Jakarta", ignoreCase = true) -> "ID"
+            timeZone.contains("Asia/Riyadh", ignoreCase = true) -> "SA"
+            else -> null
         }
     }
 
@@ -319,5 +374,6 @@ class HomeViewModel(
         super.onCleared()
         countdownJob?.cancel()
         locationObserverJob?.cancel()
+        settingsObserverJob?.cancel()
     }
 }
