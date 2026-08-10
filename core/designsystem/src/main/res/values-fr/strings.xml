@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="prayers">
+        <item>Fajr</item>
+        <item>Lever du soleil</item>
+        <item>Dhuhr</item>
+        <item>Asr</item>
+        <item>Maghrib</item>
+        <item>Isha</item>
+    </string-array>
+    <string name="unknown_error_message">Erreur inconnue</string>
+    <string name="permission_required">Permission requise</string>
+    <string name="settings_dialog_info">Pour fournir les heures de prière basées sur la localisation, nous avons besoin de votre permission. Veuillez l\'accorder dans les paramètres de l\'application.</string>
+    <string name="open_settings">Ouvrir les paramètres</string>
+    <string name="location_permission_needed">Autorisation de localisation requise</string>
+    <string name="permission_grant_message">Les heures de prière sont calculées en fonction de votre position actuelle. Veuillez accorder la permission pour continuer.</string>
+    <string name="grant_permission">Accorder la permission</string>
+    <string name="select_location">Sélectionner la localisation</string>
+    <string name="back">Retour</string>
+    <string name="preset_cities">Villes prédéfinies</string>
+    <string name="search">Rechercher</string>
+    <string name="search_city">Rechercher une ville…</string>
+    <string name="clear">Effacer</string>
+    <string name="no_results_found">Aucun résultat trouvé</string>
+    <string name="select_calculation_method">Sélectionner la méthode de calcul</string>
+    <string name="calculation_method">Méthode de calcul</string>
+    <string name="select_language">Sélectionner la langue</string>
+    <string name="language">Langue</string>
+    <string name="hijri_adjustment">Ajustement hijri</string>
+    <string name="days">jours</string>
+    <string name="settings">Paramètres</string>
+    <string name="location">Localisation</string>
+    <string name="retry">Réessayer</string>
+    <string name="error_loading_cities">Échec du chargement des villes</string>
+    <string name="error_search_failed">Échec de la recherche</string>
+    <string name="no_internet">Pas de connexion Internet</string>
+    <string name="recent_searches">Recherches récentes</string>
+    <string name="clear_all">Tout effacer</string>
+    <string name="sort">Trier</string>
+</resources>

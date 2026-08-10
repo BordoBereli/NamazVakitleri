@@ -5,8 +5,7 @@ import com.kutluoglu.core.common.gregorianFullFormatter
 import com.kutluoglu.core.common.gregorianShortFormatter
 import com.kutluoglu.core.common.hijriFormatter
 import com.kutluoglu.core.common.timeFormatter
-import com.kutluoglu.core.ui.R
-import com.kutluoglu.core.ui.theme.common.StringResourcesProvider
+import com.kutluoglu.core.designsystem.R
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer_feature.common.states.TimeUiState
@@ -24,7 +23,7 @@ import kotlin.time.toKotlinDuration
  */
 @Factory
 class PrayerFormatter(
-    private val resProvider: StringResourcesProvider
+    private val resourcesProvider: ResourcesProvider
 ) {
     fun getInitialTimeInfo(
             zoneId: ZoneId,
@@ -53,7 +52,7 @@ class PrayerFormatter(
      * Maps a list of Prayer objects to include localized names from string resources.
      */
     fun withLocalizedNames(prayerTimes: List<Prayer>): List<Prayer> {
-        val prayerNames = resProvider.getStringArray(R.array.prayers)
+        val prayerNames = resourcesProvider.getStringArray(R.array.prayers)
 
         // Ensure the lists can be safely zipped.
         if (prayerTimes.size != prayerNames.size) {
@@ -71,7 +70,10 @@ class PrayerFormatter(
         val city = locationData.city ?: ""
         val county = locationData.county
 
-        return county?.let { "$county, $city - $countryCode" }
-            ?: "$city, $countryCode"
+        return when {
+            !county.isNullOrBlank() -> "$county, $city - $countryCode"
+            city.isNotBlank() -> "$city, $countryCode"
+            else -> countryCode
+        }
     }
 }

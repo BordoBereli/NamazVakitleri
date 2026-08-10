@@ -5,6 +5,8 @@ import com.kutluoglu.prayer.data.repository.location.LocationDataStore
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.repository.LocationRepository
 import com.kutluoglu.prayer.usecases.location.LocationError
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import org.koin.core.annotation.Single
 
 /**
@@ -32,5 +34,15 @@ class LocationRepositoryImp(
         }
     } catch (e: Exception) {
         Result.failure(Exception(LocationError.UNKNOWN(e.message).message))
+    }
+
+    override fun observeLocation(): Flow<LocationData> {
+        return locationCache.observeLocation().map { model ->
+            if (model != null) {
+                locationMapper.mapToDomain(model)
+            } else {
+                throw Exception(LocationError.NOT_FOUND().message)
+            }
+        }
     }
 }

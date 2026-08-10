@@ -1,32 +1,36 @@
 package com.kutluoglu.prayer_feature.home
 
-import android.R.attr.name
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
+import com.kutluoglu.core.designsystem.utils.LanguageProvider
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.prayer.Prayer
+import com.kutluoglu.prayer.usecases.location.GetSavedLocationUseCase
+import com.kutluoglu.prayer.usecases.location.ObserveLocationUseCase
+import com.kutluoglu.prayer.usecases.location.SaveLocationUseCase
 import com.kutluoglu.prayer.usecases.prayer.GetPrayerTimesUseCase
 import com.kutluoglu.prayer.usecases.quran.GetRandomVerseUseCase
-import com.kutluoglu.prayer.usecases.location.GetSavedLocationUseCase
-import com.kutluoglu.prayer.usecases.location.SaveLocationUseCase
 import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
 import com.kutluoglu.prayer_location.LocationService
+import com.kutluoglu.prayer_settings.domain.repository
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import io.mockk.spyk
+import android.util.Log
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import java.time.temporal.TemporalQueries.zoneId
 import kotlin.Result.Companion.success
 
-@ExperimentalCoroutinesApi
+@OptIn(ExperimentalCoroutinesApi::class)
 @ExtendWith(MainCoroutineRule::class)
 class HomeViewModelTest {
 
@@ -34,31 +38,81 @@ class HomeViewModelTest {
     private lateinit var getRandomVerseUseCase: GetRandomVerseUseCase
     private lateinit var saveLocationUseCase: SaveLocationUseCase
     private lateinit var getSavedLocationUseCase: GetSavedLocationUseCase
+    private lateinit var observeLocationUseCase: ObserveLocationUseCase
 
     private lateinit var calculator: PrayerLogicEngine
     private lateinit var formatter: PrayerFormatter
     private lateinit var locationService: LocationService
+    private lateinit var languageProvider: LanguageProvider
+    private lateinit var settingsRepository: SettingsRepository
     private lateinit var viewModel: HomeViewModel
 
     @BeforeEach
     fun setUp() {
-        // Initialize all mocks before each test
+        mockkStatic(Log::class)
+        every { Log.e(any<String>(), any<String>()) } returns 0
+
         getPrayerTimesUseCase = mockk()
         calculator = mockk(relaxed = true)
         formatter = mockk(relaxed = true)
         locationService = mockk(relaxed = true)
+        languageProvider = mockk(relaxed = true)
         getRandomVerseUseCase = mockk(relaxed = true)
         saveLocationUseCase = mockk(relaxed = true)
         getSavedLocationUseCase = mockk(relaxed = true)
+        observeLocationUseCase = mockk(relaxed = true)
+        settingsRepository = mockk(relaxed = true)
+
+        val mockLocation = LocationData(
+            latitude = 41.0082,
+            longitude = 28.9784,
+            country = "Turkey",
+            countryCode = "TR",
+            city = "Istanbul",
+            county = null
+        )
+
+        val testSettings = Settings(
+            location = LocationSettings(
+                latitude = 41.0082,
+                longitude = 28.9784,
+                cityName = "Istanbul",
+                district = null,
+                country = "Turkey",
+                timeZone = "Europe/Istanbul"
+            )
+        )
+
+        coEvery { settingsRepository.getSettings() } returns testSettings
+        every { settingsRepository.observeSettings() } returns flowOf(testSettings)
+        every { observeLocationUseCase() } returns flowOf()
+
+        val testDate = LocalDate(2024, 1, 1)
+        val mockPrayerList = listOf(
+            Prayer(name = "Fajr", arabicName = "الفجر", time = LocalTime(5, 0), date = testDate),
+            Prayer(name = "Sunrise", arabicName = "الشروق", time = LocalTime(7, 0), date = testDate),
+            Prayer(name = "Dhuhr", arabicName = "الظهر", time = LocalTime(12, 30), date = testDate),
+            Prayer(name = "Asr", arabicName = "العصر", time = LocalTime(15, 30), date = testDate),
+            Prayer(name = "Maghrib", arabicName = "المغرب", time = LocalTime(18, 0), date = testDate),
+            Prayer(name = "Isha", arabicName = "العشاء", time = LocalTime(19, 30), date = testDate)
+        )
+
+        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any()) } returns Result.success<List<Prayer>>(mockPrayerList)
+        coEvery { getSavedLocationUseCase() } returns success(mockLocation)
+        every { observeLocationUseCase() } returns flowOf(mockLocation)
+        every { calculator.findCurrentAndNextPrayer(any()) } returns Pair(mockPrayerList.first(), null)
 
         viewModel = HomeViewModel(
-            getPrayerTimesUseCase, // ViewModel calls loadPrayerTimes in init
+            getPrayerTimesUseCase,
             getRandomVerseUseCase,
             saveLocationUseCase,
             getSavedLocationUseCase,
+            observeLocationUseCase,
             calculator,
             formatter,
-            locationService
+            locationService,
+            languageProvider,
+            settingsRepository
         )
     }
 

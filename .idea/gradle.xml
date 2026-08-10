@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GradleMigrationSettings" migrationVersion="1" />
+  <component name="GradleSettings">
+    <option name="linkedExternalProjectsSettings">
+      <GradleProjectSettings>
+        <option name="testRunner" value="CHOOSE_PER_TEST" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="gradleJvm" value="homebrew-21" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/core" />
+            <option value="$PROJECT_DIR$/core/common" />
+            <option value="$PROJECT_DIR$/core/designsystem" />
+            <option value="$PROJECT_DIR$/prayer" />
+            <option value="$PROJECT_DIR$/prayer/data" />
+            <option value="$PROJECT_DIR$/prayer/domain" />
+            <option value="$PROJECT_DIR$/prayer/model" />
+            <option value="$PROJECT_DIR$/prayer_cache" />
+            <option value="$PROJECT_DIR$/prayer_feature" />
+            <option value="$PROJECT_DIR$/prayer_feature/common" />
+            <option value="$PROJECT_DIR$/prayer_feature/home" />
+            <option value="$PROJECT_DIR$/prayer_feature/prayertimes" />
+            <option value="$PROJECT_DIR$/prayer_feature/qibla" />
+            <option value="$PROJECT_DIR$/prayer_feature/settings" />
+            <option value="$PROJECT_DIR$/prayer_location" />
+            <option value="$PROJECT_DIR$/prayer_navigation" />
+            <option value="$PROJECT_DIR$/prayer_navigation/core" />
+            <option value="$PROJECT_DIR$/prayer_qibla" />
+            <option value="$PROJECT_DIR$/prayer_remote" />
+            <option value="$PROJECT_DIR$/prayer_settings" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+    </option>
+  </component>
+</project>

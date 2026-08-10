@@ -10,16 +10,23 @@ import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.usecases.prayer.GetPrayerTimesUseCase
 import com.kutluoglu.prayer.usecases.quran.GetRandomVerseUseCase
 import com.kutluoglu.prayer.usecases.location.GetSavedLocationUseCase
+import com.kutluoglu.prayer.usecases.location.ObserveLocationUseCase
 import com.kutluoglu.prayer.usecases.location.SaveLocationUseCase
-import com.kutluoglu.prayer_feature.common.LanguageProvider
+import com.kutluoglu.core.designsystem.utils.LanguageProvider
 import com.kutluoglu.prayer_feature.common.states.LocationUiState
+import com.kutluoglu.prayer_settings.domain.repository.SettingsRepository
 import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
 import com.kutluoglu.prayer_location.LocationService
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -27,16 +34,19 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import org.koin.android.annotation.KoinViewModel
 
+@OptIn(FlowPreview::class)
 @KoinViewModel
 class HomeViewModel(
         private val getPrayerTimesUseCase: GetPrayerTimesUseCase,
         private val getRandomVerseUseCase: GetRandomVerseUseCase,
         private val saveLocationUseCase: SaveLocationUseCase,
         private val getSavedLocationUseCase: GetSavedLocationUseCase,
+        private val observeLocationUseCase: ObserveLocationUseCase,
         private val calculator: PrayerLogicEngine,
         private val formatter: PrayerFormatter,
         private val locationService: LocationService,
-        private val languageProvider: LanguageProvider
+        private val languageProvider: LanguageProvider,
+        private val settingsRepository: SettingsRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
     val uiState: StateFlow<HomeUiState>
@@ -48,6 +58,123 @@ class HomeViewModel(
             )
 
     private var countdownJob: Job? = null
+    private var locationObserverJob: Job? = null
+    private var settingsObserverJob: Job? = null
+
+    init {
+        loadInitialLocation()
+        observeLocationChanges()
+        observeSettingsChanges()
+    }
+
+    private fun loadInitialLocation() {
+        viewModelScope.launch {
+            try {
+                val settings = settingsRepository.getSettings()
+                val locationSettings = settings.location
+                val locationData = LocationData(
+                    latitude = locationSettings.latitude,
+                    longitude = locationSettings.longitude,
+                    country = locationSettings.country,
+                    countryCode = getCountryCode(locationSettings.timeZone),
+                    city = locationSettings.cityName,
+                    county = locationSettings.district
+                )
+                processLocationForPrayerTimes(locationData)
+            } catch (e: Exception) {
+                Log.e("HomeViewModel", "Failed to load from settings: ${e.message}")
+                getSavedLocationUseCase()
+                    .onSuccess { cachedLocation ->
+                        processLocationForPrayerTimes(cachedLocation)
+                    }
+                    .onFailure {
+                        fallbackToGps()
+                    }
+            }
+        }
+    }
+
+    private fun observeLocationChanges() {
+        locationObserverJob?.cancel()
+        locationObserverJob = viewModelScope.launch {
+            observeLocationUseCase()
+                .catch { exception ->
+                    Log.e("LocationObserver", "Location Flow error: ${exception.message}")
+                    fallbackToGps()
+                }
+                .filterNotNull()
+                .debounce(500)
+                .distinctUntilChanged()
+                .collect { locationData ->
+                    processLocationForPrayerTimes(locationData)
+                }
+        }
+    }
+
+    private fun observeSettingsChanges() {
+        settingsObserverJob?.cancel()
+        settingsObserverJob = viewModelScope.launch {
+            settingsRepository.observeSettings()
+                .debounce(500)
+                .distinctUntilChanged()
+                .collect { settings ->
+                    val locationSettings = settings.location
+                    val locationData = LocationData(
+                        latitude = locationSettings.latitude,
+                        longitude = locationSettings.longitude,
+                        country = locationSettings.country,
+                        countryCode = getCountryCode(locationSettings.timeZone),
+                        city = locationSettings.cityName,
+                        county = locationSettings.district
+                    )
+                    processLocationForPrayerTimes(locationData)
+                }
+        }
+    }
+
+    private fun getCountryCode(timeZone: String): String? {
+        return when {
+            timeZone.contains("Istanbul", ignoreCase = true) ||
+            timeZone.contains("Europe/Istanbul", ignoreCase = true) -> "TR"
+            timeZone.contains("Europe/Berlin", ignoreCase = true) -> "DE"
+            timeZone.contains("Europe/London", ignoreCase = true) -> "GB"
+            timeZone.contains("Europe/Paris", ignoreCase = true) -> "FR"
+            timeZone.contains("Asia/Jakarta", ignoreCase = true) -> "ID"
+            timeZone.contains("Asia/Riyadh", ignoreCase = true) -> "SA"
+            else -> null
+        }
+    }
+
+    private suspend fun fallbackToGps() {
+        try {
+            val gpsLocation = locationService.getCurrentLocation()
+            if (gpsLocation != null) {
+                saveLocationUseCase(gpsLocation)
+                processLocationForPrayerTimes(gpsLocation)
+            } else {
+                _uiState.value = HomeUiState.Error(
+                    getUserFriendlyErrorMessage(null)
+                )
+            }
+        } catch (e: Exception) {
+            _uiState.value = HomeUiState.Error(
+                getUserFriendlyErrorMessage(e)
+            )
+        }
+    }
+
+    private fun getUserFriendlyErrorMessage(exception: Throwable?): String {
+        return when {
+            exception == null -> "Konum alınamadı. Lütfen GPS'i etkinleştirin ve uygulamayı yeniden başlatın."
+            exception.message?.contains("timeout", ignoreCase = true) == true -> 
+                "İstek zaman aşımına uğradı. Lütfen tekrar deneyin."
+            exception.message?.contains("network", ignoreCase = true) == true -> 
+                "Ağ hatası. Lütfen bağlantınızı kontrol edin."
+            exception.message?.contains("location", ignoreCase = true) == true -> 
+                "Konum servisi kullanılamıyor. Lütfen GPS'i etkinleştirin."
+            else -> "Konum alınamadı. Lütfen tekrar deneyin."
+        }
+    }
 
     /**
      * Handles UI events such as pull-to-refresh.
@@ -129,7 +256,7 @@ class HomeViewModel(
                         processLocationForPrayerTimes(currentLocation)
                     } else {
                         _uiState.value = HomeUiState.Error(
-                            "Could not get location. Please enable GPS and restart the app."
+                            getUserFriendlyErrorMessage(null)
                         )
                     }
                 }
@@ -159,7 +286,7 @@ class HomeViewModel(
             updatePrayerState()
         }.onFailure { error ->
             _uiState.value = HomeUiState.Error(
-                message = error.message ?: "An unknown error occurred while calculating prayer times."
+                message = error.message ?: getUserFriendlyErrorMessage(error)
             )
         }
     }
@@ -246,5 +373,7 @@ class HomeViewModel(
     override fun onCleared() {
         super.onCleared()
         countdownJob?.cancel()
+        locationObserverJob?.cancel()
+        settingsObserverJob?.cancel()
     }
 }

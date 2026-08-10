@@ -23,7 +23,7 @@ rootProject.name = "NamazVakitleri"
 include(":app")
 // Foundation Modules
 include(":core:common")          // Shared utilities, extensions, base classes
-include(":core:ui")              // Reusable composables/views - MaterialTheme, colors, typography
+include(":core:designsystem")              // Reusable composables/views - MaterialTheme, colors, typography
 include(":prayer_navigation:core") // Navigation setup, destinations
 //include(":core:database")        // Room database, DAOs
 //include(":core:preferences")     // DataStore/SharedPreferences wrapper
@@ -38,6 +38,7 @@ include(":prayer_remote") // Remote data sources, Retrofit, API interfaces, netw
 
 // Feature-specific Core
 include(":prayer_location") // Location services wrapper
+include(":prayer_settings")  // Settings data models and use cases
 //include(":core:qibla")           // Qibla direction calculations
 
 
@@ -52,3 +53,4 @@ include(":prayer_feature:prayertimes")
 
 include(":prayer_feature:qibla")
 include(":prayer_qibla")
+include(":prayer_feature:settings")

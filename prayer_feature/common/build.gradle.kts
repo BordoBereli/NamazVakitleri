@@ -47,7 +47,7 @@ android {
 dependencies {
     //region --- Project Dependencies ---
     implementation(project(":core:common"))
-    implementation(project(":core:ui"))
+    implementation(project(":core:designsystem"))
     implementation(project(":prayer:model"))
     implementation(project(":prayer_location"))
     //endregion

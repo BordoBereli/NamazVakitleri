@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="prayers">
+        <item>Fajr</item>
+        <item>Sonnenaufgang</item>
+        <item>Dhuhr</item>
+        <item>Asr</item>
+        <item>Maghrib</item>
+        <item>Isha</item>
+    </string-array>
+    <string name="unknown_error_message">Unbekannter Fehler</string>
+    <string name="permission_required">Berechtigung erforderlich</string>
+    <string name="settings_dialog_info">Um standortbasierte Gebetszeiten bereitzustellen, benötigen wir Ihre Erlaubnis. Bitte erteilen Sie diese in den App-Einstellungen.</string>
+    <string name="open_settings">Einstellungen öffnen</string>
+    <string name="location_permission_needed">Standortberechtigung erforderlich</string>
+    <string name="permission_grant_message">Die Gebetszeiten werden basierend auf Ihrem aktuellen Standort berechnet. Bitte erteilen Sie die Erlaubnis, um fortzufahren.</string>
+    <string name="grant_permission">Erlaubnis erteilen</string>
+    <string name="select_location">Standort auswählen</string>
+    <string name="back">Zurück</string>
+    <string name="preset_cities">Voreingestellte Städte</string>
+    <string name="search">Suchen</string>
+    <string name="search_city">Stadt suchen…</string>
+    <string name="clear">Löschen</string>
+    <string name="no_results_found">Keine Ergebnisse gefunden</string>
+    <string name="select_calculation_method">Berechnungsmethode auswählen</string>
+    <string name="calculation_method">Berechnungsmethode</string>
+    <string name="select_language">Sprache auswählen</string>
+    <string name="language">Sprache</string>
+    <string name="hijri_adjustment">Hijri-Anpassung</string>
+    <string name="days">Tage</string>
+    <string name="settings">Einstellungen</string>
+    <string name="location">Standort</string>
+    <string name="retry">Wiederholen</string>
+    <string name="error_loading_cities">Städte konnten nicht geladen werden</string>
+    <string name="error_search_failed">Suche fehlgeschlagen</string>
+    <string name="no_internet">Keine Internetverbindung</string>
+    <string name="recent_searches">Letzte Suchen</string>
+    <string name="clear_all">Alle löschen</string>
+    <string name="sort">Sortieren</string>
+</resources>

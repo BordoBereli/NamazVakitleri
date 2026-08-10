@@ -39,13 +39,16 @@ android {
             jvmTarget = JvmTarget.JVM_11
         }
     }
+    ksp {
+        arg("KOIN_DEFAULT_MODULE", "true")
+    }
     buildFeatures {
         compose = true
     }
 }
 
 dependencies {
-    implementation(project(":core:ui"))
+    implementation(project(":core:designsystem"))
     implementation(project(":core:common"))
     implementation(project(":prayer:domain"))
     implementation(project(":prayer:data"))
@@ -53,6 +56,9 @@ dependencies {
     implementation(project(":prayer_feature:home"))
     implementation(project(":prayer_feature:prayertimes"))
     implementation(project(":prayer_feature:qibla"))
+    implementation(project(":prayer_feature:common"))
+    implementation(project(":prayer_feature:settings"))
+    implementation(project(":prayer_settings"))
     implementation(project(":prayer_location"))
     implementation(project(":prayer_cache"))
     implementation(project(":prayer_qibla"))

@@ -1,0 +1,103 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
+plugins {
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.ksp)
+}
+
+android {
+    namespace = "com.kutluoglu.prayer_feature.qibla"
+    compileSdk = 36
+
+    defaultConfig {
+        minSdk = 26
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles("consumer-rules.pro")
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+    kotlin {
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_11
+        }
+    }
+    buildFeatures {
+        compose = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
+    }
+}
+
+dependencies {
+    implementation(project(":core:designsystem"))
+    //region --- Project Dependencies ---
+    implementation(project(":core:common"))
+    implementation(project(":prayer_feature:common"))
+    implementation(project(":prayer:domain"))
+    implementation(project(":prayer_navigation:core"))
+    implementation(project(":prayer_location"))
+    //endregion
+
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.material)
+
+    //region Compose
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.graphics)
+    debugImplementation(libs.androidx.compose.ui.tooling)
+    debugImplementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.material)
+    implementation(libs.androidx.material.icons.extended)
+    //endregion
+
+    implementation(libs.compose.navigation)
+
+    implementation(libs.kotlinx.datetime)
+
+    //region Handle Permission
+    implementation(libs.accompanist.permissions)
+    //endregion
+
+    //region Coil
+    implementation(libs.coil)
+    //endregion
+
+    //region Koin
+    implementation(platform(libs.koin.bom))
+    implementation(libs.koin.core)
+    implementation(libs.koin.android)
+    implementation(libs.koin.android.compose)
+    implementation(libs.koin.annotations)
+    ksp(libs.koin.ksp)
+    //endregion
+
+    //region --- Default Testing Dependencies ---
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+    //endregion
+
+    //region --- Testing Dependencies ---
+    // Note: Not including kotlinx-coroutines-test, turbine, truth, mockk as they pull JUnit 5
+    // which conflicts with the JUnit 4 test in this module
+    //endregion
+}

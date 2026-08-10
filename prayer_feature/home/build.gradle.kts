@@ -46,12 +46,13 @@ android {
 
 dependencies {
     //region --- Project Dependencies ---
-    implementation(project(":core:ui"))
+    implementation(project(":core:designsystem"))
     implementation(project(":core:common"))
     implementation(project(":prayer_feature:common"))
     implementation(project(":prayer:domain"))
     implementation(project(":prayer_navigation:core"))
     implementation(project(":prayer_location"))
+    implementation(project(":prayer_settings"))
     //endregion
 
     implementation(libs.androidx.core.ktx)

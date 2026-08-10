@@ -3,8 +3,8 @@ package com.kutluoglu.prayer_feature.common.prayerUtils
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.res.stringArrayResource
-import com.kutluoglu.core.ui.R.array
-import com.kutluoglu.prayer_feature.common.R
+import com.kutluoglu.core.designsystem.R
+import com.kutluoglu.prayer_feature.common.R as AppR
 
 
 /**
@@ -18,7 +18,7 @@ import com.kutluoglu.prayer_feature.common.R
  */
 @Composable
 fun getPrayerDrawableIdFrom(prayerName: String): Int {
-    val prayerNames = stringArrayResource(id = array.prayers)
+    val prayerNames = stringArrayResource(id = R.array.prayers)
     // Use 'remember' to create and cache the map of prayer names to drawable IDs.
     // This map is created only once and reused across recompositions, improving performance.
     val prayerIconMap = remember(prayerNames) {
@@ -28,16 +28,16 @@ fun getPrayerDrawableIdFrom(prayerName: String): Int {
         } else {
             // Create an immutable map for efficient lookups.
             mapOf(
-                prayerNames[0] to R.drawable.facr,
-                prayerNames[1] to R.drawable.sunrise,
-                prayerNames[2] to R.drawable.dhuhr,
-                prayerNames[3] to R.drawable.asr,
-                prayerNames[4] to R.drawable.magrip,
-                prayerNames[5] to R.drawable.isha
+                prayerNames[0] to AppR.drawable.facr,
+                prayerNames[1] to AppR.drawable.sunrise,
+                prayerNames[2] to AppR.drawable.dhuhr,
+                prayerNames[3] to AppR.drawable.asr,
+                prayerNames[4] to AppR.drawable.magrip,
+                prayerNames[5] to AppR.drawable.isha
             )
         }
     }
 
     // Return the icon from the map, or a default value of "R.drawable.facr" if the key doesn't exist.
-    return prayerIconMap[prayerName] ?: R.drawable.facr
+    return prayerIconMap[prayerName] ?: AppR.drawable.facr
 }
