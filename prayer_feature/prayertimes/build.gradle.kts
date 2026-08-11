@@ -74,4 +74,19 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    //region --- Testing Dependencies ---
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testImplementation(libs.junit.jupiter.params)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.turbine)
+    testImplementation(libs.truth)
+    testImplementation(libs.mockk)
+    testImplementation(libs.assertj.core)
+    testImplementation(libs.junit.platform.suite)
+    testRuntimeOnly(libs.platform.junit.platform.suite.engine)
+    //endregion
 }
+tasks.withType<Test> { useJUnitPlatform() }
