@@ -13,6 +13,7 @@ import com.kutluoglu.prayer_feature.settings.MainCoroutineRule
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import io.mockk.slot
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
@@ -110,6 +111,51 @@ class LocationSelectionViewModelTest {
         
         coVerify { locationRepository.getPresetCities() }
         coVerify { updateLocationUseCase.invoke(any()) }
+    }
+
+    @Test
+    fun `SelectDistrict should save location to settings`() = runTest {
+        val district = City("Fatih", "Turkey", 41.0364, 28.9603, "Europe/Istanbul", "Istanbul")
+
+        viewModel.onEvent(LocationSelectionEvent.SelectDistrict(district))
+
+        coVerify { updateLocationUseCase.invoke(any()) }
+    }
+
+    @Test
+    fun `SelectCity with preset district should save district from name`() = runTest {
+        val district = City("Fatih", "Turkey", 41.0364, 28.9603, "Europe/Istanbul", "Istanbul")
+
+        viewModel.onEvent(LocationSelectionEvent.SelectCity(district))
+
+        val slot = slot<LocationSettings>()
+        coVerify { updateLocationUseCase.invoke(capture(slot)) }
+        assertThat(slot.captured.cityName).isEqualTo("Istanbul")
+        assertThat(slot.captured.district).isEqualTo("Fatih")
+    }
+
+    @Test
+    fun `SelectCity with main city should not set district`() = runTest {
+        val mainCity = City("Ankara", "Turkey", 39.9334, 32.8597, "Europe/Istanbul", "Ankara")
+
+        viewModel.onEvent(LocationSelectionEvent.SelectCity(mainCity))
+
+        val slot = slot<LocationSettings>()
+        coVerify { updateLocationUseCase.invoke(capture(slot)) }
+        assertThat(slot.captured.cityName).isEqualTo("Ankara")
+        assertThat(slot.captured.district).isNull()
+    }
+
+    @Test
+    fun `SelectCity with reverse geocoded city should save county as district`() = runTest {
+        val reverseCity = City("Bursa", "Turkey", 40.1826, 29.0676, "Europe/Istanbul", "Bursa", "Osmangazi")
+
+        viewModel.onEvent(LocationSelectionEvent.SelectCity(reverseCity))
+
+        val slot = slot<LocationSettings>()
+        coVerify { updateLocationUseCase.invoke(capture(slot)) }
+        assertThat(slot.captured.cityName).isEqualTo("Bursa")
+        assertThat(slot.captured.district).isEqualTo("Osmangazi")
     }
 
     @Test

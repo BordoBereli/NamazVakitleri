@@ -33,10 +33,12 @@ dependencies {
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
     testImplementation(libs.junit.jupiter.params)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.mockk)
     testImplementation(libs.truth)
     testImplementation(libs.assertj.core)
+    testImplementation(libs.okhttp.mockwebserver)
 }
 tasks.withType<Test> { useJUnitPlatform() }

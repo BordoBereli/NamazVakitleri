@@ -931,7 +931,7 @@ private fun CityItemWithCoords(
                 val cityDisplayName = if (city.county.isNullOrEmpty()) {
                     city.name
                 } else {
-                    "${city.name}, ${city.county}"
+                    "${city.county}, ${city.name}"
                 }
                 Text(
                     text = cityDisplayName,

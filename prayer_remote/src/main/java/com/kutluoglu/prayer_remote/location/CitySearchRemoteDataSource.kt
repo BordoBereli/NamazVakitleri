@@ -42,7 +42,7 @@ class CitySearchRemoteDataSource(
             val address = result.address
             val cityName = address?.getCityName() ?: return@mapNotNull null
             val countyName = address?.getCountyName()
-            val cityField = address?.city
+            val cityField = address?.getCityName()
             val countryCode = address?.country_code?.uppercase() ?: ""
             val countryName = getCountryNameFromCode(countryCode) ?: address?.country ?: ""
             City(
@@ -78,7 +78,7 @@ class CitySearchRemoteDataSource(
         val address = result.address
         val cityName = address?.getCityName() ?: return@withContext null
         val countyName = address?.getCountyName()
-        val cityField = address?.city
+        val cityField = address?.getCityName()
         val countryCode = address?.country_code?.uppercase() ?: ""
         val countryName = getCountryNameFromCode(countryCode) ?: address?.country ?: ""
 

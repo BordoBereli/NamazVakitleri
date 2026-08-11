@@ -21,9 +21,13 @@ data class GeocodingAddress(
     val county: String? = null,
     @SerialName("state_district")
     val stateDistrict: String? = null,
+    val province: String? = null,
+    @SerialName("city_district")
+    val cityDistrict: String? = null,
+    val municipality: String? = null,
     val country: String? = null,
     val country_code: String? = null
 ) {
-    fun getCityName(): String = city ?: town ?: village ?: ""
-    fun getCountyName(): String = county ?: stateDistrict ?: state ?: ""
+    fun getCityName(): String = city ?: province ?: state ?: town ?: village ?: ""
+    fun getCountyName(): String = county ?: cityDistrict ?: town ?: stateDistrict ?: state ?: ""
 }

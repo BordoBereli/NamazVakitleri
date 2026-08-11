@@ -162,13 +162,6 @@ class LocationSelectionViewModel(
         )
     }
 
-    private fun selectDistrict(district: City) {
-        viewModelScope.launch {
-            addToHistory(district)
-            _selectedCity.emit(district)
-        }
-    }
-
     private fun goBack() {
         when (_uiState.value) {
             is LocationSelectionUiState.CitySelection -> loadCountries()
@@ -266,26 +259,36 @@ class LocationSelectionViewModel(
     private fun selectCity(city: City) {
         viewModelScope.launch {
             addToHistory(city)
-            
-            // Get country code (use first 2 letters of country name as fallback code)
-            val countryCode = getCountryCode(city.country)
-            
-            // Save to settings store for Home screen to use
-            // district = county (if available), otherwise use name
-            // cityName = city (if available), otherwise use name
-            updateLocationUseCase(
-                LocationSettings(
-                    latitude = city.latitude,
-                    longitude = city.longitude,
-                    cityName = city.province,
-                    district = city.county,
-                    country = city.country,
-                    timeZone = getTimeZoneForCountry(countryCode)
-                )
-            )
-            
+            saveLocation(city)
             _selectedCity.emit(city)
         }
+    }
+
+    private fun selectDistrict(district: City) {
+        viewModelScope.launch {
+            addToHistory(district)
+            saveLocation(district)
+            _selectedCity.emit(district)
+        }
+    }
+
+    private suspend fun saveLocation(city: City) {
+        // Get country code (use first 2 letters of country name as fallback code)
+        val countryCode = getCountryCode(city.country)
+
+        // Save to settings store for Home screen to use
+        // cityName = İl (province), district = ilçe (county if available, otherwise name)
+        updateLocationUseCase(
+            LocationSettings(
+                latitude = city.latitude,
+                longitude = city.longitude,
+                cityName = city.province,
+                district = city.county?.takeIf { it.isNotBlank() }
+                    ?: city.name.takeIf { it != city.province },
+                country = city.country,
+                timeZone = getTimeZoneForCountry(countryCode)
+            )
+        )
     }
 
     private fun getCountryCode(country: String): String {
