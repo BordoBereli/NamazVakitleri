@@ -48,6 +48,7 @@ class PrayerTimesViewModel(
     private var selectedMonth: YearMonth = LocalDateTime.now(ZoneId.systemDefault()).date.yearMonth
     private val monthCache = mutableMapOf<YearMonth, List<DailyPrayer>>()
     private var isLoading = false
+    private var pendingMonth: YearMonth? = null
 
     fun loadMonthlyPrayerTimes() {
         viewModelScope.launch {
@@ -90,7 +91,10 @@ class PrayerTimesViewModel(
         LocalDateTime.now(zoneId ?: ZoneId.systemDefault()).date.yearMonth
 
     private fun loadMonth(month: YearMonth) {
-        if (isLoading) return
+        if (isLoading) {
+            pendingMonth = month
+            return
+        }
         isLoading = true
         viewModelScope.launch {
             try {
@@ -145,6 +149,11 @@ class PrayerTimesViewModel(
                 emitSuccess(month, monthlyPrayers)
             } finally {
                 isLoading = false
+                val next = pendingMonth
+                pendingMonth = null
+                if (next != null && next != month) {
+                    loadMonth(next)
+                }
             }
         }
     }
