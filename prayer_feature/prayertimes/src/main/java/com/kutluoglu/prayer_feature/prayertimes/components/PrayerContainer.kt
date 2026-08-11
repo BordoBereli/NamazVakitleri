@@ -55,6 +55,7 @@ import com.kutluoglu.prayer_feature.prayertimes.PrayerTimesEvent
 import com.kutluoglu.prayer_feature.prayertimes.PrayerTimesUiState
 import com.kutluoglu.prayer_feature.prayertimes.R
 import kotlinx.datetime.YearMonth
+import kotlinx.datetime.number
 
 @Composable
 fun PrayerContainer(
@@ -117,7 +118,7 @@ private fun PrayerTimesContent(
 }
 
 private fun selectedMonthLabel(month: YearMonth): String =
-    java.time.YearMonth.of(month.year, month.month.ordinal + 1).format(gregorianShortFormatter)
+    java.time.YearMonth.of(month.year, month.month.number).format(gregorianShortFormatter)
 
 @Composable
 private fun TitleHeader(
