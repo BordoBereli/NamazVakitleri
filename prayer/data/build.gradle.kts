@@ -51,6 +51,10 @@ dependencies {
     implementation(libs.okhttp)
     //endregion
 
+    //region Local cache
+    implementation(libs.androidx.datastore.preferences)
+    //endregion
+
     //region Dependency Injection - Koin
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.core)
@@ -74,6 +78,7 @@ dependencies {
     testImplementation(libs.truth) // For readable assertions
     testImplementation(libs.mockk) // MockK for creating mock objects in tests
     testImplementation(libs.assertj.core) // AssertJ for more readable assertions (optional, but recommended)
+    testImplementation(libs.robolectric) // For Android framework unit tests
 
     // Koin Testing
     //testImplementation(libs.koin.test)

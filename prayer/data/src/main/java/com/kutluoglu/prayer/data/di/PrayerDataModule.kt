@@ -1,5 +1,12 @@
 package com.kutluoglu.prayer.data.di
 
+import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.emptyPreferences
+import androidx.datastore.preferences.preferencesDataStoreFile
 import okhttp3.OkHttpClient
 import org.koin.core.annotation.ComponentScan
 import org.koin.core.annotation.Configuration
@@ -17,4 +24,11 @@ import org.koin.core.annotation.Single
 object PrayerDataModule {
     @Single
     fun provideOkHttp(): OkHttpClient = OkHttpClient()
+
+    @Single
+    fun providePrayerTimesDataStore(context: Context): DataStore<Preferences> =
+        PreferenceDataStoreFactory.create(
+            corruptionHandler = ReplaceFileCorruptionHandler { emptyPreferences() },
+            produceFile = { context.preferencesDataStoreFile("prayer_times_cache") }
+        )
 }
