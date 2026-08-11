@@ -30,6 +30,7 @@ Last updated: 2026-08-11
   - File: `prayer/domain/src/main/java/com/kutluoglu/prayer/domain/PrayerLogicEngine.kt:50`
   - Issue: wrong countdown for non-local timezones; should use the prayer's zone.
   - Status: DONE 2026-08-11 (TDD) — `calculateTimeRemaining(nextPrayerTime, zoneId)` now takes the zone; `HomeViewModel.updateCountdown` passes the location-derived zone. Added `PrayerLogicEngineTest` (RED→GREEN: UTC vs Istanbul 3h offset). Full suite green.
+  - Follow-up (impact check): `findCurrentPrayer` had the same `ZoneId.systemDefault()` bug — `findCurrentAndNextPrayer(prayers, zoneId)` now takes the zone too; `PrayerLogicEngine` injects a `Clock` (default `systemDefaultZone`, Koin skips it) for deterministic tests. Callers updated (`HomeViewModel.updatePrayerState`, `PrayerTimesViewModel`). Full suite green.
 
 ## 🟡 Incomplete implementations (TODO stubs)
 

@@ -102,7 +102,7 @@ class HomeViewModelTest {
         coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any()) } returns Result.success<List<Prayer>>(mockPrayerList)
         coEvery { getSavedLocationUseCase() } returns success(mockLocation)
         every { observeLocationUseCase() } returns flowOf(mockLocation)
-        every { calculator.findCurrentAndNextPrayer(any()) } returns Pair(mockPrayerList.first(), null)
+        every { calculator.findCurrentAndNextPrayer(any(), any()) } returns Pair(mockPrayerList.first(), null)
 
         viewModel = HomeViewModel(
             getPrayerTimesUseCase,
@@ -139,7 +139,7 @@ class HomeViewModelTest {
         every { formatter.locationInfo(any()) } returns "Mock Location"
 
         // 3. Mock Calculator
-        every { calculator.findCurrentAndNextPrayer(localizedPrayerList) } returns Pair(sabahPrayer, null)
+        every { calculator.findCurrentAndNextPrayer(localizedPrayerList, any()) } returns Pair(sabahPrayer, null)
 
         // 4. Mock the data class 'copy' method
         every { sabahPrayer.copy(isCurrent = true) } returns finalPrayerList.first()

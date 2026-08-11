@@ -12,7 +12,8 @@ import java.time.ZoneId
  */
 interface PrayerLogic {
     fun findCurrentAndNextPrayer(
-            prayers: List<Prayer>
+            prayers: List<Prayer>,
+            zoneId: ZoneId
     ): Pair<Prayer?, Prayer?>
 
     fun calculateTimeRemaining(

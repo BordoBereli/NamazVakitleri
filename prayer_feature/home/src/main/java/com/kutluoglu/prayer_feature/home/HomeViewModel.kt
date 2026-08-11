@@ -293,8 +293,9 @@ class HomeViewModel(
 
     private fun updatePrayerState() {
         val currentState = _uiState.value as? HomeUiState.Success ?: return
+        val zoneId = getZoneIdFromLocation(currentState.locationState.locationData.countryCode)
         val (currentPrayer, nextPrayer) =
-            calculator.findCurrentAndNextPrayer(currentState.prayerState.prayers)
+            calculator.findCurrentAndNextPrayer(currentState.prayerState.prayers, zoneId)
         val prayersWithCurrent = currentState.prayerState.prayers.map { prayer ->
             currentPrayer?.let {
                 prayer.copy(isCurrent = prayer.name == it.name)

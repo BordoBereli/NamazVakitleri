@@ -67,7 +67,7 @@ class PrayerTimesViewModel(
                             val langDetectedPrayerTimes = formatter.withLocalizedNames(prayerTimes)
                             // isCurrent logic is only relevant for today's prayers
                             val isToday = date == today.date
-                            val (currentPrayer, _) = if(isToday) calculator.findCurrentAndNextPrayer(langDetectedPrayerTimes) else Pair(null, null)
+                            val (currentPrayer, _) = if(isToday) calculator.findCurrentAndNextPrayer(langDetectedPrayerTimes, zoneId) else Pair(null, null)
                             val prayersWithCurrent = langDetectedPrayerTimes.map {
                                 it.copy(isCurrent = isToday && it.name == currentPrayer?.name)
                             }

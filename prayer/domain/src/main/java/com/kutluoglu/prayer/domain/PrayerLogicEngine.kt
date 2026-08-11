@@ -9,6 +9,7 @@ import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.plus
 import kotlinx.datetime.toJavaLocalTime
+import java.time.Clock
 import java.time.Duration
 import java.time.ZoneId
 
@@ -19,11 +20,14 @@ import java.time.ZoneId
  */
 
 @Factory
-class PrayerLogicEngine: PrayerLogic {
+class PrayerLogicEngine(
+        private val clock: Clock = Clock.systemDefaultZone()
+): PrayerLogic {
     override fun findCurrentAndNextPrayer(
-            prayers: List<Prayer>
+            prayers: List<Prayer>,
+            zoneId: ZoneId
     ): Pair<Prayer?, Prayer?> {
-        val currentPrayer = findCurrentPrayer(prayers)
+        val currentPrayer = findCurrentPrayer(prayers, zoneId)
         // Handle period before the first prayer (Fajr)
         if (currentPrayer == null) {
             return Pair(prayers.lastOrNull(), prayers.firstOrNull())
@@ -48,7 +52,7 @@ class PrayerLogicEngine: PrayerLogic {
             nextPrayerTime: LocalTime,
             zoneId: ZoneId
     ): Duration {
-        val now = java.time.LocalTime.now(zoneId)
+        val now = java.time.LocalTime.now(clock.withZone(zoneId))
         val duration = Duration.between(
             now,
             nextPrayerTime.toJavaLocalTime()
@@ -61,9 +65,10 @@ class PrayerLogicEngine: PrayerLogic {
     }
 
     private fun findCurrentPrayer(
-            prayers: List<Prayer>
+            prayers: List<Prayer>,
+            zoneId: ZoneId
     ): Prayer? = prayers.lastOrNull { prayer ->
-        val currentTime = java.time.LocalTime.now(ZoneId.systemDefault())
+        val currentTime = java.time.LocalTime.now(clock.withZone(zoneId))
         !prayer.time.toJavaLocalTime().isAfter(currentTime)
     }
 
