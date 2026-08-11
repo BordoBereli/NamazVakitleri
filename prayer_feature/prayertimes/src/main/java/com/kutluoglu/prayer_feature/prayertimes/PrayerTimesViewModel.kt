@@ -159,6 +159,7 @@ class PrayerTimesViewModel(
     }
 
     private fun emitSuccess(month: YearMonth, monthlyPrayers: List<DailyPrayer>) {
+        if (month != selectedMonth) return
         val location = savedLocation ?: return
         val resolvedZoneId = zoneId ?: return
         val today = LocalDateTime.now(resolvedZoneId)
