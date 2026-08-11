@@ -16,6 +16,7 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.DateTimeUnit
@@ -176,5 +177,34 @@ class PrayerTimesViewModelTest {
         val nextMonth = currentMonth.plus(1, DateTimeUnit.MONTH)
         val expectedCalls = currentMonth.numberOfDays + nextMonth.numberOfDays
         assertThat(callCount).isEqualTo(expectedCalls)
+    }
+
+    @Test
+    fun `navigation during an in-flight load is not dropped`() = runTest {
+        val gate = CompletableDeferred<Unit>()
+        var callCount = 0
+        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any()) } coAnswers {
+            callCount++
+            if (callCount == 1) gate.await()
+            success(mockPrayerList)
+        }
+
+        viewModel.loadMonthlyPrayerTimes()
+        viewModel.onEvent(PrayerTimesEvent.OnNextMonth)
+        viewModel.onEvent(PrayerTimesEvent.OnNextMonth)
+
+        gate.complete(Unit)
+
+        viewModel.uiState.test {
+            val state = awaitItem()
+            assertThat(state).isInstanceOf(PrayerTimesUiState.Success::class.java)
+            val success = state as PrayerTimesUiState.Success
+            val zoneId = getZoneIdFromLocation("TR")
+            val currentMonth = LocalDateTime.now(zoneId).date.yearMonth
+            val secondNextMonth = currentMonth.plus(2, DateTimeUnit.MONTH)
+            assertThat(success.selectedMonth).isEqualTo(secondNextMonth)
+            assertThat(success.isCurrentMonth).isFalse()
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 }
