@@ -2,22 +2,35 @@ package com.kutluoglu.prayer_settings.data.local
 
 import android.content.Context
 import androidx.datastore.core.DataStore
+import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.preferencesDataStore
+import androidx.datastore.preferences.preferencesDataStoreFile
 import com.kutluoglu.prayer_settings.domain.model.LocationSettings
 import com.kutluoglu.prayer_settings.domain.model.Settings
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import org.koin.core.annotation.Single
 
-private val Context.settingsDataStore: DataStore<Preferences> by preferencesDataStore(name = "prayer_settings_store")
+class SettingsDataStore(
+    private val dataStore: DataStore<Preferences>
+) {
 
-@Single
-class SettingsDataStore(private val context: Context) {
+    companion object {
+        fun create(context: Context): SettingsDataStore {
+            return SettingsDataStore(
+                PreferenceDataStoreFactory.create(
+                    corruptionHandler = ReplaceFileCorruptionHandler { emptyPreferences() },
+                    produceFile = { context.preferencesDataStoreFile("prayer_settings_store") }
+                )
+            )
+        }
+    }
     
     private object PreferencesKeys {
         val LATITUDE = doublePreferencesKey("latitude")
@@ -31,7 +44,7 @@ class SettingsDataStore(private val context: Context) {
         val HIJRI_ADJUSTMENT = intPreferencesKey("hijri_adjustment")
     }
     
-    fun observeSettings(): Flow<Settings> = context.settingsDataStore.data.map { preferences ->
+    fun observeSettings(): Flow<Settings> = dataStore.data.map { preferences ->
         Settings(
             location = LocationSettings(
                 latitude = preferences[PreferencesKeys.LATITUDE] ?: 41.0082,
@@ -48,9 +61,8 @@ class SettingsDataStore(private val context: Context) {
     }
     
     suspend fun getSettings(): Settings {
-        var settings = Settings()
-        context.settingsDataStore.data.collect { preferences ->
-            settings = Settings(
+        return dataStore.data.first().let { preferences ->
+            Settings(
                 location = LocationSettings(
                     latitude = preferences[PreferencesKeys.LATITUDE] ?: 41.0082,
                     longitude = preferences[PreferencesKeys.LONGITUDE] ?: 28.9784,
@@ -64,34 +76,37 @@ class SettingsDataStore(private val context: Context) {
                 hijriAdjustment = preferences[PreferencesKeys.HIJRI_ADJUSTMENT] ?: 0
             )
         }
-        return settings
     }
     
     suspend fun updateLocation(location: LocationSettings) {
-        context.settingsDataStore.edit { preferences ->
+        dataStore.edit { preferences ->
             preferences[PreferencesKeys.LATITUDE] = location.latitude
             preferences[PreferencesKeys.LONGITUDE] = location.longitude
             preferences[PreferencesKeys.CITY_NAME] = location.cityName
-            location.district?.let { preferences[PreferencesKeys.DISTRICT] = it }
+            if (location.district != null) {
+                preferences[PreferencesKeys.DISTRICT] = location.district
+            } else {
+                preferences.remove(PreferencesKeys.DISTRICT)
+            }
             preferences[PreferencesKeys.COUNTRY] = location.country
             preferences[PreferencesKeys.TIME_ZONE] = location.timeZone
         }
     }
     
     suspend fun updateCalculationMethod(method: String) {
-        context.settingsDataStore.edit { preferences ->
+        dataStore.edit { preferences ->
             preferences[PreferencesKeys.CALCULATION_METHOD] = method
         }
     }
     
     suspend fun updateLanguage(language: String) {
-        context.settingsDataStore.edit { preferences ->
+        dataStore.edit { preferences ->
             preferences[PreferencesKeys.LANGUAGE] = language
         }
     }
     
     suspend fun updateHijriAdjustment(days: Int) {
-        context.settingsDataStore.edit { preferences ->
+        dataStore.edit { preferences ->
             preferences[PreferencesKeys.HIJRI_ADJUSTMENT] = days
         }
     }

@@ -23,7 +23,7 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 
 val appModule: Module = module {
     // Settings DataStore (singleton to share data)
-    single { SettingsDataStore(get()) }
+    single { SettingsDataStore.create(get()) }
     
     // Settings Repository (singleton to share flow between Settings and Home)
     single<SettingsRepository> { SettingsRepositoryImpl(get(), get()) }
