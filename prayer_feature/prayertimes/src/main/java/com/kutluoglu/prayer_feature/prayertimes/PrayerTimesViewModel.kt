@@ -107,6 +107,7 @@ class PrayerTimesViewModel(
     }
 
     fun onEvent(event: PrayerTimesEvent) {
+        // TODO(Task 5): implement month navigation
         when (event) {
             PrayerTimesEvent.OnPreviousMonth -> Unit
             PrayerTimesEvent.OnNextMonth -> Unit
