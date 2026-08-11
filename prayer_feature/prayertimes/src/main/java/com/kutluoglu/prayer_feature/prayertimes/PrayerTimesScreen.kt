@@ -27,7 +27,8 @@ import com.kutluoglu.prayer_feature.prayertimes.components.TopContainer
 @Composable
 fun PayerTimesScreen(
     modifier: Modifier = Modifier,
-    uiState: PrayerTimesUiState
+    uiState: PrayerTimesUiState,
+    onEvent: (PrayerTimesEvent) -> Unit
 ){
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
         val isLandscape = maxWidth > maxHeight
@@ -47,7 +48,7 @@ fun PayerTimesScreen(
                     shape = RoundedCornerShape(24.dp),
                     elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
                 ) {
-                    PrayerContainer(uiState)
+                    PrayerContainer(uiState, onEvent)
                 }
             }
         } else {
@@ -70,7 +71,7 @@ fun PayerTimesScreen(
                         shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
                         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
                     ) {
-                        PrayerContainer(uiState)
+                        PrayerContainer(uiState, onEvent)
                     }
                 }
             }
