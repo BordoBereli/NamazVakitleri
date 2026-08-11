@@ -31,8 +31,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -43,17 +45,21 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.kutluoglu.core.common.gregorianShortFormatter
 import com.kutluoglu.core.designsystem.components.ErrorMessage
 import com.kutluoglu.core.designsystem.components.LoadingIndicator
 import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer_feature.common.prayerUtils.getPrayerDrawableIdFrom
 import com.kutluoglu.prayer_feature.prayertimes.DailyPrayer
+import com.kutluoglu.prayer_feature.prayertimes.PrayerTimesEvent
 import com.kutluoglu.prayer_feature.prayertimes.PrayerTimesUiState
 import com.kutluoglu.prayer_feature.prayertimes.R
+import kotlinx.datetime.YearMonth
 
 @Composable
 fun PrayerContainer(
-        uiState: PrayerTimesUiState
+        uiState: PrayerTimesUiState,
+        onEvent: (PrayerTimesEvent) -> Unit
 ) {
     when (uiState) {
         is PrayerTimesUiState.Loading -> LoadingIndicator()
@@ -61,7 +67,9 @@ fun PrayerContainer(
         is PrayerTimesUiState.Success -> PrayerTimesContent(
             monthlyPrayers = uiState.monthlyPrayers,
             currentDayOfMonth = uiState.currentDayOfMonth,
-            gregorianDate = uiState.timeState.gregorianShortDate,
+            selectedMonth = uiState.selectedMonth,
+            isCurrentMonth = uiState.isCurrentMonth,
+            onEvent = onEvent
         )
     }
 }
@@ -70,17 +78,21 @@ fun PrayerContainer(
 private fun PrayerTimesContent(
         monthlyPrayers: List<DailyPrayer>,
         currentDayOfMonth: Int,
-        gregorianDate: String
+        selectedMonth: YearMonth,
+        isCurrentMonth: Boolean,
+        onEvent: (PrayerTimesEvent) -> Unit
 ) {
     val listState = rememberLazyListState()
 
-    LaunchedEffect(monthlyPrayers) {
-        // Find the index of the current day. The list is 0-indexed, so subtract 1.
-        val todayIndex = currentDayOfMonth - 1
-        // Make sure the index is valid before scrolling
-        if (todayIndex in monthlyPrayers.indices) {
-            // Animate the scroll to the item. Use scrollToItem for an instant jump.
-            listState.animateScrollToItem(index = todayIndex)
+    LaunchedEffect(monthlyPrayers, isCurrentMonth) {
+        if (isCurrentMonth) {
+            // Find the index of the current day. The list is 0-indexed, so subtract 1.
+            val todayIndex = currentDayOfMonth - 1
+            // Make sure the index is valid before scrolling
+            if (todayIndex in monthlyPrayers.indices) {
+                // Animate the scroll to the item. Use scrollToItem for an instant jump.
+                listState.animateScrollToItem(index = todayIndex)
+            }
         }
     }
     Column(
@@ -90,16 +102,31 @@ private fun PrayerTimesContent(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         // --- Header Items ---
-        TitleHeader(gregorianDate)
+        TitleHeader(
+            selectedMonthLabel = selectedMonthLabel(selectedMonth),
+            isCurrentMonth = isCurrentMonth,
+            onPrevious = { onEvent(PrayerTimesEvent.OnPreviousMonth) },
+            onNext = { onEvent(PrayerTimesEvent.OnNextMonth) },
+            onToday = { onEvent(PrayerTimesEvent.OnToday) }
+        )
         PrayersHeader(monthlyPrayers.firstOrNull()?.prayers ?: emptyList())
         // --- Content Items ---
-        PrayerList(monthlyPrayers, currentDayOfMonth, listState)
+        PrayerList(monthlyPrayers, currentDayOfMonth, isCurrentMonth, listState)
     }
 
 }
 
+private fun selectedMonthLabel(month: YearMonth): String =
+    java.time.YearMonth.of(month.year, month.month.ordinal + 1).format(gregorianShortFormatter)
+
 @Composable
-private fun TitleHeader(gregorianDate: String) {
+private fun TitleHeader(
+        selectedMonthLabel: String,
+        isCurrentMonth: Boolean,
+        onPrevious: () -> Unit,
+        onNext: () -> Unit,
+        onToday: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -108,30 +135,40 @@ private fun TitleHeader(gregorianDate: String) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(
-            painter = painterResource(id = R.drawable.btn_left),
-            contentDescription = "Prayer Times Icon"
-        )
+        IconButton(onClick = onPrevious) {
+            Icon(
+                painter = painterResource(id = R.drawable.btn_left),
+                contentDescription = stringResource(R.string.previous_month)
+            )
+        }
         Column(
             modifier = Modifier.weight(1f),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = gregorianDate,
+                text = selectedMonthLabel,
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = stringResource(R.string.page_sub_title),
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+            if (isCurrentMonth) {
+                Text(
+                    text = stringResource(R.string.page_sub_title),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            } else {
+                TextButton(onClick = onToday) {
+                    Text(text = stringResource(R.string.today))
+                }
+            }
+        }
+        IconButton(onClick = onNext) {
+            Icon(
+                painter = painterResource(id = R.drawable.btn_right),
+                contentDescription = stringResource(R.string.next_month)
             )
         }
-        Icon(
-            painter = painterResource(id = R.drawable.btn_right),
-            contentDescription = "Prayer Times Icon"
-        )
     }
 }
 
@@ -172,6 +209,7 @@ fun PrayersHeader(prayers: List<Prayer>) {
 private fun PrayerList(
         monthlyPrayers: List<DailyPrayer>,
         currentDayOfMonth: Int,
+        isCurrentMonth: Boolean,
         listState: LazyListState
 ) {
     LazyColumn(
@@ -183,7 +221,7 @@ private fun PrayerList(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(monthlyPrayers, key = { it.dayOfMonth }) { dailyPrayer ->
-            val isToday = dailyPrayer.dayOfMonth == currentDayOfMonth
+            val isToday = isCurrentMonth && dailyPrayer.dayOfMonth == currentDayOfMonth
             DailyPrayerCard(
                 dailyPrayer = dailyPrayer,
                 isToday = isToday
