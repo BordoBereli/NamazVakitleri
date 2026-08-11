@@ -34,8 +34,9 @@ Last updated: 2026-08-11
 
 ## 🟡 Incomplete implementations (TODO stubs)
 
-- [ ] **5. `PrayerDataStoreImp.getPrayerTimes()` throws `TODO("Not yet implemented")`**
+- [x] **5. `PrayerDataStoreImp.getPrayerTimes()` throws `TODO("Not yet implemented")`**
   - File: `prayer/data/src/main/java/com/kutluoglu/prayer/data/source/prayer/PrayerDataStoreImp.kt:24`
+  - Status: DONE 2026-08-11 (TDD) — `PrayerDataStoreImp` now injects `PrayerCalculationService` and computes prayer times (Turkey Diyanet / Standard). Wired `PrayerDataStore` into `PrayerRepository` (repository now delegates to the data store instead of calling the service directly). Added `PrayerDataStoreImpTest` (RED→GREEN); `PrayerRepositoryTest` updated to mock the data store. Full suite green.
 
 - [ ] **6. `ClearPrayerTimesCacheUseCase` is a no-op placeholder**
   - File: `prayer/domain/src/main/java/com/kutluoglu/prayer/usecases/prayer/ClearPrayerTimesCacheUseCase.kt`

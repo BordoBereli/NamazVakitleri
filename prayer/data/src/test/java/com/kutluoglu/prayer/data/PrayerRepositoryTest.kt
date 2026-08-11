@@ -3,8 +3,8 @@ package com.kutluoglu.prayer.data
 import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.core.common.createBy
 import com.kutluoglu.prayer.data.prayer.PrayerRepository
+import com.kutluoglu.prayer.data.repository.prayer.PrayerDataStore
 import com.kutluoglu.prayer.model.prayer.Prayer
-import com.kutluoglu.prayer.services.PrayerCalculationService
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -18,19 +18,19 @@ import java.time.ZoneId
 class PrayerRepositoryTest {
 
     // 1. Declare the dependencies and the class under test
-    private lateinit var prayerCalculationService: PrayerCalculationService
+    private lateinit var prayerDataStore: PrayerDataStore
     private lateinit var repository: PrayerRepository
 
     @BeforeEach
     fun setUp() {
         // 2. Create a mock of the dependency
-        prayerCalculationService = mockk()
+        prayerDataStore = mockk()
         // 3. Initialize the class under test with the mock
-        repository = PrayerRepository(prayerCalculationService)
+        repository = PrayerRepository(prayerDataStore)
     }
 
     @Test
-    fun `getPrayerTimes should call calculationService and return its result`() = runTest {
+    fun `getPrayerTimes should call data store and return its result`() = runTest {
         // Arrange (Given)
         val testDate = LocalDateTime.createBy(2024, 1, 1)
         val testLatitude = 41.0
@@ -47,16 +47,16 @@ class PrayerRepositoryTest {
             )
         )
 
-        // Stub the mock: When prayerCalculationService.calculatePrayerTimes is called with ANY arguments,
+        // Stub the mock: When prayerDataStore.getPrayerTimes is called with ANY arguments,
         // it should return our mockPrayerList.
-        coEvery { prayerCalculationService.calculateDailyPrayerTimes(any(), any(), any(), any(), any(), any()) } returns mockPrayerList
+        coEvery { prayerDataStore.getPrayerTimes(any(), any(), any(), any()) } returns mockPrayerList
 
         // Act (When)
         val result = repository.getPrayerTimes(testDate, testLatitude, testLongitude, zoneId)
 
         // Assert (Then)
-        // Verify that the service was called exactly once.
-        coVerify(exactly = 1) { prayerCalculationService.calculateDailyPrayerTimes(testLatitude, testLongitude, zoneId, testDate, any(), any()) }
+        // Verify that the data store was called exactly once.
+        coVerify(exactly = 1) { prayerDataStore.getPrayerTimes(testDate, testLatitude, testLongitude, zoneId) }
 
         // Verify that the result from the repository is the same as the one we told the mock to return.
         assertThat(result).isEqualTo(mockPrayerList)
