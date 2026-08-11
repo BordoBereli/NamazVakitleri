@@ -22,4 +22,8 @@ class PrayerRepository(
         longitude = longitude,
         zoneId = zoneId
     )
+
+    override suspend fun clearCache() {
+        prayerDataStore.clearCache()
+    }
 }

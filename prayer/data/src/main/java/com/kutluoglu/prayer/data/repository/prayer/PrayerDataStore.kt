@@ -22,4 +22,6 @@ interface PrayerDataStore {
         longitude: Double,
         zoneId: ZoneId,
     ): List<Prayer>
+
+    suspend fun clearCache()
 }

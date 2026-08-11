@@ -19,4 +19,9 @@ interface IPrayerRepository {
             longitude: Double,
             zoneId: ZoneId,
     ): List<Prayer>
+
+    /**
+     * Clears any locally cached prayer times.
+     */
+    suspend fun clearCache()
 }

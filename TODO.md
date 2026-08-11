@@ -38,9 +38,10 @@ Last updated: 2026-08-11
   - File: `prayer/data/src/main/java/com/kutluoglu/prayer/data/source/prayer/PrayerDataStoreImp.kt:24`
   - Status: DONE 2026-08-11 (TDD) — `PrayerDataStoreImp` now injects `PrayerCalculationService` and computes prayer times (Turkey Diyanet / Standard). Wired `PrayerDataStore` into `PrayerRepository` (repository now delegates to the data store instead of calling the service directly). Added `PrayerDataStoreImpTest` (RED→GREEN); `PrayerRepositoryTest` updated to mock the data store. Full suite green.
 
-- [ ] **6. `ClearPrayerTimesCacheUseCase` is a no-op placeholder**
+- [x] **6. `ClearPrayerTimesCacheUseCase` is a no-op placeholder**
   - File: `prayer/domain/src/main/java/com/kutluoglu/prayer/usecases/prayer/ClearPrayerTimesCacheUseCase.kt`
   - Wired into `SettingsViewModel.clearCache()` but does nothing.
+  - Status: DONE 2026-08-11 (TDD) — use case now injects `IPrayerRepository` and calls `clearCache()`. Added `clearCache()` through the chain: `IPrayerRepository` → `PrayerRepository` → `PrayerDataStore` → `PrayerDataStoreImp` → `PrayerTimesCache.clear()`. Added `ClearPrayerTimesCacheUseCaseTest` (RED→GREEN) + delegation tests in `PrayerRepositoryTest`/`PrayerDataStoreImpTest`. Koin graph verified. Full suite green.
 
 - [x] **7. `PrayerRepository` Room caching TODOs**
   - File: `prayer/data/src/main/java/com/kutluoglu/prayer/data/prayer/PrayerRepository.kt:23,37`

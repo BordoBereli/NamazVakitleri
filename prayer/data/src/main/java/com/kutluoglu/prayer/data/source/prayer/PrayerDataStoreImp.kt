@@ -41,6 +41,10 @@ class PrayerDataStoreImp(
         return calculated
     }
 
+    override suspend fun clearCache() {
+        prayerTimesCache.clear()
+    }
+
     private fun buildCacheKey(
             date: LocalDateTime,
             latitude: Double,

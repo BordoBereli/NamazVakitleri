@@ -1,14 +1,16 @@
 package com.kutluoglu.prayer.usecases.prayer
 
+import com.kutluoglu.prayer.repository.IPrayerRepository
 import org.koin.core.annotation.Factory
 
 /**
  * Use case to clear the prayer times cache.
- * Currently a placeholder - implement if cache clearing is needed.
  */
 @Factory
-class ClearPrayerTimesCacheUseCase {
+class ClearPrayerTimesCacheUseCase(
+    private val prayerRepository: IPrayerRepository
+) {
     suspend operator fun invoke() {
-        // TODO: Implement cache clearing logic if needed
+        prayerRepository.clearCache()
     }
 }

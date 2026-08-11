@@ -63,4 +63,13 @@ class PrayerRepositoryTest {
         assertThat(result).hasSize(1)
         assertThat(result.first().name).isEqualTo("Fajr")
     }
+
+    @Test
+    fun `clearCache should delegate to the data store`() = runTest {
+        coEvery { prayerDataStore.clearCache() } returns Unit
+
+        repository.clearCache()
+
+        coVerify(exactly = 1) { prayerDataStore.clearCache() }
+    }
 }

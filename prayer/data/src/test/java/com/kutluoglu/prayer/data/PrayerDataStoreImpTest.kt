@@ -80,4 +80,11 @@ class PrayerDataStoreImpTest {
             prayerTimesCache.put("2024-01-01|41.0|29.0|Europe/Istanbul", calculatedPrayers)
         }
     }
+
+    @Test
+    fun `clearCache clears the prayer times cache`() = runTest {
+        dataStore.clearCache()
+
+        coVerify(exactly = 1) { prayerTimesCache.clear() }
+    }
 }
