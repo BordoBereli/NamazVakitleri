@@ -1,9 +1,5 @@
 package com.kutluoglu.prayer_feature.qibla
 
-import android.annotation.SuppressLint
-import android.app.Activity
-import android.content.pm.ActivityInfo
-import android.content.pm.ActivityInfo.*
 import android.hardware.SensorManager
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
@@ -11,16 +7,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kutluoglu.prayer_feature.common.components.TopContainer
 import com.kutluoglu.prayer_feature.qibla.components.QiblaCompass
 import com.kutluoglu.prayer_feature.qibla.components.QiblaInfoSection
-import kotlinx.coroutines.delay
 
-@SuppressLint("SourceLockedOrientationActivity")
 @Composable
 fun QiblaScreen(
         uiState: QiblaUiState,
@@ -31,18 +23,8 @@ fun QiblaScreen(
         onEvent(QiblaEvent.OnStart)
     }
 
-    val context = LocalContext.current
-    // Bu DisposableEffect, ekran yönünü yönetir.
     DisposableEffect(Unit) {
-        val activity = context as? Activity
-        // Orijinal ekran yönünü sakla
-        val originalOrientation = activity?.requestedOrientation
-        // Ekrana girildiğinde portre moduna kilitle
-        activity?.requestedOrientation = SCREEN_ORIENTATION_PORTRAIT
-
         onDispose {
-            // Ekrandan çıkıldığında orijinal ayara geri dön
-            activity?.requestedOrientation = originalOrientation ?: SCREEN_ORIENTATION_UNSPECIFIED
             onEvent(QiblaEvent.OnStop)
         }
     }

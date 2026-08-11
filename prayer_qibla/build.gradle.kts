@@ -26,20 +26,20 @@ android {
             )
         }
     }
-    java {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlin {
         compilerOptions {
-            jvmTarget = JvmTarget.JVM_1_8
+            jvmTarget = JvmTarget.JVM_11
         }
-        jvmToolchain(8)
     }
 }
 
 dependencies {
     implementation(project(":core:designsystem"))
+    implementation(project(":core:common"))
     implementation(project(":prayer:model"))
     implementation(project(":prayer:data"))
     implementation(libs.androidx.core.ktx)
@@ -54,8 +54,13 @@ dependencies {
 
     testImplementation(libs.junit)
     testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
     testImplementation("org.junit.jupiter:junit-jupiter-engine")
     testRuntimeOnly(libs.junit.platform.launcher)
+    testImplementation(libs.mockk)
+    testImplementation(libs.truth)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.turbine)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }

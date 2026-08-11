@@ -42,6 +42,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.getSystemService
+import com.kutluoglu.core.common.utils.AngleUtils
 import com.kutluoglu.prayer_feature.qibla.R
 import kotlin.math.abs
 import kotlin.math.cos
@@ -81,7 +82,7 @@ fun QiblaCompass(
         label = "qibla_indicator_rotation"
     )
 
-    val angleDifference = abs(qiblaAngle)
+    val angleDifference = abs(AngleUtils.normalizeDegrees(qiblaAngle))
     val isAligned = angleDifference < acceptableDifference
 
     val arrowColor by animateColorAsState(

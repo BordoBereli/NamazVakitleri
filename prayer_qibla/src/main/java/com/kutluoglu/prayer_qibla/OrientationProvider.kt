@@ -2,6 +2,7 @@ package com.kutluoglu.prayer_qibla
 
 import android.hardware.SensorManager
 import android.view.Surface
+import com.kutluoglu.core.common.utils.AngleUtils
 import com.kutluoglu.core.designsystem.utils.DisplayProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -48,10 +49,10 @@ class OrientationProvider(private val displayProvider: DisplayProvider) {
 
             // 1. Ekran rotasyonuna göre koordinat sistemini yeniden haritala
             when (displayProvider.display().rotation) {
-                Surface.ROTATION_0   -> remap(rawState.rotationMatrix, 1, 3) // AXIS_X, AXIS_Y
-                Surface.ROTATION_90 -> remap(rawState.rotationMatrix, 3, -1) // AXIS_Y, AXIS_MINUS_X
-                Surface.ROTATION_180 -> remap(rawState.rotationMatrix, -1, -3) // AXIS_MINUS_X, AXIS_MINUS_Y
-                Surface.ROTATION_270 -> remap(rawState.rotationMatrix, -3, 1) // AXIS_MINUS_Y, AXIS_X
+                Surface.ROTATION_0   -> remap(rawState.rotationMatrix, SensorManager.AXIS_X, SensorManager.AXIS_Y)
+                Surface.ROTATION_90 -> remap(rawState.rotationMatrix, SensorManager.AXIS_Y, SensorManager.AXIS_MINUS_X)
+                Surface.ROTATION_180 -> remap(rawState.rotationMatrix, SensorManager.AXIS_MINUS_X, SensorManager.AXIS_MINUS_Y)
+                Surface.ROTATION_270 -> remap(rawState.rotationMatrix, SensorManager.AXIS_MINUS_Y, SensorManager.AXIS_X)
             }
 
             // 2. Yönelim açılarını hesapla
@@ -66,7 +67,7 @@ class OrientationProvider(private val displayProvider: DisplayProvider) {
                 0.0
             }
 
-            val qiblaAngle = (qiblaBearing - normalizedAzimuth).toFloat()
+            val qiblaAngle = AngleUtils.normalizeDegrees((qiblaBearing - normalizedAzimuth).toFloat())
 
             _sensorState.update {
                 it.copy(

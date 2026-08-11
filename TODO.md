@@ -55,9 +55,11 @@ Last updated: 2026-08-11
 
 ## 🟠 Functional gaps
 
-- [ ] **9. Qibla compass locked to portrait mode**
+- [x] **9. Qibla compass locked to portrait mode**
   - File: `prayer_feature/qibla/src/main/java/com/kutluoglu/prayer_feature/qibla/QiblaScreen.kt:41`
   - Forces `SCREEN_ORIENTATION_PORTRAIT`; landscape unsupported.
+  - Status: DONE 2026-08-11 (TDD) — removed the orientation-lock `DisposableEffect` from `QiblaScreen` (kept `OnStop` dispatch). Fixed the compass math so landscape works correctly: `OrientationProvider` remap axis constants were wrong (`AXIS_Z`/`AXIS_MINUS_Z` instead of `AXIS_Y`/`AXIS_MINUS_Y` for all four rotations) — corrected to `AXIS_X/AXIS_Y`, `AXIS_Y/AXIS_MINUS_X`, `AXIS_MINUS_X/AXIS_MINUS_Y`, `AXIS_MINUS_Y/AXIS_X`. `qiblaAngle` is now normalized to [-180, 180] via new `AngleUtils.normalizeDegrees` (core:common) so the alignment check and info display work; `QiblaCompass` normalizes defensively too. Added `AngleUtilsTest` (4) + `OrientationProviderTest` (8) + `QiblaDataStoreImpTest` (2) (RED→GREEN). Full suite green. Note: `prayer_qibla` JVM bumped 8→11 (was inconsistent with the rest of the project and broke test classloading).
+  - Impact (per AGENTS.md): LOW risk. `OrientationProvider.getOrientation` → 1 direct caller (`QiblaDataStoreImp.getQiblaDirection`), affecting the `QiblaRoute → GetQiblaDirection` process; `QiblaScreen`/`QiblaCompass` → 0 direct callers. The `StartPrayerCountdown`/`HomeEvent.OnCountDown` flows live in the Home feature and are NOT affected by this change. Direct caller now covered by `QiblaDataStoreImpTest` (compass start/stop + emission mapping).
 
 - [x] **10. Monthly prayer times only for current month**
   - File: `prayer_feature/prayertimes/src/main/java/com/kutluoglu/prayer_feature/prayertimes/PrayerTimesViewModel.kt`
