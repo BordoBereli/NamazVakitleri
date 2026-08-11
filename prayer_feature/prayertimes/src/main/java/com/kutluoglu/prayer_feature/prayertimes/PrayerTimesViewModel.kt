@@ -1,15 +1,11 @@
 package com.kutluoglu.prayer_feature.prayertimes
 
-/**
- * Created by F.K. on 20.12.2025.
- *
- */
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kutluoglu.core.common.getZoneIdFromLocation
 import com.kutluoglu.core.common.now
-import com.kutluoglu.core.common.startOfMonth
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
+import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.usecases.prayer.GetPrayerTimesUseCase
 import com.kutluoglu.prayer.usecases.location.GetSavedLocationUseCase
 import com.kutluoglu.prayer_feature.common.states.LocationUiState
@@ -19,14 +15,17 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.atTime
-import kotlinx.datetime.daysUntil
-import kotlinx.datetime.plus
 import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.YearMonth
+import kotlinx.datetime.atTime
 import kotlinx.datetime.minus
+import kotlinx.datetime.onDay
+import kotlinx.datetime.plus
 import kotlinx.datetime.toJavaLocalDate
+import kotlinx.datetime.yearMonth
 import org.koin.android.annotation.KoinViewModel
+import java.time.ZoneId
 import java.time.chrono.HijrahDate
 
 @KoinViewModel
@@ -44,74 +43,126 @@ class PrayerTimesViewModel(
             initialValue = PrayerTimesUiState.Loading
         )
 
+    private var savedLocation: LocationData? = null
+    private var zoneId: ZoneId? = null
+    private var selectedMonth: YearMonth = LocalDateTime.now(ZoneId.systemDefault()).date.yearMonth
+    private val monthCache = mutableMapOf<YearMonth, List<DailyPrayer>>()
+    private var isLoading = false
+
     fun loadMonthlyPrayerTimes() {
         viewModelScope.launch {
             getSavedLocationUseCase()
-                .onSuccess { savedLocation ->
-                    val zoneId = getZoneIdFromLocation(savedLocation.countryCode)
-                    val today = LocalDateTime.now(zoneId)
-                    val startOfMonth = today.startOfMonth()
-                    val endOfMonth = startOfMonth
-                        .plus(1, DateTimeUnit.MONTH)
-                        .minus(1, DateTimeUnit.DAY)
-                    val daysInMonth = startOfMonth.daysUntil(endOfMonth) + 1
-                    val monthlyPrayers = mutableListOf<DailyPrayer>()
-                    for (day in 0 until daysInMonth) {
-                        val date = startOfMonth.plus(day, DateTimeUnit.DAY)
-                        getPrayerTimesUseCase(
-                            date = date.atTime(0,0), // Use the date for the loop
-                            latitude = savedLocation.latitude,
-                            longitude = savedLocation.longitude,
-                            zoneId = zoneId
-                        ).onSuccess { prayerTimes ->
-                            val langDetectedPrayerTimes = formatter.withLocalizedNames(prayerTimes)
-                            // isCurrent logic is only relevant for today's prayers
-                            val isToday = date == today.date
-                            val (currentPrayer, _) = if(isToday) calculator.findCurrentAndNextPrayer(langDetectedPrayerTimes, zoneId) else Pair(null, null)
-                            val prayersWithCurrent = langDetectedPrayerTimes.map {
-                                it.copy(isCurrent = isToday && it.name == currentPrayer?.name)
-                            }
-                            val timeState = formatter.getInitialTimeInfo(
-                                zoneId, date.toJavaLocalDate(), HijrahDate.from(date.toJavaLocalDate())
-                            )
-                            // You would also get daily gregorian/hijri dates from your formatter here
-                            monthlyPrayers.add(
-                                DailyPrayer(
-                                    dayOfMonth = date.day,
-                                    prayers = prayersWithCurrent,
-                                    gregorianDate = timeState.gregorianDayAndName,
-                                    hijriDate = timeState.hijriDate
-                                )
-                            )
-                        }.onFailure {
-                            _uiState.value = PrayerTimesUiState.Error(it.message ?: "Failed to load prayer times for day $day.")
-                            return@launch // Exit if any day fails
-                        }
-                    }
-
-                    _uiState.value = PrayerTimesUiState.Success(
-                        monthlyPrayers = monthlyPrayers,
-                        currentDayOfMonth = today.day,
-                        timeState = formatter.getInitialTimeInfo(zoneId),
-                        locationState = LocationUiState(
-                            locationData = savedLocation,
-                            locationInfoText = formatter.locationInfo(savedLocation)
-                        )
-                    )
-
-                }.onFailure {
-                    _uiState.value =
-                        PrayerTimesUiState.Error(it.message ?: "Failed to get saved location.")
+                .onSuccess { location ->
+                    savedLocation = location
+                    val resolvedZoneId = getZoneIdFromLocation(location.countryCode)
+                    zoneId = resolvedZoneId
+                    val today = LocalDateTime.now(resolvedZoneId)
+                    selectedMonth = today.date.yearMonth
+                    loadMonth(selectedMonth)
+                }
+                .onFailure {
+                    _uiState.value = PrayerTimesUiState.Error(it.message ?: "Failed to get saved location.")
                 }
         }
     }
 
     fun onEvent(event: PrayerTimesEvent) {
-        // TODO(Task 5): implement month navigation
         when (event) {
-            PrayerTimesEvent.OnPreviousMonth -> Unit
-            PrayerTimesEvent.OnNextMonth -> Unit
-            PrayerTimesEvent.OnToday -> Unit
+            PrayerTimesEvent.OnPreviousMonth -> navigateToMonth(selectedMonth.minus(1, DateTimeUnit.MONTH))
+            PrayerTimesEvent.OnNextMonth -> navigateToMonth(selectedMonth.plus(1, DateTimeUnit.MONTH))
+            PrayerTimesEvent.OnToday -> navigateToMonth(currentMonth())
         }
+    }
+
+    private fun navigateToMonth(month: YearMonth) {
+        selectedMonth = month
+        val current = _uiState.value
+        if (current is PrayerTimesUiState.Success) {
+            _uiState.value = current.copy(
+                selectedMonth = month,
+                isCurrentMonth = month == currentMonth()
+            )
+        }
+        loadMonth(month)
+    }
+
+    private fun currentMonth(): YearMonth =
+        LocalDateTime.now(zoneId ?: ZoneId.systemDefault()).date.yearMonth
+
+    private fun loadMonth(month: YearMonth) {
+        if (isLoading) return
+        isLoading = true
+        viewModelScope.launch {
+            try {
+                val cached = monthCache[month]
+                if (cached != null) {
+                    emitSuccess(month, cached)
+                    return@launch
+                }
+                val location = savedLocation ?: return@launch
+                val resolvedZoneId = zoneId ?: return@launch
+                val today = LocalDateTime.now(resolvedZoneId)
+                val monthlyPrayers = mutableListOf<DailyPrayer>()
+                for (day in 1..month.numberOfDays) {
+                    val date = month.onDay(day)
+                    getPrayerTimesUseCase(
+                        date = date.atTime(0, 0),
+                        latitude = location.latitude,
+                        longitude = location.longitude,
+                        zoneId = resolvedZoneId
+                    ).onSuccess { prayerTimes ->
+                        val langDetectedPrayerTimes = formatter.withLocalizedNames(prayerTimes)
+                        val isToday = date == today.date
+                        val (currentPrayer, _) = if (isToday) {
+                            calculator.findCurrentAndNextPrayer(langDetectedPrayerTimes, resolvedZoneId)
+                        } else {
+                            Pair(null, null)
+                        }
+                        val prayersWithCurrent = langDetectedPrayerTimes.map {
+                            it.copy(isCurrent = isToday && it.name == currentPrayer?.name)
+                        }
+                        val timeState = formatter.getInitialTimeInfo(
+                            resolvedZoneId,
+                            date.toJavaLocalDate(),
+                            HijrahDate.from(date.toJavaLocalDate())
+                        )
+                        monthlyPrayers.add(
+                            DailyPrayer(
+                                dayOfMonth = date.day,
+                                prayers = prayersWithCurrent,
+                                gregorianDate = timeState.gregorianDayAndName,
+                                hijriDate = timeState.hijriDate
+                            )
+                        )
+                    }.onFailure {
+                        _uiState.value = PrayerTimesUiState.Error(
+                            it.message ?: "Failed to load prayer times for day $day."
+                        )
+                        return@launch
+                    }
+                }
+                monthCache[month] = monthlyPrayers
+                emitSuccess(month, monthlyPrayers)
+            } finally {
+                isLoading = false
+            }
+        }
+    }
+
+    private fun emitSuccess(month: YearMonth, monthlyPrayers: List<DailyPrayer>) {
+        val location = savedLocation ?: return
+        val resolvedZoneId = zoneId ?: return
+        val today = LocalDateTime.now(resolvedZoneId)
+        _uiState.value = PrayerTimesUiState.Success(
+            monthlyPrayers = monthlyPrayers,
+            currentDayOfMonth = today.day,
+            selectedMonth = month,
+            isCurrentMonth = month == today.date.yearMonth,
+            timeState = formatter.getInitialTimeInfo(resolvedZoneId),
+            locationState = LocationUiState(
+                locationData = location,
+                locationInfoText = formatter.locationInfo(location)
+            )
+        )
     }
 }
