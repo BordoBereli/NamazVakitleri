@@ -344,7 +344,7 @@ class HomeViewModel(
                 return
             }
 
-            val duration = calculator.calculateTimeRemaining(nextPrayer.time)
+            val duration = calculator.calculateTimeRemaining(nextPrayer.time, zoneId)
             val timeRemainingString = formatter.formatTimeRemaining(duration)
             _uiState.value = currentState.copy(
                 prayerState = currentState.prayerState.copy(timeRemaining = timeRemainingString),

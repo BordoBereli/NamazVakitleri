@@ -77,16 +77,11 @@ sealed class LanguageEvent {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LanguageSelectionRoute(
-    currentLanguage: String,
     onNavigateBack: () -> Unit,
     onLanguageSelected: (String) -> Unit,
     viewModel: LanguageSelectionViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-
-    LaunchedEffect(currentLanguage) {
-        viewModel.setCurrentLanguage(currentLanguage)
-    }
 
     LaunchedEffect(Unit) {
         viewModel.selectedLanguage.collectLatest { language ->

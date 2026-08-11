@@ -45,9 +45,10 @@ class PrayerLogicEngine: PrayerLogic {
     }
 
     override fun calculateTimeRemaining(
-            nextPrayerTime: LocalTime
+            nextPrayerTime: LocalTime,
+            zoneId: ZoneId
     ): Duration {
-        val now = java.time.LocalTime.now(ZoneId.systemDefault())
+        val now = java.time.LocalTime.now(zoneId)
         val duration = Duration.between(
             now,
             nextPrayerTime.toJavaLocalTime()

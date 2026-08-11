@@ -19,6 +19,7 @@ import com.kutluoglu.prayer_settings.domain.usecase.UpdateLanguageUseCase
 import com.kutluoglu.prayer_settings.domain.usecase.UpdateLocationUseCase
 import org.koin.core.module.Module
 import org.koin.dsl.module
+import org.koin.androidx.viewmodel.dsl.viewModel
 
 val appModule: Module = module {
     // Settings DataStore (singleton to share data)
@@ -40,9 +41,9 @@ val appModule: Module = module {
     factory { SearchLocationUseCase(get()) }
     
     // Settings ViewModels
-    single { SettingsViewModel(get(), get(), get(), get(), get(), get(), get()) }
+    viewModel { SettingsViewModel(get(), get(), get(), get(), get(), get(), get()) }
     factory { LocationSelectionViewModel(get(), get(), get(), get()) }
-    factory { CalculationMethodViewModel() }
-    factory { HijriAdjustmentViewModel() }
-    factory { LanguageSelectionViewModel() }
+    factory { CalculationMethodViewModel(get(), get()) }
+    factory { HijriAdjustmentViewModel(get(), get()) }
+    factory { LanguageSelectionViewModel(get(), get()) }
 }

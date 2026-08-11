@@ -13,7 +13,9 @@ import com.kutluoglu.prayer.usecases.prayer.GetPrayerTimesUseCase
 import com.kutluoglu.prayer.usecases.quran.GetRandomVerseUseCase
 import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
 import com.kutluoglu.prayer_location.LocationService
-import com.kutluoglu.prayer_settings.domain.repository
+import com.kutluoglu.prayer_settings.domain.model.LocationSettings
+import com.kutluoglu.prayer_settings.domain.model.Settings
+import com.kutluoglu.prayer_settings.domain.repository.SettingsRepository
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk

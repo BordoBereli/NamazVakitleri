@@ -39,7 +39,6 @@ fun NavGraphBuilder.settingsGraph(navController: NavController) {
 
     composable(Screen.CalculationMethodScreen.route) {
         CalculationMethodRoute(
-            currentMethod = "",
             onNavigateBack = { navController.popBackStack() },
             onMethodSelected = { method ->
                 navController.popBackStack()
@@ -49,7 +48,6 @@ fun NavGraphBuilder.settingsGraph(navController: NavController) {
 
     composable(Screen.HijriAdjustmentScreen.route) {
         HijriAdjustmentRoute(
-            currentAdjustment = 0,
             onNavigateBack = { navController.popBackStack() },
             onAdjustmentSelected = { adjustment ->
                 navController.popBackStack()
@@ -59,7 +57,6 @@ fun NavGraphBuilder.settingsGraph(navController: NavController) {
 
     composable(Screen.LanguageSelectionScreen.route) {
         LanguageSelectionRoute(
-            currentLanguage = "",
             onNavigateBack = { navController.popBackStack() },
             onLanguageSelected = { language ->
                 navController.popBackStack()

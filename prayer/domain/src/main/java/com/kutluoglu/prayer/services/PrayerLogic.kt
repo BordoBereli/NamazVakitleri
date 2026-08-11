@@ -3,6 +3,7 @@ package com.kutluoglu.prayer.services
 import com.kutluoglu.prayer.model.prayer.Prayer
 import kotlinx.datetime.LocalTime
 import java.time.Duration
+import java.time.ZoneId
 
 
 /**
@@ -15,6 +16,7 @@ interface PrayerLogic {
     ): Pair<Prayer?, Prayer?>
 
     fun calculateTimeRemaining(
-            nextPrayerTime: LocalTime
+            nextPrayerTime: LocalTime,
+            zoneId: ZoneId
     ): Duration
 }

@@ -50,16 +50,11 @@ import org.koin.androidx.compose.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CalculationMethodRoute(
-    currentMethod: String,
     onNavigateBack: () -> Unit,
     onMethodSelected: (String) -> Unit,
     viewModel: CalculationMethodViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-
-    LaunchedEffect(currentMethod) {
-        viewModel.setCurrentMethod(currentMethod)
-    }
 
     LaunchedEffect(Unit) {
         viewModel.selectedMethod.collectLatest { method ->
