@@ -59,9 +59,10 @@ Last updated: 2026-08-11
   - File: `prayer_feature/qibla/src/main/java/com/kutluoglu/prayer_feature/qibla/QiblaScreen.kt:41`
   - Forces `SCREEN_ORIENTATION_PORTRAIT`; landscape unsupported.
 
-- [ ] **10. Monthly prayer times only for current month**
+- [x] **10. Monthly prayer times only for current month**
   - File: `prayer_feature/prayertimes/src/main/java/com/kutluoglu/prayer_feature/prayertimes/PrayerTimesViewModel.kt`
   - No month navigation.
+  - Status: DONE 2026-08-11 (TDD) — `PrayerTimesViewModel` now tracks `selectedMonth` (kotlinx-datetime `YearMonth`), caches loaded months in `monthCache`, and exposes `onEvent(PrayerTimesEvent)` (OnPreviousMonth/OnNextMonth/OnToday). `PrayerTimesUiState.Success` gains `selectedMonth` + `isCurrentMonth`; header arrows are clickable, a "Today" button appears when not on the current month, and today-highlight/auto-scroll are gated to the current month. Added `PrayerTimesViewModelTest` (6 tests, RED→GREEN). Full suite green.
 
 - [ ] **11. Duplicated `getCountryCode` mapping**
   - Files: `prayer_feature/home/.../HomeViewModel.kt:135`, `prayer_settings/.../SettingsRepositoryImpl.kt:39`
