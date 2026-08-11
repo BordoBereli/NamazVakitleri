@@ -3,4 +3,7 @@
     <string name="page_title">Namaz Vakitleri</string>
     <string name="page_sub_title">Aylık Namaz Programı</string>
     <string name="image_desc">Kubbe</string>
+    <string name="today">Bugün</string>
+    <string name="previous_month">Önceki ay</string>
+    <string name="next_month">Sonraki ay</string>
 </resources>

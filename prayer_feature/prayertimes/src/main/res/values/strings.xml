@@ -3,4 +3,7 @@
     <string name="page_title">Prayer Times</string>
     <string name="page_sub_title">Monthly Prayer Schedules</string>
     <string name="image_desc">Kubbe</string>
+    <string name="today">Today</string>
+    <string name="previous_month">Previous month</string>
+    <string name="next_month">Next month</string>
 </resources>
