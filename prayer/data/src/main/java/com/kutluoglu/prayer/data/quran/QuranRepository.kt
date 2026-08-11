@@ -2,6 +2,7 @@ package com.kutluoglu.prayer.data.quran
 
 import com.kutluoglu.prayer.model.quran.AyahData
 import com.kutluoglu.prayer.repository.IQuranRepository
+import com.kutluoglu.prayer_remote.quran.QuranDataSource
 import org.koin.core.annotation.Single
 
 /**

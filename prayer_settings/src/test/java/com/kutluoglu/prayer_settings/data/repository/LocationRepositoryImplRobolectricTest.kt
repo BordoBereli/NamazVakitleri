@@ -2,9 +2,11 @@ package com.kutluoglu.prayer_settings.data.repository
 
 import android.content.Context
 import com.google.common.truth.Truth.assertThat
+import com.kutluoglu.prayer.model.location.City
 import com.kutluoglu.prayer_settings.data.local.CityCacheDataStore
-import com.kutluoglu.prayer_settings.domain.model.City
+import com.kutluoglu.prayer_remote.location.CitySearchRemoteDataSource
 import kotlinx.coroutines.runBlocking
+import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
@@ -32,8 +34,13 @@ class LocationRepositoryImplRobolectricTest {
         mockWebServer.start()
         
         cacheDataStore = CityCacheDataStore(context)
+
+        val remoteDataSource = CitySearchRemoteDataSource(
+            httpClient = OkHttpClient(),
+            baseUrl = mockWebServer.url("/").toString().removeSuffix("/")
+        )
         
-        repository = LocationRepositoryImpl(context, cacheDataStore)
+        repository = LocationRepositoryImpl(context, remoteDataSource, cacheDataStore)
     }
 
     @After

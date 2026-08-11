@@ -1,4 +1,4 @@
-package com.kutluoglu.prayer_settings.domain.model
+package com.kutluoglu.prayer.model.location
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

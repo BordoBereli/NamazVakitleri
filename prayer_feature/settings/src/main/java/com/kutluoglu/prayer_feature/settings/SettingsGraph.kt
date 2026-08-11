@@ -8,7 +8,7 @@ import com.kutluoglu.prayer_feature.settings.hijri.HijriAdjustmentRoute
 import com.kutluoglu.prayer_feature.settings.language.LanguageSelectionRoute
 import com.kutluoglu.prayer_feature.settings.location.LocationSelectionRoute
 import com.kutluoglu.prayer_navigation.core.Screen
-import com.kutluoglu.prayer_settings.domain.model.City
+import com.kutluoglu.prayer.model.location.City
 
 fun NavGraphBuilder.settingsGraph(navController: NavController) {
     composable(Screen.SettingsScreen.route) {

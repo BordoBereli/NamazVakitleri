@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kutluoglu.prayer_settings.data.location.LocationData
 import com.kutluoglu.prayer_settings.data.location.LocationServiceHelper
-import com.kutluoglu.prayer_settings.data.repository.NetworkException
-import com.kutluoglu.prayer_settings.domain.model.City
+import com.kutluoglu.prayer_remote.location.NetworkException
+import com.kutluoglu.prayer.model.location.City
 import com.kutluoglu.prayer_settings.domain.model.LocationSettings
 import com.kutluoglu.prayer_settings.domain.repository.LocationRepository
 import com.kutluoglu.prayer_settings.domain.usecase.SearchLocationUseCase

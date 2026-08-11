@@ -1,6 +1,6 @@
 package com.kutluoglu.prayer_settings.data.local
 
-import com.kutluoglu.prayer_settings.domain.model.City
+import com.kutluoglu.prayer.model.location.City
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

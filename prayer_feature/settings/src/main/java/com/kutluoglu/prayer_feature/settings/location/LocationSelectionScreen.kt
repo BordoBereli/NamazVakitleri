@@ -97,7 +97,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import com.kutluoglu.core.designsystem.R
 import com.kutluoglu.core.designsystem.components.SkeletonList
-import com.kutluoglu.prayer_settings.domain.model.City
+import com.kutluoglu.prayer.model.location.City
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 import org.osmdroid.config.Configuration

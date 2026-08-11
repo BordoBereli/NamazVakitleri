@@ -41,15 +41,12 @@ android {
 dependencies {
     implementation(project(":core:common"))
     implementation(project(":prayer:domain"))
+    implementation(project(":prayer_remote"))
     implementation(libs.kotlinx.datetime)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-
-    //region Network
-    implementation(libs.okhttp)
-    //endregion
 
     //region Local cache
     implementation(libs.androidx.datastore.preferences)

@@ -1,6 +1,6 @@
 package com.kutluoglu.prayer_feature.settings.location
 
-import com.kutluoglu.prayer_settings.domain.model.City
+import com.kutluoglu.prayer.model.location.City
 
 enum class SortOrder {
     ASCENDING,

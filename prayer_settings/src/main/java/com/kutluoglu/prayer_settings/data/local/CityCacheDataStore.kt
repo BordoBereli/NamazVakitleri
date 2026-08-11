@@ -6,8 +6,8 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.kutluoglu.prayer_settings.domain.model.City
-import com.kutluoglu.prayer_settings.domain.model.CityList
+import com.kutluoglu.prayer.model.location.City
+import com.kutluoglu.prayer.model.location.CityList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map

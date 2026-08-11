@@ -1,6 +1,6 @@
 package com.kutluoglu.prayer_settings.domain.repository
 
-import com.kutluoglu.prayer_settings.domain.model.City
+import com.kutluoglu.prayer.model.location.City
 
 interface LocationRepository {
     suspend fun getPresetCities(): List<City>

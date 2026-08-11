@@ -44,6 +44,7 @@ dependencies {
     implementation(project(":prayer_cache"))
     implementation(project(":core:common"))
     implementation(project(":prayer_location"))
+    implementation(project(":prayer_remote"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

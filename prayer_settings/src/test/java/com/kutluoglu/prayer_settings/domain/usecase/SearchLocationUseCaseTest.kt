@@ -1,7 +1,7 @@
 package com.kutluoglu.prayer_settings.domain.usecase
 
 import com.google.common.truth.Truth.assertThat
-import com.kutluoglu.prayer_settings.domain.model.City
+import com.kutluoglu.prayer.model.location.City
 import com.kutluoglu.prayer_settings.domain.repository.LocationRepository
 import io.mockk.coEvery
 import io.mockk.mockk

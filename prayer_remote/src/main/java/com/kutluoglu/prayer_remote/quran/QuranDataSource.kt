@@ -1,4 +1,4 @@
-package com.kutluoglu.prayer.data.quran
+package com.kutluoglu.prayer_remote.quran
 
 import com.kutluoglu.prayer.model.quran.AyahData
 import com.kutluoglu.prayer.model.quran.QuranApiAyahResponse

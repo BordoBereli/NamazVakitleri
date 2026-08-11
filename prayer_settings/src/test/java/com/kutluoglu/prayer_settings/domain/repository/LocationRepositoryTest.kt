@@ -1,7 +1,7 @@
 package com.kutluoglu.prayer_settings.domain.repository
 
 import com.google.common.truth.Truth.assertThat
-import com.kutluoglu.prayer_settings.domain.model.City
+import com.kutluoglu.prayer.model.location.City
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

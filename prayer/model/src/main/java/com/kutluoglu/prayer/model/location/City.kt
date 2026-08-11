@@ -1,6 +1,5 @@
-package com.kutluoglu.prayer_settings.domain.model
+package com.kutluoglu.prayer.model.location
 
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -14,7 +13,7 @@ data class City(
     val county: String? = null
 ) {
     val province: String get() = city ?: name
-    
+
     fun displayName(): String = when {
         city != null && county != null -> "$name, $county, $city, $country"
         city != null -> "$name, $city, $country"

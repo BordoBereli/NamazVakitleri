@@ -1,7 +1,7 @@
 package com.kutluoglu.prayer_settings.domain.usecase
 
 import android.util.Log
-import com.kutluoglu.prayer_settings.domain.model.City
+import com.kutluoglu.prayer.model.location.City
 import com.kutluoglu.prayer_settings.domain.repository.LocationRepository
 import org.koin.core.annotation.Factory
 import java.text.Normalizer

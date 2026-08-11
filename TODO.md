@@ -48,9 +48,10 @@ Last updated: 2026-08-11
   - No Room DB exists; always recalculates. Implement caching or remove TODOs.
   - Status: DONE 2026-08-11 (TDD) — implemented a DataStore-backed prayer-times cache instead of Room (corporate proxy blocks new dependency downloads; DataStore was already cached). `PrayerTimesCache` (Preferences DataStore, JSON-serialized `CachedPrayer` DTO) + `PrayerDataStoreImp` now checks cache first, calculates on miss, and stores. `PrayerRepository` TODOs were already removed in item 5. Added `PrayerTimesCacheTest` + rewrote `PrayerDataStoreImpTest` (RED→GREEN). Koin graph verified. Full suite green.
 
-- [ ] **8. `prayer_remote` module is empty**
+- [x] **8. `prayer_remote` module is empty**
   - File: `prayer_remote/src/main/java/com/kutluoglu/prayer_remote/MyClass.kt`
   - Not included in `app` dependencies. Implement or remove module.
+  - Status: DONE 2026-08-11 — populated `prayer_remote` as the dedicated remote layer. Moved `QuranDataSource` (Quran API) from `prayer:data` and extracted the Nominatim city-search/reverse-geocode logic into `CitySearchRemoteDataSource` (with `NetworkException`). Relocated `City`/`CityList`/`GeocodingResult` models from `prayer_settings` to `prayer:model` to avoid a dependency cycle. `prayer_remote` now provides its own `OkHttpClient` via Koin; `prayer:data`, `prayer_settings`, `prayer_feature:settings`, and `app` depend on it. `LocationRepositoryImpl` delegates to the remote data source (keeps cache/assets). Full suite green.
 
 ## 🟠 Functional gaps
 
