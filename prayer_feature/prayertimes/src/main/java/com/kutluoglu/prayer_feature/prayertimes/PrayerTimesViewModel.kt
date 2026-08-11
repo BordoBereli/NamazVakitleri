@@ -105,4 +105,12 @@ class PrayerTimesViewModel(
                 }
         }
     }
+
+    fun onEvent(event: PrayerTimesEvent) {
+        when (event) {
+            PrayerTimesEvent.OnPreviousMonth -> Unit
+            PrayerTimesEvent.OnNextMonth -> Unit
+            PrayerTimesEvent.OnToday -> Unit
+        }
+    }
 }
