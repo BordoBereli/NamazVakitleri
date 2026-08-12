@@ -2,25 +2,27 @@ package com.kutluoglu.prayer_feature.home
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -36,7 +38,6 @@ import com.kutluoglu.prayer_feature.home.feature.CustomBottomSheet
 import com.kutluoglu.prayer_feature.home.feature.VerseDetailSheetContent
 import com.kutluoglu.prayer_feature.home.state.HomeUiState
 import com.kutluoglu.prayer_navigation.core.PrayerNestedGraph
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -66,37 +67,26 @@ private fun PrayerContent(
     onEvent: (HomeEvent) -> Unit
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
     val successState = uiState as? HomeUiState.Success
 
-    val prayerState by remember(successState?.prayerState) {
-        derivedStateOf { successState?.prayerState }
-    }
-    val showLocationUpdatePrompt by remember(successState?.showLocationUpdatePrompt) {
-        derivedStateOf { successState?.showLocationUpdatePrompt ?: false }
-    }
-    val quranVerse by remember(successState?.quranVerse) {
-        derivedStateOf { successState?.quranVerse }
-    }
-    val isVerseSheetVisible by remember(successState?.isVerseDetailSheetVisible) {
-        derivedStateOf { successState?.isVerseDetailSheetVisible ?: false }
-    }
+    val prayerState = successState?.prayerState
+    val showLocationUpdatePrompt = successState?.showLocationUpdatePrompt ?: false
+    val quranVerse = successState?.quranVerse
+    val isVerseSheetVisible = successState?.isVerseDetailSheetVisible ?: false
 
     LaunchedEffect(showLocationUpdatePrompt) {
         if (showLocationUpdatePrompt) {
-            scope.launch {
-                val result = snackbarHostState.showSnackbar(
-                    message = context.getString(R.string.location_update_prompt_message),
-                    actionLabel = context.getString(R.string.location_update_action_label),
-                    withDismissAction = true,
-                    duration = SnackbarDuration.Long
-                )
-                if (result == SnackbarResult.ActionPerformed) {
-                    snackbarHostState.currentSnackbarData?.dismiss()
-                    onEvent(HomeEvent.OnUpdateLocationConfirmed)
-                }
+            val result = snackbarHostState.showSnackbar(
+                message = context.getString(R.string.location_update_prompt_message),
+                actionLabel = context.getString(R.string.location_update_action_label),
+                withDismissAction = true,
+                duration = SnackbarDuration.Long
+            )
+            if (result == SnackbarResult.ActionPerformed) {
+                snackbarHostState.currentSnackbarData?.dismiss()
+                onEvent(HomeEvent.OnUpdateLocationConfirmed)
             }
         }
     }
@@ -106,6 +96,15 @@ private fun PrayerContent(
         containerColor = Color.Transparent,
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { innerPadding ->
+        val errorState = uiState as? HomeUiState.Error
+        if (errorState != null) {
+            ErrorContent(
+                message = errorState.message,
+                onRetry = { onEvent(HomeEvent.OnRefresh) }
+            )
+            return@Scaffold
+        }
+
         val isRefreshing = uiState is HomeUiState.Loading
         val onPrayerTimesClick = {
             navController.navigate(PrayerNestedGraph.PRAYER_TIMES) {
@@ -125,8 +124,7 @@ private fun PrayerContent(
                         Box(modifier = modifier, contentAlignment = Alignment.Center) {
                             HomeTopContainer(
                                 painter = painterResource(id = R.drawable.home_page_fallback),
-                                successState = successState,
-                                onStartCount = { onEvent(HomeEvent.OnCountDown) }
+                                successState = successState
                             )
                         }
                     }
@@ -235,5 +233,30 @@ private fun PortraitMode(
         topContainer(Modifier.weight(0.37f))
         dailyPrayers(Modifier.weight(0.50f))
         bottomContainer(Modifier.weight(0.13f))
+    }
+}
+
+@Composable
+private fun ErrorContent(
+    message: String,
+    onRetry: () -> Unit
+) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Text(
+                text = message,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.error
+            )
+            Button(onClick = onRetry) {
+                Text(stringResource(R.string.retry))
+            }
+        }
     }
 }

@@ -7,7 +7,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -37,8 +36,7 @@ import com.kutluoglu.prayer_feature.home.state.PrayerUiState
 @Composable
 fun HomeTopContainer(
         successState: HomeUiState.Success?,
-        painter: Painter,
-        onStartCount: () -> Unit
+        painter: Painter
 ) {
     val locationState by remember(successState) {
         derivedStateOf { successState?.locationState }
@@ -54,8 +52,6 @@ fun HomeTopContainer(
     }
 
     val borderColorFromTheme = MaterialTheme.colorScheme.onSecondaryContainer
-
-    LaunchedEffect(prayerState) { onStartCount() }
 
     TopContainer(
         painter = painter,

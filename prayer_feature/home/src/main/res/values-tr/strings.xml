@@ -130,5 +130,6 @@
     <!-- Süre isimleri sonu -->
     <string name="no_verse_available">(Ayet bilgisi henüz hazır değil.)</string>
     <string name="shared_from_app">%1$s Uygulaması</string>
+    <string name="retry">Tekrar Dene</string>
 
 </resources>

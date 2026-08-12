@@ -15,8 +15,10 @@ import com.kutluoglu.prayer_feature.home.state.QuranUiState
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -117,5 +119,26 @@ class HomeViewModelTest {
         val vm = viewModel()
         vm.onEvent(HomeEvent.OnVerseClicked)
         vm.onEvent(HomeEvent.OnVerseDetailDismissed)
+    }
+
+    @Test
+    fun `prayerPassedSignal restarts countdown with recomputed prayer state`() = runTest {
+        val prayerPassed = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+        coEvery { locationCoordinator.resolveInitial() } returns location
+        coEvery { locationCoordinator.observeLocationChanges() } returns flowOf()
+        coEvery { locationCoordinator.observeSettingsChanges() } returns flowOf()
+        every { countdownEngine.prayerPassedSignal } returns prayerPassed
+        every { countdownEngine.dayChangedSignal } returns MutableSharedFlow()
+        coEvery { prayerTimesLoader.load(location) } returns success(loadedData())
+
+        val vm = viewModel()
+        assertThat(vm.screenGate.value).isEqualTo(HomeScreenGate.Ready)
+
+        val refreshed = PrayerUiState()
+        coEvery { prayerTimesLoader.computePrayerState(any(), any()) } returns refreshed
+
+        prayerPassed.emit(Unit)
+
+        verify { countdownEngine.start(refreshed, ZoneId.of("Europe/Istanbul"), any()) }
     }
 }

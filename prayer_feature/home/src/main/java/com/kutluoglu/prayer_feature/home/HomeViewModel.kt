@@ -73,7 +73,6 @@ class HomeViewModel(
     fun onEvent(event: HomeEvent) {
         when (event) {
             HomeEvent.OnRefresh -> { loadPrayerTimesForCurrentLocation() }
-            HomeEvent.OnCountDown -> { startPrayerCountdown() }
             HomeEvent.OnPermissionsGranted -> { loadPrayerTimesForCurrentLocation() }
             HomeEvent.OnUpdateLocationConfirmed -> { updateLocationChange() }
             HomeEvent.OnLoadQuranVerse -> { loadRandomVerse() }
@@ -127,7 +126,7 @@ class HomeViewModel(
                 _prayerState.value = loaded.prayerState
                 _promptState.value = locationCoordinator.locationUpdatePrompt.value
                 _screenGate.value = HomeScreenGate.Ready
-                startCountdownFromCurrentState()
+                startCountdown()
             }
             .onFailure { error ->
                 _screenGate.value = HomeScreenGate.Error(
@@ -142,15 +141,10 @@ class HomeViewModel(
         val refreshed = prayerTimesLoader.computePrayerState(currentState.prayers, zoneId)
         _prayerState.value = refreshed
         _screenGate.value = HomeScreenGate.Ready
+        startCountdown()
     }
 
-    private fun startPrayerCountdown() {
-        val currentState = _prayerState.value ?: return
-        val zoneId = getZoneIdFromLocation(_locationState.value?.locationData?.countryCode)
-        countdownEngine.start(currentState, zoneId, viewModelScope)
-    }
-
-    private fun startCountdownFromCurrentState() {
+    private fun startCountdown() {
         val currentState = _prayerState.value ?: return
         val zoneId = getZoneIdFromLocation(_locationState.value?.locationData?.countryCode)
         countdownEngine.start(currentState, zoneId, viewModelScope)
