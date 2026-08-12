@@ -1,10 +1,11 @@
-package com.kutluoglu.prayer_feature.home
+package com.kutluoglu.prayer_feature.home.domain
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
 import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
+import com.kutluoglu.prayer_feature.home.state.PrayerUiState
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk

@@ -4,6 +4,14 @@ import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer_feature.common.states.LocationUiState
 import com.kutluoglu.prayer_feature.common.states.TimeUiState
+import com.kutluoglu.prayer_feature.home.domain.CountdownEngine
+import com.kutluoglu.prayer_feature.home.domain.LocationCoordinator
+import com.kutluoglu.prayer_feature.home.domain.LoadedPrayerData
+import com.kutluoglu.prayer_feature.home.domain.PrayerTimesLoader
+import com.kutluoglu.prayer_feature.home.domain.QuranVerseLoader
+import com.kutluoglu.prayer_feature.home.state.HomeScreenGate
+import com.kutluoglu.prayer_feature.home.state.PrayerUiState
+import com.kutluoglu.prayer_feature.home.state.QuranUiState
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk

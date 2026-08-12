@@ -30,9 +30,9 @@ import com.kutluoglu.prayer_feature.common.components.LocationInfoSection
 import com.kutluoglu.prayer_feature.common.components.TopContainer
 import com.kutluoglu.prayer_feature.common.states.TimeUiState
 import com.kutluoglu.prayer_feature.common.prayerUtils.getPrayerDrawableIdFrom
-import com.kutluoglu.prayer_feature.home.HomeUiState
-import com.kutluoglu.prayer_feature.home.PrayerUiState
 import com.kutluoglu.prayer_feature.home.R
+import com.kutluoglu.prayer_feature.home.state.HomeUiState
+import com.kutluoglu.prayer_feature.home.state.PrayerUiState
 
 @Composable
 fun HomeTopContainer(

@@ -8,7 +8,7 @@ import androidx.navigation.NavController
 import com.kutluoglu.prayer_feature.home.HomeScreen
 import com.kutluoglu.prayer_feature.home.HomeViewModel
 import com.kutluoglu.prayer_feature.home.common.QuranVerseFormatter
-import com.kutluoglu.prayer_feature.home.mergeToHomeUiState
+import com.kutluoglu.prayer_feature.home.state.mergeToHomeUiState
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 

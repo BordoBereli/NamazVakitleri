@@ -1,8 +1,9 @@
-package com.kutluoglu.prayer_feature.home
+package com.kutluoglu.prayer_feature.home.domain
 
 import android.util.Log
 import com.kutluoglu.core.designsystem.utils.LanguageProvider
 import com.kutluoglu.prayer.usecases.quran.GetRandomVerseUseCase
+import com.kutluoglu.prayer_feature.home.state.QuranUiState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -1,4 +1,4 @@
-package com.kutluoglu.prayer_feature.home
+package com.kutluoglu.prayer_feature.home.state
 
 sealed interface HomeScreenGate {
     data object Loading : HomeScreenGate

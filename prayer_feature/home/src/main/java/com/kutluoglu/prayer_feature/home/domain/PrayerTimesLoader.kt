@@ -1,4 +1,4 @@
-package com.kutluoglu.prayer_feature.home
+package com.kutluoglu.prayer_feature.home.domain
 
 import com.kutluoglu.core.common.getZoneIdFromLocation
 import com.kutluoglu.core.common.now
@@ -9,6 +9,7 @@ import com.kutluoglu.prayer.usecases.prayer.GetPrayerTimesUseCase
 import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
 import com.kutluoglu.prayer_feature.common.states.LocationUiState
 import com.kutluoglu.prayer_feature.common.states.TimeUiState
+import com.kutluoglu.prayer_feature.home.state.PrayerUiState
 import kotlinx.datetime.LocalDateTime
 import org.koin.core.annotation.Factory
 import java.time.ZoneId

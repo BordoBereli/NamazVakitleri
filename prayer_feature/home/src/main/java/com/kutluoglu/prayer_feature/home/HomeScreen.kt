@@ -34,6 +34,7 @@ import com.kutluoglu.prayer_feature.home.components.DailyPrayers
 import com.kutluoglu.prayer_feature.home.components.HomeTopContainer
 import com.kutluoglu.prayer_feature.home.feature.CustomBottomSheet
 import com.kutluoglu.prayer_feature.home.feature.VerseDetailSheetContent
+import com.kutluoglu.prayer_feature.home.state.HomeUiState
 import com.kutluoglu.prayer_navigation.core.PrayerNestedGraph
 import kotlinx.coroutines.launch
 

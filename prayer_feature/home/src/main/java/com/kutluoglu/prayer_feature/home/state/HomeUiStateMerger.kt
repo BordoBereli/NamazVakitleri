@@ -1,4 +1,4 @@
-package com.kutluoglu.prayer_feature.home
+package com.kutluoglu.prayer_feature.home.state
 
 import com.kutluoglu.prayer_feature.common.states.LocationUiState
 import com.kutluoglu.prayer_feature.common.states.TimeUiState

@@ -1,4 +1,4 @@
-package com.kutluoglu.prayer_feature.home
+package com.kutluoglu.prayer_feature.home.state
 
 import com.kutluoglu.prayer.model.quran.AyahData
 

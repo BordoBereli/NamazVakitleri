@@ -30,9 +30,9 @@ import com.kutluoglu.core.designsystem.components.ErrorMessage
 import com.kutluoglu.core.designsystem.components.LoadingIndicator
 import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer_feature.common.LocalIsLandscape
-import com.kutluoglu.prayer_feature.home.HomeUiState
-import com.kutluoglu.prayer_feature.home.PrayerUiState
 import com.kutluoglu.prayer_feature.home.R
+import com.kutluoglu.prayer_feature.home.state.HomeUiState
+import com.kutluoglu.prayer_feature.home.state.PrayerUiState
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable

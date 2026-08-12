@@ -1,4 +1,4 @@
-package com.kutluoglu.prayer_feature.home
+package com.kutluoglu.prayer_feature.home.domain
 
 import android.util.Log
 import com.kutluoglu.prayer.model.location.LocationData

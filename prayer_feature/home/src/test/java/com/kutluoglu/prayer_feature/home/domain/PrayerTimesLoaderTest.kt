@@ -1,4 +1,4 @@
-package com.kutluoglu.prayer_feature.home
+package com.kutluoglu.prayer_feature.home.domain
 
 import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.core.common.getZoneIdFromLocation

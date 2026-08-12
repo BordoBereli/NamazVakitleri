@@ -20,9 +20,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.kutluoglu.prayer.model.quran.AyahData
 import com.kutluoglu.prayer_feature.home.HomeEvent
-import com.kutluoglu.prayer_feature.home.HomeUiState
 import com.kutluoglu.prayer_feature.home.R
 import com.kutluoglu.prayer_feature.home.common.QuranVerseFormatter
+import com.kutluoglu.prayer_feature.home.state.HomeUiState
 
 @Composable
 fun BottomContainer(
