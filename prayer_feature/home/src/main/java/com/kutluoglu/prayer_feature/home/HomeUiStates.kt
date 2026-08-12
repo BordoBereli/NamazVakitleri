@@ -17,6 +17,7 @@ sealed class HomeUiState {
         val timeState: TimeUiState = TimeUiState(),
         val prayerState: PrayerUiState = PrayerUiState(),
         val locationState: LocationUiState,
+        val countdownState: CountdownUiState = CountdownUiState(),
 
         val quranVerse: AyahData? = null,
         val isVerseDetailSheetVisible: Boolean = false,
