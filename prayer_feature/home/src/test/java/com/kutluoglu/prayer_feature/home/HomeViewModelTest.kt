@@ -1,192 +1,113 @@
 package com.kutluoglu.prayer_feature.home
 
-import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import com.kutluoglu.core.designsystem.utils.LanguageProvider
-import com.kutluoglu.prayer.domain.PrayerLogicEngine
 import com.kutluoglu.prayer.model.location.LocationData
-import com.kutluoglu.prayer.model.prayer.Prayer
-import com.kutluoglu.prayer.usecases.location.GetSavedLocationUseCase
-import com.kutluoglu.prayer.usecases.location.ObserveLocationUseCase
-import com.kutluoglu.prayer.usecases.location.SaveLocationUseCase
-import com.kutluoglu.prayer.usecases.prayer.GetPrayerTimesUseCase
-import com.kutluoglu.prayer.usecases.quran.GetRandomVerseUseCase
-import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
-import com.kutluoglu.prayer_location.LocationService
-import com.kutluoglu.prayer_settings.domain.model.LocationSettings
-import com.kutluoglu.prayer_settings.domain.model.Settings
-import com.kutluoglu.prayer_settings.domain.repository.SettingsRepository
+import com.kutluoglu.prayer_feature.common.states.LocationUiState
+import com.kutluoglu.prayer_feature.common.states.TimeUiState
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.mockkStatic
-import io.mockk.spyk
-import android.util.Log
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.LocalTime
+import kotlinx.coroutines.test.setMain
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
+import java.time.ZoneId
 import kotlin.Result.Companion.success
 
 @OptIn(ExperimentalCoroutinesApi::class)
-@ExtendWith(MainCoroutineRule::class)
 class HomeViewModelTest {
 
-    private lateinit var getPrayerTimesUseCase: GetPrayerTimesUseCase
-    private lateinit var getRandomVerseUseCase: GetRandomVerseUseCase
-    private lateinit var saveLocationUseCase: SaveLocationUseCase
-    private lateinit var getSavedLocationUseCase: GetSavedLocationUseCase
-    private lateinit var observeLocationUseCase: ObserveLocationUseCase
+    private val locationCoordinator: LocationCoordinator = mockk(relaxed = true)
+    private val prayerTimesLoader: PrayerTimesLoader = mockk(relaxed = true)
+    private val countdownEngine: CountdownEngine = mockk(relaxed = true)
+    private val quranVerseLoader: QuranVerseLoader = mockk(relaxed = true)
 
-    private lateinit var calculator: PrayerLogicEngine
-    private lateinit var formatter: PrayerFormatter
-    private lateinit var locationService: LocationService
-    private lateinit var languageProvider: LanguageProvider
-    private lateinit var settingsRepository: SettingsRepository
-    private lateinit var viewModel: HomeViewModel
+    private val location = LocationData(
+        latitude = 41.0082,
+        longitude = 28.9784,
+        country = "Turkey",
+        countryCode = "TR",
+        city = "Istanbul",
+        county = null
+    )
+
+    private fun loadedData() = LoadedPrayerData(
+        prayerState = PrayerUiState(),
+        timeState = TimeUiState(),
+        locationState = LocationUiState(location, "Istanbul, TR"),
+        zoneId = ZoneId.of("Europe/Istanbul")
+    )
+
+    private fun viewModel() = HomeViewModel(
+        locationCoordinator,
+        prayerTimesLoader,
+        countdownEngine,
+        quranVerseLoader
+    )
 
     @BeforeEach
     fun setUp() {
-        mockkStatic(Log::class)
-        every { Log.e(any<String>(), any<String>()) } returns 0
+        Dispatchers.setMain(UnconfinedTestDispatcher())
+        every { countdownEngine.prayerPassedSignal } returns kotlinx.coroutines.flow.MutableSharedFlow()
+        every { countdownEngine.dayChangedSignal } returns kotlinx.coroutines.flow.MutableSharedFlow()
+    }
 
-        getPrayerTimesUseCase = mockk()
-        calculator = mockk(relaxed = true)
-        formatter = mockk(relaxed = true)
-        locationService = mockk(relaxed = true)
-        languageProvider = mockk(relaxed = true)
-        getRandomVerseUseCase = mockk(relaxed = true)
-        saveLocationUseCase = mockk(relaxed = true)
-        getSavedLocationUseCase = mockk(relaxed = true)
-        observeLocationUseCase = mockk(relaxed = true)
-        settingsRepository = mockk(relaxed = true)
-
-        val mockLocation = LocationData(
-            latitude = 41.0082,
-            longitude = 28.9784,
-            country = "Turkey",
-            countryCode = "TR",
-            city = "Istanbul",
-            county = null
-        )
-
-        val testSettings = Settings(
-            location = LocationSettings(
-                latitude = 41.0082,
-                longitude = 28.9784,
-                cityName = "Istanbul",
-                district = null,
-                country = "Turkey",
-                timeZone = "Europe/Istanbul"
-            )
-        )
-
-        coEvery { settingsRepository.getSettings() } returns testSettings
-        every { settingsRepository.observeSettings() } returns flowOf(testSettings)
-        every { observeLocationUseCase() } returns flowOf()
-
-        val testDate = LocalDate(2024, 1, 1)
-        val mockPrayerList = listOf(
-            Prayer(name = "Fajr", arabicName = "الفجر", time = LocalTime(5, 0), date = testDate),
-            Prayer(name = "Sunrise", arabicName = "الشروق", time = LocalTime(7, 0), date = testDate),
-            Prayer(name = "Dhuhr", arabicName = "الظهر", time = LocalTime(12, 30), date = testDate),
-            Prayer(name = "Asr", arabicName = "العصر", time = LocalTime(15, 30), date = testDate),
-            Prayer(name = "Maghrib", arabicName = "المغرب", time = LocalTime(18, 0), date = testDate),
-            Prayer(name = "Isha", arabicName = "العشاء", time = LocalTime(19, 30), date = testDate)
-        )
-
-        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any()) } returns Result.success<List<Prayer>>(mockPrayerList)
-        coEvery { getSavedLocationUseCase() } returns success(mockLocation)
-        every { observeLocationUseCase() } returns flowOf(mockLocation)
-        every { calculator.findCurrentAndNextPrayer(any(), any()) } returns Pair(mockPrayerList.first(), null)
-
-        viewModel = HomeViewModel(
-            getPrayerTimesUseCase,
-            getRandomVerseUseCase,
-            saveLocationUseCase,
-            getSavedLocationUseCase,
-            observeLocationUseCase,
-            calculator,
-            formatter,
-            locationService,
-            languageProvider,
-            settingsRepository
-        )
+    @AfterEach
+    fun tearDown() {
+        Dispatchers.resetMain()
     }
 
     @Test
-    fun `loadPrayerTimes success should update uiState with prayer list`() = runTest {
-        // Arrange / Given
-        val testDate = LocalDate(2024, 1, 1)
-        val fajrPrayer = spyk(Prayer(name = "Fajr", arabicName = "الفجر", time = LocalTime(5, 0), date = testDate))
-        val initialPrayerList = listOf(fajrPrayer)
-        val sabahPrayer = spyk(Prayer(name = "Sabah", arabicName = "الفجر", time = LocalTime(5, 0), date = testDate, isCurrent = false))
-        val localizedPrayerList = listOf(sabahPrayer)
-        val finalPrayerList = listOf(sabahPrayer.copy(isCurrent = true))
+    fun `init resolves initial location and emits Ready when load succeeds`() = runTest {
+        coEvery { locationCoordinator.resolveInitial() } returns location
+        coEvery { locationCoordinator.observeLocationChanges() } returns flowOf()
+        coEvery { locationCoordinator.observeSettingsChanges() } returns flowOf()
+        coEvery { prayerTimesLoader.load(location) } returns success(loadedData())
 
-
-        // 1. Mock UseCases and Services
-        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any()) } returns success(initialPrayerList)
-        coEvery { getSavedLocationUseCase() } returns success(mockk(relaxed = true))
-
-        // 2. Mock Formatters
-        every { formatter.withLocalizedNames(initialPrayerList) } returns localizedPrayerList
-        every { formatter.getInitialTimeInfo(any()) } returns mockk(relaxed = true)
-        every { formatter.locationInfo(any()) } returns "Mock Location"
-
-        // 3. Mock Calculator
-        every { calculator.findCurrentAndNextPrayer(localizedPrayerList, any()) } returns Pair(sabahPrayer, null)
-
-        // 4. Mock the data class 'copy' method
-        every { sabahPrayer.copy(isCurrent = true) } returns finalPrayerList.first()
-
-
-        // Act / When
-        viewModel.loadPrayerTimesForCurrentLocation()
-
-        // Assert / Then
-        viewModel.uiState.test {
-            // Await the final Success state
-            val successState = awaitItem()
-            assertThat(successState).isInstanceOf(HomeUiState.Success::class.java)
-
-            // Assert the data within the success state
-            val prayerState = (successState as HomeUiState.Success).prayerState
-            assertThat(prayerState.prayers).isEqualTo(finalPrayerList)
-            assertThat(prayerState.prayers.first().isCurrent).isTrue()
-
-            // Ensure no other events are emitted
-            cancelAndIgnoreRemainingEvents()
-        }
+        val vm = viewModel()
+        assertThat(vm.screenGate.value).isEqualTo(HomeScreenGate.Ready)
     }
 
     @Test
-    fun `loadPrayerTimes failure should update uiState with error message`() = runTest {
-        // Arrange
-        val errorMessage = "Failed to fetch times"
-        val exception = RuntimeException(errorMessage)
-        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any()) } returns Result.failure(exception)
-        // Mock location service to avoid null pointers and reach the use case call
-        coEvery { locationService.getCurrentLocation() } returns null
-        val mockLocation = mockk<LocationData>(relaxed = true)
-        coEvery { getSavedLocationUseCase() } returns success(mockLocation)
+    fun `refresh failure switches gate to Error`() = runTest {
+        coEvery { locationCoordinator.resolveInitial() } returns location
+        coEvery { locationCoordinator.observeLocationChanges() } returns flowOf()
+        coEvery { locationCoordinator.observeSettingsChanges() } returns flowOf()
+        coEvery { prayerTimesLoader.load(location) } returns
+            Result.failure(RuntimeException("fetch failed"))
 
-        // Act
-        viewModel.loadPrayerTimesForCurrentLocation()
+        val vm = viewModel()
+        assertThat(vm.screenGate.value is HomeScreenGate.Error).isTrue()
+    }
 
-        // Assert
-        viewModel.uiState.test {
-            // Similar to the success test, the first emission we receive will be the final Error state.
-            val errorState = awaitItem()
-            assertThat(errorState).isInstanceOf(HomeUiState.Error::class.java)
+    @Test
+    fun `onEvent OnRefresh triggers reload and resolves to Ready`() = runTest {
+        coEvery { locationCoordinator.resolveInitial() } returns null
+        coEvery { locationCoordinator.observeLocationChanges() } returns flowOf()
+        coEvery { locationCoordinator.observeSettingsChanges() } returns flowOf()
+        coEvery { locationCoordinator.resolveSavedAndDetectDrift() } returns location
+        coEvery { prayerTimesLoader.load(location) } returns success(loadedData())
 
-            // Assert the message within the Error state
-            assertThat((errorState as HomeUiState.Error).message).isEqualTo(errorMessage)
-            cancelAndIgnoreRemainingEvents()
-        }
+        val vm = viewModel()
+        vm.onEvent(HomeEvent.OnRefresh)
+        assertThat(vm.screenGate.value).isEqualTo(HomeScreenGate.Ready)
+    }
+
+    @Test
+    fun `onEvent OnVerseClicked toggles the sheet`() = runTest {
+        coEvery { locationCoordinator.resolveInitial() } returns null
+        coEvery { locationCoordinator.observeLocationChanges() } returns flowOf()
+        coEvery { locationCoordinator.observeSettingsChanges() } returns flowOf()
+        every { quranVerseLoader.quranState } returns kotlinx.coroutines.flow.MutableStateFlow(QuranUiState())
+
+        val vm = viewModel()
+        vm.onEvent(HomeEvent.OnVerseClicked)
+        vm.onEvent(HomeEvent.OnVerseDetailDismissed)
     }
 }

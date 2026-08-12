@@ -1,185 +1,66 @@
 package com.kutluoglu.prayer_feature.home
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kutluoglu.core.common.getZoneIdFromLocation
-import com.kutluoglu.core.common.now
-import com.kutluoglu.prayer.domain.PrayerLogicEngine
 import com.kutluoglu.prayer.model.location.LocationData
-import com.kutluoglu.prayer.usecases.prayer.GetPrayerTimesUseCase
-import com.kutluoglu.prayer.usecases.quran.GetRandomVerseUseCase
-import com.kutluoglu.prayer.usecases.location.GetSavedLocationUseCase
-import com.kutluoglu.prayer.usecases.location.ObserveLocationUseCase
-import com.kutluoglu.prayer.usecases.location.SaveLocationUseCase
-import com.kutluoglu.core.designsystem.utils.LanguageProvider
 import com.kutluoglu.prayer_feature.common.states.LocationUiState
-import com.kutluoglu.prayer_settings.domain.repository.SettingsRepository
-import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
-import com.kutluoglu.prayer_location.LocationService
+import com.kutluoglu.prayer_feature.common.states.TimeUiState
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.LocalDateTime
 import org.koin.android.annotation.KoinViewModel
 
 @OptIn(FlowPreview::class)
 @KoinViewModel
 class HomeViewModel(
-        private val getPrayerTimesUseCase: GetPrayerTimesUseCase,
-        private val getRandomVerseUseCase: GetRandomVerseUseCase,
-        private val saveLocationUseCase: SaveLocationUseCase,
-        private val getSavedLocationUseCase: GetSavedLocationUseCase,
-        private val observeLocationUseCase: ObserveLocationUseCase,
-        private val calculator: PrayerLogicEngine,
-        private val formatter: PrayerFormatter,
-        private val locationService: LocationService,
-        private val languageProvider: LanguageProvider,
-        private val settingsRepository: SettingsRepository
+    private val locationCoordinator: LocationCoordinator,
+    private val prayerTimesLoader: PrayerTimesLoader,
+    private val countdownEngine: CountdownEngine,
+    private val quranVerseLoader: QuranVerseLoader
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
-    val uiState: StateFlow<HomeUiState>
-        get() = _uiState
-            .stateIn(
-                scope = viewModelScope,
-                initialValue = HomeUiState.Loading,
-                started = SharingStarted.WhileSubscribed(5_000)
-            )
 
-    private var countdownJob: Job? = null
+    private val _screenGate = MutableStateFlow<HomeScreenGate>(HomeScreenGate.Loading)
+    val screenGate: StateFlow<HomeScreenGate> = _screenGate
+
+    private val _timeState = MutableStateFlow<TimeUiState?>(null)
+    val timeState: StateFlow<TimeUiState?> = _timeState
+
+    private val _locationState = MutableStateFlow<LocationUiState?>(null)
+    val locationState: StateFlow<LocationUiState?> = _locationState
+
+    private val _prayerState = MutableStateFlow<PrayerUiState?>(null)
+    val prayerState: StateFlow<PrayerUiState?> = _prayerState
+
+    private val _promptState = MutableStateFlow(false)
+    val promptState: StateFlow<Boolean> = _promptState
+
+    val countdownState: StateFlow<CountdownUiState> = countdownEngine.countdownState
+    val quranState: StateFlow<QuranUiState> = quranVerseLoader.quranState
+
     private var locationObserverJob: Job? = null
     private var settingsObserverJob: Job? = null
+    private var prayerPassedObserverJob: Job? = null
+    private var dayChangedObserverJob: Job? = null
 
     init {
-        loadInitialLocation()
-        observeLocationChanges()
-        observeSettingsChanges()
-    }
-
-    private fun loadInitialLocation() {
-        viewModelScope.launch {
-            try {
-                val settings = settingsRepository.getSettings()
-                val locationSettings = settings.location
-                val locationData = LocationData(
-                    latitude = locationSettings.latitude,
-                    longitude = locationSettings.longitude,
-                    country = locationSettings.country,
-                    countryCode = getCountryCode(locationSettings.timeZone),
-                    city = locationSettings.cityName,
-                    county = locationSettings.district
-                )
-                processLocationForPrayerTimes(locationData)
-            } catch (e: Exception) {
-                Log.e("HomeViewModel", "Failed to load from settings: ${e.message}")
-                getSavedLocationUseCase()
-                    .onSuccess { cachedLocation ->
-                        processLocationForPrayerTimes(cachedLocation)
-                    }
-                    .onFailure {
-                        fallbackToGps()
-                    }
-            }
-        }
-    }
-
-    private fun observeLocationChanges() {
-        locationObserverJob?.cancel()
         locationObserverJob = viewModelScope.launch {
-            observeLocationUseCase()
-                .catch { exception ->
-                    Log.e("LocationObserver", "Location Flow error: ${exception.message}")
-                    fallbackToGps()
-                }
-                .filterNotNull()
-                .debounce(500)
-                .distinctUntilChanged()
-                .collect { locationData ->
-                    processLocationForPrayerTimes(locationData)
-                }
+            locationCoordinator.observeLocationChanges().collect { onLocationResolved(it) }
         }
-    }
-
-    private fun observeSettingsChanges() {
-        settingsObserverJob?.cancel()
         settingsObserverJob = viewModelScope.launch {
-            settingsRepository.observeSettings()
-                .debounce(500)
-                .distinctUntilChanged()
-                .collect { settings ->
-                    val locationSettings = settings.location
-                    val locationData = LocationData(
-                        latitude = locationSettings.latitude,
-                        longitude = locationSettings.longitude,
-                        country = locationSettings.country,
-                        countryCode = getCountryCode(locationSettings.timeZone),
-                        city = locationSettings.cityName,
-                        county = locationSettings.district
-                    )
-                    processLocationForPrayerTimes(locationData)
-                }
+            locationCoordinator.observeSettingsChanges().collect { onLocationResolved(it) }
         }
+        prayerPassedObserverJob = viewModelScope.launch {
+            countdownEngine.prayerPassedSignal.collect { refreshPrayerState() }
+        }
+        dayChangedObserverJob = viewModelScope.launch {
+            countdownEngine.dayChangedSignal.collect { loadPrayerTimesForCurrentLocation() }
+        }
+        loadInitialLocation()
     }
 
-    private fun getCountryCode(timeZone: String): String? {
-        return when {
-            timeZone.contains("Istanbul", ignoreCase = true) ||
-            timeZone.contains("Europe/Istanbul", ignoreCase = true) -> "TR"
-            timeZone.contains("Europe/Berlin", ignoreCase = true) -> "DE"
-            timeZone.contains("Europe/London", ignoreCase = true) -> "GB"
-            timeZone.contains("Europe/Paris", ignoreCase = true) -> "FR"
-            timeZone.contains("Asia/Jakarta", ignoreCase = true) -> "ID"
-            timeZone.contains("Asia/Riyadh", ignoreCase = true) -> "SA"
-            else -> null
-        }
-    }
-
-    private suspend fun fallbackToGps() {
-        try {
-            val gpsLocation = locationService.getCurrentLocation()
-            if (gpsLocation != null) {
-                saveLocationUseCase(gpsLocation)
-                processLocationForPrayerTimes(gpsLocation)
-            } else {
-                _uiState.value = HomeUiState.Error(
-                    getUserFriendlyErrorMessage(null)
-                )
-            }
-        } catch (e: Exception) {
-            _uiState.value = HomeUiState.Error(
-                getUserFriendlyErrorMessage(e)
-            )
-        }
-    }
-
-    private fun getUserFriendlyErrorMessage(exception: Throwable?): String {
-        return when {
-            exception == null -> "Konum alınamadı. Lütfen GPS'i etkinleştirin ve uygulamayı yeniden başlatın."
-            exception.message?.contains("timeout", ignoreCase = true) == true -> 
-                "İstek zaman aşımına uğradı. Lütfen tekrar deneyin."
-            exception.message?.contains("network", ignoreCase = true) == true -> 
-                "Ağ hatası. Lütfen bağlantınızı kontrol edin."
-            exception.message?.contains("location", ignoreCase = true) == true -> 
-                "Konum servisi kullanılamıyor. Lütfen GPS'i etkinleştirin."
-            else -> "Konum alınamadı. Lütfen tekrar deneyin."
-        }
-    }
-
-    /**
-     * Handles UI events such as pull-to-refresh.
-     *
-     */
     fun onEvent(event: HomeEvent) {
         when (event) {
             HomeEvent.OnRefresh -> { loadPrayerTimesForCurrentLocation() }
@@ -192,189 +73,101 @@ class HomeViewModel(
         }
     }
 
-    private fun setVerseSheetVisibility(isVisible: Boolean) {
-        val currentState = _uiState.value
-        if (currentState is HomeUiState.Success) {
-            _uiState.value = currentState.copy(isVerseDetailSheetVisible = isVisible)
-        }
-    }
-
-    private fun loadRandomVerse(delayMillis: Long = 1000L) {
+    private fun loadInitialLocation() {
         viewModelScope.launch {
-            val currentState = _uiState.value
-            when(currentState) {
-                is HomeUiState.Success -> {
-                    val language = languageProvider.getLanguageCode()
-                    getRandomVerseUseCase(language)
-                        .onSuccess { verse ->
-                            _uiState.value = currentState.copy(quranVerse = verse)
-                        }.onFailure {
-                            Log.e("LoadRandomVerse", "Failed to load random verse -> ${it.message}")
-                        }
-                }
-                is HomeUiState.Loading, is HomeUiState.Error -> {
-                    delay(delayMillis)
-                    val nextDelay = (delayMillis * 2).coerceAtMost(30_000L)
-                    loadRandomVerse(nextDelay)
-                }
-            }
-        }
-    }
-
-    private fun updateLocationChange() {
-        viewModelScope.launch {
-            _uiState.value = HomeUiState.Loading
-            val newLocation = locationService.getCurrentLocation()
-            if (newLocation != null) {
-                saveLocationUseCase(newLocation)
-                processLocationForPrayerTimes(newLocation)
+            val location = locationCoordinator.resolveInitial()
+            if (location != null) {
+                onLocationResolved(location)
             } else {
-                _uiState.value = HomeUiState.Error(
-                    "Failed to get updated location. Please try again."
-                )
+                fail(HomeErrorMapper.getUserFriendlyErrorMessage(null))
             }
         }
     }
 
     fun loadPrayerTimesForCurrentLocation() {
         viewModelScope.launch {
-            _uiState.value = HomeUiState.Loading
-            getSavedLocationUseCase()
-                .onSuccess{ savedLocation ->
-                    processLocationForPrayerTimes(savedLocation)
-                    val currentLocation = locationService.getCurrentLocation()
-                    if (currentLocation != null && locationService.isDifferentThen(savedLocation)) {
-                        val successState = _uiState.value as? HomeUiState.Success
-                        if (successState != null) {
-                            _uiState.value = successState.copy(showLocationUpdatePrompt = true)
-                        }
-                    }
-                }.onFailure {
-                    val currentLocation = locationService.getCurrentLocation()
-                    if (currentLocation != null) {
-                        saveLocationUseCase(currentLocation)
-                        processLocationForPrayerTimes(currentLocation)
-                    } else {
-                        _uiState.value = HomeUiState.Error(
-                            getUserFriendlyErrorMessage(null)
-                        )
-                    }
-                }
+            _screenGate.value = HomeScreenGate.Loading
+            val location = locationCoordinator.resolveSavedAndDetectDrift()
+            if (location != null) {
+                onLocationResolved(location)
+            } else {
+                fail(HomeErrorMapper.getUserFriendlyErrorMessage(null))
+            }
         }
     }
 
-    private suspend fun processLocationForPrayerTimes(location: LocationData) {
-        val zoneId = getZoneIdFromLocation(location.countryCode)
-        val locationDateTime = LocalDateTime.now(zoneId)
-
-        getPrayerTimesUseCase(
-            date = locationDateTime,
-            latitude = location.latitude,
-            longitude = location.longitude,
-            zoneId = zoneId
-        ).onSuccess { prayerTimes ->
-            val langDetectedPrayerTimes = formatter.withLocalizedNames(prayerTimes)
-            val successState = HomeUiState.Success(
-                prayerState = PrayerUiState(prayers = langDetectedPrayerTimes),
-                timeState = formatter.getInitialTimeInfo(zoneId),
-                locationState = LocationUiState(
-                    locationData = location,
-                    locationInfoText = formatter.locationInfo(location)
+    private fun updateLocationChange() {
+        viewModelScope.launch {
+            _screenGate.value = HomeScreenGate.Loading
+            val newLocation = locationCoordinator.refreshFromGps()
+            if (newLocation != null) {
+                onLocationResolved(newLocation)
+            } else {
+                _screenGate.value = HomeScreenGate.Error(
+                    "Failed to get updated location. Please try again."
                 )
-            )
-            _uiState.value = successState
-            updatePrayerState()
-        }.onFailure { error ->
-            _uiState.value = HomeUiState.Error(
-                message = error.message ?: getUserFriendlyErrorMessage(error)
-            )
+            }
         }
     }
 
-    private fun updatePrayerState() {
-        val currentState = _uiState.value as? HomeUiState.Success ?: return
-        val zoneId = getZoneIdFromLocation(currentState.locationState.locationData.countryCode)
-        val (currentPrayer, nextPrayer) =
-            calculator.findCurrentAndNextPrayer(currentState.prayerState.prayers, zoneId)
-        val prayersWithCurrent = currentState.prayerState.prayers.map { prayer ->
-            currentPrayer?.let {
-                prayer.copy(isCurrent = prayer.name == it.name)
-            } ?: prayer.copy(isCurrent = false)
-        }
+    private suspend fun onLocationResolved(location: LocationData) {
+        prayerTimesLoader.load(location)
+            .onSuccess { loaded ->
+                _locationState.value = loaded.locationState
+                _timeState.value = loaded.timeState
+                _prayerState.value = loaded.prayerState
+                _promptState.value = locationCoordinator.locationUpdatePrompt.value
+                _screenGate.value = HomeScreenGate.Ready
+                startCountdownFromCurrentState()
+            }
+            .onFailure { error ->
+                _screenGate.value = HomeScreenGate.Error(
+                    error.message ?: HomeErrorMapper.getUserFriendlyErrorMessage(error)
+                )
+            }
+    }
 
-        _uiState.value = currentState.copy(
-            prayerState = currentState.prayerState.copy(
-                prayers = prayersWithCurrent,
-                currentPrayer = currentPrayer,
-                nextPrayer = nextPrayer
-            )
+    private fun refreshPrayerState() {
+        val currentState = _prayerState.value ?: return
+        val zoneId = getZoneIdFromLocation(_locationState.value?.locationData?.countryCode)
+        val refreshed = prayerTimesLoader.computePrayerState(currentState.prayers, zoneId)
+        _prayerState.value = refreshed
+        _screenGate.value = HomeScreenGate.Ready
+    }
+
+    private fun startPrayerCountdown() {
+        val currentState = _prayerState.value ?: return
+        val zoneId = getZoneIdFromLocation(_locationState.value?.locationData?.countryCode)
+        countdownEngine.start(currentState, zoneId, viewModelScope)
+    }
+
+    private fun startCountdownFromCurrentState() {
+        val currentState = _prayerState.value ?: return
+        val zoneId = getZoneIdFromLocation(_locationState.value?.locationData?.countryCode)
+        countdownEngine.start(currentState, zoneId, viewModelScope)
+    }
+
+    private fun loadRandomVerse() {
+        quranVerseLoader.loadVerse(
+            scope = viewModelScope,
+            isScreenReady = { _screenGate.value == HomeScreenGate.Ready }
         )
     }
 
-
-    fun startPrayerCountdown() {
-        countdownJob?.cancel()
-        countdownJob = viewModelScope.launch {
-            while (isActive) {
-                updateCountdown()
-                delay(1_000)
-            }
-        }
+    private fun setVerseSheetVisibility(isVisible: Boolean) {
+        quranVerseLoader.setSheetVisible(isVisible)
     }
 
-    private fun updateCountdown() {
-        val currentState = _uiState.value as? HomeUiState.Success ?: return
-        val nextPrayer = currentState.prayerState.nextPrayer
-        val zoneId = getZoneIdFromLocation(currentState.locationState.locationData.countryCode)
-        val currentTime = LocalDateTime.now(zoneId)
-        val currentTimeString = formatter.getFormattedCurrentTime(zoneId)
-
-        if (nextPrayer != null) {
-            val currentPrayer = currentState.prayerState.currentPrayer
-            if (currentPrayer != null && nextPrayer.date != currentPrayer.date) {
-                if(isDayChanged(prayerDate = currentPrayer.date, currentDeviceDate = currentTime.date)) {
-                    countdownJob?.cancel()
-                    loadPrayerTimesForCurrentLocation()
-                    return
-                }
-            }
-
-            val nextPrayerDateTime = LocalDateTime(date = nextPrayer.date, time = nextPrayer.time)
-            if (currentTime >= nextPrayerDateTime) {
-                updatePrayerState()
-                return
-            }
-
-            val duration = calculator.calculateTimeRemaining(nextPrayer.time, zoneId)
-            val timeRemainingString = formatter.formatTimeRemaining(duration)
-            _uiState.value = currentState.copy(
-                prayerState = currentState.prayerState.copy(timeRemaining = timeRemainingString),
-                timeState = currentState.timeState.copy(currentTime = currentTimeString)
-            )
-        } else {
-            val currentDeviceDate = currentTime.date
-            val prayerDate = currentState.prayerState.prayers.firstOrNull()?.date
-            if (isDayChanged(prayerDate, currentDeviceDate)) {
-                countdownJob?.cancel()
-                loadPrayerTimesForCurrentLocation()
-            } else {
-                _uiState.value = currentState.copy(
-                    prayerState = currentState.prayerState.copy(timeRemaining = "--:--:--"),
-                    timeState = currentState.timeState.copy(currentTime = currentTimeString)
-                )
-            }
-        }
+    private fun fail(message: String) {
+        _screenGate.value = HomeScreenGate.Error(message)
     }
-
-    private fun isDayChanged(
-            prayerDate: LocalDate?,
-            currentDeviceDate: LocalDate
-    ): Boolean = prayerDate != null && currentDeviceDate != prayerDate
 
     override fun onCleared() {
         super.onCleared()
-        countdownJob?.cancel()
+        countdownEngine.stop()
         locationObserverJob?.cancel()
         settingsObserverJob?.cancel()
+        prayerPassedObserverJob?.cancel()
+        dayChangedObserverJob?.cancel()
     }
 }

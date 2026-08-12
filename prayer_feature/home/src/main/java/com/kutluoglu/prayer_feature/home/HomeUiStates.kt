@@ -28,7 +28,6 @@ sealed class HomeUiState {
 data class PrayerUiState(
         val prayers: List<Prayer> = emptyList(),
         val currentPrayer: Prayer? = null,
-        val nextPrayer: Prayer? = null,
-        val timeRemaining: String = "--:--:--"
+        val nextPrayer: Prayer? = null
 )
 

@@ -49,6 +49,9 @@ fun HomeTopContainer(
     val prayerState by remember(successState) {
         derivedStateOf { successState?.prayerState }
     }
+    val countdownState by remember(successState) {
+        derivedStateOf { successState?.countdownState }
+    }
 
     val borderColorFromTheme = MaterialTheme.colorScheme.onSecondaryContainer
 
@@ -70,7 +73,7 @@ fun HomeTopContainer(
                 .weight(0.5F),
             contentAlignment = Alignment.Center
         ) {
-            timeState?.let { TimeInfoSection(timeState = it) }
+            timeState?.let { TimeInfoSection(timeState = it, currentTime = countdownState?.currentTime ?: "") }
         }
         Box(
             modifier = Modifier
@@ -90,19 +93,19 @@ fun HomeTopContainer(
                 },
             contentAlignment = Alignment.Center,
         ) {
-            prayerState?.let { NextPrayerInfo(prayerState = it) }
+            prayerState?.let { NextPrayerInfo(prayerState = it, timeRemaining = countdownState?.timeRemaining ?: "--:--:--") }
         }
     }
 }
 
 @Composable
-private fun TimeInfoSection(timeState: TimeUiState) {
+private fun TimeInfoSection(timeState: TimeUiState, currentTime: String) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = timeState.currentTime,
+            text = currentTime,
             style = MaterialTheme.typography.displaySmall,
             color = MaterialTheme.colorScheme.onPrimaryContainer
         )
@@ -122,7 +125,7 @@ private fun TimeInfoSection(timeState: TimeUiState) {
 }
 
 @Composable
-private fun NextPrayerInfo(prayerState: PrayerUiState) {
+private fun NextPrayerInfo(prayerState: PrayerUiState, timeRemaining: String) {
     val nextPrayerNameRaw = prayerState.nextPrayer?.name ?: "İmsak"
 
     val nextPrayerDisplayName = when (nextPrayerNameRaw) {
@@ -160,7 +163,7 @@ private fun NextPrayerInfo(prayerState: PrayerUiState) {
         }
         Spacer(modifier = Modifier.height(4.dp))
         Text(
-            text = prayerState.timeRemaining,
+            text = timeRemaining,
             style = MaterialTheme.typography.displaySmall,
             color = MaterialTheme.colorScheme.primary
         )
