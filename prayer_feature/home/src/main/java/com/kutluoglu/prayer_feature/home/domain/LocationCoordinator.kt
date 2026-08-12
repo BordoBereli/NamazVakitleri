@@ -33,6 +33,16 @@ class LocationCoordinator(
     private val _locationUpdatePrompt = MutableStateFlow(false)
     val locationUpdatePrompt: StateFlow<Boolean> = _locationUpdatePrompt
 
+    /**
+     * Reads and resets the drift prompt flag so it only surfaces once per detected drift.
+     * Without the reset, the prompt would reappear on every subsequent location resolution.
+     */
+    fun consumeLocationUpdatePrompt(): Boolean {
+        val value = _locationUpdatePrompt.value
+        _locationUpdatePrompt.value = false
+        return value
+    }
+
     /** Observes repository location pushes (relayed with debounce + distinct). */
     fun observeLocationChanges(): Flow<LocationData> =
         observeLocationUseCase()

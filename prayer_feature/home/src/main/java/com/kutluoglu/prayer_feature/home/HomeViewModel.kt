@@ -124,7 +124,7 @@ class HomeViewModel(
                 _locationState.value = loaded.locationState
                 _timeState.value = loaded.timeState
                 _prayerState.value = loaded.prayerState
-                _promptState.value = locationCoordinator.locationUpdatePrompt.value
+                _promptState.value = locationCoordinator.consumeLocationUpdatePrompt()
                 _screenGate.value = HomeScreenGate.Ready
                 startCountdown()
             }

@@ -132,4 +132,23 @@ class LocationCoordinatorTest {
 
         assertThat(coordinator.locationUpdatePrompt.value).isTrue()
     }
+
+    @Test
+    fun `consumeLocationUpdatePrompt returns true and resets the flag`() = runTest {
+        coEvery { getSavedLocationUseCase() } returns success(savedLocation)
+        coEvery { locationService.getCurrentLocation() } returns gpsLocation
+        every { locationService.isDifferentThen(savedLocation) } returns true
+
+        val coordinator = coordinator()
+        coordinator.resolveSavedAndDetectDrift()
+
+        assertThat(coordinator.consumeLocationUpdatePrompt()).isTrue()
+        assertThat(coordinator.locationUpdatePrompt.value).isFalse()
+    }
+
+    @Test
+    fun `consumeLocationUpdatePrompt returns false when no drift was detected`() = runTest {
+        val coordinator = coordinator()
+        assertThat(coordinator.consumeLocationUpdatePrompt()).isFalse()
+    }
 }
