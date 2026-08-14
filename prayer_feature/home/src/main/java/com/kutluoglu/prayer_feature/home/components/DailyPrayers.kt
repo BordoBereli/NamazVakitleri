@@ -33,7 +33,8 @@ fun DailyPrayers(
         prayerState: PrayerUiState?,
         isRefreshing: Boolean,
         onRefresh: () -> Unit,
-        onViewAllClicked: () -> Unit
+        onViewAllClicked: () -> Unit,
+        isAutoGps: Boolean = false
 ) {
     val pullRefreshState = rememberPullRefreshState(
         refreshing = isRefreshing,
@@ -47,7 +48,8 @@ fun DailyPrayers(
         prayerState?.let {
             PrayerGrid(
                 prayers = it.prayers,
-                onViewAllClicked = onViewAllClicked
+                onViewAllClicked = onViewAllClicked,
+                isAutoGps = isAutoGps
             )
         }
         // Place the indicator at the top center of the Box
@@ -62,7 +64,8 @@ fun DailyPrayers(
 @Composable
 private fun PrayerGrid(
         prayers: List<Prayer>,
-        onViewAllClicked: () -> Unit
+        onViewAllClicked: () -> Unit,
+        isAutoGps: Boolean = false
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(3),
@@ -77,7 +80,8 @@ private fun PrayerGrid(
         items(prayers, key = { it.name }) { prayer ->
             PrayerCard(
                 prayer = prayer,
-                isCurrent = prayer.isCurrent
+                isCurrent = prayer.isCurrent,
+                isAutoGps = isAutoGps
             )
         }
     }

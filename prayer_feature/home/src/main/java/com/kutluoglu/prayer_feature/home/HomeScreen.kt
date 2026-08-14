@@ -96,7 +96,13 @@ fun HomeScreen(
                 HorizontalPager(state = pagerState) { page ->
                     val entry = entries.getOrNull(page)
                     if (entry != null && entry.id == locationsState.selectedId) {
-                        PrayerContent(navController, uiState, quranVerseFormatter, onEvent)
+                        PrayerContent(
+                            navController = navController,
+                            uiState = uiState,
+                            quranVerseFormatter = quranVerseFormatter,
+                            isAutoGps = entry.isAutoGps,
+                            onEvent = onEvent
+                        )
                     } else {
                         LocationPlaceholder(entry)
                     }
@@ -122,6 +128,7 @@ private fun PrayerContent(
     navController: NavController,
     uiState: HomeUiState,
     quranVerseFormatter: QuranVerseFormatter,
+    isAutoGps: Boolean = false,
     onEvent: (HomeEvent) -> Unit
 ) {
     val successState = uiState as? HomeUiState.Success
@@ -173,7 +180,8 @@ private fun PrayerContent(
                                 prayerState = prayerState,
                                 isRefreshing = isRefreshing,
                                 onRefresh = { onEvent(HomeEvent.OnRefresh) },
-                                onViewAllClicked = onPrayerTimesClick
+                                onViewAllClicked = onPrayerTimesClick,
+                                isAutoGps = isAutoGps
                             )
                         }
                     }
