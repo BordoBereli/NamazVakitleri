@@ -20,6 +20,7 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
 
@@ -47,6 +48,7 @@ class HomeViewModel(
     private val _locationsState = MutableStateFlow<LocationsState>(LocationsState())
     val locationsState: StateFlow<LocationsState> = _locationsState
 
+    // GPS drift prompt retired; kept until Task 8 removes the UI plumbing
     private val _promptState = MutableStateFlow(false)
     val promptState: StateFlow<Boolean> = _promptState
 
@@ -59,15 +61,17 @@ class HomeViewModel(
 
     init {
         locationsObserverJob = viewModelScope.launch {
-            locationsCoordinator.observeState().collect { state ->
-                _locationsState.value = state
-                val selected = resolveSelected(state)
-                if (selected != null) {
-                    onLocationResolved(selected)
-                } else {
-                    fail(HomeErrorMapper.getUserFriendlyErrorMessage(null))
+            locationsCoordinator.observeState()
+                .drop(1) // skip initial emission; loadInitialLocation() handles first resolution
+                .collect { state ->
+                    _locationsState.value = state
+                    val selected = resolveSelected(state)
+                    if (selected != null) {
+                        onLocationResolved(selected)
+                    } else {
+                        fail(HomeErrorMapper.getUserFriendlyErrorMessage(null))
+                    }
                 }
-            }
         }
         prayerPassedObserverJob = viewModelScope.launch {
             countdownEngine.prayerPassedSignal.collect { refreshPrayerState() }
@@ -82,7 +86,7 @@ class HomeViewModel(
         when (event) {
             HomeEvent.OnRefresh -> loadPrayerTimesForCurrentLocation()
             HomeEvent.OnPermissionsGranted -> loadPrayerTimesForCurrentLocation()
-            HomeEvent.OnUpdateLocationConfirmed -> Unit
+            HomeEvent.OnUpdateLocationConfirmed -> Unit // retired; removed in Task 8
             HomeEvent.OnLoadQuranVerse -> loadRandomVerse()
             HomeEvent.OnVerseClicked -> setVerseSheetVisibility(isVisible = true)
             HomeEvent.OnVerseDetailDismissed -> setVerseSheetVisibility(isVisible = false)

@@ -22,6 +22,7 @@ import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -92,8 +93,19 @@ class HomeViewModelTest {
 
         val vm = viewModel()
         assertThat(vm.screenGate.value).isEqualTo(HomeScreenGate.Ready)
-        assertThat(vm.locationsState.value.selectedId).isEqualTo("loc-1")
-        assertThat(vm.locationsState.value.entries).hasSize(1)
+    }
+
+    @Test
+    fun `init loads prayer times exactly once`() = runTest {
+        coEvery { locationsCoordinator.observeState() } returns flowOf(
+            LocationsState(entries = listOf(entry), selectedId = "loc-1")
+        )
+        coEvery { locationsCoordinator.resolveInitial() } returns location
+        coEvery { prayerTimesLoader.load(location) } returns success(loadedData())
+
+        val vm = viewModel()
+
+        coVerify(exactly = 1) { prayerTimesLoader.load(location) }
     }
 
     @Test
@@ -144,6 +156,43 @@ class HomeViewModelTest {
         vm.onEvent(HomeEvent.OnLocationSelected("loc-1"))
 
         coVerify { locationsCoordinator.selectLocation("loc-1") }
+    }
+
+    @Test
+    fun `location selection reloads prayer times for the selected location`() = runTest {
+        val locA = LocationData(41.0082, 28.9784, "Turkey", "TR", "Istanbul", null)
+        val locB = LocationData(39.9334, 32.8597, "Turkey", "TR", "Ankara", null)
+        val entryA = LocationEntry("loc-1", locA, displayName = "Istanbul, Turkey")
+        val entryB = LocationEntry("loc-2", locB, displayName = "Ankara, Turkey")
+        val stateFlow = MutableStateFlow(
+            LocationsState(entries = listOf(entryA, entryB), selectedId = "loc-1")
+        )
+        coEvery { locationsCoordinator.observeState() } returns stateFlow
+        coEvery { locationsCoordinator.resolveInitial() } returns locA
+        coEvery { prayerTimesLoader.load(locA) } returns success(loadedData())
+        coEvery { prayerTimesLoader.load(locB) } returns success(loadedData())
+
+        val vm = viewModel()
+        stateFlow.value = LocationsState(entries = listOf(entryA, entryB), selectedId = "loc-2")
+
+        coVerify { prayerTimesLoader.load(locB) }
+        assertThat(vm.locationsState.value.selectedId).isEqualTo("loc-2")
+        assertThat(vm.locationsState.value.entries).hasSize(2)
+    }
+
+    @Test
+    fun `empty locations state after initial emission shows error`() = runTest {
+        val stateFlow = MutableStateFlow(
+            LocationsState(entries = listOf(entry), selectedId = "loc-1")
+        )
+        coEvery { locationsCoordinator.observeState() } returns stateFlow
+        coEvery { locationsCoordinator.resolveInitial() } returns location
+        coEvery { prayerTimesLoader.load(location) } returns success(loadedData())
+
+        val vm = viewModel()
+        stateFlow.value = LocationsState()
+
+        assertThat(vm.screenGate.value is HomeScreenGate.Error).isTrue()
     }
 
     @Test
