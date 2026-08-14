@@ -31,6 +31,9 @@ class MyLocationsViewModel(
             }
             is MyLocationsEvent.SetGpsEnabled -> viewModelScope.launch {
                 locationsCoordinator.setGpsEnabled(event.enabled)
+                if (event.enabled) {
+                    locationsCoordinator.refreshGps()
+                }
             }
             is MyLocationsEvent.SelectLocation -> viewModelScope.launch {
                 locationsCoordinator.selectLocation(event.id)

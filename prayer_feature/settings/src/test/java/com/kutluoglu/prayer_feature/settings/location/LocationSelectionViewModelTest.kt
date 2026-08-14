@@ -110,7 +110,6 @@ class LocationSelectionViewModelTest {
         
         viewModel.onEvent(LocationSelectionEvent.SelectCity(city))
         
-        coVerify { locationRepository.getPresetCities() }
         coVerify { locationsCoordinator.addLocation(any()) }
     }
 

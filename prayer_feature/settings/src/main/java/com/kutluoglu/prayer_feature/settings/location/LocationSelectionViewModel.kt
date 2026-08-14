@@ -289,7 +289,8 @@ class LocationSelectionViewModel(
             LocationEntry(
                 id = UUID.randomUUID().toString(),
                 location = location,
-                displayName = listOfNotNull(location.city, location.country).joinToString(", ")
+                displayName = listOfNotNull(location.county, location.city, location.country)
+                    .joinToString(", ").ifBlank { "My Location" }
             )
         )
     }
@@ -514,34 +515,6 @@ class LocationSelectionViewModel(
             }
             
             return false
-        }
-
-        private fun getTimeZoneForCountry(countryCode: String): String {
-            return when (countryCode.uppercase()) {
-                "TR" -> "Europe/Istanbul"
-                "SA" -> "Asia/Riyadh"
-                "EG" -> "Africa/Cairo"
-                "ID" -> "Asia/Jakarta"
-                "MY" -> "Asia/Kuala_Lumpur"
-                "PK" -> "Asia/Karachi"
-                "IN" -> "Asia/Kolkata"
-                "BD" -> "Asia/Dhaka"
-                "NG" -> "Africa/Lagos"
-                "MA" -> "Africa/Casablanca"
-                "DZ" -> "Africa/Algiers"
-                "TN" -> "Africa/Tunis"
-                "JO" -> "Asia/Amman"
-                "AE" -> "Asia/Dubai"
-                "KW" -> "Asia/Kuwait"
-                "QA" -> "Asia/Qatar"
-                "BH" -> "Asia/Bahrain"
-                "OM" -> "Asia/Muscat"
-                "GB", "UK" -> "Europe/London"
-                "US" -> "America/New_York"
-                "DE" -> "Europe/Berlin"
-                "FR" -> "Europe/Paris"
-                else -> "UTC"
-            }
         }
     }
 }

@@ -52,6 +52,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.kutluoglu.core.designsystem.R
 import com.kutluoglu.core.designsystem.components.LoadingIndicator
+import com.kutluoglu.prayer_feature.settings.R as SettingsR
 import com.kutluoglu.prayer_settings.domain.model.Settings
 import org.koin.androidx.compose.koinViewModel
 
@@ -156,7 +157,7 @@ private fun SettingsContent(
                 SettingsItem(
                     icon = Icons.Default.LocationOn,
                     title = stringResource(R.string.location),
-                    subtitle = "Manage locations",
+                    subtitle = stringResource(SettingsR.string.manage_locations),
                     onClick = onNavigateToMyLocations
                 )
                 

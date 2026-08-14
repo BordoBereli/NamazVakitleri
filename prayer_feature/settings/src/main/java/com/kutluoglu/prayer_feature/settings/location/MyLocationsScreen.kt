@@ -1,6 +1,7 @@
 package com.kutluoglu.prayer_feature.settings.location
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -31,8 +32,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.kutluoglu.prayer.model.location.LocationEntry
+import com.kutluoglu.prayer_feature.settings.R
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -46,10 +49,10 @@ fun MyLocationsRoute(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("My Locations") },
+                title = { Text(stringResource(R.string.my_locations)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
                     }
                 }
             )
@@ -61,8 +64,8 @@ fun MyLocationsRoute(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(modifier = Modifier.weight(1f)) {
-                    Text("Use my current location", style = MaterialTheme.typography.bodyLarge)
-                    Text("Auto-updates as you travel", style = MaterialTheme.typography.bodySmall)
+                    Text(stringResource(R.string.use_my_current_location), style = MaterialTheme.typography.bodyLarge)
+                    Text(stringResource(R.string.auto_updates_as_you_travel), style = MaterialTheme.typography.bodySmall)
                 }
                 Switch(
                     checked = state.gpsEnabled,
@@ -75,20 +78,33 @@ fun MyLocationsRoute(
             ) {
                 Icon(Icons.Default.Add, contentDescription = null)
                 Spacer(Modifier.width(8.dp))
-                Text("Add location")
+                Text(stringResource(R.string.add_location))
             }
-            LazyColumn {
-                items(state.entries, key = { it.id }) { entry ->
-                    LocationRow(
-                        entry = entry,
-                        isSelected = entry.id == state.selectedId,
-                        onSelect = { viewModel.onEvent(MyLocationsEvent.SelectLocation(entry.id)) },
-                        onDelete = {
-                            if (!entry.isAutoGps) {
-                                viewModel.onEvent(MyLocationsEvent.RemoveLocation(entry.id))
-                            }
-                        }
+            if (state.entries.isEmpty()) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = stringResource(R.string.no_locations_yet),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
+                }
+            } else {
+                LazyColumn {
+                    items(state.entries, key = { it.id }) { entry ->
+                        LocationRow(
+                            entry = entry,
+                            isSelected = entry.id == state.selectedId,
+                            onSelect = { viewModel.onEvent(MyLocationsEvent.SelectLocation(entry.id)) },
+                            onDelete = {
+                                if (!entry.isAutoGps) {
+                                    viewModel.onEvent(MyLocationsEvent.RemoveLocation(entry.id))
+                                }
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -119,17 +135,17 @@ private fun LocationRow(
             Column(modifier = Modifier.weight(1f)) {
                 Text(entry.displayName, style = MaterialTheme.typography.bodyLarge)
                 Text(
-                    text = if (entry.isAutoGps) "GPS" else "Manual",
+                    text = if (entry.isAutoGps) stringResource(R.string.gps_badge) else stringResource(R.string.manual_badge),
                     style = MaterialTheme.typography.labelSmall,
                     color = if (entry.isAutoGps) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
             if (isSelected) {
-                Icon(Icons.Default.Check, contentDescription = "Selected", tint = MaterialTheme.colorScheme.primary)
+                Icon(Icons.Default.Check, contentDescription = stringResource(R.string.selected), tint = MaterialTheme.colorScheme.primary)
             }
             if (!entry.isAutoGps) {
                 IconButton(onClick = onDelete) {
-                    Icon(Icons.Default.Delete, contentDescription = "Delete")
+                    Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.delete))
                 }
             }
         }

@@ -34,4 +34,14 @@
     <string name="days">days</string>
     <string name="province_capital">Province Capital</string>
     <string name="days_adjustment">Days Adjustment</string>
+    <string name="my_locations">My Locations</string>
+    <string name="use_my_current_location">Use my current location</string>
+    <string name="auto_updates_as_you_travel">Auto-updates as you travel</string>
+    <string name="add_location">Add location</string>
+    <string name="gps_badge">GPS</string>
+    <string name="manual_badge">Manual</string>
+    <string name="manage_locations">Manage locations</string>
+    <string name="delete">Delete</string>
+    <string name="selected">Selected</string>
+    <string name="no_locations_yet">No locations yet — add one below</string>
 </resources>

@@ -64,6 +64,18 @@ class MyLocationsViewModelTest {
     }
 
     @Test
+    fun `enabling gps triggers a location refresh`() = runTest {
+        viewModel.onEvent(MyLocationsEvent.SetGpsEnabled(true))
+        coVerify { coordinator.refreshGps() }
+    }
+
+    @Test
+    fun `disabling gps does not trigger a location refresh`() = runTest {
+        viewModel.onEvent(MyLocationsEvent.SetGpsEnabled(false))
+        coVerify(exactly = 0) { coordinator.refreshGps() }
+    }
+
+    @Test
     fun `selectLocation delegates to coordinator`() = runTest {
         viewModel.onEvent(MyLocationsEvent.SelectLocation("loc-1"))
         coVerify { coordinator.selectLocation("loc-1") }
