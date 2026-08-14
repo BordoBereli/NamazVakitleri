@@ -2,21 +2,20 @@ package com.kutluoglu.prayer_feature.qibla
 
 import android.hardware.SensorManager
 import android.util.Log
-import android.util.Log.e
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kutluoglu.prayer.usecases.qibla.CalculateQiblaUseCase
-import com.kutluoglu.prayer_location.LocationService
+import com.kutluoglu.prayer_location.ActiveLocationProvider
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
-import kotlin.Double
 
 data class QiblaUiState(
     val qiblaBearing: Double = 0.0, // Kıble'nin Kuzey'e göre açısı
@@ -29,7 +28,7 @@ data class QiblaUiState(
 
 @KoinViewModel
 class QiblaViewModel(
-    private val locationService: LocationService,
+    private val activeLocationProvider: ActiveLocationProvider,
     private val calculateQiblaUseCase: CalculateQiblaUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(QiblaUiState())
@@ -54,7 +53,7 @@ class QiblaViewModel(
 
         observationJob = viewModelScope.launch {
             try {
-                val location = locationService.getCurrentLocation()
+                val location = activeLocationProvider.location.first()
                 location?.let {
                     calculateQiblaUseCase.observeQiblaDirection(it.latitude, it.longitude)
                         .collectLatest { currQiblaState ->
@@ -88,7 +87,6 @@ class QiblaViewModel(
         observationJob = null
         calculateQiblaUseCase.stop()
     }
-
 
     override fun onCleared() {
         super.onCleared()

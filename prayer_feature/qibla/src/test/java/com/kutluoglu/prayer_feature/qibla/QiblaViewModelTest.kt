@@ -1,0 +1,91 @@
+package com.kutluoglu.prayer_feature.qibla
+
+import android.util.Log
+import app.cash.turbine.test
+import com.google.common.truth.Truth.assertThat
+import com.kutluoglu.prayer.model.location.LocationData
+import com.kutluoglu.prayer.model.qibla.QiblaState
+import com.kutluoglu.prayer.usecases.qibla.CalculateQiblaUseCase
+import com.kutluoglu.prayer_location.ActiveLocationProvider
+import io.mockk.coEvery
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.mockkStatic
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+
+@OptIn(ExperimentalCoroutinesApi::class)
+class QiblaViewModelTest {
+
+    private val calculateQiblaUseCase = mockk<CalculateQiblaUseCase>(relaxed = true)
+    private val provider = ActiveLocationProvider()
+    private lateinit var viewModel: QiblaViewModel
+
+    private val location = LocationData(
+        latitude = 41.0082,
+        longitude = 28.9784,
+        country = "Turkey",
+        countryCode = "TR",
+        city = "Istanbul",
+        county = null
+    )
+
+    @BeforeEach
+    fun setUp() {
+        mockkStatic(Log::class)
+        every { Log.e(any<String>(), any<String>(), any()) } returns 0
+        every { Log.i(any<String>(), any<String>()) } returns 0
+
+        Dispatchers.setMain(UnconfinedTestDispatcher())
+        provider.set(location)
+        viewModel = QiblaViewModel(provider, calculateQiblaUseCase)
+    }
+
+    @AfterEach
+    fun tearDown() {
+        Dispatchers.resetMain()
+    }
+
+    @Test
+    fun `OnStart observes qibla direction for the active location`() = runTest {
+        val qiblaState = QiblaState(
+            qiblaBearing = 150.0,
+            deviceAzimuth = 10.0f,
+            qiblaAngle = 140.0f,
+            sensorAccuracy = 3
+        )
+        coEvery { calculateQiblaUseCase.observeQiblaDirection(location.latitude, location.longitude) } returns
+            MutableStateFlow(qiblaState)
+
+        viewModel.onEvent(QiblaEvent.OnStart)
+
+        viewModel.uiState.test {
+            val state = awaitItem()
+            assertThat(state.qiblaBearing).isEqualTo(150.0)
+            assertThat(state.isLocationAvailable).isTrue()
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `OnStart with no active location shows error`() = runTest {
+        provider.set(null)
+
+        viewModel.onEvent(QiblaEvent.OnStart)
+
+        viewModel.uiState.test {
+            val state = awaitItem()
+            assertThat(state.isLocationAvailable).isFalse()
+            assertThat(state.error).isNotNull()
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+}

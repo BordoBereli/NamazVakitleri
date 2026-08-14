@@ -97,7 +97,17 @@ dependencies {
     //endregion
 
     //region --- Testing Dependencies ---
-    // Note: Not including kotlinx-coroutines-test, turbine, truth, mockk as they pull JUnit 5
-    // which conflicts with the JUnit 4 test in this module
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testImplementation(libs.junit.jupiter.params)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.turbine)
+    testImplementation(libs.truth)
+    testImplementation(libs.mockk)
+    testImplementation(libs.assertj.core)
+    testImplementation(libs.junit.platform.suite)
+    testRuntimeOnly(libs.platform.junit.platform.suite.engine)
     //endregion
 }
+tasks.withType<Test> { useJUnitPlatform() }
