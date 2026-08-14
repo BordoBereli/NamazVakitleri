@@ -1,5 +1,6 @@
 package com.kutluoglu.prayer_feature.home
 
+import android.util.Log
 import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.location.LocationEntry
@@ -18,6 +19,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -57,7 +59,7 @@ class HomeViewModelTest {
         displayName = "Istanbul, TR"
     )
 
-    private fun loadedData() = LoadedPrayerData(
+    private fun loadedData(location: LocationData = this.location) = LoadedPrayerData(
         prayerState = PrayerUiState(),
         timeState = TimeUiState(),
         locationState = LocationUiState(location, "Istanbul, TR"),
@@ -74,6 +76,8 @@ class HomeViewModelTest {
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(UnconfinedTestDispatcher())
+        mockkStatic(Log::class)
+        every { Log.e(any<String>(), any<String>()) } returns 0
         every { countdownEngine.prayerPassedSignal } returns kotlinx.coroutines.flow.MutableSharedFlow()
         every { countdownEngine.dayChangedSignal } returns kotlinx.coroutines.flow.MutableSharedFlow()
     }
@@ -122,6 +126,21 @@ class HomeViewModelTest {
     }
 
     @Test
+    fun `active location id is set even when active load fails`() = runTest {
+        coEvery { locationsCoordinator.observeState() } returns flowOf(
+            LocationsState(entries = listOf(entry), selectedId = "loc-1")
+        )
+        coEvery { locationsCoordinator.resolveInitial() } returns location
+        coEvery { prayerTimesLoader.load(location) } returns
+            Result.failure(RuntimeException("fetch failed"))
+
+        val vm = viewModel()
+
+        assertThat(vm.activeLocationId.value).isEqualTo("loc-1")
+        assertThat(vm.screenGate.value is HomeScreenGate.Error).isTrue()
+    }
+
+    @Test
     fun `onEvent OnRefresh triggers reload and resolves to Ready`() = runTest {
         coEvery { locationsCoordinator.observeState() } returns flowOf(
             LocationsState(entries = listOf(entry), selectedId = "loc-1")
@@ -161,7 +180,7 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `location selection reloads prayer times for the selected location`() = runTest {
+    fun `location selection switches active location without reloading`() = runTest {
         val locA = LocationData(41.0082, 28.9784, "Turkey", "TR", "Istanbul", null)
         val locB = LocationData(39.9334, 32.8597, "Turkey", "TR", "Ankara", null)
         val entryA = LocationEntry("loc-1", locA, displayName = "Istanbul, Turkey")
@@ -171,15 +190,38 @@ class HomeViewModelTest {
         )
         coEvery { locationsCoordinator.observeState() } returns stateFlow
         coEvery { locationsCoordinator.resolveInitial() } returns locA
-        coEvery { prayerTimesLoader.load(locA) } returns success(loadedData())
-        coEvery { prayerTimesLoader.load(locB) } returns success(loadedData())
+        coEvery { prayerTimesLoader.load(locA) } returns success(loadedData(locA))
+        coEvery { prayerTimesLoader.load(locB) } returns success(loadedData(locB))
 
         val vm = viewModel()
+        coVerify(exactly = 1) { prayerTimesLoader.load(locB) } // pre-loaded once
+
         stateFlow.value = LocationsState(entries = listOf(entryA, entryB), selectedId = "loc-2")
 
+        assertThat(vm.activeLocationId.value).isEqualTo("loc-2")
+        coVerify(exactly = 1) { prayerTimesLoader.load(locB) } // still once — cache hit, no reload
+    }
+
+    @Test
+    fun `location change for same id triggers reload`() = runTest {
+        val locA = LocationData(41.0082, 28.9784, "Turkey", "TR", "Istanbul", null)
+        val locB = LocationData(39.9334, 32.8597, "Turkey", "TR", "Ankara", null)
+        val entryA = LocationEntry("loc-1", locA, displayName = "Istanbul, Turkey")
+        val entryB = LocationEntry("loc-1", locB, displayName = "Ankara, Turkey")
+        val stateFlow = MutableStateFlow(
+            LocationsState(entries = listOf(entryA), selectedId = "loc-1")
+        )
+        coEvery { locationsCoordinator.observeState() } returns stateFlow
+        coEvery { locationsCoordinator.resolveInitial() } returns locA
+        coEvery { prayerTimesLoader.load(locA) } returns success(loadedData(locA))
+        coEvery { prayerTimesLoader.load(locB) } returns success(loadedData(locB))
+
+        val vm = viewModel()
+        coVerify(exactly = 1) { prayerTimesLoader.load(locA) }
+
+        stateFlow.value = LocationsState(entries = listOf(entryB), selectedId = "loc-1")
+
         coVerify { prayerTimesLoader.load(locB) }
-        assertThat(vm.locationsState.value.selectedId).isEqualTo("loc-2")
-        assertThat(vm.locationsState.value.entries).hasSize(2)
     }
 
     @Test

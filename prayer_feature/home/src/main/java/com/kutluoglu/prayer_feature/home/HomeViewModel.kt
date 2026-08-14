@@ -1,5 +1,6 @@
 package com.kutluoglu.prayer_feature.home
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kutluoglu.prayer_location.LocationsCoordinator
@@ -104,18 +105,21 @@ class HomeViewModel(
                 _locationsState.value = state
                 val activeId = state.selectedId ?: state.entries.firstOrNull()?.id
                 if (activeId != null) {
-                    prayerTimesLoader.load(location)
-                        .onSuccess { loaded ->
+                    val result = prayerTimesLoader.load(location)
+                    if (result.isSuccess) {
+                        val loaded = result.getOrThrow()
+                        stateMutex.withLock {
                             _prayerDataByLocation.value = _prayerDataByLocation.value + (activeId to loaded)
                             _activeLocationId.value = activeId
                             _screenGate.value = HomeScreenGate.Ready
                             startCountdownFor(activeId)
                         }
-                        .onFailure { error ->
-                            _screenGate.value = HomeScreenGate.Error(
-                                error.message ?: HomeErrorMapper.getUserFriendlyErrorMessage(error)
-                            )
-                        }
+                    } else {
+                        val error = result.exceptionOrNull()
+                        _screenGate.value = HomeScreenGate.Error(
+                            error?.message ?: HomeErrorMapper.getUserFriendlyErrorMessage(error)
+                        )
+                    }
                 } else {
                     fail(HomeErrorMapper.getUserFriendlyErrorMessage(null))
                 }
@@ -138,10 +142,10 @@ class HomeViewModel(
                 fail(HomeErrorMapper.getUserFriendlyErrorMessage(null))
                 return@withLock
             }
+            _activeLocationId.value = activeId
             loadAllLocations(state)
             val activeData = _prayerDataByLocation.value[activeId]
             if (activeData != null) {
-                _activeLocationId.value = activeId
                 _screenGate.value = HomeScreenGate.Ready
                 startCountdownFor(activeId)
             } else {
@@ -153,22 +157,30 @@ class HomeViewModel(
     private suspend fun loadAllLocations(state: LocationsState) {
         val current = _prayerDataByLocation.value.toMutableMap()
         for (entry in state.entries) {
-            if (current[entry.id] == null) {
+            val cached = current[entry.id]
+            val locationChanged = cached?.locationState?.locationData != entry.location
+            if (cached == null || locationChanged) {
                 prayerTimesLoader.load(entry.location)
                     .onSuccess { loaded -> current[entry.id] = loaded }
-                    .onFailure { /* non-active failures tolerated; active handled in handleState */ }
+                    .onFailure { error ->
+                        Log.e("HomeViewModel", "Failed to pre-load ${entry.id}: ${error.message}")
+                    }
             }
         }
         _prayerDataByLocation.value = current
     }
 
     private fun refreshPrayerState() {
-        val activeId = _activeLocationId.value ?: return
-        val data = _prayerDataByLocation.value[activeId] ?: return
-        val refreshed = prayerTimesLoader.computePrayerState(data.prayerState.prayers, data.zoneId)
-        _prayerDataByLocation.value = _prayerDataByLocation.value + (activeId to data.copy(prayerState = refreshed))
-        _screenGate.value = HomeScreenGate.Ready
-        startCountdownFor(activeId)
+        viewModelScope.launch {
+            stateMutex.withLock {
+                val activeId = _activeLocationId.value ?: return@withLock
+                val data = _prayerDataByLocation.value[activeId] ?: return@withLock
+                val refreshed = prayerTimesLoader.computePrayerState(data.prayerState.prayers, data.zoneId)
+                _prayerDataByLocation.value = _prayerDataByLocation.value + (activeId to data.copy(prayerState = refreshed))
+                _screenGate.value = HomeScreenGate.Ready
+                startCountdownFor(activeId)
+            }
+        }
     }
 
     private fun startCountdownFor(locationId: String) {
