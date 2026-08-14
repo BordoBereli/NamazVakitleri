@@ -2,10 +2,12 @@ package com.kutluoglu.prayer_feature.home
 
 import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.prayer.model.location.LocationData
+import com.kutluoglu.prayer.model.location.LocationEntry
+import com.kutluoglu.prayer_location.LocationsCoordinator
+import com.kutluoglu.prayer_location.data.LocationsState
 import com.kutluoglu.prayer_feature.common.states.LocationUiState
 import com.kutluoglu.prayer_feature.common.states.TimeUiState
 import com.kutluoglu.prayer_feature.home.domain.CountdownEngine
-import com.kutluoglu.prayer_feature.home.domain.LocationCoordinator
 import com.kutluoglu.prayer_feature.home.domain.LoadedPrayerData
 import com.kutluoglu.prayer_feature.home.domain.PrayerTimesLoader
 import com.kutluoglu.prayer_feature.home.domain.QuranVerseLoader
@@ -13,6 +15,7 @@ import com.kutluoglu.prayer_feature.home.state.HomeScreenGate
 import com.kutluoglu.prayer_feature.home.state.PrayerUiState
 import com.kutluoglu.prayer_feature.home.state.QuranUiState
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -33,7 +36,7 @@ import kotlin.Result.Companion.success
 @OptIn(ExperimentalCoroutinesApi::class)
 class HomeViewModelTest {
 
-    private val locationCoordinator: LocationCoordinator = mockk(relaxed = true)
+    private val locationsCoordinator: LocationsCoordinator = mockk(relaxed = true)
     private val prayerTimesLoader: PrayerTimesLoader = mockk(relaxed = true)
     private val countdownEngine: CountdownEngine = mockk(relaxed = true)
     private val quranVerseLoader: QuranVerseLoader = mockk(relaxed = true)
@@ -47,6 +50,12 @@ class HomeViewModelTest {
         county = null
     )
 
+    private val entry = LocationEntry(
+        id = "loc-1",
+        location = location,
+        displayName = "Istanbul, TR"
+    )
+
     private fun loadedData() = LoadedPrayerData(
         prayerState = PrayerUiState(),
         timeState = TimeUiState(),
@@ -55,7 +64,7 @@ class HomeViewModelTest {
     )
 
     private fun viewModel() = HomeViewModel(
-        locationCoordinator,
+        locationsCoordinator,
         prayerTimesLoader,
         countdownEngine,
         quranVerseLoader
@@ -75,20 +84,24 @@ class HomeViewModelTest {
 
     @Test
     fun `init resolves initial location and emits Ready when load succeeds`() = runTest {
-        coEvery { locationCoordinator.resolveInitial() } returns location
-        coEvery { locationCoordinator.observeLocationChanges() } returns flowOf()
-        coEvery { locationCoordinator.observeSettingsChanges() } returns flowOf()
+        coEvery { locationsCoordinator.observeState() } returns flowOf(
+            LocationsState(entries = listOf(entry), selectedId = "loc-1")
+        )
+        coEvery { locationsCoordinator.resolveInitial() } returns location
         coEvery { prayerTimesLoader.load(location) } returns success(loadedData())
 
         val vm = viewModel()
         assertThat(vm.screenGate.value).isEqualTo(HomeScreenGate.Ready)
+        assertThat(vm.locationsState.value.selectedId).isEqualTo("loc-1")
+        assertThat(vm.locationsState.value.entries).hasSize(1)
     }
 
     @Test
     fun `refresh failure switches gate to Error`() = runTest {
-        coEvery { locationCoordinator.resolveInitial() } returns location
-        coEvery { locationCoordinator.observeLocationChanges() } returns flowOf()
-        coEvery { locationCoordinator.observeSettingsChanges() } returns flowOf()
+        coEvery { locationsCoordinator.observeState() } returns flowOf(
+            LocationsState(entries = listOf(entry), selectedId = "loc-1")
+        )
+        coEvery { locationsCoordinator.resolveInitial() } returns location
         coEvery { prayerTimesLoader.load(location) } returns
             Result.failure(RuntimeException("fetch failed"))
 
@@ -98,10 +111,9 @@ class HomeViewModelTest {
 
     @Test
     fun `onEvent OnRefresh triggers reload and resolves to Ready`() = runTest {
-        coEvery { locationCoordinator.resolveInitial() } returns null
-        coEvery { locationCoordinator.observeLocationChanges() } returns flowOf()
-        coEvery { locationCoordinator.observeSettingsChanges() } returns flowOf()
-        coEvery { locationCoordinator.resolveSavedAndDetectDrift() } returns location
+        coEvery { locationsCoordinator.observeState() } returns flowOf(LocationsState())
+        coEvery { locationsCoordinator.resolveInitial() } returns null
+        coEvery { locationsCoordinator.resolveSelected() } returns location
         coEvery { prayerTimesLoader.load(location) } returns success(loadedData())
 
         val vm = viewModel()
@@ -111,9 +123,8 @@ class HomeViewModelTest {
 
     @Test
     fun `onEvent OnVerseClicked toggles the sheet`() = runTest {
-        coEvery { locationCoordinator.resolveInitial() } returns null
-        coEvery { locationCoordinator.observeLocationChanges() } returns flowOf()
-        coEvery { locationCoordinator.observeSettingsChanges() } returns flowOf()
+        coEvery { locationsCoordinator.observeState() } returns flowOf(LocationsState())
+        coEvery { locationsCoordinator.resolveInitial() } returns null
         every { quranVerseLoader.quranState } returns kotlinx.coroutines.flow.MutableStateFlow(QuranUiState())
 
         val vm = viewModel()
@@ -122,11 +133,26 @@ class HomeViewModelTest {
     }
 
     @Test
+    fun `onEvent OnLocationSelected delegates to coordinator`() = runTest {
+        coEvery { locationsCoordinator.observeState() } returns flowOf(
+            LocationsState(entries = listOf(entry), selectedId = "loc-1")
+        )
+        coEvery { locationsCoordinator.resolveInitial() } returns location
+        coEvery { prayerTimesLoader.load(location) } returns success(loadedData())
+
+        val vm = viewModel()
+        vm.onEvent(HomeEvent.OnLocationSelected("loc-1"))
+
+        coVerify { locationsCoordinator.selectLocation("loc-1") }
+    }
+
+    @Test
     fun `prayerPassedSignal restarts countdown with recomputed prayer state`() = runTest {
         val prayerPassed = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
-        coEvery { locationCoordinator.resolveInitial() } returns location
-        coEvery { locationCoordinator.observeLocationChanges() } returns flowOf()
-        coEvery { locationCoordinator.observeSettingsChanges() } returns flowOf()
+        coEvery { locationsCoordinator.observeState() } returns flowOf(
+            LocationsState(entries = listOf(entry), selectedId = "loc-1")
+        )
+        coEvery { locationsCoordinator.resolveInitial() } returns location
         every { countdownEngine.prayerPassedSignal } returns prayerPassed
         every { countdownEngine.dayChangedSignal } returns MutableSharedFlow()
         coEvery { prayerTimesLoader.load(location) } returns success(loadedData())

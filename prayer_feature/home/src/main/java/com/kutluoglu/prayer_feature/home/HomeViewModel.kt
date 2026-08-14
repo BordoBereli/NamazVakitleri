@@ -4,10 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kutluoglu.core.common.getZoneIdFromLocation
 import com.kutluoglu.prayer.model.location.LocationData
+import com.kutluoglu.prayer_location.LocationsCoordinator
+import com.kutluoglu.prayer_location.data.LocationsState
 import com.kutluoglu.prayer_feature.common.states.LocationUiState
 import com.kutluoglu.prayer_feature.common.states.TimeUiState
 import com.kutluoglu.prayer_feature.home.domain.CountdownEngine
-import com.kutluoglu.prayer_feature.home.domain.LocationCoordinator
 import com.kutluoglu.prayer_feature.home.domain.PrayerTimesLoader
 import com.kutluoglu.prayer_feature.home.domain.QuranVerseLoader
 import com.kutluoglu.prayer_feature.home.state.CountdownUiState
@@ -25,7 +26,7 @@ import org.koin.android.annotation.KoinViewModel
 @OptIn(FlowPreview::class)
 @KoinViewModel
 class HomeViewModel(
-    private val locationCoordinator: LocationCoordinator,
+    private val locationsCoordinator: LocationsCoordinator,
     private val prayerTimesLoader: PrayerTimesLoader,
     private val countdownEngine: CountdownEngine,
     private val quranVerseLoader: QuranVerseLoader
@@ -43,23 +44,30 @@ class HomeViewModel(
     private val _prayerState = MutableStateFlow<PrayerUiState?>(null)
     val prayerState: StateFlow<PrayerUiState?> = _prayerState
 
+    private val _locationsState = MutableStateFlow<LocationsState>(LocationsState())
+    val locationsState: StateFlow<LocationsState> = _locationsState
+
     private val _promptState = MutableStateFlow(false)
     val promptState: StateFlow<Boolean> = _promptState
 
     val countdownState: StateFlow<CountdownUiState> = countdownEngine.countdownState
     val quranState: StateFlow<QuranUiState> = quranVerseLoader.quranState
 
-    private var locationObserverJob: Job? = null
-    private var settingsObserverJob: Job? = null
+    private var locationsObserverJob: Job? = null
     private var prayerPassedObserverJob: Job? = null
     private var dayChangedObserverJob: Job? = null
 
     init {
-        locationObserverJob = viewModelScope.launch {
-            locationCoordinator.observeLocationChanges().collect { onLocationResolved(it) }
-        }
-        settingsObserverJob = viewModelScope.launch {
-            locationCoordinator.observeSettingsChanges().collect { onLocationResolved(it) }
+        locationsObserverJob = viewModelScope.launch {
+            locationsCoordinator.observeState().collect { state ->
+                _locationsState.value = state
+                val selected = resolveSelected(state)
+                if (selected != null) {
+                    onLocationResolved(selected)
+                } else {
+                    fail(HomeErrorMapper.getUserFriendlyErrorMessage(null))
+                }
+            }
         }
         prayerPassedObserverJob = viewModelScope.launch {
             countdownEngine.prayerPassedSignal.collect { refreshPrayerState() }
@@ -72,18 +80,23 @@ class HomeViewModel(
 
     fun onEvent(event: HomeEvent) {
         when (event) {
-            HomeEvent.OnRefresh -> { loadPrayerTimesForCurrentLocation() }
-            HomeEvent.OnPermissionsGranted -> { loadPrayerTimesForCurrentLocation() }
-            HomeEvent.OnUpdateLocationConfirmed -> { updateLocationChange() }
-            HomeEvent.OnLoadQuranVerse -> { loadRandomVerse() }
-            HomeEvent.OnVerseClicked -> { setVerseSheetVisibility(isVisible = true) }
-            HomeEvent.OnVerseDetailDismissed -> { setVerseSheetVisibility(isVisible = false) }
+            HomeEvent.OnRefresh -> loadPrayerTimesForCurrentLocation()
+            HomeEvent.OnPermissionsGranted -> loadPrayerTimesForCurrentLocation()
+            HomeEvent.OnUpdateLocationConfirmed -> Unit
+            HomeEvent.OnLoadQuranVerse -> loadRandomVerse()
+            HomeEvent.OnVerseClicked -> setVerseSheetVisibility(isVisible = true)
+            HomeEvent.OnVerseDetailDismissed -> setVerseSheetVisibility(isVisible = false)
+            is HomeEvent.OnLocationSelected -> selectLocation(event.locationId)
         }
     }
 
+    private fun resolveSelected(state: LocationsState): LocationData? =
+        state.entries.firstOrNull { it.id == state.selectedId }?.location
+            ?: state.entries.firstOrNull()?.location
+
     private fun loadInitialLocation() {
         viewModelScope.launch {
-            val location = locationCoordinator.resolveInitial()
+            val location = locationsCoordinator.resolveInitial()
             if (location != null) {
                 onLocationResolved(location)
             } else {
@@ -95,7 +108,7 @@ class HomeViewModel(
     fun loadPrayerTimesForCurrentLocation() {
         viewModelScope.launch {
             _screenGate.value = HomeScreenGate.Loading
-            val location = locationCoordinator.resolveSavedAndDetectDrift()
+            val location = locationsCoordinator.resolveSelected()
             if (location != null) {
                 onLocationResolved(location)
             } else {
@@ -104,17 +117,9 @@ class HomeViewModel(
         }
     }
 
-    private fun updateLocationChange() {
+    private fun selectLocation(locationId: String) {
         viewModelScope.launch {
-            _screenGate.value = HomeScreenGate.Loading
-            val newLocation = locationCoordinator.refreshFromGps()
-            if (newLocation != null) {
-                onLocationResolved(newLocation)
-            } else {
-                _screenGate.value = HomeScreenGate.Error(
-                    "Failed to get updated location. Please try again."
-                )
-            }
+            locationsCoordinator.selectLocation(locationId)
         }
     }
 
@@ -124,7 +129,6 @@ class HomeViewModel(
                 _locationState.value = loaded.locationState
                 _timeState.value = loaded.timeState
                 _prayerState.value = loaded.prayerState
-                _promptState.value = locationCoordinator.consumeLocationUpdatePrompt()
                 _screenGate.value = HomeScreenGate.Ready
                 startCountdown()
             }
@@ -168,8 +172,7 @@ class HomeViewModel(
     override fun onCleared() {
         super.onCleared()
         countdownEngine.stop()
-        locationObserverJob?.cancel()
-        settingsObserverJob?.cancel()
+        locationsObserverJob?.cancel()
         prayerPassedObserverJob?.cancel()
         dayChangedObserverJob?.cancel()
     }
