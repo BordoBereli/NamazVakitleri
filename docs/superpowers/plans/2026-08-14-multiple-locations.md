@@ -625,8 +625,9 @@ class LocationsCoordinatorTest {
 
     private val dataStore = mockk<LocationsDataStore>(relaxed = true)
     private val locationService = mockk<LocationService>(relaxed = true)
+    private val migration = mockk<LocationsMigration>(relaxed = true)
     private val provider = ActiveLocationProvider()
-    private val coordinator = LocationsCoordinator(dataStore, locationService, provider)
+    private val coordinator = LocationsCoordinator(dataStore, locationService, provider, migration)
 
     private val istanbul = LocationEntry(
         id = "loc-1",
@@ -737,6 +738,7 @@ package com.kutluoglu.prayer_location
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.location.LocationEntry
 import com.kutluoglu.prayer_location.data.LocationsDataStore
+import com.kutluoglu.prayer_location.data.LocationsMigration
 import com.kutluoglu.prayer_location.data.LocationsState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -748,7 +750,8 @@ import org.koin.core.annotation.Single
 class LocationsCoordinator(
     private val locationsDataStore: LocationsDataStore,
     private val locationService: LocationService,
-    private val activeLocationProvider: ActiveLocationProvider
+    private val activeLocationProvider: ActiveLocationProvider,
+    private val locationsMigration: LocationsMigration
 ) {
     private val _gpsLocation = MutableStateFlow<LocationData?>(null)
 
@@ -766,6 +769,7 @@ class LocationsCoordinator(
     }
 
     suspend fun resolveInitial(): LocationData? {
+        locationsMigration.migrateIfNeeded()
         val state = locationsDataStore.getLocations()
         val selected = state.entries.firstOrNull { it.id == state.selectedId }
             ?: state.entries.firstOrNull()
@@ -829,6 +833,8 @@ class LocationsCoordinator(
 }
 ```
 
+Note: `LocationsCoordinator` injects `LocationsMigration` and calls `migrateIfNeeded()` at the start of `resolveInitial()` — this wires up the legacy-location migration (Task 4) so it actually runs at startup.
+
 - [ ] **Step 4: Run test to verify it passes**
 
 Run: `./gradlew :prayer_location:testDebugUnitTest --tests="*LocationsCoordinatorTest"`
@@ -863,23 +869,20 @@ First read the current `HomeEvent.kt` and `HomeViewModelTest.kt` to preserve exi
 - [ ] **Step 1: Add `OnLocationSelected` to `HomeEvent`**
 
 ```kotlin
-sealed class HomeEvent {
-    data object OnRefresh : HomeEvent()
-    data object OnPermissionsGranted : HomeEvent()
-    data object OnLoadQuranVerse : HomeEvent()
-    data object OnVerseClicked : HomeEvent()
-    data object OnVerseDetailDismissed : HomeEvent()
-    data class OnLocationSelected(val locationId: String) : HomeEvent()
+sealed interface HomeEvent {
+    object OnRefresh : HomeEvent
+    object OnPermissionsGranted : HomeEvent
+    object OnUpdateLocationConfirmed : HomeEvent
+    object OnLoadQuranVerse : HomeEvent
+    object OnVerseClicked : HomeEvent
+    object OnVerseDetailDismissed : HomeEvent
+    data class OnLocationSelected(val locationId: String) : HomeEvent
 }
 ```
 
-Remove `OnUpdateLocationConfirmed` (the GPS drift prompt is retired — the auto GPS location updates on refresh instead).
+**Keep `OnUpdateLocationConfirmed` and `HomeUiState.Success.showLocationUpdatePrompt` for now** — they are removed in Task 8 when `HomeScreen` is rewritten. This keeps the build green at each step. The new `HomeViewModel` simply never emits the prompt (`_promptState` stays `false`).
 
-- [ ] **Step 2: Update `HomeUiState.Success`**
-
-Remove `showLocationUpdatePrompt` from `HomeUiState.Success` (it is retired). Keep everything else.
-
-- [ ] **Step 3: Write the failing test**
+- [ ] **Step 2: Write the failing test**
 
 Update `HomeViewModelTest` to mock `LocationsCoordinator` instead of `LocationCoordinator`. Key new assertions:
 
@@ -933,6 +936,9 @@ class HomeViewModel(
     private val _locationsState = MutableStateFlow<LocationsState>(LocationsState())
     val locationsState: StateFlow<LocationsState> = _locationsState
 
+    private val _promptState = MutableStateFlow(false)
+    val promptState: StateFlow<Boolean> = _promptState
+
     val countdownState: StateFlow<CountdownUiState> = countdownEngine.countdownState
     val quranState: StateFlow<QuranUiState> = quranVerseLoader.quranState
 
@@ -965,6 +971,7 @@ class HomeViewModel(
         when (event) {
             HomeEvent.OnRefresh -> loadPrayerTimesForCurrentLocation()
             HomeEvent.OnPermissionsGranted -> loadPrayerTimesForCurrentLocation()
+            HomeEvent.OnUpdateLocationConfirmed -> Unit // retired; removed in Task 8
             HomeEvent.OnLoadQuranVerse -> loadRandomVerse()
             HomeEvent.OnVerseClicked -> setVerseSheetVisibility(isVisible = true)
             HomeEvent.OnVerseDetailDismissed -> setVerseSheetVisibility(isVisible = false)
