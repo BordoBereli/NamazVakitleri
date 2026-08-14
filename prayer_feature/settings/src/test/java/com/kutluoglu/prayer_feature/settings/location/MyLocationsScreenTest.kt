@@ -1,0 +1,108 @@
+package com.kutluoglu.prayer_feature.settings.location
+
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithContentDescription
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performTouchInput
+import com.kutluoglu.prayer.model.location.LocationData
+import com.kutluoglu.prayer.model.location.LocationEntry
+import com.kutluoglu.prayer_location.LocationsCoordinator
+import com.kutluoglu.prayer_location.data.LocationsState
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.mockk
+import kotlinx.coroutines.flow.MutableStateFlow
+import org.junit.Rule
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
+
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [35])
+class MyLocationsScreenTest {
+
+    @get:Rule
+    val composeTestRule = createComposeRule()
+
+    private val coordinator = mockk<LocationsCoordinator>(relaxed = true)
+
+    private val istanbul = LocationEntry(
+        id = "loc-1",
+        location = LocationData(41.0082, 28.9784, "Turkey", "TR", "Istanbul", null),
+        displayName = "Istanbul, Turkey"
+    )
+
+    private val ankara = LocationEntry(
+        id = "loc-2",
+        location = LocationData(39.9334, 32.8597, "Turkey", "TR", "Ankara", null),
+        displayName = "Ankara, Turkey"
+    )
+
+    private val gps = LocationEntry(
+        id = "gps",
+        location = LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", null),
+        displayName = "Istanbul, Turkey",
+        isAutoGps = true
+    )
+
+    private fun setState(entries: List<LocationEntry>, gpsEnabled: Boolean = false, selectedId: String? = null) {
+        coEvery { coordinator.observeState() } returns MutableStateFlow(
+            LocationsState(entries = entries, gpsEnabled = gpsEnabled, selectedId = selectedId)
+        )
+    }
+
+    private fun launchScreen() {
+        val viewModel = MyLocationsViewModel(coordinator)
+        composeTestRule.setContent {
+            MyLocationsRoute(
+                onNavigateBack = {},
+                onAddLocation = {},
+                viewModel = viewModel
+            )
+        }
+    }
+
+    @Test
+    fun `renders manual locations with delete and drag handle`() {
+        setState(listOf(istanbul, ankara), selectedId = "loc-1")
+        launchScreen()
+
+        composeTestRule.onNodeWithText("Istanbul, Turkey").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Ankara, Turkey").assertIsDisplayed()
+        composeTestRule.onAllNodesWithContentDescription("Delete").assertCountEquals(2)
+        composeTestRule.onAllNodesWithContentDescription("Reorder").assertCountEquals(2)
+    }
+
+    @Test
+    fun `renders gps entry without delete or drag handle`() {
+        setState(listOf(gps, istanbul), gpsEnabled = true, selectedId = "gps")
+        launchScreen()
+
+        composeTestRule.onAllNodesWithContentDescription("Delete").assertCountEquals(1)
+        composeTestRule.onAllNodesWithContentDescription("Reorder").assertCountEquals(1)
+    }
+
+    @Test
+    fun `drag reorder persists new order to coordinator`() {
+        setState(listOf(istanbul, ankara), selectedId = "loc-1")
+        launchScreen()
+
+        composeTestRule.onAllNodesWithContentDescription("Reorder")[0]
+            .performTouchInput {
+                down(center)
+                advanceEventTime(viewConfiguration.longPressTimeoutMillis + 100)
+                moveTo(Offset(centerX, centerY + 60f))
+                moveTo(Offset(centerX, centerY + 120f))
+                moveTo(Offset(centerX, centerY + 180f))
+                advanceEventTime(100)
+                up()
+            }
+
+        composeTestRule.waitForIdle()
+        coVerify { coordinator.reorderLocations(listOf("loc-2", "loc-1")) }
+    }
+}

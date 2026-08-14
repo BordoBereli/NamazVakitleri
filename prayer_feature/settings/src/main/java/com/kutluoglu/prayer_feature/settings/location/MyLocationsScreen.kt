@@ -34,7 +34,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -58,6 +60,7 @@ fun MyLocationsRoute(
     val state by viewModel.uiState.collectAsState()
     val lazyListState = rememberLazyListState()
     val entries = remember { mutableStateListOf<LocationEntry>() }
+    var pendingOrder by remember { mutableStateOf<List<String>?>(null) }
     val reorderableState = rememberReorderableLazyListState(lazyListState) { from, to ->
         val fromIndex = entries.indexOfFirst { it.id == from.key }
         val toIndex = entries.indexOfFirst { it.id == to.key }
@@ -67,10 +70,18 @@ fun MyLocationsRoute(
     }
 
     LaunchedEffect(state.entries) {
-        if (!reorderableState.isAnyItemDragging) {
-            entries.clear()
-            entries.addAll(state.entries)
+        val currentOrder = state.entries.filterNot { it.isAutoGps }.map { it.id }
+        val pending = pendingOrder
+        if (pending != null) {
+            if (currentOrder == pending || currentOrder.toSet() != pending.toSet()) {
+                pendingOrder = null
+            } else {
+                return@LaunchedEffect
+            }
         }
+        if (reorderableState.isAnyItemDragging) return@LaunchedEffect
+        entries.clear()
+        entries.addAll(state.entries)
     }
 
     LaunchedEffect(Unit) {
@@ -81,6 +92,7 @@ fun MyLocationsRoute(
                 val persisted = entries.filterNot { it.isAutoGps }
                 val current = state.entries.filterNot { it.isAutoGps }
                 if (persisted.isNotEmpty() && persisted.map { it.id } != current.map { it.id }) {
+                    pendingOrder = persisted.map { it.id }
                     viewModel.onEvent(MyLocationsEvent.ReorderLocations(persisted.map { it.id }))
                 }
             }

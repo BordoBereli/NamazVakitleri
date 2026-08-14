@@ -104,6 +104,7 @@ platform-junit-platform-suite-engine = { module = "org.junit.platform:junit-plat
 junit-platform-suite-api = { module = "org.junit.platform:junit-platform-suite-api" }
 junit-platform-suite-engine = { module = "org.junit.platform:junit-platform-suite-engine", version.ref = "junitPlatformSuiteEngine" }
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junitPlatformLauncher" }
+junit-vintage-engine = { module = "org.junit.vintage:junit-vintage-engine" }
 truth = { module = "com.google.truth:truth", version.ref = "truth" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
