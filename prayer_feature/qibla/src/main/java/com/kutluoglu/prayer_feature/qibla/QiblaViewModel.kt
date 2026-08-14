@@ -6,12 +6,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kutluoglu.prayer.usecases.qibla.CalculateQiblaUseCase
 import com.kutluoglu.prayer_location.ActiveLocationProvider
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -26,6 +28,7 @@ data class QiblaUiState(
     val sensorAccuracy: Int = SensorManager.SENSOR_STATUS_UNRELIABLE
 )
 
+@OptIn(FlowPreview::class)
 @KoinViewModel
 class QiblaViewModel(
     private val activeLocationProvider: ActiveLocationProvider,
@@ -53,10 +56,16 @@ class QiblaViewModel(
 
         observationJob = viewModelScope.launch {
             try {
-                val location = activeLocationProvider.location.first()
-                location?.let {
-                    calculateQiblaUseCase.observeQiblaDirection(it.latitude, it.longitude)
-                        .collectLatest { currQiblaState ->
+                activeLocationProvider.location
+                    .flatMapLatest { location ->
+                        if (location != null) {
+                            calculateQiblaUseCase.observeQiblaDirection(location.latitude, location.longitude)
+                        } else {
+                            flowOf(null)
+                        }
+                    }
+                    .collectLatest { currQiblaState ->
+                        if (currQiblaState != null) {
                             _uiState.update {
                                 it.copy(
                                     qiblaAngle = currQiblaState.qiblaAngle,
@@ -67,8 +76,10 @@ class QiblaViewModel(
                                     error = null
                                 )
                             }
+                        } else {
+                            _uiState.update { it.copy(isLocationAvailable = false, error = "Location not found") }
                         }
-                } ?: throw Exception("Location not found")
+                    }
             } catch (e: Exception) {
                 if (e is kotlinx.coroutines.CancellationException) {
                     // Job iptal edildiğinde bu bir hata değildir, log'a yazıp geçebiliriz.

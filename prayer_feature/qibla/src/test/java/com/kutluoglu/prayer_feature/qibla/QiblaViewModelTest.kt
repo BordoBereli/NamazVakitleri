@@ -11,6 +11,7 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import io.mockk.unmockkAll
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -52,6 +53,7 @@ class QiblaViewModelTest {
     @AfterEach
     fun tearDown() {
         Dispatchers.resetMain()
+        unmockkAll()
     }
 
     @Test
@@ -85,6 +87,31 @@ class QiblaViewModelTest {
             val state = awaitItem()
             assertThat(state.isLocationAvailable).isFalse()
             assertThat(state.error).isNotNull()
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `qibla follows active location changes`() = runTest {
+        val locA = LocationData(41.0082, 28.9784, "Turkey", "TR", "Istanbul", null)
+        val locB = LocationData(39.9334, 32.8597, "Turkey", "TR", "Ankara", null)
+        val stateA = QiblaState(qiblaBearing = 150.0, deviceAzimuth = 10.0f, qiblaAngle = 140.0f, sensorAccuracy = 3)
+        val stateB = QiblaState(qiblaBearing = 160.0, deviceAzimuth = 20.0f, qiblaAngle = 140.0f, sensorAccuracy = 3)
+        coEvery { calculateQiblaUseCase.observeQiblaDirection(locA.latitude, locA.longitude) } returns
+            MutableStateFlow(stateA)
+        coEvery { calculateQiblaUseCase.observeQiblaDirection(locB.latitude, locB.longitude) } returns
+            MutableStateFlow(stateB)
+
+        provider.set(locA)
+        viewModel.onEvent(QiblaEvent.OnStart)
+
+        viewModel.uiState.test {
+            val first = awaitItem()
+            assertThat(first.qiblaBearing).isEqualTo(150.0)
+
+            provider.set(locB)
+            val second = awaitItem()
+            assertThat(second.qiblaBearing).isEqualTo(160.0)
             cancelAndIgnoreRemainingEvents()
         }
     }
