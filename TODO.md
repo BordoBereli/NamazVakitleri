@@ -3,7 +3,20 @@
 Persistent task list for the NamazVakitleri Android project.
 Status: `[ ]` = pending, `[x]` = done, `[~]` = in progress.
 
-Last updated: 2026-08-11
+Last updated: 2026-08-14
+
+---
+
+## ✅ Features completed
+
+- [x] **Multiple locations with per-location home screens** (2026-08-14, TDD)
+  - Unlimited locations, each with its own home screen page (swipeable `HorizontalPager` + tap-able location chips).
+  - Auto GPS location (optional toggle) visually distinguished from manual locations (GPS badge on chips + prayer cards).
+  - "My Locations" manager screen in Settings (add via search, delete, GPS toggle, select active).
+  - Monthly prayer-times screen: per-location month cache + per-location month position (no stale data on switch).
+  - Qibla screen follows the active location reactively.
+  - Retired the GPS drift prompt (auto GPS location updates on refresh instead).
+  - Spec: `docs/superpowers/specs/2026-08-14-multiple-locations-design.md`; Plan: `docs/superpowers/plans/2026-08-14-multiple-locations.md`.
 
 ---
 
