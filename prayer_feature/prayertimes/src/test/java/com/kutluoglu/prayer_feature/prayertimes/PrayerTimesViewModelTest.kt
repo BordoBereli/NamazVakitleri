@@ -8,8 +8,8 @@ import com.kutluoglu.core.common.now
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.prayer.Prayer
-import com.kutluoglu.prayer.usecases.location.GetSavedLocationUseCase
 import com.kutluoglu.prayer.usecases.prayer.GetPrayerTimesUseCase
+import com.kutluoglu.prayer_location.ActiveLocationProvider
 import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
 import com.kutluoglu.prayer_feature.common.states.TimeUiState
 import io.mockk.coEvery
@@ -36,7 +36,7 @@ import kotlin.Result.Companion.success
 class PrayerTimesViewModelTest {
 
     private lateinit var getPrayerTimesUseCase: GetPrayerTimesUseCase
-    private lateinit var getSavedLocationUseCase: GetSavedLocationUseCase
+    private lateinit var activeLocationProvider: ActiveLocationProvider
     private lateinit var calculator: PrayerLogicEngine
     private lateinit var formatter: PrayerFormatter
     private lateinit var viewModel: PrayerTimesViewModel
@@ -65,11 +65,11 @@ class PrayerTimesViewModelTest {
         every { Log.e(any<String>(), any<String>()) } returns 0
 
         getPrayerTimesUseCase = mockk()
-        getSavedLocationUseCase = mockk()
+        activeLocationProvider = ActiveLocationProvider()
+        activeLocationProvider.set(mockLocation)
         calculator = mockk(relaxed = true)
         formatter = mockk(relaxed = true)
 
-        coEvery { getSavedLocationUseCase() } returns success(mockLocation)
         coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any()) } returns success(mockPrayerList)
         every { calculator.findCurrentAndNextPrayer(any(), any()) } returns Pair(null, null)
         every { formatter.withLocalizedNames(any()) } returns mockPrayerList
@@ -82,7 +82,7 @@ class PrayerTimesViewModelTest {
 
         viewModel = PrayerTimesViewModel(
             getPrayerTimesUseCase,
-            getSavedLocationUseCase,
+            activeLocationProvider,
             calculator,
             formatter
         )
@@ -206,5 +206,32 @@ class PrayerTimesViewModelTest {
             assertThat(success.isCurrentMonth).isFalse()
             cancelAndIgnoreRemainingEvents()
         }
+    }
+
+    @Test
+    fun `month cache is keyed per location`() = runTest {
+        val locA = LocationData(41.0082, 28.9784, "Turkey", "TR", "Istanbul", null)
+        val locB = LocationData(39.9334, 32.8597, "Turkey", "TR", "Ankara", null)
+        var callCount = 0
+        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any()) } answers {
+            callCount++
+            success(mockPrayerList)
+        }
+
+        activeLocationProvider.set(locA)
+        viewModel.loadMonthlyPrayerTimes()
+        val callsForA = callCount
+
+        activeLocationProvider.set(locB)
+        viewModel.loadMonthlyPrayerTimes()
+        val callsForB = callCount
+
+        // Switching locations reloads (not served from locA's cache)
+        assertThat(callsForB).isGreaterThan(callsForA)
+
+        // Switching back to locA serves from its cache (no new calls)
+        activeLocationProvider.set(locA)
+        viewModel.loadMonthlyPrayerTimes()
+        assertThat(callCount).isEqualTo(callsForB)
     }
 }

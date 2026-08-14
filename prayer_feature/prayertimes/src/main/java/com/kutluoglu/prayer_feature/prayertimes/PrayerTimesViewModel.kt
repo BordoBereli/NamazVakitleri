@@ -7,12 +7,13 @@ import com.kutluoglu.core.common.now
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.usecases.prayer.GetPrayerTimesUseCase
-import com.kutluoglu.prayer.usecases.location.GetSavedLocationUseCase
+import com.kutluoglu.prayer_location.ActiveLocationProvider
 import com.kutluoglu.prayer_feature.common.states.LocationUiState
 import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DateTimeUnit
@@ -31,7 +32,7 @@ import java.time.chrono.HijrahDate
 @KoinViewModel
 class PrayerTimesViewModel(
         private val getPrayerTimesUseCase: GetPrayerTimesUseCase,
-        private val getSavedLocationUseCase: GetSavedLocationUseCase,
+        private val activeLocationProvider: ActiveLocationProvider,
         private val calculator: PrayerLogicEngine,
         private val formatter: PrayerFormatter
 ) : ViewModel() {
@@ -43,40 +44,43 @@ class PrayerTimesViewModel(
             initialValue = PrayerTimesUiState.Loading
         )
 
-    private var savedLocation: LocationData? = null
+    private var activeLocationId: String? = null
     private var zoneId: ZoneId? = null
-    private var selectedMonth: YearMonth = LocalDateTime.now(ZoneId.systemDefault()).date.yearMonth
-    private val monthCache = mutableMapOf<YearMonth, List<DailyPrayer>>()
+    private val monthCache = mutableMapOf<String, MutableMap<YearMonth, List<DailyPrayer>>>()
+    private val selectedMonthByLocation = mutableMapOf<String, YearMonth>()
     private var isLoading = false
     private var pendingMonth: YearMonth? = null
 
     fun loadMonthlyPrayerTimes() {
         viewModelScope.launch {
-            getSavedLocationUseCase()
-                .onSuccess { location ->
-                    savedLocation = location
-                    val resolvedZoneId = getZoneIdFromLocation(location.countryCode)
-                    zoneId = resolvedZoneId
-                    val today = LocalDateTime.now(resolvedZoneId)
-                    selectedMonth = today.date.yearMonth
-                    loadMonth(selectedMonth)
-                }
-                .onFailure {
-                    _uiState.value = PrayerTimesUiState.Error(it.message ?: "Failed to get saved location.")
-                }
+            val location = activeLocationProvider.location.first() ?: run {
+                _uiState.value = PrayerTimesUiState.Error("Failed to get saved location.")
+                return@launch
+            }
+            activeLocationId = location.locationId()
+            val resolvedZoneId = getZoneIdFromLocation(location.countryCode)
+            zoneId = resolvedZoneId
+            val today = LocalDateTime.now(resolvedZoneId)
+            val month = selectedMonthByLocation[activeLocationId] ?: today.date.yearMonth
+            loadMonth(month)
         }
     }
 
     fun onEvent(event: PrayerTimesEvent) {
         when (event) {
-            PrayerTimesEvent.OnPreviousMonth -> navigateToMonth(selectedMonth.minus(1, DateTimeUnit.MONTH))
-            PrayerTimesEvent.OnNextMonth -> navigateToMonth(selectedMonth.plus(1, DateTimeUnit.MONTH))
+            PrayerTimesEvent.OnPreviousMonth -> navigateToMonth(selectedMonth().minus(1, DateTimeUnit.MONTH))
+            PrayerTimesEvent.OnNextMonth -> navigateToMonth(selectedMonth().plus(1, DateTimeUnit.MONTH))
             PrayerTimesEvent.OnToday -> navigateToMonth(currentMonth())
         }
     }
 
+    private fun selectedMonth(): YearMonth {
+        val id = activeLocationId ?: return currentMonth()
+        return selectedMonthByLocation[id] ?: currentMonth()
+    }
+
     private fun navigateToMonth(month: YearMonth) {
-        selectedMonth = month
+        activeLocationId?.let { selectedMonthByLocation[it] = month }
         val current = _uiState.value
         if (current is PrayerTimesUiState.Success) {
             _uiState.value = current.copy(
@@ -98,12 +102,14 @@ class PrayerTimesViewModel(
         isLoading = true
         viewModelScope.launch {
             try {
-                val cached = monthCache[month]
+                val locationId = activeLocationId ?: return@launch
+                val locationCache = monthCache.getOrPut(locationId) { mutableMapOf() }
+                val cached = locationCache[month]
                 if (cached != null) {
                     emitSuccess(month, cached)
                     return@launch
                 }
-                val location = savedLocation ?: return@launch
+                val location = activeLocationProvider.location.first() ?: return@launch
                 val resolvedZoneId = zoneId ?: return@launch
                 val today = LocalDateTime.now(resolvedZoneId)
                 val monthlyPrayers = mutableListOf<DailyPrayer>()
@@ -145,7 +151,7 @@ class PrayerTimesViewModel(
                         return@launch
                     }
                 }
-                monthCache[month] = monthlyPrayers
+                locationCache[month] = monthlyPrayers
                 emitSuccess(month, monthlyPrayers)
             } finally {
                 isLoading = false
@@ -159,8 +165,8 @@ class PrayerTimesViewModel(
     }
 
     private fun emitSuccess(month: YearMonth, monthlyPrayers: List<DailyPrayer>) {
-        if (month != selectedMonth) return
-        val location = savedLocation ?: return
+        if (month != selectedMonth()) return
+        val location = activeLocationProvider.location.value ?: return
         val resolvedZoneId = zoneId ?: return
         val today = LocalDateTime.now(resolvedZoneId)
         _uiState.value = PrayerTimesUiState.Success(
@@ -175,4 +181,6 @@ class PrayerTimesViewModel(
             )
         )
     }
+
+    private fun LocationData.locationId(): String = "$latitude,$longitude"
 }
