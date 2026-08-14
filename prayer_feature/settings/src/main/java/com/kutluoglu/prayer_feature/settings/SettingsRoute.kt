@@ -4,13 +4,13 @@ import androidx.compose.runtime.Composable
 
 @Composable
 fun SettingsRoute(
-    onNavigateToLocationSelection: () -> Unit,
+    onNavigateToMyLocations: () -> Unit,
     onNavigateToCalculationMethod: () -> Unit,
     onNavigateToHijriAdjustment: () -> Unit,
     onNavigateToLanguage: () -> Unit
 ) {
     SettingsScreen(
-        onNavigateToLocationSelection = onNavigateToLocationSelection,
+        onNavigateToMyLocations = onNavigateToMyLocations,
         onNavigateToCalculationMethod = onNavigateToCalculationMethod,
         onNavigateToHijriAdjustment = onNavigateToHijriAdjustment,
         onNavigateToLanguage = onNavigateToLanguage

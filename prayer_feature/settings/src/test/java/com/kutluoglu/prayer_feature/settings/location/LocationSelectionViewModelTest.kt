@@ -5,10 +5,11 @@ import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.prayer_settings.data.location.LocationServiceHelper
 import com.kutluoglu.prayer_remote.location.NetworkException
 import com.kutluoglu.prayer.model.location.City
-import com.kutluoglu.prayer_settings.domain.model.LocationSettings
+import com.kutluoglu.prayer.model.location.LocationData
+import com.kutluoglu.prayer.model.location.LocationEntry
+import com.kutluoglu.prayer_location.LocationsCoordinator
 import com.kutluoglu.prayer_settings.domain.repository.LocationRepository
 import com.kutluoglu.prayer_settings.domain.usecase.SearchLocationUseCase
-import com.kutluoglu.prayer_settings.domain.usecase.UpdateLocationUseCase
 import com.kutluoglu.prayer_feature.settings.MainCoroutineRule
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -30,7 +31,7 @@ class LocationSelectionViewModelTest {
     private lateinit var locationRepository: LocationRepository
     private lateinit var searchLocationUseCase: SearchLocationUseCase
     private lateinit var locationServiceHelper: LocationServiceHelper
-    private lateinit var updateLocationUseCase: UpdateLocationUseCase
+    private lateinit var locationsCoordinator: LocationsCoordinator
     private lateinit var viewModel: LocationSelectionViewModel
 
     private val presetCities = listOf(
@@ -44,9 +45,9 @@ class LocationSelectionViewModelTest {
         locationRepository = mockk()
         searchLocationUseCase = mockk()
         locationServiceHelper = mockk()
-        updateLocationUseCase = mockk(relaxed = true)
+        locationsCoordinator = mockk(relaxed = true)
         coEvery { locationRepository.getPresetCities() } returns presetCities
-        viewModel = LocationSelectionViewModel(locationRepository, searchLocationUseCase, locationServiceHelper, updateLocationUseCase)
+        viewModel = LocationSelectionViewModel(locationRepository, searchLocationUseCase, locationServiceHelper, locationsCoordinator)
     }
 
     @Test
@@ -110,7 +111,7 @@ class LocationSelectionViewModelTest {
         viewModel.onEvent(LocationSelectionEvent.SelectCity(city))
         
         coVerify { locationRepository.getPresetCities() }
-        coVerify { updateLocationUseCase.invoke(any()) }
+        coVerify { locationsCoordinator.addLocation(any()) }
     }
 
     @Test
@@ -119,7 +120,7 @@ class LocationSelectionViewModelTest {
 
         viewModel.onEvent(LocationSelectionEvent.SelectDistrict(district))
 
-        coVerify { updateLocationUseCase.invoke(any()) }
+        coVerify { locationsCoordinator.addLocation(any()) }
     }
 
     @Test
@@ -128,10 +129,10 @@ class LocationSelectionViewModelTest {
 
         viewModel.onEvent(LocationSelectionEvent.SelectCity(district))
 
-        val slot = slot<LocationSettings>()
-        coVerify { updateLocationUseCase.invoke(capture(slot)) }
-        assertThat(slot.captured.cityName).isEqualTo("Istanbul")
-        assertThat(slot.captured.district).isEqualTo("Fatih")
+        val slot = slot<LocationEntry>()
+        coVerify { locationsCoordinator.addLocation(capture(slot)) }
+        assertThat(slot.captured.location.city).isEqualTo("Istanbul")
+        assertThat(slot.captured.location.county).isEqualTo("Fatih")
     }
 
     @Test
@@ -140,10 +141,10 @@ class LocationSelectionViewModelTest {
 
         viewModel.onEvent(LocationSelectionEvent.SelectCity(mainCity))
 
-        val slot = slot<LocationSettings>()
-        coVerify { updateLocationUseCase.invoke(capture(slot)) }
-        assertThat(slot.captured.cityName).isEqualTo("Ankara")
-        assertThat(slot.captured.district).isNull()
+        val slot = slot<LocationEntry>()
+        coVerify { locationsCoordinator.addLocation(capture(slot)) }
+        assertThat(slot.captured.location.city).isEqualTo("Ankara")
+        assertThat(slot.captured.location.county).isNull()
     }
 
     @Test
@@ -152,10 +153,10 @@ class LocationSelectionViewModelTest {
 
         viewModel.onEvent(LocationSelectionEvent.SelectCity(reverseCity))
 
-        val slot = slot<LocationSettings>()
-        coVerify { updateLocationUseCase.invoke(capture(slot)) }
-        assertThat(slot.captured.cityName).isEqualTo("Bursa")
-        assertThat(slot.captured.district).isEqualTo("Osmangazi")
+        val slot = slot<LocationEntry>()
+        coVerify { locationsCoordinator.addLocation(capture(slot)) }
+        assertThat(slot.captured.location.city).isEqualTo("Bursa")
+        assertThat(slot.captured.location.county).isEqualTo("Osmangazi")
     }
 
     @Test

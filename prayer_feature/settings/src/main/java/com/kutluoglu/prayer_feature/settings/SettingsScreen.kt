@@ -58,7 +58,7 @@ import org.koin.androidx.compose.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    onNavigateToLocationSelection: () -> Unit,
+    onNavigateToMyLocations: () -> Unit,
     onNavigateToCalculationMethod: () -> Unit,
     onNavigateToHijriAdjustment: () -> Unit,
     onNavigateToLanguage: () -> Unit,
@@ -101,7 +101,7 @@ fun SettingsScreen(
                     SettingsContent(
                         settings = state.settings,
                         onClearCacheClick = { showClearCacheDialog = true },
-                        onNavigateToLocationSelection = onNavigateToLocationSelection,
+                        onNavigateToMyLocations = onNavigateToMyLocations,
                         onNavigateToCalculationMethod = onNavigateToCalculationMethod,
                         onNavigateToHijriAdjustment = onNavigateToHijriAdjustment,
                         onNavigateToLanguage = onNavigateToLanguage
@@ -126,7 +126,7 @@ fun SettingsScreen(
 private fun SettingsContent(
     settings: Settings,
     onClearCacheClick: () -> Unit,
-    onNavigateToLocationSelection: () -> Unit,
+    onNavigateToMyLocations: () -> Unit,
     onNavigateToCalculationMethod: () -> Unit,
     onNavigateToHijriAdjustment: () -> Unit,
     onNavigateToLanguage: () -> Unit
@@ -156,8 +156,8 @@ private fun SettingsContent(
                 SettingsItem(
                     icon = Icons.Default.LocationOn,
                     title = stringResource(R.string.location),
-                    subtitle = settings.location.displayName(),
-                    onClick = onNavigateToLocationSelection
+                    subtitle = "Manage locations",
+                    onClick = onNavigateToMyLocations
                 )
                 
                 HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))

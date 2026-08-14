@@ -2,14 +2,15 @@ package com.kutluoglu.prayer_feature.settings.location
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kutluoglu.prayer_settings.data.location.LocationData
-import com.kutluoglu.prayer_settings.data.location.LocationServiceHelper
-import com.kutluoglu.prayer_remote.location.NetworkException
 import com.kutluoglu.prayer.model.location.City
-import com.kutluoglu.prayer_settings.domain.model.LocationSettings
+import com.kutluoglu.prayer.model.location.LocationData
+import com.kutluoglu.prayer.model.location.LocationEntry
+import com.kutluoglu.prayer_location.LocationsCoordinator
+import com.kutluoglu.prayer_remote.location.NetworkException
+import com.kutluoglu.prayer_settings.data.location.LocationData as SettingsLocationData
+import com.kutluoglu.prayer_settings.data.location.LocationServiceHelper
 import com.kutluoglu.prayer_settings.domain.repository.LocationRepository
 import com.kutluoglu.prayer_settings.domain.usecase.SearchLocationUseCase
-import com.kutluoglu.prayer_settings.domain.usecase.UpdateLocationUseCase
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -21,13 +22,14 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
 import java.text.Normalizer
+import java.util.UUID
 
 @KoinViewModel
 class LocationSelectionViewModel(
     private val locationRepository: LocationRepository,
     private val searchLocationUseCase: SearchLocationUseCase,
     private val locationServiceHelper: LocationServiceHelper,
-    private val updateLocationUseCase: UpdateLocationUseCase
+    private val locationsCoordinator: LocationsCoordinator
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<LocationSelectionUiState>(LocationSelectionUiState.Loading)
@@ -273,20 +275,21 @@ class LocationSelectionViewModel(
     }
 
     private suspend fun saveLocation(city: City) {
-        // Get country code (use first 2 letters of country name as fallback code)
         val countryCode = getCountryCode(city.country)
-
-        // Save to settings store for Home screen to use
-        // cityName = İl (province), district = ilçe (county if available, otherwise name)
-        updateLocationUseCase(
-            LocationSettings(
-                latitude = city.latitude,
-                longitude = city.longitude,
-                cityName = city.province,
-                district = city.county?.takeIf { it.isNotBlank() }
-                    ?: city.name.takeIf { it != city.province },
-                country = city.country,
-                timeZone = getTimeZoneForCountry(countryCode)
+        val location = LocationData(
+            latitude = city.latitude,
+            longitude = city.longitude,
+            country = city.country,
+            countryCode = countryCode,
+            city = city.province,
+            county = city.county?.takeIf { it.isNotBlank() }
+                ?: city.name.takeIf { it != city.province }
+        )
+        locationsCoordinator.addLocation(
+            LocationEntry(
+                id = UUID.randomUUID().toString(),
+                location = location,
+                displayName = listOfNotNull(location.city, location.country).joinToString(", ")
             )
         )
     }
@@ -341,7 +344,7 @@ class LocationSelectionViewModel(
             )
             
             try {
-                val location: LocationData? = locationServiceHelper.getCurrentLocation()
+                val location: SettingsLocationData? = locationServiceHelper.getCurrentLocation()
                 if (location != null) {
                     val city = locationRepository.reverseGeocode(
                         location.latitude,

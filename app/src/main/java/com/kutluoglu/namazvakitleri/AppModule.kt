@@ -5,6 +5,7 @@ import com.kutluoglu.prayer_feature.settings.calculation.CalculationMethodViewMo
 import com.kutluoglu.prayer_feature.settings.hijri.HijriAdjustmentViewModel
 import com.kutluoglu.prayer_feature.settings.language.LanguageSelectionViewModel
 import com.kutluoglu.prayer_feature.settings.location.LocationSelectionViewModel
+import com.kutluoglu.prayer_feature.settings.location.MyLocationsViewModel
 import com.kutluoglu.prayer.data.repository.location.LocationDataStore
 import com.kutluoglu.prayer_settings.data.local.SettingsDataStore
 import com.kutluoglu.prayer_settings.data.repository.SettingsRepositoryImpl
@@ -43,6 +44,7 @@ val appModule: Module = module {
     // Settings ViewModels
     viewModel { SettingsViewModel(get(), get(), get(), get(), get(), get(), get()) }
     factory { LocationSelectionViewModel(get(), get(), get(), get()) }
+    viewModel { MyLocationsViewModel(get()) }
     factory { CalculationMethodViewModel(get(), get()) }
     factory { HijriAdjustmentViewModel(get(), get()) }
     factory { LanguageSelectionViewModel(get(), get()) }
