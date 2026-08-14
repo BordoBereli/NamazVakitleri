@@ -76,7 +76,7 @@ class LocationsCoordinatorTest {
     }
 
     @Test
-    fun `resolveInitial returns gps when no manual entries and gps enabled`() = runBlocking<Unit> {
+    fun `resolveInitial gps fallback updates provider`() = runBlocking<Unit> {
         val gps = LocationData(40.0, 29.0, "Turkey", "TR", "Bursa", null)
         coEvery { dataStore.getLocations() } returns LocationsState(gpsEnabled = true)
         coEvery { locationService.getCurrentLocation() } returns gps
@@ -84,6 +84,31 @@ class LocationsCoordinatorTest {
         val result = coordinator.resolveInitial()
 
         assertThat(result).isEqualTo(gps)
+        assertThat(provider.location.first()).isEqualTo(gps)
+    }
+
+    @Test
+    fun `resolveSelected falls back to gps when no manual entries`() = runBlocking<Unit> {
+        val gps = LocationData(40.0, 29.0, "Turkey", "TR", "Bursa", null)
+        coEvery { dataStore.getLocations() } returns LocationsState(gpsEnabled = true)
+        coEvery { locationService.getCurrentLocation() } returns gps
+
+        val result = coordinator.resolveSelected()
+
+        assertThat(result).isEqualTo(gps)
+        assertThat(provider.location.first()).isEqualTo(gps)
+    }
+
+    @Test
+    fun `selectLocation gps updates provider and persists sentinel`() = runBlocking<Unit> {
+        val gps = LocationData(40.0, 29.0, "Turkey", "TR", "Bursa", null)
+        coEvery { dataStore.getLocations() } returns LocationsState(entries = listOf(istanbul))
+        coordinator.setGpsLocation(gps)
+
+        coordinator.selectLocation(LocationsCoordinator.GPS_LOCATION_ID)
+
+        coVerify { dataStore.setSelectedLocation(LocationsCoordinator.GPS_LOCATION_ID) }
+        assertThat(provider.location.first()).isEqualTo(gps)
     }
 
     @Test

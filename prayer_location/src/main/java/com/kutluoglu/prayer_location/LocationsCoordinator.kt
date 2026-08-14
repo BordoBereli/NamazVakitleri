@@ -36,6 +36,9 @@ class LocationsCoordinator(
     suspend fun resolveInitial(): LocationData? {
         locationsMigration.migrateIfNeeded()
         val state = locationsDataStore.getLocations()
+        if (state.selectedId == GPS_LOCATION_ID && state.gpsEnabled) {
+            return resolveGps()
+        }
         val selected = state.entries.firstOrNull { it.id == state.selectedId }
             ?: state.entries.firstOrNull()
         if (selected != null) {
@@ -43,16 +46,32 @@ class LocationsCoordinator(
             return selected.location
         }
         if (state.gpsEnabled) {
-            return refreshGps()
+            return resolveGps()
         }
         return null
     }
 
     suspend fun resolveSelected(): LocationData? {
         val state = locationsDataStore.getLocations()
+        if (state.selectedId == GPS_LOCATION_ID && state.gpsEnabled) {
+            return resolveGps()
+        }
         val selected = state.entries.firstOrNull { it.id == state.selectedId }
             ?: state.entries.firstOrNull()
-        return selected?.location
+        if (selected != null) {
+            activeLocationProvider.set(selected.location)
+            return selected.location
+        }
+        if (state.gpsEnabled) {
+            return resolveGps()
+        }
+        return null
+    }
+
+    private suspend fun resolveGps(): LocationData? {
+        val gps = refreshGps()
+        if (gps != null) activeLocationProvider.set(gps)
+        return gps
     }
 
     suspend fun refreshGps(): LocationData? {
@@ -62,6 +81,12 @@ class LocationsCoordinator(
     }
 
     suspend fun selectLocation(id: String) {
+        if (id == GPS_LOCATION_ID) {
+            locationsDataStore.setSelectedLocation(GPS_LOCATION_ID)
+            val gps = _gpsLocation.value ?: refreshGps()
+            if (gps != null) activeLocationProvider.set(gps)
+            return
+        }
         locationsDataStore.setSelectedLocation(id)
         val entry = locationsDataStore.getLocations().entries.firstOrNull { it.id == id }
         entry?.let { activeLocationProvider.set(it.location) }
@@ -90,9 +115,13 @@ class LocationsCoordinator(
 
     private fun LocationData.toEntry(): LocationEntry =
         LocationEntry(
-            id = "gps",
+            id = GPS_LOCATION_ID,
             location = this,
             isAutoGps = true,
             displayName = listOfNotNull(city, country).joinToString(", ").ifBlank { "GPS" }
         )
+
+    companion object {
+        const val GPS_LOCATION_ID = "gps"
+    }
 }
