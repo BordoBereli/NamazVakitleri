@@ -43,5 +43,6 @@
     <string name="manage_locations">Manage locations</string>
     <string name="delete">Delete</string>
     <string name="selected">Selected</string>
+    <string name="reorder">Reorder</string>
     <string name="no_locations_yet">No locations yet — add one below</string>
 </resources>

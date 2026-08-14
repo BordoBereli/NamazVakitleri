@@ -38,6 +38,9 @@ class MyLocationsViewModel(
             is MyLocationsEvent.SelectLocation -> viewModelScope.launch {
                 locationsCoordinator.selectLocation(event.id)
             }
+            is MyLocationsEvent.ReorderLocations -> viewModelScope.launch {
+                locationsCoordinator.reorderLocations(event.ids)
+            }
         }
     }
 }

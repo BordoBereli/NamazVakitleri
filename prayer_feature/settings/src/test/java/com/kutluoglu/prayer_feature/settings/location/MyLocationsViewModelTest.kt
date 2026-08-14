@@ -80,4 +80,10 @@ class MyLocationsViewModelTest {
         viewModel.onEvent(MyLocationsEvent.SelectLocation("loc-1"))
         coVerify { coordinator.selectLocation("loc-1") }
     }
+
+    @Test
+    fun `reorderLocations delegates to coordinator`() = runTest {
+        viewModel.onEvent(MyLocationsEvent.ReorderLocations(listOf("loc-2", "loc-1")))
+        coVerify { coordinator.reorderLocations(listOf("loc-2", "loc-1")) }
+    }
 }

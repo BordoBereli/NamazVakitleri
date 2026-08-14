@@ -86,6 +86,10 @@ dependencies {
     implementation(libs.osmdroid)
     //endregion
 
+    //region Reorderable
+    implementation(libs.reorderable)
+    //endregion
+
     //region Koin
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.core)
