@@ -39,7 +39,7 @@ class PrayerTimesLoaderTest {
         val dhuhr = Prayer(name = "Öğle", arabicName = "الظهر", time = LocalTime(12, 30), date = date)
         coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any()) } returns success(listOf(fajr, dhuhr))
         every { formatter.withLocalizedNames(any()) } returns listOf(fajr, dhuhr)
-        every { formatter.getInitialTimeInfo(any()) } returns TimeUiState(gregorianFullDate = "02 Ağustos 2026")
+        every { formatter.getInitialTimeInfo(any(), any(), any()) } returns TimeUiState(gregorianFullDate = "02 Ağustos 2026")
         every { formatter.locationInfo(any()) } returns "Istanbul, TR"
         every { calculator.findCurrentAndNextPrayer(any(), any()) } returns Pair(fajr, dhuhr)
 
