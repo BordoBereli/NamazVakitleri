@@ -24,21 +24,31 @@ fun HomeRoute(
         navController: NavController
 ) {
     val gate by viewModel.screenGate.collectAsState()
-    val time by viewModel.timeState.collectAsState()
-    val location by viewModel.locationState.collectAsState()
-    val prayer by viewModel.prayerState.collectAsState()
     val countdown by viewModel.countdownState.collectAsState()
     val quran by viewModel.quranState.collectAsState()
     val locations by viewModel.locationsState.collectAsState()
+    val prayerData by viewModel.prayerDataByLocation.collectAsState()
+    val activeLocationId by viewModel.activeLocationId.collectAsState()
 
-    val uiState = remember(gate, time, location, prayer, countdown, quran) {
-        mergeToHomeUiState(gate, location, time, prayer, countdown, quran)
+    val activeData = prayerData[activeLocationId]
+
+    val uiState = remember(gate, activeData, countdown, quran) {
+        mergeToHomeUiState(
+            gate = gate,
+            location = activeData?.locationState,
+            time = activeData?.timeState,
+            prayer = activeData?.prayerState,
+            countdown = countdown,
+            quran = quran
+        )
     }
 
     HomeScreen(
         navController = navController,
         uiState = uiState,
         locationsState = locations,
+        prayerDataByLocation = prayerData,
+        activeLocationId = activeLocationId,
         quranVerseFormatter = verseFormatter,
         onEvent = { event -> viewModel.onEvent(event) }
     )

@@ -2,26 +2,25 @@ package com.kutluoglu.prayer_feature.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kutluoglu.core.common.getZoneIdFromLocation
-import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer_location.LocationsCoordinator
 import com.kutluoglu.prayer_location.data.LocationsState
-import com.kutluoglu.prayer_feature.common.states.LocationUiState
-import com.kutluoglu.prayer_feature.common.states.TimeUiState
 import com.kutluoglu.prayer_feature.home.domain.CountdownEngine
+import com.kutluoglu.prayer_feature.home.domain.LoadedPrayerData
 import com.kutluoglu.prayer_feature.home.domain.PrayerTimesLoader
 import com.kutluoglu.prayer_feature.home.domain.QuranVerseLoader
 import com.kutluoglu.prayer_feature.home.state.CountdownUiState
 import com.kutluoglu.prayer_feature.home.state.HomeErrorMapper
 import com.kutluoglu.prayer_feature.home.state.HomeScreenGate
-import com.kutluoglu.prayer_feature.home.state.PrayerUiState
 import com.kutluoglu.prayer_feature.home.state.QuranUiState
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import org.koin.android.annotation.KoinViewModel
 
 @OptIn(FlowPreview::class)
@@ -36,20 +35,19 @@ class HomeViewModel(
     private val _screenGate = MutableStateFlow<HomeScreenGate>(HomeScreenGate.Loading)
     val screenGate: StateFlow<HomeScreenGate> = _screenGate
 
-    private val _timeState = MutableStateFlow<TimeUiState?>(null)
-    val timeState: StateFlow<TimeUiState?> = _timeState
-
-    private val _locationState = MutableStateFlow<LocationUiState?>(null)
-    val locationState: StateFlow<LocationUiState?> = _locationState
-
-    private val _prayerState = MutableStateFlow<PrayerUiState?>(null)
-    val prayerState: StateFlow<PrayerUiState?> = _prayerState
-
     private val _locationsState = MutableStateFlow<LocationsState>(LocationsState())
     val locationsState: StateFlow<LocationsState> = _locationsState
 
+    private val _prayerDataByLocation = MutableStateFlow<Map<String, LoadedPrayerData>>(emptyMap())
+    val prayerDataByLocation: StateFlow<Map<String, LoadedPrayerData>> = _prayerDataByLocation
+
+    private val _activeLocationId = MutableStateFlow<String?>(null)
+    val activeLocationId: StateFlow<String?> = _activeLocationId
+
     val countdownState: StateFlow<CountdownUiState> = countdownEngine.countdownState
     val quranState: StateFlow<QuranUiState> = quranVerseLoader.quranState
+
+    private val stateMutex = Mutex()
 
     private var locationsObserverJob: Job? = null
     private var prayerPassedObserverJob: Job? = null
@@ -58,15 +56,10 @@ class HomeViewModel(
     init {
         locationsObserverJob = viewModelScope.launch {
             locationsCoordinator.observeState()
-                .drop(1) // skip initial emission; loadInitialLocation() handles first resolution
+                .drop(1)
                 .collect { state ->
                     _locationsState.value = state
-                    val selected = resolveSelected(state)
-                    if (selected != null) {
-                        onLocationResolved(selected)
-                    } else {
-                        fail(HomeErrorMapper.getUserFriendlyErrorMessage(null))
-                    }
+                    handleState(state)
                 }
         }
         prayerPassedObserverJob = viewModelScope.launch {
@@ -89,15 +82,13 @@ class HomeViewModel(
         }
     }
 
-    private fun resolveSelected(state: LocationsState): LocationData? =
-        state.entries.firstOrNull { it.id == state.selectedId }?.location
-            ?: state.entries.firstOrNull()?.location
-
     private fun loadInitialLocation() {
         viewModelScope.launch {
             val location = locationsCoordinator.resolveInitial()
             if (location != null) {
-                onLocationResolved(location)
+                val state = locationsCoordinator.observeState().first()
+                _locationsState.value = state
+                handleState(state)
             } else {
                 fail(HomeErrorMapper.getUserFriendlyErrorMessage(null))
             }
@@ -109,7 +100,25 @@ class HomeViewModel(
             _screenGate.value = HomeScreenGate.Loading
             val location = locationsCoordinator.resolveSelected()
             if (location != null) {
-                onLocationResolved(location)
+                val state = locationsCoordinator.observeState().first()
+                _locationsState.value = state
+                val activeId = state.selectedId ?: state.entries.firstOrNull()?.id
+                if (activeId != null) {
+                    prayerTimesLoader.load(location)
+                        .onSuccess { loaded ->
+                            _prayerDataByLocation.value = _prayerDataByLocation.value + (activeId to loaded)
+                            _activeLocationId.value = activeId
+                            _screenGate.value = HomeScreenGate.Ready
+                            startCountdownFor(activeId)
+                        }
+                        .onFailure { error ->
+                            _screenGate.value = HomeScreenGate.Error(
+                                error.message ?: HomeErrorMapper.getUserFriendlyErrorMessage(error)
+                            )
+                        }
+                } else {
+                    fail(HomeErrorMapper.getUserFriendlyErrorMessage(null))
+                }
             } else {
                 fail(HomeErrorMapper.getUserFriendlyErrorMessage(null))
             }
@@ -122,35 +131,49 @@ class HomeViewModel(
         }
     }
 
-    private suspend fun onLocationResolved(location: LocationData) {
-        prayerTimesLoader.load(location)
-            .onSuccess { loaded ->
-                _locationState.value = loaded.locationState
-                _timeState.value = loaded.timeState
-                _prayerState.value = loaded.prayerState
+    private suspend fun handleState(state: LocationsState) {
+        stateMutex.withLock {
+            val activeId = state.selectedId ?: state.entries.firstOrNull()?.id
+            if (activeId == null) {
+                fail(HomeErrorMapper.getUserFriendlyErrorMessage(null))
+                return@withLock
+            }
+            loadAllLocations(state)
+            val activeData = _prayerDataByLocation.value[activeId]
+            if (activeData != null) {
+                _activeLocationId.value = activeId
                 _screenGate.value = HomeScreenGate.Ready
-                startCountdown()
+                startCountdownFor(activeId)
+            } else {
+                fail(HomeErrorMapper.getUserFriendlyErrorMessage(null))
             }
-            .onFailure { error ->
-                _screenGate.value = HomeScreenGate.Error(
-                    error.message ?: HomeErrorMapper.getUserFriendlyErrorMessage(error)
-                )
+        }
+    }
+
+    private suspend fun loadAllLocations(state: LocationsState) {
+        val current = _prayerDataByLocation.value.toMutableMap()
+        for (entry in state.entries) {
+            if (current[entry.id] == null) {
+                prayerTimesLoader.load(entry.location)
+                    .onSuccess { loaded -> current[entry.id] = loaded }
+                    .onFailure { /* non-active failures tolerated; active handled in handleState */ }
             }
+        }
+        _prayerDataByLocation.value = current
     }
 
     private fun refreshPrayerState() {
-        val currentState = _prayerState.value ?: return
-        val zoneId = getZoneIdFromLocation(_locationState.value?.locationData?.countryCode)
-        val refreshed = prayerTimesLoader.computePrayerState(currentState.prayers, zoneId)
-        _prayerState.value = refreshed
+        val activeId = _activeLocationId.value ?: return
+        val data = _prayerDataByLocation.value[activeId] ?: return
+        val refreshed = prayerTimesLoader.computePrayerState(data.prayerState.prayers, data.zoneId)
+        _prayerDataByLocation.value = _prayerDataByLocation.value + (activeId to data.copy(prayerState = refreshed))
         _screenGate.value = HomeScreenGate.Ready
-        startCountdown()
+        startCountdownFor(activeId)
     }
 
-    private fun startCountdown() {
-        val currentState = _prayerState.value ?: return
-        val zoneId = getZoneIdFromLocation(_locationState.value?.locationData?.countryCode)
-        countdownEngine.start(currentState, zoneId, viewModelScope)
+    private fun startCountdownFor(locationId: String) {
+        val data = _prayerDataByLocation.value[locationId] ?: return
+        countdownEngine.start(data.prayerState, data.zoneId, viewModelScope)
     }
 
     private fun loadRandomVerse() {

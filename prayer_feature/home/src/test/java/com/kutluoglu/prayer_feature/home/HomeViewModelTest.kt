@@ -123,7 +123,9 @@ class HomeViewModelTest {
 
     @Test
     fun `onEvent OnRefresh triggers reload and resolves to Ready`() = runTest {
-        coEvery { locationsCoordinator.observeState() } returns flowOf(LocationsState())
+        coEvery { locationsCoordinator.observeState() } returns flowOf(
+            LocationsState(entries = listOf(entry), selectedId = "loc-1")
+        )
         coEvery { locationsCoordinator.resolveInitial() } returns null
         coEvery { locationsCoordinator.resolveSelected() } returns location
         coEvery { prayerTimesLoader.load(location) } returns success(loadedData())
@@ -193,6 +195,25 @@ class HomeViewModelTest {
         stateFlow.value = LocationsState()
 
         assertThat(vm.screenGate.value is HomeScreenGate.Error).isTrue()
+    }
+
+    @Test
+    fun `all locations are pre-loaded on init`() = runTest {
+        val locA = LocationData(41.0082, 28.9784, "Turkey", "TR", "Istanbul", null)
+        val locB = LocationData(39.9334, 32.8597, "Turkey", "TR", "Ankara", null)
+        val entryA = LocationEntry("loc-1", locA, displayName = "Istanbul, Turkey")
+        val entryB = LocationEntry("loc-2", locB, displayName = "Ankara, Turkey")
+        coEvery { locationsCoordinator.observeState() } returns flowOf(
+            LocationsState(entries = listOf(entryA, entryB), selectedId = "loc-1")
+        )
+        coEvery { locationsCoordinator.resolveInitial() } returns locA
+        coEvery { prayerTimesLoader.load(locA) } returns success(loadedData())
+        coEvery { prayerTimesLoader.load(locB) } returns success(loadedData())
+
+        val vm = viewModel()
+
+        assertThat(vm.prayerDataByLocation.value.keys).containsExactly("loc-1", "loc-2")
+        assertThat(vm.activeLocationId.value).isEqualTo("loc-1")
     }
 
     @Test

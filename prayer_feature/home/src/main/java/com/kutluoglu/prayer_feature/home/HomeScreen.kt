@@ -35,8 +35,10 @@ import com.kutluoglu.prayer_feature.home.components.BottomContainer
 import com.kutluoglu.prayer_feature.home.components.DailyPrayers
 import com.kutluoglu.prayer_feature.home.components.HomeTopContainer
 import com.kutluoglu.prayer_feature.home.components.LocationChipsRow
+import com.kutluoglu.prayer_feature.home.domain.LoadedPrayerData
 import com.kutluoglu.prayer_feature.home.feature.CustomBottomSheet
 import com.kutluoglu.prayer_feature.home.feature.VerseDetailSheetContent
+import com.kutluoglu.prayer_feature.home.state.CountdownUiState
 import com.kutluoglu.prayer_feature.home.state.HomeUiState
 import com.kutluoglu.prayer_location.data.LocationsState
 import com.kutluoglu.prayer_navigation.core.PrayerNestedGraph
@@ -48,9 +50,19 @@ fun HomeScreen(
     navController: NavController,
     uiState: HomeUiState,
     locationsState: LocationsState,
+    prayerDataByLocation: Map<String, LoadedPrayerData>,
+    activeLocationId: String?,
     quranVerseFormatter: QuranVerseFormatter,
     onEvent: (HomeEvent) -> Unit
 ) {
+    val onPrayerTimesClick = {
+        navController.navigate(PrayerNestedGraph.PRAYER_TIMES) {
+            popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+            launchSingleTop = true
+            restoreState = true
+        }
+    }
+
     Box(modifier = Modifier.fillMaxSize()) {
         PermissionHandler(
             onPermissionsGranted = { onEvent(HomeEvent.OnPermissionsGranted) }
@@ -95,16 +107,24 @@ fun HomeScreen(
                 )
                 HorizontalPager(state = pagerState) { page ->
                     val entry = entries.getOrNull(page)
-                    if (entry != null && entry.id == locationsState.selectedId) {
-                        PrayerContent(
+                    if (entry == null) return@HorizontalPager
+                    val isActive = entry.id == activeLocationId
+                    val data = prayerDataByLocation[entry.id]
+                    when {
+                        isActive -> PrayerContent(
                             navController = navController,
                             uiState = uiState,
                             quranVerseFormatter = quranVerseFormatter,
                             isAutoGps = entry.isAutoGps,
+                            onPrayerTimesClick = onPrayerTimesClick,
                             onEvent = onEvent
                         )
-                    } else {
-                        LocationPlaceholder(entry)
+                        data != null -> LocationPagePreview(
+                            data = data,
+                            isAutoGps = entry.isAutoGps,
+                            onViewAllClicked = onPrayerTimesClick
+                        )
+                        else -> LocationPlaceholder(entry)
                     }
                 }
             }
@@ -122,6 +142,53 @@ private fun LocationPlaceholder(entry: LocationEntry?) {
     }
 }
 
+@Composable
+private fun LocationPagePreview(
+    data: LoadedPrayerData,
+    isAutoGps: Boolean,
+    onViewAllClicked: () -> Unit
+) {
+    val successState = HomeUiState.Success(
+        timeState = data.timeState,
+        prayerState = data.prayerState,
+        locationState = data.locationState,
+        countdownState = CountdownUiState(),
+        quranVerse = null,
+        isVerseDetailSheetVisible = false
+    )
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        val isLandscape = maxWidth > maxHeight
+        val layoutDirection = LocalLayoutDirection.current
+        CompositionLocalProvider(LocalIsLandscape provides isLandscape) {
+            val topContainer = @Composable { modifier: Modifier ->
+                Box(modifier = modifier, contentAlignment = Alignment.Center) {
+                    HomeTopContainer(
+                        painter = painterResource(id = R.drawable.home_page_fallback),
+                        successState = successState
+                    )
+                }
+            }
+            val dailyPrayers = @Composable { modifier: Modifier ->
+                Box(modifier = modifier) {
+                    DailyPrayers(
+                        prayerState = data.prayerState,
+                        isRefreshing = false,
+                        onRefresh = {},
+                        onViewAllClicked = onViewAllClicked,
+                        isAutoGps = isAutoGps
+                    )
+                }
+            }
+            val emptyBottom = @Composable { modifier: Modifier -> Box(modifier = modifier) }
+            if (isLandscape) {
+                LandscapeMode(PaddingValues(0.dp), topContainer, dailyPrayers, emptyBottom)
+            } else {
+                PortraitMode(PaddingValues(0.dp), layoutDirection, topContainer, dailyPrayers, emptyBottom)
+            }
+        }
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PrayerContent(
@@ -129,6 +196,7 @@ private fun PrayerContent(
     uiState: HomeUiState,
     quranVerseFormatter: QuranVerseFormatter,
     isAutoGps: Boolean = false,
+    onPrayerTimesClick: () -> Unit,
     onEvent: (HomeEvent) -> Unit
 ) {
     val successState = uiState as? HomeUiState.Success
@@ -151,13 +219,6 @@ private fun PrayerContent(
         }
 
         val isRefreshing = uiState is HomeUiState.Loading
-        val onPrayerTimesClick = {
-            navController.navigate(PrayerNestedGraph.PRAYER_TIMES) {
-                popUpTo(navController.graph.findStartDestination().id) { saveState = true }
-                launchSingleTop = true
-                restoreState = true
-            }
-        }
 
         Box(modifier = Modifier.fillMaxSize()) {
             BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
