@@ -53,6 +53,8 @@ class LocationsDataStore(
     suspend fun reorderLocations(ids: List<String>) {
         dataStore.edit { prefs ->
             val current = decodeEntries(prefs[Keys.LOCATIONS])
+            val currentIds = current.map { it.id }.toSet()
+            if (ids.toSet() != currentIds || ids.size != current.size) return@edit
             val byId = current.associateBy { it.id }
             val reordered = ids.mapNotNull { byId[it] }
             prefs[Keys.LOCATIONS] = json.encodeToString(reordered)

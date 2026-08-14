@@ -108,4 +108,25 @@ class LocationsDataStoreTest {
         val second = store.observeLocations().first()
         assertThat(second.entries).hasSize(2)
     }
+
+    @Test
+    fun `data persists across store instances`() = runBlocking<Unit> {
+        store.addLocation(istanbul)
+
+        val freshStore = LocationsDataStore(dataStore)
+
+        val state = freshStore.getLocations()
+        assertThat(state.entries.map { it.id }).containsExactly("loc-1")
+    }
+
+    @Test
+    fun `reorderLocations with unknown ids is a no-op`() = runBlocking<Unit> {
+        store.addLocation(istanbul)
+        store.addLocation(ankara)
+
+        store.reorderLocations(listOf("loc-1", "unknown"))
+
+        val state = store.getLocations()
+        assertThat(state.entries.map { it.id }).containsExactly("loc-1", "loc-2")
+    }
 }
