@@ -28,7 +28,7 @@ class LocationsDataStore(
     fun observeLocations(): Flow<LocationsState> = dataStore.data.map { prefs ->
         LocationsState(
             entries = decodeEntries(prefs[Keys.LOCATIONS]),
-            gpsEnabled = prefs[Keys.GPS_ENABLED] ?: false,
+            gpsEnabled = prefs[Keys.GPS_ENABLED] ?: true,
             selectedId = prefs[Keys.SELECTED_ID]
         )
     }

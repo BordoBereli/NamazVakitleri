@@ -48,10 +48,10 @@ class LocationsDataStoreTest {
     }
 
     @Test
-    fun `default state is empty with gps disabled`() = runBlocking<Unit> {
+    fun `default state is empty with gps enabled`() = runBlocking<Unit> {
         val state = store.getLocations()
         assertThat(state.entries).isEmpty()
-        assertThat(state.gpsEnabled).isFalse()
+        assertThat(state.gpsEnabled).isTrue()
         assertThat(state.selectedId).isNull()
     }
 
