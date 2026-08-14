@@ -72,7 +72,7 @@ class PrayerTimesViewModelTest {
 
         coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any()) } returns success(mockPrayerList)
         every { calculator.findCurrentAndNextPrayer(any(), any()) } returns Pair(null, null)
-        every { formatter.withLocalizedNames(any()) } returns mockPrayerList
+        every { formatter.withLocalizedNames(any()) } answers { firstArg() }
         every { formatter.getInitialTimeInfo(any(), any(), any()) } returns TimeUiState(
             gregorianDayAndName = "1 Monday",
             hijriDate = "1 Muharram 1448"
@@ -233,5 +233,61 @@ class PrayerTimesViewModelTest {
         activeLocationProvider.set(locA)
         viewModel.loadMonthlyPrayerTimes()
         assertThat(callCount).isEqualTo(callsForB)
+    }
+
+    @Test
+    fun `month position is remembered per location`() = runTest {
+        val locA = LocationData(41.0082, 28.9784, "Turkey", "TR", "Istanbul", null)
+        val locB = LocationData(39.9334, 32.8597, "Turkey", "TR", "Ankara", null)
+        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any()) } returns success(mockPrayerList)
+
+        activeLocationProvider.set(locA)
+        viewModel.loadMonthlyPrayerTimes()
+        viewModel.onEvent(PrayerTimesEvent.OnNextMonth)
+
+        activeLocationProvider.set(locB)
+        viewModel.loadMonthlyPrayerTimes()
+
+        activeLocationProvider.set(locA)
+        viewModel.loadMonthlyPrayerTimes()
+
+        val zoneId = getZoneIdFromLocation("TR")
+        val currentMonth = LocalDateTime.now(zoneId).date.yearMonth
+        val nextMonth = currentMonth.plus(1, DateTimeUnit.MONTH)
+        viewModel.uiState.test {
+            val state = awaitItem()
+            val success = state as PrayerTimesUiState.Success
+            assertThat(success.selectedMonth).isEqualTo(nextMonth)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `location switch during in-flight load does not emit stale pairing`() = runTest {
+        val locA = LocationData(41.0082, 28.9784, "Turkey", "TR", "Istanbul", null)
+        val locB = LocationData(39.9334, 32.8597, "Turkey", "TR", "Ankara", null)
+        val prayerListB = mockPrayerList.map { it.copy(name = "${it.name}B") }
+        val gate = CompletableDeferred<Unit>()
+        var callCount = 0
+        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any()) } coAnswers {
+            callCount++
+            val latitude = arg<Double>(1)
+            if (callCount == 1) gate.await()
+            if (latitude == locA.latitude) success(mockPrayerList) else success(prayerListB)
+        }
+
+        activeLocationProvider.set(locA)
+        viewModel.loadMonthlyPrayerTimes()
+        activeLocationProvider.set(locB)
+        viewModel.loadMonthlyPrayerTimes()
+        gate.complete(Unit)
+
+        viewModel.uiState.test {
+            val state = awaitItem()
+            val success = state as PrayerTimesUiState.Success
+            assertThat(success.locationState.locationData).isEqualTo(locB)
+            assertThat(success.monthlyPrayers.first().prayers.first().name).isEqualTo("FajrB")
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 }

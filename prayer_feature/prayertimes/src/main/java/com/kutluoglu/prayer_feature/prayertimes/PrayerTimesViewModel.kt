@@ -54,7 +54,7 @@ class PrayerTimesViewModel(
     fun loadMonthlyPrayerTimes() {
         viewModelScope.launch {
             val location = activeLocationProvider.location.first() ?: run {
-                _uiState.value = PrayerTimesUiState.Error("Failed to get saved location.")
+                _uiState.value = PrayerTimesUiState.Error("Failed to get active location.")
                 return@launch
             }
             activeLocationId = location.locationId()
@@ -101,16 +101,25 @@ class PrayerTimesViewModel(
         }
         isLoading = true
         viewModelScope.launch {
+            val locationId = activeLocationId ?: run {
+                isLoading = false
+                return@launch
+            }
+            val location = activeLocationProvider.location.value ?: run {
+                isLoading = false
+                return@launch
+            }
+            val resolvedZoneId = zoneId ?: run {
+                isLoading = false
+                return@launch
+            }
             try {
-                val locationId = activeLocationId ?: return@launch
                 val locationCache = monthCache.getOrPut(locationId) { mutableMapOf() }
                 val cached = locationCache[month]
                 if (cached != null) {
-                    emitSuccess(month, cached)
+                    emitSuccess(month, cached, locationId, location, resolvedZoneId)
                     return@launch
                 }
-                val location = activeLocationProvider.location.first() ?: return@launch
-                val resolvedZoneId = zoneId ?: return@launch
                 val today = LocalDateTime.now(resolvedZoneId)
                 val monthlyPrayers = mutableListOf<DailyPrayer>()
                 for (day in 1..month.numberOfDays) {
@@ -152,22 +161,26 @@ class PrayerTimesViewModel(
                     }
                 }
                 locationCache[month] = monthlyPrayers
-                emitSuccess(month, monthlyPrayers)
+                emitSuccess(month, monthlyPrayers, locationId, location, resolvedZoneId)
             } finally {
                 isLoading = false
                 val next = pendingMonth
                 pendingMonth = null
-                if (next != null && next != month) {
+                if (next != null && (next != month || locationId != activeLocationId)) {
                     loadMonth(next)
                 }
             }
         }
     }
 
-    private fun emitSuccess(month: YearMonth, monthlyPrayers: List<DailyPrayer>) {
-        if (month != selectedMonth()) return
-        val location = activeLocationProvider.location.value ?: return
-        val resolvedZoneId = zoneId ?: return
+    private fun emitSuccess(
+        month: YearMonth,
+        monthlyPrayers: List<DailyPrayer>,
+        locationId: String,
+        location: LocationData,
+        resolvedZoneId: ZoneId
+    ) {
+        if (month != selectedMonth() || locationId != activeLocationId) return
         val today = LocalDateTime.now(resolvedZoneId)
         _uiState.value = PrayerTimesUiState.Success(
             monthlyPrayers = monthlyPrayers,
