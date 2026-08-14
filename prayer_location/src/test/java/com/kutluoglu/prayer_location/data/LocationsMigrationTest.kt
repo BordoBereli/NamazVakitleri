@@ -8,6 +8,7 @@ import com.kutluoglu.prayer.model.location.LocationEntry
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import io.mockk.slot
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 
@@ -41,9 +42,19 @@ class LocationsMigrationTest {
             county = null
         )
 
+        val slot = slot<LocationEntry>()
+        coEvery { locationsStore.addLocation(capture(slot)) } returns Unit
+
         LocationsMigration(locationsStore, legacyStore).migrateIfNeeded()
 
-        coVerify { locationsStore.addLocation(any()) }
+        val entry = slot.captured
+        assertThat(entry.isAutoGps).isFalse()
+        assertThat(entry.location.latitude).isEqualTo(41.0082)
+        assertThat(entry.location.longitude).isEqualTo(28.9784)
+        assertThat(entry.location.city).isEqualTo("Istanbul")
+        assertThat(entry.location.country).isEqualTo("Turkey")
+        assertThat(entry.displayName).isEqualTo("Istanbul, Turkey")
+        assertThat(entry.id).isNotEmpty()
     }
 
     @Test
