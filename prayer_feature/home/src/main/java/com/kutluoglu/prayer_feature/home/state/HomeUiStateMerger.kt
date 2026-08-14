@@ -33,8 +33,7 @@ fun mergeToHomeUiState(
     time: TimeUiState?,
     prayer: PrayerUiState?,
     countdown: CountdownUiState,
-    quran: QuranUiState,
-    prompt: Boolean
+    quran: QuranUiState
 ): HomeUiState {
     return when (gate) {
         HomeScreenGate.Loading -> HomeUiState.Loading
@@ -45,8 +44,7 @@ fun mergeToHomeUiState(
             locationState = requireNotNull(location),
             countdownState = countdown,
             quranVerse = quran.verse,
-            isVerseDetailSheetVisible = quran.isSheetVisible,
-            showLocationUpdatePrompt = prompt
+            isVerseDetailSheetVisible = quran.isSheetVisible
         )
     }
 }

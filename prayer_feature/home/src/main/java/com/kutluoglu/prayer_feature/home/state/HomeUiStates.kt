@@ -20,8 +20,7 @@ sealed class HomeUiState {
         val countdownState: CountdownUiState = CountdownUiState(),
 
         val quranVerse: AyahData? = null,
-        val isVerseDetailSheetVisible: Boolean = false,
-        val showLocationUpdatePrompt: Boolean = false
+        val isVerseDetailSheetVisible: Boolean = false
     ) : HomeUiState()
 }
 

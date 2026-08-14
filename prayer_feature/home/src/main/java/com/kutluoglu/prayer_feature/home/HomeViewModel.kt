@@ -48,10 +48,6 @@ class HomeViewModel(
     private val _locationsState = MutableStateFlow<LocationsState>(LocationsState())
     val locationsState: StateFlow<LocationsState> = _locationsState
 
-    // GPS drift prompt retired; kept until Task 8 removes the UI plumbing
-    private val _promptState = MutableStateFlow(false)
-    val promptState: StateFlow<Boolean> = _promptState
-
     val countdownState: StateFlow<CountdownUiState> = countdownEngine.countdownState
     val quranState: StateFlow<QuranUiState> = quranVerseLoader.quranState
 
@@ -86,7 +82,6 @@ class HomeViewModel(
         when (event) {
             HomeEvent.OnRefresh -> loadPrayerTimesForCurrentLocation()
             HomeEvent.OnPermissionsGranted -> loadPrayerTimesForCurrentLocation()
-            HomeEvent.OnUpdateLocationConfirmed -> Unit // retired; removed in Task 8
             HomeEvent.OnLoadQuranVerse -> loadRandomVerse()
             HomeEvent.OnVerseClicked -> setVerseSheetVisibility(isVisible = true)
             HomeEvent.OnVerseDetailDismissed -> setVerseSheetVisibility(isVisible = false)

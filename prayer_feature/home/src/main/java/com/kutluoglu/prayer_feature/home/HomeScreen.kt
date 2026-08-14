@@ -2,24 +2,20 @@ package com.kutluoglu.prayer_feature.home
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -29,32 +25,88 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.kutluoglu.core.designsystem.components.PermissionHandler
+import com.kutluoglu.prayer.model.location.LocationEntry
 import com.kutluoglu.prayer_feature.common.LocalIsLandscape
 import com.kutluoglu.prayer_feature.home.common.QuranVerseFormatter
 import com.kutluoglu.prayer_feature.home.components.BottomContainer
 import com.kutluoglu.prayer_feature.home.components.DailyPrayers
 import com.kutluoglu.prayer_feature.home.components.HomeTopContainer
+import com.kutluoglu.prayer_feature.home.components.LocationChipsRow
 import com.kutluoglu.prayer_feature.home.feature.CustomBottomSheet
 import com.kutluoglu.prayer_feature.home.feature.VerseDetailSheetContent
 import com.kutluoglu.prayer_feature.home.state.HomeUiState
+import com.kutluoglu.prayer_location.data.LocationsState
 import com.kutluoglu.prayer_navigation.core.PrayerNestedGraph
+import com.kutluoglu.prayer_navigation.core.Screen
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun HomeScreen(
     navController: NavController,
     uiState: HomeUiState,
+    locationsState: LocationsState,
     quranVerseFormatter: QuranVerseFormatter,
     onEvent: (HomeEvent) -> Unit
 ) {
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
+    Box(modifier = Modifier.fillMaxSize()) {
         PermissionHandler(
             onPermissionsGranted = { onEvent(HomeEvent.OnPermissionsGranted) }
         ) {
-            PrayerContent(navController, uiState, quranVerseFormatter, onEvent)
+            val entries = locationsState.entries
+            val selectedIndex = entries.indexOfFirst { it.id == locationsState.selectedId }
+                .coerceAtLeast(0)
+            val pagerState = rememberPagerState(
+                initialPage = selectedIndex,
+                pageCount = { entries.size.coerceAtLeast(1) }
+            )
+
+            LaunchedEffect(locationsState.selectedId) {
+                val index = entries.indexOfFirst { it.id == locationsState.selectedId }
+                if (index >= 0 && index != pagerState.currentPage) {
+                    pagerState.animateScrollToPage(index)
+                }
+            }
+
+            LaunchedEffect(pagerState.currentPage, pagerState.isScrollInProgress) {
+                val entry = entries.getOrNull(pagerState.currentPage)
+                if (entry != null && entry.id != locationsState.selectedId) {
+                    onEvent(HomeEvent.OnLocationSelected(entry.id))
+                }
+            }
+
+            Column(modifier = Modifier.fillMaxSize()) {
+                LocationChipsRow(
+                    entries = entries,
+                    selectedId = locationsState.selectedId,
+                    onLocationSelected = { id -> onEvent(HomeEvent.OnLocationSelected(id)) },
+                    onAddLocation = {
+                        navController.navigate(Screen.SettingsScreen.route) {
+                            popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
+                )
+                HorizontalPager(state = pagerState) { page ->
+                    val entry = entries.getOrNull(page)
+                    if (entry != null && entry.id == locationsState.selectedId) {
+                        PrayerContent(navController, uiState, quranVerseFormatter, onEvent)
+                    } else {
+                        LocationPlaceholder(entry)
+                    }
+                }
+            }
         }
+    }
+}
+
+@Composable
+private fun LocationPlaceholder(entry: LocationEntry?) {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Text(
+            text = entry?.displayName ?: "",
+            style = MaterialTheme.typography.titleLarge
+        )
     }
 }
 
@@ -66,35 +118,15 @@ private fun PrayerContent(
     quranVerseFormatter: QuranVerseFormatter,
     onEvent: (HomeEvent) -> Unit
 ) {
-    val snackbarHostState = remember { SnackbarHostState() }
-    val context = LocalContext.current
-
     val successState = uiState as? HomeUiState.Success
 
     val prayerState = successState?.prayerState
-    val showLocationUpdatePrompt = successState?.showLocationUpdatePrompt ?: false
     val quranVerse = successState?.quranVerse
     val isVerseSheetVisible = successState?.isVerseDetailSheetVisible ?: false
 
-    LaunchedEffect(showLocationUpdatePrompt) {
-        if (showLocationUpdatePrompt) {
-            val result = snackbarHostState.showSnackbar(
-                message = context.getString(R.string.location_update_prompt_message),
-                actionLabel = context.getString(R.string.location_update_action_label),
-                withDismissAction = true,
-                duration = SnackbarDuration.Long
-            )
-            if (result == SnackbarResult.ActionPerformed) {
-                snackbarHostState.currentSnackbarData?.dismiss()
-                onEvent(HomeEvent.OnUpdateLocationConfirmed)
-            }
-        }
-    }
-
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        containerColor = Color.Transparent,
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+        containerColor = Color.Transparent
     ) { innerPadding ->
         val errorState = uiState as? HomeUiState.Error
         if (errorState != null) {

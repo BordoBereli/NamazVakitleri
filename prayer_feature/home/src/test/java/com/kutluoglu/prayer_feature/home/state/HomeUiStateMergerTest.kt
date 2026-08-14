@@ -40,8 +40,7 @@ class HomeUiStateMergerTest {
             time = null,
             prayer = null,
             countdown = countdown,
-            quran = quran,
-            prompt = false
+            quran = quran
         )
         assertThat(result).isEqualTo(HomeUiState.Loading)
     }
@@ -54,8 +53,7 @@ class HomeUiStateMergerTest {
             time = null,
             prayer = null,
             countdown = countdown,
-            quran = quran,
-            prompt = false
+            quran = quran
         )
         assertThat(result).isEqualTo(HomeUiState.Error("boom"))
     }
@@ -68,8 +66,7 @@ class HomeUiStateMergerTest {
             time = time,
             prayer = prayer,
             countdown = countdown,
-            quran = quran,
-            prompt = true
+            quran = quran
         ) as HomeUiState.Success
 
         assertThat(result.locationState).isEqualTo(location)
@@ -78,7 +75,6 @@ class HomeUiStateMergerTest {
         assertThat(result.countdownState).isEqualTo(countdown)
         assertThat(result.quranVerse).isNull()
         assertThat(result.isVerseDetailSheetVisible).isFalse()
-        assertThat(result.showLocationUpdatePrompt).isTrue()
     }
 
     @Test
@@ -89,8 +85,7 @@ class HomeUiStateMergerTest {
             time = time,
             prayer = prayer,
             countdown = countdown,
-            quran = quran,
-            prompt = false
+            quran = quran
         ) as HomeUiState.Success
 
         assertThat(result.prayerState === prayer).isTrue()
@@ -105,8 +100,7 @@ class HomeUiStateMergerTest {
                 time = time,
                 prayer = prayer,
                 countdown = countdown,
-                quran = quran,
-                prompt = false
+                quran = quran
             )
         }
         assertThat(result.isFailure).isTrue()
