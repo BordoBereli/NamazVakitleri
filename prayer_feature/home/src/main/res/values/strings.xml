@@ -8,8 +8,6 @@
     <string name="time_until_prayer_format">Time until %1$s</string>
     <string name="time_until_sunrise">Time until Sunrise</string>
     <string name="unknown_error_message">Unknown error</string>
-    <string name="location_update_prompt_message">Your location has changed.</string>
-    <string name="location_update_action_label">Update</string>
     <string name="share_verse">Share Verse</string>
 
     <!-- ... surah name ... -->

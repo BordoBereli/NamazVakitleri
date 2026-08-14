@@ -60,9 +60,9 @@ fun LocationChipsRow(
             selected = false,
             onClick = onAddLocation,
             leadingIcon = {
-                Icon(Icons.Default.Add, contentDescription = null)
+                Icon(Icons.Default.Add, contentDescription = "Add location")
             },
-            label = { Text("+") }
+            label = { Text("") }
         )
     }
 }
