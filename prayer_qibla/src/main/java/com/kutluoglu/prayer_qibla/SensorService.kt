@@ -29,18 +29,28 @@ class SensorService(context: Context) : SensorEventListener {
     private val _rawSensorState = MutableStateFlow(RawSensorState())
     val rawSensorState = _rawSensorState.asStateFlow()
 
-    fun startCompass() {
+    fun startCompass(): Unit {
         if (isRegistered) return
         val accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
         val magnetometer = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD)
         val gyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE)
-        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_GAME)
-        sensorManager.registerListener(this, magnetometer, SensorManager.SENSOR_DELAY_GAME)
-        sensorManager.registerListener(this, gyroscope, SensorManager.SENSOR_DELAY_GAME)
-        isRegistered = true
+        var registered = 0
+        accelerometer?.let {
+            sensorManager.registerListener(this, it, SensorManager.SENSOR_DELAY_GAME)
+            registered++
+        }
+        magnetometer?.let {
+            sensorManager.registerListener(this, it, SensorManager.SENSOR_DELAY_GAME)
+            registered++
+        }
+        gyroscope?.let {
+            sensorManager.registerListener(this, it, SensorManager.SENSOR_DELAY_GAME)
+            registered++
+        }
+        isRegistered = registered > 0
     }
 
-    fun stopCompass() {
+    fun stopCompass(): Unit {
         if (!isRegistered) return
         sensorManager.unregisterListener(this)
         isRegistered = false
