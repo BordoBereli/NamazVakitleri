@@ -4,13 +4,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
@@ -18,25 +16,23 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.kutluoglu.core.designsystem.components.PermissionHandler
 import com.kutluoglu.prayer.model.location.LocationEntry
-import com.kutluoglu.prayer_feature.common.LocalIsLandscape
 import com.kutluoglu.prayer_feature.home.common.QuranVerseFormatter
 import com.kutluoglu.prayer_feature.home.components.BottomContainer
 import com.kutluoglu.prayer_feature.home.components.DailyPrayers
+import com.kutluoglu.prayer_feature.home.components.HomeErrorContent
 import com.kutluoglu.prayer_feature.home.components.HomeTopContainer
 import com.kutluoglu.prayer_feature.home.components.LocationChipsRow
 import com.kutluoglu.prayer_feature.home.domain.LoadedPrayerData
 import com.kutluoglu.prayer_feature.home.feature.CustomBottomSheet
 import com.kutluoglu.prayer_feature.home.feature.VerseDetailSheetContent
+import com.kutluoglu.prayer_feature.home.layout.HomeResponsiveLayout
 import com.kutluoglu.prayer_feature.home.state.CountdownUiState
 import com.kutluoglu.prayer_feature.home.state.HomeUiState
 import com.kutluoglu.prayer_location.data.LocationsState
@@ -167,37 +163,29 @@ private fun LocationPagePreview(
         quranVerse = null,
         isVerseDetailSheetVisible = false
     )
-    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val isLandscape = maxWidth > maxHeight
-        val layoutDirection = LocalLayoutDirection.current
-        CompositionLocalProvider(LocalIsLandscape provides isLandscape) {
-            val topContainer = @Composable { modifier: Modifier ->
-                Box(modifier = modifier, contentAlignment = Alignment.Center) {
-                    HomeTopContainer(
-                        painter = painterResource(id = R.drawable.home_page_fallback),
-                        successState = successState
-                    )
-                }
+    HomeResponsiveLayout(
+        innerPadding = PaddingValues(0.dp),
+        topContainer = { modifier ->
+            Box(modifier = modifier, contentAlignment = Alignment.Center) {
+                HomeTopContainer(
+                    painter = painterResource(id = R.drawable.home_page_fallback),
+                    successState = successState
+                )
             }
-            val dailyPrayers = @Composable { modifier: Modifier ->
-                Box(modifier = modifier) {
-                    DailyPrayers(
-                        prayerState = data.prayerState,
-                        isRefreshing = false,
-                        onRefresh = {},
-                        onViewAllClicked = onViewAllClicked,
-                        isAutoGps = isAutoGps
-                    )
-                }
+        },
+        dailyPrayers = { modifier ->
+            Box(modifier = modifier) {
+                DailyPrayers(
+                    prayerState = data.prayerState,
+                    isRefreshing = false,
+                    onRefresh = {},
+                    onViewAllClicked = onViewAllClicked,
+                    isAutoGps = isAutoGps
+                )
             }
-            val emptyBottom = @Composable { modifier: Modifier -> Box(modifier = modifier) }
-            if (isLandscape) {
-                LandscapeMode(PaddingValues(0.dp), topContainer, dailyPrayers, emptyBottom)
-            } else {
-                PortraitMode(PaddingValues(0.dp), layoutDirection, topContainer, dailyPrayers, emptyBottom)
-            }
-        }
-    }
+        },
+        bottomContainer = { modifier -> Box(modifier = modifier) }
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -222,7 +210,7 @@ private fun PrayerContent(
     ) { innerPadding ->
         val errorState = uiState as? HomeUiState.Error
         if (errorState != null) {
-            ErrorContent(
+            HomeErrorContent(
                 message = errorState.message,
                 onRetry = { onEvent(HomeEvent.OnRefresh) }
             )
@@ -232,65 +220,42 @@ private fun PrayerContent(
         val isRefreshing = uiState is HomeUiState.Loading
 
         Box(modifier = Modifier.fillMaxSize()) {
-            BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-                val isLandscape = maxWidth > maxHeight
-                val layoutDirection = LocalLayoutDirection.current // Get the layout direction here
-
-                CompositionLocalProvider(LocalIsLandscape provides isLandscape) {
-                    val topContainer = @Composable { modifier: Modifier ->
-                        Box(modifier = modifier, contentAlignment = Alignment.Center) {
-                            HomeTopContainer(
-                                painter = painterResource(id = R.drawable.home_page_fallback),
-                                successState = successState
-                            )
-                        }
-                    }
-
-                    val dailyPrayers = @Composable { modifier: Modifier ->
-                        Box(modifier = modifier) {
-                            DailyPrayers(
-                                prayerState = prayerState,
-                                isRefreshing = isRefreshing,
-                                onRefresh = { onEvent(HomeEvent.OnRefresh) },
-                                onViewAllClicked = onPrayerTimesClick,
-                                isAutoGps = isAutoGps
-                            )
-                        }
-                    }
-
-                    val bottomContainer = @Composable { modifier: Modifier ->
-                        Box(
-                            modifier = modifier
-                                .clickable(enabled = successState?.quranVerse != null) {
-                                    onEvent(HomeEvent.OnVerseClicked)
-                                },
-                            contentAlignment = Alignment.Center
-                        ) {
-                            BottomContainer(
-                                quranVerse = quranVerse,
-                                verseFormatter = quranVerseFormatter
-                            ) { onEvent(HomeEvent.OnLoadQuranVerse) }
-                        }
-                    }
-
-                    if (isLandscape) {
-                        LandscapeMode(
-                            innerPadding = innerPadding,
-                            topContainer = topContainer,
-                            dailyPrayers = dailyPrayers,
-                            bottomContainer = bottomContainer
+            HomeResponsiveLayout(
+                innerPadding = innerPadding,
+                topContainer = { modifier ->
+                    Box(modifier = modifier, contentAlignment = Alignment.Center) {
+                        HomeTopContainer(
+                            painter = painterResource(id = R.drawable.home_page_fallback),
+                            successState = successState
                         )
-                    } else {
-                        PortraitMode(
-                            innerPadding = innerPadding,
-                            layoutDirection = layoutDirection,
-                            topContainer = topContainer,
-                            dailyPrayers = dailyPrayers,
-                            bottomContainer = bottomContainer
+                    }
+                },
+                dailyPrayers = { modifier ->
+                    Box(modifier = modifier) {
+                        DailyPrayers(
+                            prayerState = prayerState,
+                            isRefreshing = isRefreshing,
+                            onRefresh = { onEvent(HomeEvent.OnRefresh) },
+                            onViewAllClicked = onPrayerTimesClick,
+                            isAutoGps = isAutoGps
                         )
+                    }
+                },
+                bottomContainer = { modifier ->
+                    Box(
+                        modifier = modifier
+                            .clickable(enabled = successState?.quranVerse != null) {
+                                onEvent(HomeEvent.OnVerseClicked)
+                            },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        BottomContainer(
+                            quranVerse = quranVerse,
+                            verseFormatter = quranVerseFormatter
+                        ) { onEvent(HomeEvent.OnLoadQuranVerse) }
                     }
                 }
-            }
+            )
             CustomBottomSheet(
                 isVisible = isVerseSheetVisible,
                 onDismiss = { onEvent(HomeEvent.OnVerseDetailDismissed) }
@@ -298,82 +263,6 @@ private fun PrayerContent(
                 quranVerse?.let { verse ->
                     VerseDetailSheetContent(verse = verse, verseFormatter = quranVerseFormatter)
                 }
-            }
-        }
-    }
-}
-
-@Composable
-private fun LandscapeMode(
-        innerPadding: PaddingValues,
-        topContainer: @Composable (Modifier) -> Unit,
-        dailyPrayers: @Composable (Modifier) -> Unit,
-        bottomContainer: @Composable (Modifier) -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(
-                bottom = innerPadding.calculateBottomPadding()
-            ),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        topContainer(Modifier.weight(0.4f))
-        Column(
-            modifier = Modifier.weight(0.6f),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            dailyPrayers(Modifier.weight(0.8f))
-            bottomContainer(Modifier.weight(0.2f))
-        }
-    }
-}
-
-@Composable
-private fun PortraitMode(
-        innerPadding: PaddingValues,
-        layoutDirection: LayoutDirection,
-        topContainer: @Composable (Modifier) -> Unit,
-        dailyPrayers: @Composable (Modifier) -> Unit,
-        bottomContainer: @Composable (Modifier) -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(
-                start = innerPadding.calculateStartPadding(layoutDirection),
-                end = innerPadding.calculateEndPadding(layoutDirection),
-                bottom = innerPadding.calculateBottomPadding()
-            ),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        topContainer(Modifier.weight(0.37f))
-        dailyPrayers(Modifier.weight(0.50f))
-        bottomContainer(Modifier.weight(0.13f))
-    }
-}
-
-@Composable
-private fun ErrorContent(
-    message: String,
-    onRetry: () -> Unit
-) {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            Text(
-                text = message,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.error
-            )
-            Button(onClick = onRetry) {
-                Text(stringResource(R.string.retry))
             }
         }
     }
