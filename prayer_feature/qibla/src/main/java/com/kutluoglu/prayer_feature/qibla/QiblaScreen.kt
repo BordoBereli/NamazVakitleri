@@ -2,9 +2,11 @@ package com.kutluoglu.prayer_feature.qibla
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -46,11 +48,11 @@ fun QiblaScreen(
         }
     }
 
-    Column(
+    BoxWithConstraints(
         modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        contentAlignment = Alignment.Center
     ) {
+        val isLandscape = maxWidth > maxHeight
         when {
             uiState.error != null -> {
                 Text(stringResource(R.string.qibla_location_error))
@@ -59,29 +61,106 @@ fun QiblaScreen(
                 Text(stringResource(R.string.qibla_waiting_location))
             }
             else -> {
-                locationName?.let {
-                    LocationChip(locationName = it)
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
-                BearingBadge(bearing = uiState.qiblaBearing)
-                Spacer(modifier = Modifier.height(16.dp))
-                QiblaCompass(
-                    deviceAzimuth = uiState.deviceAzimuth,
-                    qiblaAngle = uiState.qiblaAngle,
-                    sensorAccuracy = uiState.sensorAccuracy
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                TurnPill(qiblaAngle = uiState.qiblaAngle)
-                Spacer(modifier = Modifier.height(8.dp))
-                AccuracyBadge(sensorAccuracy = uiState.sensorAccuracy)
-                if (accuracyLevel(uiState.sensorAccuracy) == AccuracyLevel.LOW) {
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = stringResource(R.string.qibla_calibrate),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                if (isLandscape) {
+                    LandscapeLayout(
+                        uiState = uiState,
+                        locationName = locationName
+                    )
+                } else {
+                    PortraitLayout(
+                        uiState = uiState,
+                        locationName = locationName
                     )
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun PortraitLayout(
+    uiState: QiblaUiState,
+    locationName: String?
+) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        locationName?.let {
+            LocationChip(locationName = it)
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+        BearingBadge(bearing = uiState.qiblaBearing)
+        Spacer(modifier = Modifier.height(16.dp))
+        QiblaCompass(
+            deviceAzimuth = uiState.deviceAzimuth,
+            qiblaAngle = uiState.qiblaAngle,
+            sensorAccuracy = uiState.sensorAccuracy
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        TurnPill(qiblaAngle = uiState.qiblaAngle)
+        Spacer(modifier = Modifier.height(8.dp))
+        AccuracyBadge(sensorAccuracy = uiState.sensorAccuracy)
+        if (accuracyLevel(uiState.sensorAccuracy) == AccuracyLevel.LOW) {
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = stringResource(R.string.qibla_calibrate),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
+}
+
+@Composable
+private fun LandscapeLayout(
+    uiState: QiblaUiState,
+    locationName: String?
+) {
+    Row(
+        modifier = Modifier.fillMaxSize(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight()
+                .padding(top = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
+        ) {
+            locationName?.let {
+                LocationChip(locationName = it)
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+            BearingBadge(bearing = uiState.qiblaBearing)
+        }
+
+        QiblaCompass(
+            deviceAzimuth = uiState.deviceAzimuth,
+            qiblaAngle = uiState.qiblaAngle,
+            sensorAccuracy = uiState.sensorAccuracy
+        )
+
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight()
+                .padding(bottom = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Bottom
+        ) {
+            TurnPill(qiblaAngle = uiState.qiblaAngle)
+            Spacer(modifier = Modifier.height(8.dp))
+            AccuracyBadge(sensorAccuracy = uiState.sensorAccuracy)
+            if (accuracyLevel(uiState.sensorAccuracy) == AccuracyLevel.LOW) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = stringResource(R.string.qibla_calibrate),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
         }
     }
