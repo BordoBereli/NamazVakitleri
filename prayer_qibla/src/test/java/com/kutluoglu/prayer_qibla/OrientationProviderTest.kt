@@ -178,6 +178,50 @@ class OrientationProviderTest {
         assertThat(state.qiblaAngle).isWithin(0.5f).of(-67f)
     }
 
+    @Test
+    fun `gyro sample updates azimuth between rotation matrix samples`() {
+        every { display.rotation } returns Surface.ROTATION_0
+
+        // Initialize with device pointing north
+        orientationProvider.getOrientation(
+            RawSensorState(rotationMatrix = rotationMatrixForHeading(0f)),
+            41.0082, 28.9784
+        )
+
+        // Gyro rotates 90 deg/s around z for 1 second
+        val gyroZ = Math.toRadians(90.0).toFloat()
+        val state = orientationProvider.getOrientation(
+            RawSensorState(gyro = floatArrayOf(0f, 0f, gyroZ), timestamp = 1_000_000_000L),
+            41.0082, 28.9784
+        )
+
+        assertThat(state.deviceAzimuth).isWithin(1f).of(90f)
+    }
+
+    @Test
+    fun `rotation matrix corrects gyro drift`() {
+        every { display.rotation } returns Surface.ROTATION_0
+
+        orientationProvider.getOrientation(
+            RawSensorState(rotationMatrix = rotationMatrixForHeading(0f)),
+            41.0082, 28.9784
+        )
+        // Drift 10 degrees via gyro
+        val gyroZ = Math.toRadians(10.0).toFloat()
+        orientationProvider.getOrientation(
+            RawSensorState(gyro = floatArrayOf(0f, 0f, gyroZ), timestamp = 1_000_000_000L),
+            41.0082, 28.9784
+        )
+        // Correct back toward north reference
+        val state = orientationProvider.getOrientation(
+            RawSensorState(rotationMatrix = rotationMatrixForHeading(0f), timestamp = 2_000_000_000L),
+            41.0082, 28.9784
+        )
+
+        assertThat(state.deviceAzimuth).isLessThan(10f)
+        assertThat(state.deviceAzimuth).isGreaterThan(0f)
+    }
+
     private fun rotationMatrixForHeading(headingDegrees: Float): FloatArray {
         val h = Math.toRadians(headingDegrees.toDouble())
         val c = cos(h).toFloat()
