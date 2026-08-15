@@ -44,12 +44,6 @@ import androidx.compose.ui.unit.dp
 import com.kutluoglu.prayer.model.location.LocationEntry
 import kotlin.math.abs
 
-private data class ChipBounds(
-    val offsetX: Float,
-    val width: Float,
-    val height: Float
-)
-
 private fun selectionProgressFor(
     index: Int,
     currentPage: Int,
