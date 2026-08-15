@@ -88,23 +88,25 @@ fun QiblaScreen(
             }
         }
 
-        Card(
-            modifier = Modifier
-                .weight(0.22f)
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            shape = RoundedCornerShape(20.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface
-            )
-        ) {
-            QiblaInfoSection(
+        if (uiState.error == null && uiState.isLocationAvailable) {
+            Card(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
-                uiState = uiState,
-                locationName = locationName
-            )
+                    .weight(0.22f)
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surface
+                )
+            ) {
+                QiblaInfoSection(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    uiState = uiState,
+                    locationName = locationName
+                )
+            }
         }
     }
 }
