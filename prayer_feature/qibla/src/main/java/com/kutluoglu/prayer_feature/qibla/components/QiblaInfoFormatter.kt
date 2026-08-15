@@ -20,6 +20,13 @@ sealed interface QiblaDistanceLabel {
 
 enum class TurnDirection { LEFT, RIGHT }
 
+/**
+ * Maps a qibla angle to a user-facing label.
+ *
+ * The angle is normalized to [-180, 180]. A positive angle means the user must
+ * turn RIGHT, a negative angle means turn LEFT. The threshold is inclusive:
+ * an angle whose absolute value is exactly `threshold` is considered aligned.
+ */
 fun qiblaDistanceLabel(qiblaAngle: Float, threshold: Float): QiblaDistanceLabel {
     val normalized = AngleUtils.normalizeDegrees(qiblaAngle)
     return if (abs(normalized) <= threshold) {

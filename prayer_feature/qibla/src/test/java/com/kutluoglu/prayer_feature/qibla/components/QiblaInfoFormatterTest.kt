@@ -50,4 +50,17 @@ class QiblaInfoFormatterTest {
             QiblaDistanceLabel.Turn(160, TurnDirection.LEFT)
         )
     }
+
+    @Test
+    fun `exactly at threshold is aligned`() {
+        assertThat(qiblaDistanceLabel(10f, 10f)).isEqualTo(QiblaDistanceLabel.Aligned)
+        assertThat(qiblaDistanceLabel(-10f, 10f)).isEqualTo(QiblaDistanceLabel.Aligned)
+        // Just above threshold is NOT aligned
+        assertThat(qiblaDistanceLabel(10.1f, 10f)).isEqualTo(
+            QiblaDistanceLabel.Turn(10, TurnDirection.RIGHT)
+        )
+        assertThat(qiblaDistanceLabel(-10.1f, 10f)).isEqualTo(
+            QiblaDistanceLabel.Turn(10, TurnDirection.LEFT)
+        )
+    }
 }
