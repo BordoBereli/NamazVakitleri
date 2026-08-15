@@ -48,9 +48,9 @@ import androidx.compose.ui.unit.dp
 import com.kutluoglu.core.common.gregorianShortFormatter
 import com.kutluoglu.core.designsystem.components.ErrorMessage
 import com.kutluoglu.core.designsystem.components.LoadingIndicator
+import com.kutluoglu.prayer.model.prayer.DailyPrayer
 import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer_feature.common.prayerUtils.getPrayerDrawableIdFrom
-import com.kutluoglu.prayer_feature.prayertimes.DailyPrayer
 import com.kutluoglu.prayer_feature.prayertimes.PrayerTimesEvent
 import com.kutluoglu.prayer_feature.prayertimes.PrayerTimesUiState
 import com.kutluoglu.prayer_feature.prayertimes.R

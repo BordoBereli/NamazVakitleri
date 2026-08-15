@@ -1,7 +1,9 @@
 package com.kutluoglu.prayer.data.repository.prayer
 
+import com.kutluoglu.prayer.model.prayer.DailyPrayer
 import com.kutluoglu.prayer.model.prayer.Prayer
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.YearMonth
 import java.time.ZoneId
 
 /**
@@ -22,6 +24,21 @@ interface PrayerDataStore {
         longitude: Double,
         zoneId: ZoneId,
     ): List<Prayer>
+
+    suspend fun getMonthlyPrayerTimes(
+        month: YearMonth,
+        latitude: Double,
+        longitude: Double,
+        zoneId: ZoneId,
+    ): List<DailyPrayer>?
+
+    suspend fun saveMonthlyPrayerTimes(
+        month: YearMonth,
+        latitude: Double,
+        longitude: Double,
+        zoneId: ZoneId,
+        prayers: List<DailyPrayer>,
+    )
 
     suspend fun clearCache()
 }

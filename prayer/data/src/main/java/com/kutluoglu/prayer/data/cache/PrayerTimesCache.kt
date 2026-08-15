@@ -4,6 +4,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.kutluoglu.prayer.model.prayer.DailyPrayer
 import com.kutluoglu.prayer.model.prayer.Prayer
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
@@ -30,6 +31,21 @@ class PrayerTimesCache(
     }
 
     suspend fun put(cacheKey: String, prayers: List<Prayer>) {
+        val key = stringPreferencesKey(cacheKey)
+        val raw = json.encodeToString(prayers.map { it.toCached() })
+        dataStore.edit { it[key] = raw }
+    }
+
+    suspend fun getMonth(cacheKey: String): List<DailyPrayer>? {
+        val key = stringPreferencesKey(cacheKey)
+        val raw = dataStore.data.map { it[key] }.firstOrNull()
+        if (raw.isNullOrBlank()) return null
+        return runCatching {
+            json.decodeFromString<List<CachedDailyPrayer>>(raw).map { it.toDailyPrayer() }
+        }.getOrNull()
+    }
+
+    suspend fun putMonth(cacheKey: String, prayers: List<DailyPrayer>) {
         val key = stringPreferencesKey(cacheKey)
         val raw = json.encodeToString(prayers.map { it.toCached() })
         dataStore.edit { it[key] = raw }

@@ -4,13 +4,16 @@ import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.core.common.createBy
 import com.kutluoglu.prayer.data.prayer.PrayerRepository
 import com.kutluoglu.prayer.data.repository.prayer.PrayerDataStore
+import com.kutluoglu.prayer.model.prayer.DailyPrayer
 import com.kutluoglu.prayer.model.prayer.Prayer
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
+import kotlinx.datetime.YearMonth
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.ZoneId
@@ -71,5 +74,52 @@ class PrayerRepositoryTest {
         repository.clearCache()
 
         coVerify(exactly = 1) { prayerDataStore.clearCache() }
+    }
+
+    @Test
+    fun `getMonthlyPrayerTimes should call data store and return its result`() = runTest {
+        val month = YearMonth(2024, 1)
+        val zoneId = ZoneId.of("Europe/Istanbul")
+        val mockMonth = listOf(
+            DailyPrayer(
+                dayOfMonth = 1,
+                gregorianDate = "1 Monday",
+                hijriDate = "1 Muharram 1448",
+                prayers = listOf(
+                    Prayer("Fajr", "الفجر", LocalTime.parse("05:00"), LocalDate(2024, 1, 1))
+                )
+            )
+        )
+        coEvery { prayerDataStore.getMonthlyPrayerTimes(any(), any(), any(), any()) } returns mockMonth
+
+        val result = repository.getMonthlyPrayerTimes(month, 41.0, 29.0, zoneId)
+
+        coVerify(exactly = 1) {
+            prayerDataStore.getMonthlyPrayerTimes(month, 41.0, 29.0, zoneId)
+        }
+        assertThat(result).isEqualTo(mockMonth)
+    }
+
+    @Test
+    fun `saveMonthlyPrayerTimes should delegate to the data store`() = runTest {
+        val month = YearMonth(2024, 1)
+        val zoneId = ZoneId.of("Europe/Istanbul")
+        val monthToSave = listOf(
+            DailyPrayer(
+                dayOfMonth = 1,
+                gregorianDate = "1 Monday",
+                hijriDate = "1 Muharram 1448",
+                prayers = listOf(
+                    Prayer("Fajr", "الفجر", LocalTime.parse("05:00"), LocalDate(2024, 1, 1))
+                )
+            )
+        )
+        coEvery { prayerDataStore.saveMonthlyPrayerTimes(any(), any(), any(), any(), any()) } returns Unit
+
+        repository.saveMonthlyPrayerTimes(month, 41.0, 29.0, zoneId, monthToSave)
+
+        coVerify(exactly = 1) {
+            prayerDataStore.saveMonthlyPrayerTimes(month, 41.0, 29.0, zoneId, monthToSave)
+        }
     }
 }

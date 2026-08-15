@@ -6,7 +6,10 @@ import com.kutluoglu.core.common.getZoneIdFromLocation
 import com.kutluoglu.core.common.now
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
 import com.kutluoglu.prayer.model.location.LocationData
+import com.kutluoglu.prayer.model.prayer.DailyPrayer
+import com.kutluoglu.prayer.usecases.prayer.GetMonthlyPrayerTimesUseCase
 import com.kutluoglu.prayer.usecases.prayer.GetPrayerTimesUseCase
+import com.kutluoglu.prayer.usecases.prayer.SaveMonthlyPrayerTimesUseCase
 import com.kutluoglu.prayer_location.ActiveLocationProvider
 import com.kutluoglu.prayer_feature.common.states.LocationUiState
 import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
@@ -32,6 +35,8 @@ import java.time.chrono.HijrahDate
 @KoinViewModel
 class PrayerTimesViewModel(
         private val getPrayerTimesUseCase: GetPrayerTimesUseCase,
+        private val getMonthlyPrayerTimesUseCase: GetMonthlyPrayerTimesUseCase,
+        private val saveMonthlyPrayerTimesUseCase: SaveMonthlyPrayerTimesUseCase,
         private val activeLocationProvider: ActiveLocationProvider,
         private val calculator: PrayerLogicEngine,
         private val formatter: PrayerFormatter
@@ -120,6 +125,19 @@ class PrayerTimesViewModel(
                     emitSuccess(month, cached, locationId, location, resolvedZoneId)
                     return@launch
                 }
+                val persistedMonth = getMonthlyPrayerTimesUseCase(
+                    month = month,
+                    latitude = location.latitude,
+                    longitude = location.longitude,
+                    zoneId = resolvedZoneId
+                )
+                if (persistedMonth != null) {
+                    val today = LocalDateTime.now(resolvedZoneId).date
+                    val refreshed = refreshCurrentPrayerFlags(persistedMonth, today, resolvedZoneId)
+                    locationCache[month] = refreshed
+                    emitSuccess(month, refreshed, locationId, location, resolvedZoneId)
+                    return@launch
+                }
                 val today = LocalDateTime.now(resolvedZoneId)
                 val monthlyPrayers = mutableListOf<DailyPrayer>()
                 for (day in 1..month.numberOfDays) {
@@ -161,6 +179,13 @@ class PrayerTimesViewModel(
                     }
                 }
                 locationCache[month] = monthlyPrayers
+                saveMonthlyPrayerTimesUseCase(
+                    month = month,
+                    latitude = location.latitude,
+                    longitude = location.longitude,
+                    zoneId = resolvedZoneId,
+                    prayers = monthlyPrayers
+                )
                 emitSuccess(month, monthlyPrayers, locationId, location, resolvedZoneId)
             } finally {
                 isLoading = false
@@ -193,6 +218,23 @@ class PrayerTimesViewModel(
                 locationInfoText = formatter.locationInfo(location)
             )
         )
+    }
+
+    private fun refreshCurrentPrayerFlags(
+        monthlyPrayers: List<DailyPrayer>,
+        today: kotlinx.datetime.LocalDate,
+        resolvedZoneId: ZoneId
+    ): List<DailyPrayer> = monthlyPrayers.map { daily ->
+        if (daily.dayOfMonth == today.day) {
+            val (currentPrayer, _) = calculator.findCurrentAndNextPrayer(daily.prayers, resolvedZoneId)
+            daily.copy(
+                prayers = daily.prayers.map {
+                    it.copy(isCurrent = it.name == currentPrayer?.name)
+                }
+            )
+        } else {
+            daily
+        }
     }
 
     private fun LocationData.locationId(): String = "$latitude,$longitude"

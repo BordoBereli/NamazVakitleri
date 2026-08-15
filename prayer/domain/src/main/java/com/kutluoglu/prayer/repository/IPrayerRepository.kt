@@ -1,7 +1,9 @@
 package com.kutluoglu.prayer.repository
 
+import com.kutluoglu.prayer.model.prayer.DailyPrayer
 import com.kutluoglu.prayer.model.prayer.Prayer
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.YearMonth
 import java.time.ZoneId
 
 
@@ -19,6 +21,29 @@ interface IPrayerRepository {
             longitude: Double,
             zoneId: ZoneId,
     ): List<Prayer>
+
+    /**
+     * Returns a previously cached month of prayer times for the given location,
+     * or null when the month is not cached.
+     */
+    suspend fun getMonthlyPrayerTimes(
+            month: YearMonth,
+            latitude: Double,
+            longitude: Double,
+            zoneId: ZoneId,
+    ): List<DailyPrayer>?
+
+    /**
+     * Persists a whole month of prayer times for the given location so it can be
+     * restored without recalculating.
+     */
+    suspend fun saveMonthlyPrayerTimes(
+            month: YearMonth,
+            latitude: Double,
+            longitude: Double,
+            zoneId: ZoneId,
+            prayers: List<DailyPrayer>,
+    )
 
     /**
      * Clears any locally cached prayer times.

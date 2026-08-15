@@ -3,10 +3,12 @@ package com.kutluoglu.prayer.data.source.prayer
 import com.kutluoglu.prayer.data.cache.PrayerTimesCache
 import com.kutluoglu.prayer.data.repository.prayer.PrayerDataStore
 import com.kutluoglu.prayer.model.prayer.CalculationMethod
+import com.kutluoglu.prayer.model.prayer.DailyPrayer
 import com.kutluoglu.prayer.model.prayer.JuristicMethod
 import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer.services.PrayerCalculationService
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.YearMonth
 import org.koin.core.annotation.Single
 import java.time.ZoneId
 
@@ -41,6 +43,27 @@ class PrayerDataStoreImp(
         return calculated
     }
 
+    override suspend fun getMonthlyPrayerTimes(
+            month: YearMonth,
+            latitude: Double,
+            longitude: Double,
+            zoneId: ZoneId
+    ): List<DailyPrayer>? {
+        val cacheKey = buildMonthCacheKey(month, latitude, longitude, zoneId)
+        return prayerTimesCache.getMonth(cacheKey)
+    }
+
+    override suspend fun saveMonthlyPrayerTimes(
+            month: YearMonth,
+            latitude: Double,
+            longitude: Double,
+            zoneId: ZoneId,
+            prayers: List<DailyPrayer>
+    ) {
+        val cacheKey = buildMonthCacheKey(month, latitude, longitude, zoneId)
+        prayerTimesCache.putMonth(cacheKey, prayers)
+    }
+
     override suspend fun clearCache() {
         prayerTimesCache.clear()
     }
@@ -51,4 +74,11 @@ class PrayerDataStoreImp(
             longitude: Double,
             zoneId: ZoneId
     ): String = "${date.date}|$latitude|$longitude|${zoneId.id}"
+
+    private fun buildMonthCacheKey(
+            month: YearMonth,
+            latitude: Double,
+            longitude: Double,
+            zoneId: ZoneId
+    ): String = "$month|$latitude|$longitude|${zoneId.id}"
 }

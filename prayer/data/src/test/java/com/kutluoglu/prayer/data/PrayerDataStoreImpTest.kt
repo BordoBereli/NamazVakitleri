@@ -5,6 +5,7 @@ import com.kutluoglu.core.common.createBy
 import com.kutluoglu.prayer.data.cache.PrayerTimesCache
 import com.kutluoglu.prayer.data.source.prayer.PrayerDataStoreImp
 import com.kutluoglu.prayer.model.prayer.CalculationMethod
+import com.kutluoglu.prayer.model.prayer.DailyPrayer
 import com.kutluoglu.prayer.model.prayer.JuristicMethod
 import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer.services.PrayerCalculationService
@@ -12,8 +13,10 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
+import kotlinx.datetime.YearMonth
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.ZoneId
@@ -86,5 +89,51 @@ class PrayerDataStoreImpTest {
         dataStore.clearCache()
 
         coVerify(exactly = 1) { prayerTimesCache.clear() }
+    }
+
+    @Test
+    fun `getMonthlyPrayerTimes returns the cached month from the cache`() = runTest {
+        val month = YearMonth(2024, 1)
+        val zoneId = ZoneId.of("Europe/Istanbul")
+        val cachedMonth = listOf(
+            DailyPrayer(
+                dayOfMonth = 1,
+                gregorianDate = "1 Monday",
+                hijriDate = "1 Muharram 1448",
+                prayers = listOf(
+                    Prayer("Fajr", "الفجر", LocalTime.parse("05:00"), LocalDate(2024, 1, 1))
+                )
+            )
+        )
+        coEvery { prayerTimesCache.getMonth(any()) } returns cachedMonth
+
+        val result = dataStore.getMonthlyPrayerTimes(month, 41.0, 29.0, zoneId)
+
+        assertThat(result).isEqualTo(cachedMonth)
+        coVerify(exactly = 1) {
+            prayerTimesCache.getMonth("2024-01|41.0|29.0|Europe/Istanbul")
+        }
+    }
+
+    @Test
+    fun `saveMonthlyPrayerTimes stores the month in the cache`() = runTest {
+        val month = YearMonth(2024, 1)
+        val zoneId = ZoneId.of("Europe/Istanbul")
+        val monthToSave = listOf(
+            DailyPrayer(
+                dayOfMonth = 1,
+                gregorianDate = "1 Monday",
+                hijriDate = "1 Muharram 1448",
+                prayers = listOf(
+                    Prayer("Fajr", "الفجر", LocalTime.parse("05:00"), LocalDate(2024, 1, 1))
+                )
+            )
+        )
+
+        dataStore.saveMonthlyPrayerTimes(month, 41.0, 29.0, zoneId, monthToSave)
+
+        coVerify(exactly = 1) {
+            prayerTimesCache.putMonth("2024-01|41.0|29.0|Europe/Istanbul", monthToSave)
+        }
     }
 }

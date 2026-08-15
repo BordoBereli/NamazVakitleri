@@ -7,12 +7,16 @@ import com.kutluoglu.core.common.getZoneIdFromLocation
 import com.kutluoglu.core.common.now
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
 import com.kutluoglu.prayer.model.location.LocationData
+import com.kutluoglu.prayer.model.prayer.DailyPrayer
 import com.kutluoglu.prayer.model.prayer.Prayer
+import com.kutluoglu.prayer.usecases.prayer.GetMonthlyPrayerTimesUseCase
 import com.kutluoglu.prayer.usecases.prayer.GetPrayerTimesUseCase
+import com.kutluoglu.prayer.usecases.prayer.SaveMonthlyPrayerTimesUseCase
 import com.kutluoglu.prayer_location.ActiveLocationProvider
 import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
 import com.kutluoglu.prayer_feature.common.states.TimeUiState
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
@@ -36,6 +40,8 @@ import kotlin.Result.Companion.success
 class PrayerTimesViewModelTest {
 
     private lateinit var getPrayerTimesUseCase: GetPrayerTimesUseCase
+    private lateinit var getMonthlyPrayerTimesUseCase: GetMonthlyPrayerTimesUseCase
+    private lateinit var saveMonthlyPrayerTimesUseCase: SaveMonthlyPrayerTimesUseCase
     private lateinit var activeLocationProvider: ActiveLocationProvider
     private lateinit var calculator: PrayerLogicEngine
     private lateinit var formatter: PrayerFormatter
@@ -65,12 +71,16 @@ class PrayerTimesViewModelTest {
         every { Log.e(any<String>(), any<String>()) } returns 0
 
         getPrayerTimesUseCase = mockk()
+        getMonthlyPrayerTimesUseCase = mockk()
+        saveMonthlyPrayerTimesUseCase = mockk()
         activeLocationProvider = ActiveLocationProvider()
         activeLocationProvider.set(mockLocation)
         calculator = mockk(relaxed = true)
         formatter = mockk(relaxed = true)
 
         coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any()) } returns success(mockPrayerList)
+        coEvery { getMonthlyPrayerTimesUseCase.invoke(any(), any(), any(), any()) } returns null
+        coEvery { saveMonthlyPrayerTimesUseCase.invoke(any(), any(), any(), any(), any()) } returns Unit
         every { calculator.findCurrentAndNextPrayer(any(), any()) } returns Pair(null, null)
         every { formatter.withLocalizedNames(any()) } answers { firstArg() }
         every { formatter.getInitialTimeInfo(any(), any(), any()) } returns TimeUiState(
@@ -82,6 +92,8 @@ class PrayerTimesViewModelTest {
 
         viewModel = PrayerTimesViewModel(
             getPrayerTimesUseCase,
+            getMonthlyPrayerTimesUseCase,
+            saveMonthlyPrayerTimesUseCase,
             activeLocationProvider,
             calculator,
             formatter
@@ -177,6 +189,62 @@ class PrayerTimesViewModelTest {
         val nextMonth = currentMonth.plus(1, DateTimeUnit.MONTH)
         val expectedCalls = currentMonth.numberOfDays + nextMonth.numberOfDays
         assertThat(callCount).isEqualTo(expectedCalls)
+    }
+
+    @Test
+    fun `loads month from persistent cache without per-day fetches`() = runTest {
+        val zoneId = getZoneIdFromLocation("TR")
+        val currentMonth = LocalDateTime.now(zoneId).date.yearMonth
+        val cachedMonth = (1..currentMonth.numberOfDays).map { day ->
+            DailyPrayer(
+                dayOfMonth = day,
+                gregorianDate = "$day Monday",
+                hijriDate = "$day Muharram 1448",
+                prayers = mockPrayerList
+            )
+        }
+        coEvery { getMonthlyPrayerTimesUseCase.invoke(any(), any(), any(), any()) } returns cachedMonth
+        var callCount = 0
+        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any()) } answers {
+            callCount++
+            success(mockPrayerList)
+        }
+
+        viewModel.loadMonthlyPrayerTimes()
+
+        viewModel.uiState.test {
+            val state = awaitItem()
+            assertThat(state).isInstanceOf(PrayerTimesUiState.Success::class.java)
+            val success = state as PrayerTimesUiState.Success
+            assertThat(success.monthlyPrayers.size).isEqualTo(currentMonth.numberOfDays)
+            assertThat(success.monthlyPrayers.first().dayOfMonth).isEqualTo(1)
+            cancelAndIgnoreRemainingEvents()
+        }
+        assertThat(callCount).isEqualTo(0)
+    }
+
+    @Test
+    fun `saves month to persistent cache after per-day computation`() = runTest {
+        val zoneId = getZoneIdFromLocation("TR")
+        val currentMonth = LocalDateTime.now(zoneId).date.yearMonth
+        coEvery { getMonthlyPrayerTimesUseCase.invoke(any(), any(), any(), any()) } returns null
+
+        viewModel.loadMonthlyPrayerTimes()
+
+        viewModel.uiState.test {
+            val state = awaitItem()
+            assertThat(state).isInstanceOf(PrayerTimesUiState.Success::class.java)
+            cancelAndIgnoreRemainingEvents()
+        }
+        coVerify(exactly = 1) {
+            saveMonthlyPrayerTimesUseCase.invoke(
+                currentMonth,
+                mockLocation.latitude,
+                mockLocation.longitude,
+                zoneId,
+                any()
+            )
+        }
     }
 
     @Test
