@@ -55,7 +55,8 @@ fun QiblaScreen(
                 }
                 QiblaCompass(
                     deviceAzimuth = uiState.deviceAzimuth,
-                    qiblaAngle = uiState.qiblaAngle
+                    qiblaAngle = uiState.qiblaAngle,
+                    sensorAccuracy = uiState.sensorAccuracy
                 )
             }
         }
