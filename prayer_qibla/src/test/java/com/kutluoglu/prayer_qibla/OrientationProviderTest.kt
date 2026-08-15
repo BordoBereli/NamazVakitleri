@@ -188,14 +188,14 @@ class OrientationProviderTest {
             41.0082, 28.9784
         )
 
-        // Gyro rotates 90 deg/s around z for 1 second
+        // Gyro rotates 90 deg/s around z for 0.1 seconds (dt clamped to 0.1s max)
         val gyroZ = Math.toRadians(90.0).toFloat()
         val state = orientationProvider.getOrientation(
-            RawSensorState(gyro = floatArrayOf(0f, 0f, gyroZ), timestamp = 1_000_000_000L),
+            RawSensorState(gyro = floatArrayOf(0f, 0f, gyroZ), timestamp = 100_000_000L),
             41.0082, 28.9784
         )
 
-        assertThat(state.deviceAzimuth).isWithin(1f).of(90f)
+        assertThat(state.deviceAzimuth).isWithin(1f).of(9f)
     }
 
     @Test

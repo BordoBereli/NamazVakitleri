@@ -38,7 +38,7 @@ class OrientationProvider(private val displayProvider: DisplayProvider) {
     fun getOrientation(rawState: RawSensorState, userLatitude: Double?, userLongitude: Double?): SensorState {
         if (rawState.gyro != null) {
             val dt = if (lastTimestamp != -1L) {
-                (rawState.timestamp - lastTimestamp) / 1_000_000_000f
+                ((rawState.timestamp - lastTimestamp) / 1_000_000_000f).coerceAtMost(0.1f)
             } else {
                 0f
             }
@@ -88,6 +88,17 @@ class OrientationProvider(private val displayProvider: DisplayProvider) {
             _sensorState.update { it.copy(sensorAccuracy = rawState.accuracy) }
         }
         return sensorState.value
+    }
+
+    /**
+     * Resets the fusion filter and timestamp. Should be called when the compass
+     * restarts (e.g. leaving and returning to the Qibla screen) so the filter
+     * re-initializes from the next rotation matrix instead of re-converging
+     * from stale state.
+     */
+    fun reset() {
+        fusion.reset()
+        lastTimestamp = -1L
     }
 
     private fun remap(matrix: FloatArray, x: Int, y: Int) {
