@@ -206,10 +206,10 @@ class OrientationProviderTest {
             RawSensorState(rotationMatrix = rotationMatrixForHeading(0f)),
             41.0082, 28.9784
         )
-        // Drift 10 degrees via gyro
-        val gyroZ = Math.toRadians(10.0).toFloat()
+        // Drift 10 degrees via gyro (100 deg/s for 0.1s, within dt clamp)
+        val gyroZ = Math.toRadians(100.0).toFloat()
         orientationProvider.getOrientation(
-            RawSensorState(gyro = floatArrayOf(0f, 0f, gyroZ), timestamp = 1_000_000_000L),
+            RawSensorState(gyro = floatArrayOf(0f, 0f, gyroZ), timestamp = 100_000_000L),
             41.0082, 28.9784
         )
         // Correct back toward north reference
