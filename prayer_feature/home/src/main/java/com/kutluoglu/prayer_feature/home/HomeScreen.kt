@@ -13,9 +13,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -43,6 +42,9 @@ import com.kutluoglu.prayer_feature.home.state.HomeUiState
 import com.kutluoglu.prayer_location.data.LocationsState
 import com.kutluoglu.prayer_navigation.core.PrayerNestedGraph
 import com.kutluoglu.prayer_navigation.core.Screen
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -82,20 +84,26 @@ fun HomeScreen(
                 }
             }
 
-            var previousPage by remember { mutableIntStateOf(pagerState.currentPage) }
-            LaunchedEffect(pagerState.currentPage, pagerState.isScrollInProgress) {
-                val page = pagerState.currentPage
-                val entry = entries.getOrNull(page)
-                if (page != previousPage && entry != null && entry.id != locationsState.selectedId) {
-                    onEvent(HomeEvent.OnLocationSelected(entry.id))
-                }
-                previousPage = page
+            val currentEntries by rememberUpdatedState(entries)
+            val currentSelectedId by rememberUpdatedState(locationsState.selectedId)
+            LaunchedEffect(Unit) {
+                snapshotFlow { pagerState.currentPage to pagerState.isScrollInProgress }
+                    .filter { (_, isScrolling) -> !isScrolling }
+                    .map { (page, _) -> page }
+                    .distinctUntilChanged()
+                    .collect { page ->
+                        val entry = currentEntries.getOrNull(page)
+                        if (entry != null && entry.id != currentSelectedId) {
+                            onEvent(HomeEvent.OnLocationSelected(entry.id))
+                        }
+                    }
             }
 
             Column(modifier = Modifier.fillMaxSize()) {
                 LocationChipsRow(
                     entries = entries,
                     selectedId = locationsState.selectedId,
+                    pagerState = pagerState,
                     onLocationSelected = { id -> onEvent(HomeEvent.OnLocationSelected(id)) },
                     onAddLocation = {
                         navController.navigate(Screen.SettingsScreen.route) {
@@ -105,7 +113,10 @@ fun HomeScreen(
                         }
                     }
                 )
-                HorizontalPager(state = pagerState) { page ->
+                HorizontalPager(
+                    state = pagerState,
+                    beyondViewportPageCount = 1
+                ) { page ->
                     val entry = entries.getOrNull(page)
                     if (entry == null) return@HorizontalPager
                     val isActive = entry.id == activeLocationId
