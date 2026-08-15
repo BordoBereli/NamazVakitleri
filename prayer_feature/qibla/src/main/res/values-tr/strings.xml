@@ -1,17 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="qibla_page_title">Kıble Pusulası</string>
-    <string name="qibla_location">Konum</string>
-    <string name="qibla_direction">Yön</string>
-    <string name="qibla_distance">Kıbleye Uzaklık</string>
-    <string name="qibla_distance_aligned">0°</string>
-    <string name="qibla_measurement">Ölçüm</string>
-    <string name="qibla_accuracy_high">Yüksek</string>
-    <string name="qibla_accuracy_medium">Orta</string>
-    <string name="qibla_accuracy_low">Düşük</string>
-    <string name="qibla_turn_right">%1$d° sağa dön</string>
-    <string name="qibla_turn_left">%1$d° sola dön</string>
-    <string name="qibla_aligned">Kıbleye Dönük!</string>
     <string name="qibla_calibrate">8 şekli çizerek kalibre edin</string>
     <string name="qibla_calibration_required">Kalibrasyon Gerekli</string>
     <string name="qibla_accuracy_medium_badge">Orta Doğruluk</string>
