@@ -1,4 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="qibla_page_title">Qibla Compass</string>
+    <string name="qibla_location">Location</string>
+    <string name="qibla_direction">Direction</string>
+    <string name="qibla_distance">Distance to Qibla</string>
+    <string name="qibla_measurement">Measurement</string>
+    <string name="qibla_accuracy_high">High</string>
+    <string name="qibla_accuracy_medium">Medium</string>
+    <string name="qibla_accuracy_low">Low</string>
+    <string name="qibla_turn_right">Turn %1$d° right</string>
+    <string name="qibla_turn_left">Turn %1$d° left</string>
+    <string name="qibla_aligned">Facing Qibla!</string>
+    <string name="qibla_calibrate">Move your phone in a figure-8 to calibrate</string>
+    <string name="qibla_calibration_required">Calibration Required</string>
+    <string name="qibla_accuracy_medium_badge">Medium Accuracy</string>
+    <string name="qibla_accuracy_high_badge">High Accuracy</string>
+    <string name="qibla_waiting_location">Waiting for location...</string>
+    <string name="qibla_location_error">Error: Location unavailable. Please check your location services.</string>
+    <string name="qibla_degrees_north">%1$d° North</string>
+    <string name="qibla_compass_arrow">Qibla Direction</string>
+    <string name="qibla_kaaba">Kaaba</string>
 </resources>

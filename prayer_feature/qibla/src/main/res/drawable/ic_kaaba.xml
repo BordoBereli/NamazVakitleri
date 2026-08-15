@@ -1,11 +1,26 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="24dp"
-    android:height="24dp"
-    android:viewportWidth="24"
-    android:viewportHeight="24"
-    android:tint="?attr/colorControlNormal">
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <!-- front face -->
     <path
-        android:fillColor="@android:color/white"
-        android:pathData="M3,3h18v18h-18z"/>
+        android:fillColor="#1A1A1A"
+        android:pathData="M12,14 L36,14 L36,38 L12,38 Z"/>
+    <!-- top face -->
+    <path
+        android:fillColor="#2A2A2A"
+        android:pathData="M12,14 L20,8 L44,8 L36,14 Z"/>
+    <!-- gold band (front) -->
+    <path
+        android:fillColor="#D4AF37"
+        android:pathData="M12,26 L36,26 L36,30 L12,30 Z"/>
+    <!-- gold band (top) -->
+    <path
+        android:fillColor="#C9A227"
+        android:pathData="M20,8 L44,8 L44,12 L20,12 Z"/>
+    <!-- gold door -->
+    <path
+        android:fillColor="#D4AF37"
+        android:pathData="M22,30 L26,30 L26,38 L22,38 Z"/>
 </vector>
-
