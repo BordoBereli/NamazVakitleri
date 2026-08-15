@@ -17,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
@@ -39,6 +40,7 @@ fun LocationChipsRow(
 ) {
     val listState = rememberLazyListState()
     val density = LocalDensity.current
+    val currentEntries by rememberUpdatedState(entries)
     val currentPage = pagerState.currentPage
     val currentPageOffsetFraction = pagerState.currentPageOffsetFraction
 
@@ -67,9 +69,9 @@ fun LocationChipsRow(
 
     LaunchedEffect(Unit) {
         snapshotFlow { pagerState.currentPage to pagerState.currentPageOffsetFraction }
-            .collect { (page, _) ->
-                val index = page.coerceIn(0, (entries.size - 1).coerceAtLeast(0))
-                if (index < 0) return@collect
+        .collect { (page, _) ->
+            val index = page.coerceIn(0, (currentEntries.size - 1).coerceAtLeast(0))
+            if (index < 0) return@collect
                 if (listState.isScrollInProgress) {
                     snapshotFlow { listState.isScrollInProgress }.first { !it }
                 }
