@@ -1,4 +1,4 @@
-package com.kutluoglu.prayer_feature.prayertimes.components
+ package com.kutluoglu.prayer_feature.prayertimes.components
 
 /**
  * Created by F.K. on 20.12.2025.
