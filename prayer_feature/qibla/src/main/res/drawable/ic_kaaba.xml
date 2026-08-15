@@ -7,6 +7,10 @@
     <path
         android:fillColor="#1A1A1A"
         android:pathData="M12,14 L36,14 L36,38 L12,38 Z"/>
+    <!-- right face -->
+    <path
+        android:fillColor="#0F0F0F"
+        android:pathData="M36,14 L44,8 L44,32 L36,38 Z"/>
     <!-- top face -->
     <path
         android:fillColor="#2A2A2A"
@@ -15,6 +19,10 @@
     <path
         android:fillColor="#D4AF37"
         android:pathData="M12,26 L36,26 L36,30 L12,30 Z"/>
+    <!-- gold band (right) -->
+    <path
+        android:fillColor="#C9A227"
+        android:pathData="M36,26 L44,20 L44,24 L36,30 Z"/>
     <!-- gold band (top) -->
     <path
         android:fillColor="#C9A227"
