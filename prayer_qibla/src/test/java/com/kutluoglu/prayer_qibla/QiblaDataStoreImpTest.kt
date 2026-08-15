@@ -1,20 +1,15 @@
 package com.kutluoglu.prayer_qibla
 
 import android.hardware.SensorManager
-import android.util.Log
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
-import io.mockk.mockkStatic
-import io.mockk.unmockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
@@ -26,24 +21,13 @@ class QiblaDataStoreImpTest {
     private val orientationProvider = mockk<OrientationProvider>()
     private val dataStore = QiblaDataStoreImp(sensorService, orientationProvider)
 
-    @BeforeEach
-    fun setUp() {
-        mockkStatic(Log::class)
-        every { Log.e(any<String>(), any<String>()) } returns 0
-        every { Log.d(any<String>(), any<String>()) } returns 0
-    }
-
-    @AfterEach
-    fun tearDown() {
-        unmockkStatic(Log::class)
-    }
-
     @Test
     fun `getQiblaDirection starts compass and emits mapped QiblaState`() = runTest {
         val sensorState = MutableStateFlow(RawSensorState())
         every { sensorService.rawSensorState } returns sensorState
         every { sensorService.startCompass() } just Runs
         every { sensorService.stopCompass() } just Runs
+        every { orientationProvider.reset() } just Runs
         every { orientationProvider.getOrientation(any(), any(), any()) } returns SensorState(
             sensorAccuracy = SensorManager.SENSOR_STATUS_ACCURACY_HIGH,
             deviceAzimuth = 45f,
@@ -61,6 +45,7 @@ class QiblaDataStoreImpTest {
             assertThat(state.qiblaBearing).isEqualTo(151.6)
             assertThat(state.sensorAccuracy).isEqualTo(SensorManager.SENSOR_STATUS_ACCURACY_HIGH)
             verify { sensorService.startCompass() }
+            verify { orientationProvider.reset() }
 
             cancelAndIgnoreRemainingEvents()
         }
@@ -71,12 +56,10 @@ class QiblaDataStoreImpTest {
     fun `start and stop delegate to sensor service`() {
         every { sensorService.startCompass() } just Runs
         every { sensorService.stopCompass() } just Runs
-        every { orientationProvider.reset() } just Runs
 
         dataStore.start()
         dataStore.stop()
 
-        verify { orientationProvider.reset() }
         verify { sensorService.startCompass() }
         verify { sensorService.stopCompass() }
     }

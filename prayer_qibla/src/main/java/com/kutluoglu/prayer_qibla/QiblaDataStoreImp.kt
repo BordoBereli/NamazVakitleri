@@ -21,6 +21,7 @@ class QiblaDataStoreImp(
         latitude: Double,
         longitude: Double
     ): Flow<QiblaState> = channelFlow {
+        orientationProvider.reset()
         sensorService.startCompass()
         val job = launch {
             sensorService.rawSensorState.collect {
@@ -41,10 +42,7 @@ class QiblaDataStoreImp(
         }
     }.flowOn(Dispatchers.Default)
 
-    override fun start() {
-        orientationProvider.reset()
-        sensorService.startCompass()
-    }
+    override fun start() = sensorService.startCompass()
 
     override fun stop() = sensorService.stopCompass()
 }
