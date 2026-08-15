@@ -65,19 +65,24 @@ fun LocationChipsRow(
     }
 
     LaunchedEffect(Unit) {
-        snapshotFlow { pagerState.currentPage to pagerState.currentPageOffsetFraction }
-            .collect { (page, _) ->
-                val index = page.coerceIn(0, (entries.size - 1).coerceAtLeast(0))
-                if (index < 0) return@collect
-                if (listState.isScrollInProgress) return@collect
-                val info = listState.layoutInfo
-                val delta = ChipsSelectionGeometry.chipScrollTargetFor(index, info)
-                if (delta != null) {
-                    if (delta != 0f) listState.animateScrollBy(delta)
-                } else {
-                    listState.scrollToItem(index)
-                }
+        snapshotFlow {
+            Triple(
+                pagerState.currentPage,
+                pagerState.currentPageOffsetFraction,
+                listState.isScrollInProgress
+            )
+        }.collect { (page, _, isScrolling) ->
+            if (isScrolling) return@collect
+            val index = page.coerceIn(0, (entries.size - 1).coerceAtLeast(0))
+            if (index < 0) return@collect
+            val info = listState.layoutInfo
+            val delta = ChipsSelectionGeometry.chipScrollTargetFor(index, info)
+            if (delta != null) {
+                if (delta != 0f) listState.animateScrollBy(delta)
+            } else {
+                listState.scrollToItem(index)
             }
+        }
     }
 
     Box(
