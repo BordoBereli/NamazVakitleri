@@ -55,6 +55,8 @@ class OrientationFusionTest {
         val azimuthAfter = azimuthOf(after)
         assertThat(azimuthAfter).isLessThan(azimuthBefore)
         assertThat(azimuthAfter).isGreaterThan(0f)
+        // reference only pulls slightly (2% weight): stays near the 10° gyro estimate
+        assertThat(azimuthAfter).isWithin(2f).of(10f)
     }
 
     @Test

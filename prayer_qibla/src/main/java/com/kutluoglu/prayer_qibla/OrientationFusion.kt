@@ -71,10 +71,10 @@ class OrientationFusion(
         val sign = if (dot < 0f) -1f else 1f
         val alpha = referenceGain
         val beta = 1f - alpha
-        qw = alpha * qw + beta * ref.w * sign
-        qx = alpha * qx + beta * ref.x * sign
-        qy = alpha * qy + beta * ref.y * sign
-        qz = alpha * qz + beta * ref.z * sign
+        qw = beta * qw + alpha * ref.w * sign
+        qx = beta * qx + alpha * ref.x * sign
+        qy = beta * qy + alpha * ref.y * sign
+        qz = beta * qz + alpha * ref.z * sign
         normalize()
     }
 
