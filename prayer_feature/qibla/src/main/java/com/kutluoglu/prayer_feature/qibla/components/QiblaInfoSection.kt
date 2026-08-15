@@ -19,10 +19,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.kutluoglu.core.common.utils.AngleUtils
 import com.kutluoglu.prayer_feature.qibla.QiblaUiState
 import com.kutluoglu.prayer_feature.qibla.R
-import kotlin.math.abs
 import kotlin.math.roundToInt
 
 @Composable
@@ -31,8 +29,8 @@ fun QiblaInfoSection(
     uiState: QiblaUiState,
     locationName: String?
 ) {
-    val isAligned = abs(AngleUtils.normalizeDegrees(uiState.qiblaAngle)) <= QIBLA_ALIGNMENT_THRESHOLD
     val distanceLabel = qiblaDistanceLabel(uiState.qiblaAngle, QIBLA_ALIGNMENT_THRESHOLD)
+    val isAligned = distanceLabel is QiblaDistanceLabel.Aligned
     val accuracyText = when (accuracyLevel(uiState.sensorAccuracy)) {
         AccuracyLevel.HIGH -> stringResource(R.string.qibla_accuracy_high)
         AccuracyLevel.MEDIUM -> stringResource(R.string.qibla_accuracy_medium)
@@ -63,7 +61,7 @@ fun QiblaInfoSection(
         InfoRow(
             title = stringResource(R.string.qibla_distance),
             value = when (distanceLabel) {
-                is QiblaDistanceLabel.Aligned -> "0°"
+                is QiblaDistanceLabel.Aligned -> stringResource(R.string.qibla_distance_aligned)
                 is QiblaDistanceLabel.Turn -> when (distanceLabel.direction) {
                     TurnDirection.RIGHT -> stringResource(
                         R.string.qibla_turn_right,

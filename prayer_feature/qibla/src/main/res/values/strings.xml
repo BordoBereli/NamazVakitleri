@@ -4,6 +4,7 @@
     <string name="qibla_location">Location</string>
     <string name="qibla_direction">Direction</string>
     <string name="qibla_distance">Distance to Qibla</string>
+    <string name="qibla_distance_aligned">0°</string>
     <string name="qibla_measurement">Measurement</string>
     <string name="qibla_accuracy_high">High</string>
     <string name="qibla_accuracy_medium">Medium</string>

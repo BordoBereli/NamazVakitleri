@@ -4,6 +4,7 @@
     <string name="qibla_location">Konum</string>
     <string name="qibla_direction">Yön</string>
     <string name="qibla_distance">Kıbleye Uzaklık</string>
+    <string name="qibla_distance_aligned">0°</string>
     <string name="qibla_measurement">Ölçüm</string>
     <string name="qibla_accuracy_high">Yüksek</string>
     <string name="qibla_accuracy_medium">Orta</string>
