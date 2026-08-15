@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -171,26 +170,31 @@ private fun AccuracyRing(sensorAccuracy: Int, modifier: Modifier = Modifier) {
         AccuracyLevel.LOW -> Color(0xFFB3261E)
     }
     val isLow = level == AccuracyLevel.LOW
-    val transition = rememberInfiniteTransition(label = "ring_rotation")
-    val rotation by transition.animateFloat(
-        initialValue = 0f,
-        targetValue = 360f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 4000, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "ring_rotation_value"
-    )
+    val rotation: Float = if (isLow) {
+        val transition = rememberInfiniteTransition(label = "ring_rotation")
+        val animatedRotation by transition.animateFloat(
+            initialValue = 0f,
+            targetValue = 360f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(durationMillis = 4000, easing = LinearEasing),
+                repeatMode = RepeatMode.Restart
+            ),
+            label = "ring_rotation_value"
+        )
+        animatedRotation
+    } else {
+        0f
+    }
 
     Canvas(
-        modifier = modifier.graphicsLayer { rotationZ = if (isLow) rotation else 0f }
+        modifier = modifier.graphicsLayer { rotationZ = rotation }
     ) {
         val strokeWidth = 6.dp.toPx()
         val radius = (size.minDimension - strokeWidth) / 2
         val style = if (isLow) {
             Stroke(
                 width = strokeWidth,
-                pathEffect = PathEffect.dashPathEffect(floatArrayOf(20f, 16f))
+                pathEffect = PathEffect.dashPathEffect(floatArrayOf(20.dp.toPx(), 16.dp.toPx()))
             )
         } else {
             Stroke(width = strokeWidth)
