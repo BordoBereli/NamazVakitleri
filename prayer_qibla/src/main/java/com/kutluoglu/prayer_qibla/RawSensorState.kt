@@ -5,6 +5,8 @@ import android.hardware.SensorManager
 // SensorService tarafından yayınlanan ham veri modeli
 data class RawSensorState(
     val rotationMatrix: FloatArray? = null,
+    val gyro: FloatArray? = null,
+    val timestamp: Long = 0L,
     val accuracy: Int = SensorManager.SENSOR_STATUS_UNRELIABLE
 ) {
     // equals ve hashCode'u içeriğe göre doğru çalışması için override et
@@ -16,12 +18,19 @@ data class RawSensorState(
             if (other.rotationMatrix == null) return false
             if (!rotationMatrix.contentEquals(other.rotationMatrix)) return false
         } else if (other.rotationMatrix != null) return false
+        if (gyro != null) {
+            if (other.gyro == null) return false
+            if (!gyro.contentEquals(other.gyro)) return false
+        } else if (other.gyro != null) return false
+        if (timestamp != other.timestamp) return false
         if (accuracy != other.accuracy) return false
         return true
     }
 
     override fun hashCode(): Int {
         var result = rotationMatrix?.contentHashCode() ?: 0
+        result = 31 * result + (gyro?.contentHashCode() ?: 0)
+        result = 31 * result + timestamp.hashCode()
         result = 31 * result + accuracy
         return result
     }
