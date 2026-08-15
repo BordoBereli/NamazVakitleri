@@ -26,6 +26,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.kutluoglu.prayer.model.location.LocationEntry
+import kotlinx.coroutines.flow.first
 
 @Composable
 fun LocationChipsRow(
@@ -65,24 +66,21 @@ fun LocationChipsRow(
     }
 
     LaunchedEffect(Unit) {
-        snapshotFlow {
-            Triple(
-                pagerState.currentPage,
-                pagerState.currentPageOffsetFraction,
-                listState.isScrollInProgress
-            )
-        }.collect { (page, _, isScrolling) ->
-            if (isScrolling) return@collect
-            val index = page.coerceIn(0, (entries.size - 1).coerceAtLeast(0))
-            if (index < 0) return@collect
-            val info = listState.layoutInfo
-            val delta = ChipsSelectionGeometry.chipScrollTargetFor(index, info)
-            if (delta != null) {
-                if (delta != 0f) listState.animateScrollBy(delta)
-            } else {
-                listState.scrollToItem(index)
+        snapshotFlow { pagerState.currentPage to pagerState.currentPageOffsetFraction }
+            .collect { (page, _) ->
+                val index = page.coerceIn(0, (entries.size - 1).coerceAtLeast(0))
+                if (index < 0) return@collect
+                if (listState.isScrollInProgress) {
+                    snapshotFlow { listState.isScrollInProgress }.first { !it }
+                }
+                val info = listState.layoutInfo
+                val delta = ChipsSelectionGeometry.chipScrollTargetFor(index, info)
+                if (delta != null) {
+                    if (delta != 0f) listState.animateScrollBy(delta)
+                } else {
+                    listState.scrollToItem(index)
+                }
             }
-        }
     }
 
     Box(
