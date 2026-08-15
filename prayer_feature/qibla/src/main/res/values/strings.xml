@@ -19,6 +19,9 @@
     <string name="qibla_waiting_location">Waiting for location...</string>
     <string name="qibla_location_error">Error: Location unavailable. Please check your location services.</string>
     <string name="qibla_degrees_north">%1$d° North</string>
+    <string name="qibla_turn_right_pill">Turn right</string>
+    <string name="qibla_turn_left_pill">Turn left</string>
+    <string name="qibla_aligned_pill">Facing Qibla</string>
     <string name="qibla_compass_arrow">Qibla Direction</string>
     <string name="qibla_kaaba">Kaaba</string>
 </resources>

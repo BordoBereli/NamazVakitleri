@@ -19,6 +19,9 @@
     <string name="qibla_waiting_location">Konum bekleniyor...</string>
     <string name="qibla_location_error">Hata: Konum alınamadı. Lütfen konum servislerinizi kontrol edin.</string>
     <string name="qibla_degrees_north">%1$d° Kuzey</string>
+    <string name="qibla_turn_right_pill">Sağa dön</string>
+    <string name="qibla_turn_left_pill">Sola dön</string>
+    <string name="qibla_aligned_pill">Kıbleye hizalı</string>
     <string name="qibla_compass_arrow">Kıble Yönü</string>
     <string name="qibla_kaaba">Kabe</string>
 </resources>
