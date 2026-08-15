@@ -71,10 +71,12 @@ class QiblaDataStoreImpTest {
     fun `start and stop delegate to sensor service`() {
         every { sensorService.startCompass() } just Runs
         every { sensorService.stopCompass() } just Runs
+        every { orientationProvider.reset() } just Runs
 
         dataStore.start()
         dataStore.stop()
 
+        verify { orientationProvider.reset() }
         verify { sensorService.startCompass() }
         verify { sensorService.stopCompass() }
     }
