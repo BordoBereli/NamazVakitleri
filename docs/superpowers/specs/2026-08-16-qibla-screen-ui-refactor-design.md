@@ -52,7 +52,7 @@ fun qiblaLayoutStrategy(maxWidth: Dp, maxHeight: Dp): QiblaLayoutStrategy =
 
 **Refactored `QiblaScreen.kt`** (~110 lines): state gating → `BoxWithConstraints` → strategy resolution → `QiblaLayout`.
 
-**New file: `components/QiblaLayout.kt`** — public `QiblaLayout(uiState, locationName)` composable. Switches on strategy:
+**New file: `components/QiblaLayout.kt`** — `internal QiblaLayout(strategy, qiblaBearing, deviceAzimuth, qiblaAngle, sensorAccuracy, locationName, modifier)` composable (scalar params keep it decoupled from `QiblaUiState`). Switches on strategy:
 
 - **PORTRAIT** → `Column`: `LocationChip` + `BearingBadge` + `QiblaCompass` + `QiblaStatusBlock`.
 - **LANDSCAPE** → `Row`: left `Column` (`LocationChip` + `BearingBadge`), center `QiblaCompass`, right `Column` (`QiblaStatusBlock`).
