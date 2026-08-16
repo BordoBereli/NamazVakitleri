@@ -1,6 +1,5 @@
 package com.kutluoglu.prayer_feature.qibla.components
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -14,15 +13,14 @@ import androidx.compose.ui.unit.dp
 import com.kutluoglu.prayer_feature.qibla.R
 
 @Composable
-fun QiblaStatusBlock(
+internal fun QiblaStatusBlock(
     qiblaAngle: Float,
     sensorAccuracy: Int,
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         TurnPill(qiblaAngle = qiblaAngle)
         Spacer(modifier = Modifier.height(8.dp))

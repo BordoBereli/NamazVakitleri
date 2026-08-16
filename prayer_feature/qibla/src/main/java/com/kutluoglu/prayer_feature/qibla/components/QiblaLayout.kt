@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun QiblaLayout(
+internal fun QiblaLayout(
     strategy: QiblaLayoutStrategy,
     qiblaBearing: Double,
     deviceAzimuth: Float,
