@@ -24,6 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.kutluoglu.prayer_feature.qibla.components.AccuracyLevel
+import com.kutluoglu.prayer_feature.qibla.components.BearingBadge
 import com.kutluoglu.prayer_feature.qibla.components.LocationChip
 import com.kutluoglu.prayer_feature.qibla.components.QIBLA_ALIGNMENT_THRESHOLD
 import com.kutluoglu.prayer_feature.qibla.components.QiblaCompass
@@ -164,24 +165,6 @@ private fun LandscapeLayout(
                 )
             }
         }
-    }
-}
-
-@Composable
-private fun BearingBadge(bearing: Double, modifier: Modifier = Modifier) {
-    Surface(
-        modifier = modifier,
-        shape = RoundedCornerShape(50),
-        color = Color.White,
-        border = BorderStroke(1.dp, Color(0xFFB8860B).copy(alpha = 0.35f))
-    ) {
-        Text(
-            text = stringResource(R.string.qibla_degrees_north, bearing.roundToInt()),
-            modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp),
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold,
-            color = Color(0xFFB8860B)
-        )
     }
 }
 
