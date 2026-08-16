@@ -24,6 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.kutluoglu.prayer_feature.qibla.components.AccuracyLevel
+import com.kutluoglu.prayer_feature.qibla.components.LocationChip
 import com.kutluoglu.prayer_feature.qibla.components.QIBLA_ALIGNMENT_THRESHOLD
 import com.kutluoglu.prayer_feature.qibla.components.QiblaCompass
 import com.kutluoglu.prayer_feature.qibla.components.QiblaDistanceLabel
@@ -163,23 +164,6 @@ private fun LandscapeLayout(
                 )
             }
         }
-    }
-}
-
-@Composable
-private fun LocationChip(locationName: String, modifier: Modifier = Modifier) {
-    Surface(
-        modifier = modifier,
-        shape = RoundedCornerShape(50),
-        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f)
-    ) {
-        Text(
-            text = locationName,
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-            style = MaterialTheme.typography.labelMedium,
-            fontWeight = FontWeight.Medium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
     }
 }
 
