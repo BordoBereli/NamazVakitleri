@@ -24,15 +24,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.kutluoglu.prayer_feature.qibla.components.AccuracyBadge
-import com.kutluoglu.prayer_feature.qibla.components.AccuracyLevel
 import com.kutluoglu.prayer_feature.qibla.components.BearingBadge
 import com.kutluoglu.prayer_feature.qibla.components.LocationChip
 import com.kutluoglu.prayer_feature.qibla.components.QIBLA_ALIGNMENT_THRESHOLD
 import com.kutluoglu.prayer_feature.qibla.components.QiblaCompass
 import com.kutluoglu.prayer_feature.qibla.components.QiblaDistanceLabel
+import com.kutluoglu.prayer_feature.qibla.components.QiblaStatusBlock
 import com.kutluoglu.prayer_feature.qibla.components.TurnDirection
 import com.kutluoglu.prayer_feature.qibla.components.TurnPill
-import com.kutluoglu.prayer_feature.qibla.components.accuracyLevel
 import com.kutluoglu.prayer_feature.qibla.components.qiblaDistanceLabel
 import kotlin.math.roundToInt
 
@@ -103,17 +102,10 @@ private fun PortraitLayout(
             sensorAccuracy = uiState.sensorAccuracy
         )
         Spacer(modifier = Modifier.height(16.dp))
-        TurnPill(qiblaAngle = uiState.qiblaAngle)
-        Spacer(modifier = Modifier.height(8.dp))
-        AccuracyBadge(sensorAccuracy = uiState.sensorAccuracy)
-        if (accuracyLevel(uiState.sensorAccuracy) == AccuracyLevel.LOW) {
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = stringResource(R.string.qibla_calibrate),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
+        QiblaStatusBlock(
+            qiblaAngle = uiState.qiblaAngle,
+            sensorAccuracy = uiState.sensorAccuracy
+        )
     }
 }
 
@@ -155,17 +147,10 @@ private fun LandscapeLayout(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Bottom
         ) {
-            TurnPill(qiblaAngle = uiState.qiblaAngle)
-            Spacer(modifier = Modifier.height(8.dp))
-            AccuracyBadge(sensorAccuracy = uiState.sensorAccuracy)
-            if (accuracyLevel(uiState.sensorAccuracy) == AccuracyLevel.LOW) {
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = stringResource(R.string.qibla_calibrate),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
+            QiblaStatusBlock(
+                qiblaAngle = uiState.qiblaAngle,
+                sensorAccuracy = uiState.sensorAccuracy
+            )
         }
     }
 }
