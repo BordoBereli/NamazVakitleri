@@ -30,6 +30,7 @@ import com.kutluoglu.prayer_feature.qibla.components.QIBLA_ALIGNMENT_THRESHOLD
 import com.kutluoglu.prayer_feature.qibla.components.QiblaCompass
 import com.kutluoglu.prayer_feature.qibla.components.QiblaDistanceLabel
 import com.kutluoglu.prayer_feature.qibla.components.TurnDirection
+import com.kutluoglu.prayer_feature.qibla.components.TurnPill
 import com.kutluoglu.prayer_feature.qibla.components.accuracyLevel
 import com.kutluoglu.prayer_feature.qibla.components.qiblaDistanceLabel
 import kotlin.math.roundToInt
@@ -163,56 +164,6 @@ private fun LandscapeLayout(
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-            }
-        }
-    }
-}
-
-@Composable
-private fun TurnPill(qiblaAngle: Float, modifier: Modifier = Modifier) {
-    val label = qiblaDistanceLabel(qiblaAngle, QIBLA_ALIGNMENT_THRESHOLD)
-    val isAligned = label is QiblaDistanceLabel.Aligned
-    val container = if (isAligned) Color(0xFF1E7E34) else Color(0xFFB8860B)
-
-    Surface(
-        modifier = modifier,
-        shape = RoundedCornerShape(18.dp),
-        color = container
-    ) {
-        Row(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            when (label) {
-                is QiblaDistanceLabel.Aligned -> {
-                    Text(
-                        text = stringResource(R.string.qibla_aligned_pill),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    )
-                }
-                is QiblaDistanceLabel.Turn -> {
-                    Text(
-                        text = "${label.degrees}°",
-                        style = MaterialTheme.typography.headlineMedium,
-                        fontWeight = FontWeight.Black,
-                        color = Color.White
-                    )
-                    Text(
-                        text = stringResource(
-                            if (label.direction == TurnDirection.RIGHT) {
-                                R.string.qibla_turn_right_pill
-                            } else {
-                                R.string.qibla_turn_left_pill
-                            }
-                        ),
-                        style = MaterialTheme.typography.titleSmall,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    )
-                }
             }
         }
     }
