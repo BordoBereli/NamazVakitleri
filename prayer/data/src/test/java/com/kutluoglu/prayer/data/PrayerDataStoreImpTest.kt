@@ -205,4 +205,45 @@ class PrayerDataStoreImpTest {
             prayerTimesCache.put("2024-01-02|41.0|29.0|Europe/Istanbul", tomorrowPrayers)
         }
     }
+
+    @Test
+    fun `getPrayerTimes skips pre-caching when tomorrow is already cached`() = runTest {
+        val testDate = LocalDateTime.createBy(2024, 1, 1)
+        val zoneId = ZoneId.of("Europe/Istanbul")
+        val tomorrow = testDate.date.plus(1, DateTimeUnit.DAY)
+            .atTime(testDate.hour, testDate.minute, testDate.second, testDate.nanosecond)
+        val todayPrayers = listOf(
+            Prayer("Fajr", "الفجر", LocalTime.parse("05:00"), testDate.date)
+        )
+        val tomorrowPrayers = listOf(
+            Prayer("Fajr", "الفجر", LocalTime.parse("05:01"), tomorrow.date)
+        )
+        coEvery { prayerTimesCache.get("2024-01-01|41.0|29.0|Europe/Istanbul") } returns null
+        coEvery { prayerTimesCache.get("2024-01-02|41.0|29.0|Europe/Istanbul") } returns tomorrowPrayers
+        coEvery {
+            prayerCalculationService.calculateDailyPrayerTimes(any(), any(), any(), any(), any(), any())
+        } returns todayPrayers
+
+        val result = dataStore.getPrayerTimes(testDate, 41.0, 29.0, zoneId)
+
+        assertThat(result).isEqualTo(todayPrayers)
+        coVerify(exactly = 1) {
+            prayerCalculationService.calculateDailyPrayerTimes(
+                41.0, 29.0, zoneId, testDate,
+                CalculationMethod.TURKEY_DIYANET, JuristicMethod.STANDARD
+            )
+        }
+        coVerify(exactly = 0) {
+            prayerCalculationService.calculateDailyPrayerTimes(
+                41.0, 29.0, zoneId, tomorrow,
+                CalculationMethod.TURKEY_DIYANET, JuristicMethod.STANDARD
+            )
+        }
+        coVerify(exactly = 1) {
+            prayerTimesCache.put("2024-01-01|41.0|29.0|Europe/Istanbul", todayPrayers)
+        }
+        coVerify(exactly = 0) {
+            prayerTimesCache.put("2024-01-02|41.0|29.0|Europe/Istanbul", any())
+        }
+    }
 }
