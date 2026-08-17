@@ -1,5 +1,6 @@
 package com.kutluoglu.prayer.data
 
+import android.util.Log
 import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.core.common.createBy
 import com.kutluoglu.prayer.data.cache.PrayerTimesCache
@@ -11,7 +12,12 @@ import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer.services.PrayerCalculationService
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkStatic
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
@@ -29,12 +35,15 @@ class PrayerDataStoreImpTest {
     private lateinit var prayerCalculationService: PrayerCalculationService
     private lateinit var prayerTimesCache: PrayerTimesCache
     private lateinit var dataStore: PrayerDataStoreImp
+    private val preCacheScope = CoroutineScope(SupervisorJob() + Dispatchers.Unconfined)
 
     @BeforeEach
     fun setUp() {
         prayerCalculationService = mockk()
         prayerTimesCache = mockk(relaxed = true)
-        dataStore = PrayerDataStoreImp(prayerCalculationService, prayerTimesCache)
+        mockkStatic(Log::class)
+        every { Log.e(any<String>(), any<String>()) } returns 0
+        dataStore = PrayerDataStoreImp(prayerCalculationService, prayerTimesCache, preCacheScope)
     }
 
     @Test
@@ -98,10 +107,12 @@ class PrayerDataStoreImpTest {
         coEvery { prayerTimesCache.get(any()) } returns null
         val callerThread = Thread.currentThread().name
         var calculationThread: String? = null
+        var callCount = 0
         coEvery {
             prayerCalculationService.calculateDailyPrayerTimes(any(), any(), any(), any(), any(), any())
         } answers {
-            calculationThread = Thread.currentThread().name
+            callCount++
+            if (callCount == 1) calculationThread = Thread.currentThread().name
             calculatedPrayers
         }
 
@@ -244,6 +255,26 @@ class PrayerDataStoreImpTest {
         }
         coVerify(exactly = 0) {
             prayerTimesCache.put("2024-01-02|41.0|29.0|Europe/Istanbul", any())
+        }
+    }
+
+    @Test
+    fun `getPrayerTimes returns today's data even when pre-caching tomorrow fails`() = runTest {
+        val testDate = LocalDateTime.createBy(2024, 1, 1)
+        val zoneId = ZoneId.of("Europe/Istanbul")
+        val todayPrayers = listOf(
+            Prayer("Fajr", "الفجر", LocalTime.parse("05:00"), testDate.date)
+        )
+        coEvery { prayerTimesCache.get(any()) } returns null
+        coEvery {
+            prayerCalculationService.calculateDailyPrayerTimes(any(), any(), any(), any(), any(), any())
+        } returns todayPrayers andThenThrows RuntimeException("pre-cache failed")
+
+        val result = dataStore.getPrayerTimes(testDate, 41.0, 29.0, zoneId)
+
+        assertThat(result).isEqualTo(todayPrayers)
+        coVerify(exactly = 1) {
+            prayerTimesCache.put("2024-01-01|41.0|29.0|Europe/Istanbul", todayPrayers)
         }
     }
 }

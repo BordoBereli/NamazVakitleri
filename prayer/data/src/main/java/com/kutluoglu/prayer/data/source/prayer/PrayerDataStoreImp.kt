@@ -1,5 +1,6 @@
 package com.kutluoglu.prayer.data.source.prayer
 
+import android.util.Log
 import com.kutluoglu.prayer.data.cache.PrayerTimesCache
 import com.kutluoglu.prayer.data.repository.prayer.PrayerDataStore
 import com.kutluoglu.prayer.model.prayer.CalculationMethod
@@ -7,13 +8,16 @@ import com.kutluoglu.prayer.model.prayer.DailyPrayer
 import com.kutluoglu.prayer.model.prayer.JuristicMethod
 import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer.services.PrayerCalculationService
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.YearMonth
 import kotlinx.datetime.atTime
 import kotlinx.datetime.plus
-import kotlinx.datetime.YearMonth
+import org.koin.core.annotation.Named
 import org.koin.core.annotation.Single
 import java.time.ZoneId
 
@@ -25,7 +29,8 @@ import java.time.ZoneId
 @Single
 class PrayerDataStoreImp(
         private val prayerCalculationService: PrayerCalculationService,
-        private val prayerTimesCache: PrayerTimesCache
+        private val prayerTimesCache: PrayerTimesCache,
+        @Named("preCacheScope") private val preCacheScope: CoroutineScope
 ): PrayerDataStore {
     override suspend fun getPrayerTimes(
             date: LocalDateTime,
@@ -34,7 +39,11 @@ class PrayerDataStoreImp(
             zoneId: ZoneId
     ): List<Prayer> {
         val cacheKey = buildCacheKey(date, latitude, longitude, zoneId)
-        prayerTimesCache.get(cacheKey)?.let { return it }
+        val cached = prayerTimesCache.get(cacheKey)
+        if (cached != null) {
+            preCacheTomorrow(date, latitude, longitude, zoneId)
+            return cached
+        }
 
         val calculated = withContext(Dispatchers.Default) {
             prayerCalculationService.calculateDailyPrayerTimes(
@@ -51,27 +60,31 @@ class PrayerDataStoreImp(
         return calculated
     }
 
-    private suspend fun preCacheTomorrow(
+    private fun preCacheTomorrow(
             date: LocalDateTime,
             latitude: Double,
             longitude: Double,
             zoneId: ZoneId
     ) {
-        val tomorrow = date.date.plus(1, DateTimeUnit.DAY)
-            .atTime(date.hour, date.minute, date.second, date.nanosecond)
-        val tomorrowKey = buildCacheKey(tomorrow, latitude, longitude, zoneId)
-        if (prayerTimesCache.get(tomorrowKey) != null) return
-        val tomorrowPrayers = withContext(Dispatchers.Default) {
-            prayerCalculationService.calculateDailyPrayerTimes(
-                latitude = latitude,
-                longitude = longitude,
-                zoneId = zoneId,
-                date = tomorrow,
-                calculationMethod = CalculationMethod.TURKEY_DIYANET,
-                juristicMethod = JuristicMethod.STANDARD
-            )
+        preCacheScope.launch {
+            runCatching {
+                val tomorrow = date.date.plus(1, DateTimeUnit.DAY)
+                    .atTime(date.hour, date.minute, date.second, date.nanosecond)
+                val tomorrowKey = buildCacheKey(tomorrow, latitude, longitude, zoneId)
+                if (prayerTimesCache.get(tomorrowKey) != null) return@runCatching
+                val tomorrowPrayers = prayerCalculationService.calculateDailyPrayerTimes(
+                    latitude = latitude,
+                    longitude = longitude,
+                    zoneId = zoneId,
+                    date = tomorrow,
+                    calculationMethod = CalculationMethod.TURKEY_DIYANET,
+                    juristicMethod = JuristicMethod.STANDARD
+                )
+                prayerTimesCache.put(tomorrowKey, tomorrowPrayers)
+            }.onFailure { error ->
+                Log.e("PrayerDataStoreImp", "Failed to pre-cache tomorrow: ${error.message}")
+            }
         }
-        prayerTimesCache.put(tomorrowKey, tomorrowPrayers)
     }
 
     override suspend fun getMonthlyPrayerTimes(
