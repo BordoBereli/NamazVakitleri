@@ -184,7 +184,7 @@ class LocationsCoordinatorTest {
         )
         coEvery { dataStore.getLastGpsLocation() } returns gpsIstanbul
         coEvery { locationService.getCurrentLocation() } returns gpsBursa
-        every { locationService.isDifferentThen(gpsIstanbul) } returns true
+        every { locationService.isDifferentThen(gpsIstanbul, gpsBursa) } returns true
 
         coordinator.resolveInitial()
 
@@ -201,7 +201,23 @@ class LocationsCoordinatorTest {
         )
         coEvery { dataStore.getLastGpsLocation() } returns gpsIstanbul
         coEvery { locationService.getCurrentLocation() } returns gpsIstanbul
-        every { locationService.isDifferentThen(gpsIstanbul) } returns false
+        every { locationService.isDifferentThen(gpsIstanbul, gpsIstanbul) } returns false
+
+        coordinator.resolveInitial()
+
+        coVerify(exactly = 0) { dataStore.setLastGpsLocation(any()) }
+        assertThat(provider.location.first()).isEqualTo(gpsIstanbul)
+    }
+
+    @Test
+    fun `background refresh does not persist when fresh fix is unavailable`() = runBlocking<Unit> {
+        coEvery { dataStore.getLocations() } returns LocationsState(
+            entries = listOf(istanbul),
+            gpsEnabled = true,
+            selectedId = LocationsCoordinator.GPS_LOCATION_ID
+        )
+        coEvery { dataStore.getLastGpsLocation() } returns gpsIstanbul
+        coEvery { locationService.getCurrentLocation() } returns null
 
         coordinator.resolveInitial()
 

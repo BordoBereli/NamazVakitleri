@@ -1,5 +1,6 @@
 package com.kutluoglu.prayer_location
 
+import android.util.Log
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.location.LocationEntry
 import com.kutluoglu.prayer_location.data.LocationsDataStore
@@ -12,6 +13,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import org.koin.core.annotation.Single
+import java.util.concurrent.atomic.AtomicBoolean
 
 @Single
 class LocationsCoordinator(
@@ -22,6 +24,7 @@ class LocationsCoordinator(
     private val refreshScope: CoroutineScope
 ) {
     private val _gpsLocation = MutableStateFlow<LocationData?>(null)
+    private val refreshInFlight = AtomicBoolean(false)
 
     fun observeState(): Flow<LocationsState> =
         combine(locationsDataStore.observeLocations(), _gpsLocation) { state, gps ->
@@ -85,12 +88,19 @@ class LocationsCoordinator(
     private fun cacheAndLaunchRefresh(cached: LocationData) {
         _gpsLocation.value = cached
         activeLocationProvider.set(cached)
+        if (!refreshInFlight.compareAndSet(false, true)) return
         refreshScope.launch {
-            val fresh = locationService.getCurrentLocation() ?: return@launch
-            if (locationService.isDifferentThen(cached)) {
-                _gpsLocation.value = fresh
-                locationsDataStore.setLastGpsLocation(fresh)
-                activeLocationProvider.set(fresh)
+            try {
+                val fresh = locationService.getCurrentLocation() ?: return@launch
+                if (locationService.isDifferentThen(cached, fresh)) {
+                    _gpsLocation.value = fresh
+                    locationsDataStore.setLastGpsLocation(fresh)
+                    activeLocationProvider.set(fresh)
+                }
+            } catch (e: Exception) {
+                Log.e("LocationsCoordinator", "Background GPS refresh failed: ${e.message}")
+            } finally {
+                refreshInFlight.set(false)
             }
         }
     }

@@ -71,6 +71,16 @@ class LocationService(private val context: Context) {
         } ?: false
     }
 
+    fun isDifferentThen(current: LocationData, other: LocationData): Boolean {
+        val results = FloatArray(1)
+        Location.distanceBetween(
+            current.latitude, current.longitude,
+            other.latitude, other.longitude,
+            results
+        )
+        return results[0] > 1000
+    }
+
     // A helper function to promisify the Google Play Services location API
     @SuppressLint("MissingPermission")
     private suspend fun awaitLastLocation(): Location? {
