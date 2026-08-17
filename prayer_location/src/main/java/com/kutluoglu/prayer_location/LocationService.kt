@@ -27,6 +27,8 @@ class LocationService(private val context: Context) {
     private val geocoder = Geocoder(context, Locale.getDefault())
     private var currentLocation: LocationData? = null
 
+    fun getLastKnownLocation(): LocationData? = currentLocation
+
     // This is the main public function that will be called from the ViewModel
     @SuppressLint("MissingPermission") // Permissions are handled at the UI layer
     suspend fun getCurrentLocation(): LocationData? {
