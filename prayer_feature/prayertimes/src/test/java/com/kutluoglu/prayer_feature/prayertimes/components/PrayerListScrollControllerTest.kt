@@ -49,4 +49,13 @@ class PrayerListScrollControllerTest {
         controller.onMonthChanged(YearMonth(2026, 8), true, 16, 31)
         assertThat(scrolled).containsExactly(16, 16)
     }
+
+    @Test
+    fun `scrolls when the index becomes valid after an out-of-range call for the same month`() = runTest {
+        val scrolled = mutableListOf<Int>()
+        val controller = PrayerListScrollController { scrolled.add(it) }
+        controller.onMonthChanged(YearMonth(2026, 8), true, todayIndex = 40, itemCount = 31)
+        controller.onMonthChanged(YearMonth(2026, 8), true, todayIndex = 16, itemCount = 31)
+        assertThat(scrolled).containsExactly(16)
+    }
 }

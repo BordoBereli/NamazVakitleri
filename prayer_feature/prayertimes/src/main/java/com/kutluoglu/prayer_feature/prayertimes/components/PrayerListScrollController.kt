@@ -18,9 +18,8 @@ class PrayerListScrollController(
             return
         }
         if (lastScrolledMonth == month) return
+        if (todayIndex !in 0 until itemCount) return
         lastScrolledMonth = month
-        if (todayIndex in 0 until itemCount) {
-            scrollToItem(todayIndex)
-        }
+        scrollToItem(todayIndex)
     }
 }

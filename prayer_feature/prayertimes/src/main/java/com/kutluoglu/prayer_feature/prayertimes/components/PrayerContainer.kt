@@ -87,7 +87,7 @@ private fun PrayerTimesContent(
     val listState = rememberLazyListState()
     val scrollController = remember { PrayerListScrollController(listState::animateScrollToItem) }
 
-    LaunchedEffect(selectedMonth) {
+    LaunchedEffect(selectedMonth, monthlyPrayers) {
         scrollController.onMonthChanged(
             month = selectedMonth,
             isCurrentMonth = isCurrentMonth,
