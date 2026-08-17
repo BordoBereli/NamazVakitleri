@@ -3,8 +3,11 @@ package com.kutluoglu.prayer_feature.prayertimes
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.performClick
+import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.core.common.gregorianShortFormatter
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.prayer.DailyPrayer
@@ -97,5 +100,30 @@ class PrayerContainerTest {
     fun errorStateRendersTheErrorMessage() {
         composeRule.setContent { PrayerContainer(PrayerTimesUiState.Error("boom")) {} }
         composeRule.onNodeWithText("boom").assertIsDisplayed()
+    }
+
+    @Test
+    fun clickingNextMonthEmitsOnNextMonth() {
+        val events = mutableListOf<PrayerTimesEvent>()
+        composeRule.setContent { PrayerContainer(successState) { events.add(it) } }
+        composeRule.onNodeWithContentDescription("Sonraki ay").performClick()
+        assertThat(events).containsExactly(PrayerTimesEvent.OnNextMonth)
+    }
+
+    @Test
+    fun clickingPreviousMonthEmitsOnPreviousMonth() {
+        val events = mutableListOf<PrayerTimesEvent>()
+        composeRule.setContent { PrayerContainer(successState) { events.add(it) } }
+        composeRule.onNodeWithContentDescription("Önceki ay").performClick()
+        assertThat(events).containsExactly(PrayerTimesEvent.OnPreviousMonth)
+    }
+
+    @Test
+    fun nonCurrentMonthShowsTodayButtonThatEmitsOnToday() {
+        val events = mutableListOf<PrayerTimesEvent>()
+        val otherMonth = successState.copy(isCurrentMonth = false)
+        composeRule.setContent { PrayerContainer(otherMonth) { events.add(it) } }
+        composeRule.onNodeWithText("Bugün").performClick()
+        assertThat(events).containsExactly(PrayerTimesEvent.OnToday)
     }
 }

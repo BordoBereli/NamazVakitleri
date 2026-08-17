@@ -43,14 +43,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kutluoglu.core.common.extractWeekdayName
 import com.kutluoglu.core.common.gregorianShortFormatter
 import com.kutluoglu.core.designsystem.components.ErrorMessage
 import com.kutluoglu.core.designsystem.components.LoadingIndicator
+import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.prayer.DailyPrayer
 import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer_feature.common.prayerUtils.getPrayerDrawableIdFrom
+import com.kutluoglu.prayer_feature.common.states.LocationUiState
+import com.kutluoglu.prayer_feature.common.states.TimeUiState
 import com.kutluoglu.prayer_feature.prayertimes.PrayerTimesEvent
 import com.kutluoglu.prayer_feature.prayertimes.PrayerTimesUiState
 import com.kutluoglu.prayer_feature.prayertimes.R
@@ -366,4 +370,29 @@ private fun PrayerDateInfo(
             color = hijriDateColor
         )
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PrayerContainerSuccessPreview() {
+    PrayerContainer(
+        uiState = PrayerTimesUiState.Success(
+            monthlyPrayers = emptyList(),
+            currentDayOfMonth = 1,
+            selectedMonth = YearMonth(2026, 8),
+            isCurrentMonth = true,
+            timeState = TimeUiState(gregorianShortDate = "August 2026"),
+            locationState = LocationUiState(
+                locationData = LocationData(41.0082, 28.9784, "Turkey", "TR", "Istanbul", null),
+                locationInfoText = "Istanbul, TR"
+            )
+        ),
+        onEvent = {}
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PrayerContainerErrorPreview() {
+    PrayerContainer(uiState = PrayerTimesUiState.Error("Failed to load"), onEvent = {})
 }
