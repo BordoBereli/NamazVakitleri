@@ -102,7 +102,8 @@ private fun PrayerTimesContent(
     }
     Column(
         modifier = Modifier
-            .fillMaxSize(),
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.secondary),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         // --- Header Items ---
@@ -218,8 +219,7 @@ private fun PrayerList(
 ) {
     LazyColumn(
         modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.secondary),
+            .fillMaxSize(),
         state = listState,
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
