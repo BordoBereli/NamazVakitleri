@@ -3,7 +3,7 @@ package com.kutluoglu.prayer_feature.prayertimes
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
-import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
@@ -15,6 +15,7 @@ import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer_feature.common.states.LocationUiState
 import com.kutluoglu.prayer_feature.common.states.TimeUiState
 import com.kutluoglu.prayer_feature.prayertimes.components.PrayerContainer
+import com.kutluoglu.prayer_feature.prayertimes.components.PrayerTimesTestTags
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.YearMonth
@@ -106,7 +107,7 @@ class PrayerContainerTest {
     fun clickingNextMonthEmitsOnNextMonth() {
         val events = mutableListOf<PrayerTimesEvent>()
         composeRule.setContent { PrayerContainer(successState) { events.add(it) } }
-        composeRule.onNodeWithContentDescription("Sonraki ay").performClick()
+        composeRule.onNodeWithTag(PrayerTimesTestTags.NextMonth).performClick()
         assertThat(events).containsExactly(PrayerTimesEvent.OnNextMonth)
     }
 
@@ -114,7 +115,7 @@ class PrayerContainerTest {
     fun clickingPreviousMonthEmitsOnPreviousMonth() {
         val events = mutableListOf<PrayerTimesEvent>()
         composeRule.setContent { PrayerContainer(successState) { events.add(it) } }
-        composeRule.onNodeWithContentDescription("Önceki ay").performClick()
+        composeRule.onNodeWithTag(PrayerTimesTestTags.PreviousMonth).performClick()
         assertThat(events).containsExactly(PrayerTimesEvent.OnPreviousMonth)
     }
 
@@ -123,7 +124,7 @@ class PrayerContainerTest {
         val events = mutableListOf<PrayerTimesEvent>()
         val otherMonth = successState.copy(isCurrentMonth = false)
         composeRule.setContent { PrayerContainer(otherMonth) { events.add(it) } }
-        composeRule.onNodeWithText("Bugün").performClick()
+        composeRule.onNodeWithTag(PrayerTimesTestTags.Today).performClick()
         assertThat(events).containsExactly(PrayerTimesEvent.OnToday)
     }
 }

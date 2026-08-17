@@ -40,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -66,6 +67,12 @@ private val HEADER_BACKGROUND_ALPHA = 0.1F
 private val TODAY_BORDER_ALPHA = 0.7F
 private val HEADER_SURFACE_ALPHA = 0.5f
 private val TODAY_HIJRI_ALPHA = 0.7f
+
+object PrayerTimesTestTags {
+    const val PreviousMonth = "previous_month_button"
+    const val NextMonth = "next_month_button"
+    const val Today = "today_button"
+}
 
 @Composable
 fun PrayerContainer(
@@ -166,7 +173,10 @@ private fun TitleHeader(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        IconButton(onClick = onPrevious) {
+        IconButton(
+            onClick = onPrevious,
+            modifier = Modifier.testTag(PrayerTimesTestTags.PreviousMonth)
+        ) {
             Icon(
                 painter = painterResource(id = R.drawable.btn_left),
                 contentDescription = stringResource(R.string.previous_month)
@@ -189,12 +199,18 @@ private fun TitleHeader(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             } else {
-                TextButton(onClick = onToday) {
+                TextButton(
+                    onClick = onToday,
+                    modifier = Modifier.testTag(PrayerTimesTestTags.Today)
+                ) {
                     Text(text = stringResource(R.string.today))
                 }
             }
         }
-        IconButton(onClick = onNext) {
+        IconButton(
+            onClick = onNext,
+            modifier = Modifier.testTag(PrayerTimesTestTags.NextMonth)
+        ) {
             Icon(
                 painter = painterResource(id = R.drawable.btn_right),
                 contentDescription = stringResource(R.string.next_month)
