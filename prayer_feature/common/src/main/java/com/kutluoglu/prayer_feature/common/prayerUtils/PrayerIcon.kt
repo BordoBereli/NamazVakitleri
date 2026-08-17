@@ -7,15 +7,6 @@ import com.kutluoglu.core.designsystem.R
 import com.kutluoglu.prayer_feature.common.R as AppR
 
 
-/**
- * Created by F.K. on 28.10.2025.
- *
- * A composable function that efficiently maps a prayer name to its corresponding drawable resource ID.
- * It uses `remember` to avoid re-calculating the mapping on every recomposition.
- *
- * @param prayerName The name of the prayer (e.g., "Fajr", "Dhuhr").
- * @return The drawable resource ID for the prayer's icon, or a default/invalid ID (-1) if not found.
- */
 internal fun buildPrayerIconMap(prayerNames: List<String>): Map<String, Int> =
     if (prayerNames.size < 6) {
         emptyMap()
@@ -30,6 +21,15 @@ internal fun buildPrayerIconMap(prayerNames: List<String>): Map<String, Int> =
         )
     }
 
+/**
+ * Created by F.K. on 28.10.2025.
+ *
+ * A composable function that efficiently maps a prayer name to its corresponding drawable resource ID.
+ * It uses `remember` to avoid re-calculating the mapping on every recomposition.
+ *
+ * @param prayerName The name of the prayer (e.g., "Fajr", "Dhuhr").
+ * @return The drawable resource ID for the prayer's icon, or a default/invalid ID (-1) if not found.
+ */
 @Composable
 fun getPrayerDrawableIdFrom(prayerName: String): Int {
     val prayerNames = stringArrayResource(id = R.array.prayers)
