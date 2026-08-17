@@ -9,7 +9,10 @@ import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer.services.PrayerCalculationService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.atTime
+import kotlinx.datetime.plus
 import kotlinx.datetime.YearMonth
 import org.koin.core.annotation.Single
 import java.time.ZoneId
@@ -44,7 +47,31 @@ class PrayerDataStoreImp(
             )
         }
         prayerTimesCache.put(cacheKey, calculated)
+        preCacheTomorrow(date, latitude, longitude, zoneId)
         return calculated
+    }
+
+    private suspend fun preCacheTomorrow(
+            date: LocalDateTime,
+            latitude: Double,
+            longitude: Double,
+            zoneId: ZoneId
+    ) {
+        val tomorrow = date.date.plus(1, DateTimeUnit.DAY)
+            .atTime(date.hour, date.minute, date.second, date.nanosecond)
+        val tomorrowKey = buildCacheKey(tomorrow, latitude, longitude, zoneId)
+        if (prayerTimesCache.get(tomorrowKey) != null) return
+        val tomorrowPrayers = withContext(Dispatchers.Default) {
+            prayerCalculationService.calculateDailyPrayerTimes(
+                latitude = latitude,
+                longitude = longitude,
+                zoneId = zoneId,
+                date = tomorrow,
+                calculationMethod = CalculationMethod.TURKEY_DIYANET,
+                juristicMethod = JuristicMethod.STANDARD
+            )
+        }
+        prayerTimesCache.put(tomorrowKey, tomorrowPrayers)
     }
 
     override suspend fun getMonthlyPrayerTimes(
