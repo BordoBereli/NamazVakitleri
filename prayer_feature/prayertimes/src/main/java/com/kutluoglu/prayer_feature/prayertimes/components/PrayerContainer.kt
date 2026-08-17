@@ -57,11 +57,11 @@ import com.kutluoglu.prayer_feature.prayertimes.R
 import kotlinx.datetime.YearMonth
 import kotlinx.datetime.number
 
-private val CardCornerSize = 12.dp
-private val HeaderBackgroundAlpha = 0.1F
-private val TodayBorderAlpha = 0.7F
-private val HeaderSurfaceAlpha = 0.5f
-private val TodayHijriAlpha = 0.7f
+private val CARD_CORNER_SIZE = 12.dp
+private val HEADER_BACKGROUND_ALPHA = 0.1F
+private val TODAY_BORDER_ALPHA = 0.7F
+private val HEADER_SURFACE_ALPHA = 0.5f
+private val TODAY_HIJRI_ALPHA = 0.7f
 
 @Composable
 fun PrayerContainer(
@@ -135,7 +135,7 @@ private fun TitleHeader(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(color = MaterialTheme.colorScheme.primary.copy(alpha = HeaderBackgroundAlpha))
+            .background(color = MaterialTheme.colorScheme.primary.copy(alpha = HEADER_BACKGROUND_ALPHA))
             .padding(vertical = 16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
@@ -183,8 +183,8 @@ private fun PrayersHeader(prayers: List<Prayer>) {
         modifier = Modifier
             .padding(horizontal = 16.dp)
             .fillMaxWidth()
-            .clip(RoundedCornerShape(CardCornerSize))
-            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = HeaderSurfaceAlpha)),
+            .clip(RoundedCornerShape(CARD_CORNER_SIZE))
+            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = HEADER_SURFACE_ALPHA)),
         horizontalArrangement = Arrangement.SpaceAround, // Distributes space evenly
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -237,13 +237,13 @@ private fun PrayerList(
 @Composable
 private fun DailyPrayerCard(dailyPrayer: DailyPrayer, isToday: Boolean) {
     val borderColorFromTheme = if (isToday) MaterialTheme.colorScheme.primary else Color.Transparent
-    val cardShape = RoundedCornerShape(CardCornerSize)
+    val cardShape = RoundedCornerShape(CARD_CORNER_SIZE)
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .border(
                 width = 1.dp,
-                color = borderColorFromTheme.copy(alpha = TodayBorderAlpha),
+                color = borderColorFromTheme.copy(alpha = TODAY_BORDER_ALPHA),
                 shape = cardShape
             ),
         shape = cardShape,
@@ -301,7 +301,7 @@ private fun PrayerDateInfo(
     val numberBackgroundColor = if (isToday) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
     val numberColor = if (isToday) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
     val dateColor = if (isToday) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
-    val hijriDateColor = if (isToday) MaterialTheme.colorScheme.primary.copy(alpha = TodayHijriAlpha) else MaterialTheme.colorScheme.onSurfaceVariant
+    val hijriDateColor = if (isToday) MaterialTheme.colorScheme.primary.copy(alpha = TODAY_HIJRI_ALPHA) else MaterialTheme.colorScheme.onSurfaceVariant
 
     Row(
         modifier = Modifier
