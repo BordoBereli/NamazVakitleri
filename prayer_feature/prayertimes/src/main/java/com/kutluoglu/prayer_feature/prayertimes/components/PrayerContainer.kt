@@ -37,6 +37,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -84,17 +85,15 @@ private fun PrayerTimesContent(
         onEvent: (PrayerTimesEvent) -> Unit
 ) {
     val listState = rememberLazyListState()
+    val scrollController = remember { PrayerListScrollController(listState::animateScrollToItem) }
 
-    LaunchedEffect(monthlyPrayers, isCurrentMonth) {
-        if (isCurrentMonth) {
-            // Find the index of the current day. The list is 0-indexed, so subtract 1.
-            val todayIndex = currentDayOfMonth - 1
-            // Make sure the index is valid before scrolling
-            if (todayIndex in monthlyPrayers.indices) {
-                // Animate the scroll to the item. Use scrollToItem for an instant jump.
-                listState.animateScrollToItem(index = todayIndex)
-            }
-        }
+    LaunchedEffect(selectedMonth) {
+        scrollController.onMonthChanged(
+            month = selectedMonth,
+            isCurrentMonth = isCurrentMonth,
+            todayIndex = currentDayOfMonth - 1,
+            itemCount = monthlyPrayers.size
+        )
     }
     Column(
         modifier = Modifier
