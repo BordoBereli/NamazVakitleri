@@ -11,7 +11,9 @@ import com.kutluoglu.prayer_settings.data.location.LocationData as SettingsLocat
 import com.kutluoglu.prayer_settings.data.location.LocationServiceHelper
 import com.kutluoglu.prayer_settings.domain.repository.LocationRepository
 import com.kutluoglu.prayer_settings.domain.usecase.SearchLocationUseCase
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,6 +22,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.android.annotation.KoinViewModel
 import java.text.Normalizer
 import java.util.UUID
@@ -29,7 +32,8 @@ class LocationSelectionViewModel(
     private val locationRepository: LocationRepository,
     private val searchLocationUseCase: SearchLocationUseCase,
     private val locationServiceHelper: LocationServiceHelper,
-    private val locationsCoordinator: LocationsCoordinator
+    private val locationsCoordinator: LocationsCoordinator,
+    private val defaultDispatcher: CoroutineDispatcher = Dispatchers.Default
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<LocationSelectionUiState>(LocationSelectionUiState.Loading)
@@ -39,6 +43,7 @@ class LocationSelectionViewModel(
     val selectedCity: SharedFlow<City> = _selectedCity.asSharedFlow()
 
     private var searchJob: Job? = null
+    private var searchCountriesJob: Job? = null
     private val searchHistory = mutableListOf<City>()
     private var allCities: List<City> = emptyList()
     private var currentSortOrder: SortOrder = SortOrder.ASCENDING
@@ -97,35 +102,41 @@ class LocationSelectionViewModel(
     }
 
     private fun searchCountries(query: String) {
-        val currentState = _uiState.value
-        if (currentState !is LocationSelectionUiState.CountrySelection) return
-        
-        val filtered = if (query.isBlank()) {
-            allCities
-                .groupBy { it.country }
-                .map { (country, cities) ->
-                    CountryInfo(
-                        name = country,
-                        cityCount = cities.size,
-                        isPriority = PRIORITY_COUNTRIES.contains(country)
-                    )
+        searchCountriesJob?.cancel()
+        searchCountriesJob = viewModelScope.launch {
+            delay(DEBOUNCE_DELAY_MS)
+            val currentState = _uiState.value
+            if (currentState !is LocationSelectionUiState.CountrySelection) return@launch
+
+            val filtered = withContext(defaultDispatcher) {
+                if (query.isBlank()) {
+                    allCities
+                        .groupBy { it.country }
+                        .map { (country, cities) ->
+                            CountryInfo(
+                                name = country,
+                                cityCount = cities.size,
+                                isPriority = PRIORITY_COUNTRIES.contains(country)
+                            )
+                        }
+                        .sortedWith(compareBy({ !it.isPriority }, { it.name }))
+                } else {
+                    allCities
+                        .filter { matchesTurkish(it.name, query) || matchesTurkish(it.country, query) }
+                        .groupBy { it.country }
+                        .map { (country, cities) ->
+                            CountryInfo(
+                                name = country,
+                                cityCount = cities.size,
+                                isPriority = PRIORITY_COUNTRIES.contains(country)
+                            )
+                        }
+                        .sortedWith(compareBy({ !it.isPriority }, { it.name }))
                 }
-                .sortedWith(compareBy({ !it.isPriority }, { it.name }))
-        } else {
-            allCities
-                .filter { matchesTurkish(it.name, query) || matchesTurkish(it.country, query) }
-                .groupBy { it.country }
-                .map { (country, cities) ->
-                    CountryInfo(
-                        name = country,
-                        cityCount = cities.size,
-                        isPriority = PRIORITY_COUNTRIES.contains(country)
-                    )
-                }
-                .sortedWith(compareBy({ !it.isPriority }, { it.name }))
+            }
+
+            _uiState.value = currentState.copy(countries = filtered, searchQuery = query)
         }
-        
-        _uiState.value = currentState.copy(countries = filtered, searchQuery = query)
     }
 
     private fun selectCountry(country: String) {

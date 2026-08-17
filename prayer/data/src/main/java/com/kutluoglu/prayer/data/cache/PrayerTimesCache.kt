@@ -6,8 +6,10 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.kutluoglu.prayer.model.prayer.DailyPrayer
 import com.kutluoglu.prayer.model.prayer.Prayer
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import org.koin.core.annotation.Single
 
@@ -25,14 +27,18 @@ class PrayerTimesCache(
         val key = stringPreferencesKey(cacheKey)
         val raw = dataStore.data.map { it[key] }.firstOrNull()
         if (raw.isNullOrBlank()) return null
-        return runCatching {
-            json.decodeFromString<List<CachedPrayer>>(raw).map { it.toPrayer() }
-        }.getOrNull()
+        return withContext(Dispatchers.Default) {
+            runCatching {
+                json.decodeFromString<List<CachedPrayer>>(raw).map { it.toPrayer() }
+            }.getOrNull()
+        }
     }
 
     suspend fun put(cacheKey: String, prayers: List<Prayer>) {
         val key = stringPreferencesKey(cacheKey)
-        val raw = json.encodeToString(prayers.map { it.toCached() })
+        val raw = withContext(Dispatchers.Default) {
+            json.encodeToString(prayers.map { it.toCached() })
+        }
         dataStore.edit { it[key] = raw }
     }
 
@@ -40,14 +46,18 @@ class PrayerTimesCache(
         val key = stringPreferencesKey(cacheKey)
         val raw = dataStore.data.map { it[key] }.firstOrNull()
         if (raw.isNullOrBlank()) return null
-        return runCatching {
-            json.decodeFromString<List<CachedDailyPrayer>>(raw).map { it.toDailyPrayer() }
-        }.getOrNull()
+        return withContext(Dispatchers.Default) {
+            runCatching {
+                json.decodeFromString<List<CachedDailyPrayer>>(raw).map { it.toDailyPrayer() }
+            }.getOrNull()
+        }
     }
 
     suspend fun putMonth(cacheKey: String, prayers: List<DailyPrayer>) {
         val key = stringPreferencesKey(cacheKey)
-        val raw = json.encodeToString(prayers.map { it.toCached() })
+        val raw = withContext(Dispatchers.Default) {
+            json.encodeToString(prayers.map { it.toCached() })
+        }
         dataStore.edit { it[key] = raw }
     }
 

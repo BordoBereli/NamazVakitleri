@@ -19,14 +19,17 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.api.extension.RegisterExtension
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @Execution(value = ExecutionMode.SAME_THREAD)
-@ExtendWith(MainCoroutineRule::class)
 class LocationSelectionViewModelTest {
+
+    @JvmField
+    @RegisterExtension
+    val mainCoroutineRule = MainCoroutineRule()
 
     private lateinit var locationRepository: LocationRepository
     private lateinit var searchLocationUseCase: SearchLocationUseCase
@@ -47,7 +50,13 @@ class LocationSelectionViewModelTest {
         locationServiceHelper = mockk()
         locationsCoordinator = mockk(relaxed = true)
         coEvery { locationRepository.getPresetCities() } returns presetCities
-        viewModel = LocationSelectionViewModel(locationRepository, searchLocationUseCase, locationServiceHelper, locationsCoordinator)
+        viewModel = LocationSelectionViewModel(
+            locationRepository,
+            searchLocationUseCase,
+            locationServiceHelper,
+            locationsCoordinator,
+            defaultDispatcher = mainCoroutineRule.dispatcher
+        )
     }
 
     @Test
@@ -246,6 +255,42 @@ class LocationSelectionViewModelTest {
             val firstCountry = countryState.countries.first()
             assertThat(firstCountry.name).isEqualTo("Turkey")
             assertThat(firstCountry.isPriority).isTrue()
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `SearchCountry should filter countries after debounce`() = runTest {
+        viewModel.onEvent(LocationSelectionEvent.SearchCountry("tur"))
+
+        viewModel.uiState.test {
+            var filtered: LocationSelectionUiState.CountrySelection? = null
+            while (filtered == null) {
+                val state = awaitItem()
+                if (state is LocationSelectionUiState.CountrySelection && state.searchQuery == "tur") {
+                    filtered = state
+                }
+            }
+            assertThat(filtered.countries.map { it.name }).containsExactly("Turkey")
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `SearchCountry with blank query should restore full country list`() = runTest {
+        viewModel.onEvent(LocationSelectionEvent.SearchCountry("tur"))
+        viewModel.onEvent(LocationSelectionEvent.SearchCountry(""))
+
+        viewModel.uiState.test {
+            var restored: LocationSelectionUiState.CountrySelection? = null
+            while (restored == null) {
+                val state = awaitItem()
+                if (state is LocationSelectionUiState.CountrySelection && state.searchQuery == "") {
+                    restored = state
+                }
+            }
+            assertThat(restored.countries.map { it.name })
+                .containsExactly("Turkey", "United Kingdom")
             cancelAndIgnoreRemainingEvents()
         }
     }

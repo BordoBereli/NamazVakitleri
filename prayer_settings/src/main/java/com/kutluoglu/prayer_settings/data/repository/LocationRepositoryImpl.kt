@@ -80,8 +80,8 @@ class LocationRepositoryImpl(
         }
     }
 
-    private suspend fun loadCitiesFromAssets(): List<City> {
-        return try {
+    private suspend fun loadCitiesFromAssets(): List<City> = withContext(Dispatchers.IO) {
+        try {
             val inputStream = context.assets.open("cities.json")
             val cityList = json.decodeFromString<CityList>(inputStream.readToString())
             Log.d(TAG, "Loaded ${cityList.cities.size} cities from assets")

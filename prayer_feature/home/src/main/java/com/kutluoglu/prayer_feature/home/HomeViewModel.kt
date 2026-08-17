@@ -15,6 +15,9 @@ import com.kutluoglu.prayer_feature.home.state.HomeScreenGate
 import com.kutluoglu.prayer_feature.home.state.QuranUiState
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.drop
@@ -156,16 +159,20 @@ class HomeViewModel(
 
     private suspend fun loadAllLocations(state: LocationsState) {
         val current = _prayerDataByLocation.value.toMutableMap()
-        for (entry in state.entries) {
-            val cached = current[entry.id]
-            val locationChanged = cached?.locationState?.locationData != entry.location
-            if (cached == null || locationChanged) {
-                prayerTimesLoader.load(entry.location)
-                    .onSuccess { loaded -> current[entry.id] = loaded }
-                    .onFailure { error ->
-                        Log.e("HomeViewModel", "Failed to pre-load ${entry.id}: ${error.message}")
+        coroutineScope {
+            state.entries.map { entry ->
+                async {
+                    val cached = current[entry.id]
+                    val locationChanged = cached?.locationState?.locationData != entry.location
+                    if (cached == null || locationChanged) {
+                        prayerTimesLoader.load(entry.location)
+                            .onSuccess { loaded -> current[entry.id] = loaded }
+                            .onFailure { error ->
+                                Log.e("HomeViewModel", "Failed to pre-load ${entry.id}: ${error.message}")
+                            }
                     }
-            }
+                }
+            }.awaitAll()
         }
         _prayerDataByLocation.value = current
     }

@@ -3,6 +3,8 @@ package com.kutluoglu.prayer_settings.domain.usecase
 import android.util.Log
 import com.kutluoglu.prayer.model.location.City
 import com.kutluoglu.prayer_settings.domain.repository.LocationRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.koin.core.annotation.Factory
 import java.text.Normalizer
 
@@ -16,8 +18,10 @@ class SearchLocationUseCase(
         }
 
         val presetResults = try {
-            repository.getPresetCities().filter { city ->
-                matchesTurkish(city.name, query) || matchesTurkish(city.country, query)
+            withContext(Dispatchers.Default) {
+                repository.getPresetCities().filter { city ->
+                    matchesTurkish(city.name, query) || matchesTurkish(city.country, query)
+                }
             }
         } catch (e: Exception) {
             Log.e(TAG, "Error loading preset cities", e)
