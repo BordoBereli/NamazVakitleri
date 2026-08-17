@@ -106,19 +106,41 @@ private fun PrayerTimesContent(
             .background(MaterialTheme.colorScheme.secondary),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        // --- Header Items ---
-        TitleHeader(
+        PrayerTimesHeader(
             selectedMonthLabel = selectedMonthLabel(selectedMonth),
             isCurrentMonth = isCurrentMonth,
+            prayers = monthlyPrayers.firstOrNull()?.prayers ?: emptyList(),
             onPrevious = { onEvent(PrayerTimesEvent.OnPreviousMonth) },
             onNext = { onEvent(PrayerTimesEvent.OnNextMonth) },
             onToday = { onEvent(PrayerTimesEvent.OnToday) }
         )
-        PrayersHeader(monthlyPrayers.firstOrNull()?.prayers ?: emptyList())
-        // --- Content Items ---
-        PrayerList(monthlyPrayers, currentDayOfMonth, isCurrentMonth, listState)
+        PrayerTimesList(
+            monthlyPrayers = monthlyPrayers,
+            currentDayOfMonth = currentDayOfMonth,
+            isCurrentMonth = isCurrentMonth,
+            listState = listState
+        )
     }
 
+}
+
+@Composable
+private fun PrayerTimesHeader(
+        selectedMonthLabel: String,
+        isCurrentMonth: Boolean,
+        prayers: List<Prayer>,
+        onPrevious: () -> Unit,
+        onNext: () -> Unit,
+        onToday: () -> Unit
+) {
+    TitleHeader(
+        selectedMonthLabel = selectedMonthLabel,
+        isCurrentMonth = isCurrentMonth,
+        onPrevious = onPrevious,
+        onNext = onNext,
+        onToday = onToday
+    )
+    PrayersHeader(prayers)
 }
 
 private fun selectedMonthLabel(month: YearMonth): String =
@@ -211,7 +233,7 @@ private fun PrayersHeader(prayers: List<Prayer>) {
 }
 
 @Composable
-private fun PrayerList(
+private fun PrayerTimesList(
         monthlyPrayers: List<DailyPrayer>,
         currentDayOfMonth: Int,
         isCurrentMonth: Boolean,
