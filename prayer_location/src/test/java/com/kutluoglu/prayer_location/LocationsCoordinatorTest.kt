@@ -176,6 +176,25 @@ class LocationsCoordinatorTest {
     }
 
     @Test
+    fun `resolveInitial hydrates gps entry from cache when manual location selected`() = runBlocking<Unit> {
+        coEvery { dataStore.getLocations() } returns LocationsState(
+            entries = listOf(istanbul),
+            gpsEnabled = true,
+            selectedId = "loc-1"
+        )
+        coEvery { dataStore.observeLocations() } returns MutableStateFlow(
+            LocationsState(entries = listOf(istanbul), gpsEnabled = true, selectedId = "loc-1")
+        )
+        coEvery { dataStore.getLastGpsLocation() } returns gpsIstanbul
+
+        coordinator.resolveInitial()
+
+        val state = coordinator.observeState().first()
+        assertThat(state.entries.first().isAutoGps).isTrue()
+        assertThat(state.entries.first().location).isEqualTo(gpsIstanbul)
+    }
+
+    @Test
     fun `background refresh updates location and persists when different`() = runBlocking<Unit> {
         coEvery { dataStore.getLocations() } returns LocationsState(
             entries = listOf(istanbul),

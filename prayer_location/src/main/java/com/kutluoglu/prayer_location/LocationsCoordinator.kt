@@ -41,6 +41,7 @@ class LocationsCoordinator(
 
     suspend fun resolveInitial(): LocationData? {
         locationsMigration.migrateIfNeeded()
+        hydrateGpsFromCache()
         val state = locationsDataStore.getLocations()
         if (state.selectedId == GPS_LOCATION_ID && state.gpsEnabled) {
             return resolveGps()
@@ -58,6 +59,7 @@ class LocationsCoordinator(
     }
 
     suspend fun resolveSelected(): LocationData? {
+        hydrateGpsFromCache()
         val state = locationsDataStore.getLocations()
         if (state.selectedId == GPS_LOCATION_ID && state.gpsEnabled) {
             return resolveGps()
@@ -72,6 +74,12 @@ class LocationsCoordinator(
             return resolveGps()
         }
         return null
+    }
+
+    private suspend fun hydrateGpsFromCache() {
+        if (_gpsLocation.value == null) {
+            _gpsLocation.value = locationsDataStore.getLastGpsLocation()
+        }
     }
 
     private suspend fun resolveGps(): LocationData? {
