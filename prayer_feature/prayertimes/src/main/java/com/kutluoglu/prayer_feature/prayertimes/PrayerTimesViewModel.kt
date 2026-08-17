@@ -13,10 +13,16 @@ import com.kutluoglu.prayer.usecases.prayer.SaveMonthlyPrayerTimesUseCase
 import com.kutluoglu.prayer_location.ActiveLocationProvider
 import com.kutluoglu.prayer_feature.common.states.LocationUiState
 import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DateTimeUnit
@@ -39,7 +45,8 @@ class PrayerTimesViewModel(
         private val saveMonthlyPrayerTimesUseCase: SaveMonthlyPrayerTimesUseCase,
         private val activeLocationProvider: ActiveLocationProvider,
         private val calculator: PrayerLogicEngine,
-        private val formatter: PrayerFormatter
+        private val formatter: PrayerFormatter,
+        private val computationDispatcher: CoroutineDispatcher = Dispatchers.Default
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<PrayerTimesUiState>(PrayerTimesUiState.Loading)
     val uiState: StateFlow<PrayerTimesUiState> = _uiState
@@ -55,20 +62,33 @@ class PrayerTimesViewModel(
     private val selectedMonthByLocation = mutableMapOf<String, YearMonth>()
     private var isLoading = false
     private var pendingMonth: YearMonth? = null
+    private var locationObservationJob: Job? = null
 
     fun loadMonthlyPrayerTimes() {
-        viewModelScope.launch {
-            val location = activeLocationProvider.location.first() ?: run {
-                _uiState.value = PrayerTimesUiState.Error("Failed to get active location.")
-                return@launch
-            }
-            activeLocationId = location.locationId()
-            val resolvedZoneId = getZoneIdFromLocation(location.countryCode)
-            zoneId = resolvedZoneId
-            val today = LocalDateTime.now(resolvedZoneId)
-            val month = selectedMonthByLocation[activeLocationId] ?: today.date.yearMonth
-            loadMonth(month)
+        if (locationObservationJob?.isActive == true) return
+        locationObservationJob = viewModelScope.launch {
+            activeLocationProvider.location
+                .collect { location ->
+                    if (location == null) {
+                        _uiState.value = PrayerTimesUiState.Error("Failed to get active location.")
+                    } else {
+                        loadForLocation(location)
+                    }
+                }
         }
+    }
+
+    private fun loadForLocation(location: LocationData) {
+        val newLocationId = location.locationId()
+        if (newLocationId != activeLocationId) {
+            _uiState.value = PrayerTimesUiState.Loading
+        }
+        activeLocationId = newLocationId
+        val resolvedZoneId = getZoneIdFromLocation(location.countryCode)
+        zoneId = resolvedZoneId
+        val today = LocalDateTime.now(resolvedZoneId)
+        val month = selectedMonthByLocation[activeLocationId] ?: today.date.yearMonth
+        loadMonth(month)
     }
 
     fun onEvent(event: PrayerTimesEvent) {
@@ -139,44 +159,21 @@ class PrayerTimesViewModel(
                     return@launch
                 }
                 val today = LocalDateTime.now(resolvedZoneId)
-                val monthlyPrayers = mutableListOf<DailyPrayer>()
-                for (day in 1..month.numberOfDays) {
-                    val date = month.onDay(day)
-                    getPrayerTimesUseCase(
-                        date = date.atTime(0, 0),
-                        latitude = location.latitude,
-                        longitude = location.longitude,
-                        zoneId = resolvedZoneId
-                    ).onSuccess { prayerTimes ->
-                        val langDetectedPrayerTimes = formatter.withLocalizedNames(prayerTimes)
-                        val isToday = date == today.date
-                        val (currentPrayer, _) = if (isToday) {
-                            calculator.findCurrentAndNextPrayer(langDetectedPrayerTimes, resolvedZoneId)
-                        } else {
-                            Pair(null, null)
-                        }
-                        val prayersWithCurrent = langDetectedPrayerTimes.map {
-                            it.copy(isCurrent = isToday && it.name == currentPrayer?.name)
-                        }
-                        val timeState = formatter.getInitialTimeInfo(
-                            resolvedZoneId,
-                            date.toJavaLocalDate(),
-                            HijrahDate.from(date.toJavaLocalDate())
-                        )
-                        monthlyPrayers.add(
-                            DailyPrayer(
-                                dayOfMonth = date.day,
-                                prayers = prayersWithCurrent,
-                                gregorianDate = timeState.gregorianDayAndName,
-                                hijriDate = timeState.hijriDate
-                            )
-                        )
-                    }.onFailure {
-                        _uiState.value = PrayerTimesUiState.Error(
-                            it.message ?: "Failed to load prayer times for day $day."
-                        )
-                        return@launch
+                val monthlyPrayers = try {
+                    coroutineScope {
+                        (1..month.numberOfDays).map { day ->
+                            async(computationDispatcher) {
+                                computeDailyPrayer(day, month, location, resolvedZoneId, today)
+                            }
+                        }.awaitAll()
                     }
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    _uiState.value = PrayerTimesUiState.Error(
+                        e.message ?: "Failed to load prayer times."
+                    )
+                    return@launch
                 }
                 locationCache[month] = monthlyPrayers
                 saveMonthlyPrayerTimesUseCase(
@@ -196,6 +193,43 @@ class PrayerTimesViewModel(
                 }
             }
         }
+    }
+
+    private suspend fun computeDailyPrayer(
+        day: Int,
+        month: YearMonth,
+        location: LocationData,
+        resolvedZoneId: ZoneId,
+        today: LocalDateTime
+    ): DailyPrayer {
+        val date = month.onDay(day)
+        val prayerTimes = getPrayerTimesUseCase(
+            date = date.atTime(0, 0),
+            latitude = location.latitude,
+            longitude = location.longitude,
+            zoneId = resolvedZoneId
+        ).getOrElse { throw it }
+        val langDetectedPrayerTimes = formatter.withLocalizedNames(prayerTimes)
+        val isToday = date == today.date
+        val (currentPrayer, _) = if (isToday) {
+            calculator.findCurrentAndNextPrayer(langDetectedPrayerTimes, resolvedZoneId)
+        } else {
+            Pair(null, null)
+        }
+        val prayersWithCurrent = langDetectedPrayerTimes.map {
+            it.copy(isCurrent = isToday && it.name == currentPrayer?.name)
+        }
+        val timeState = formatter.getInitialTimeInfo(
+            resolvedZoneId,
+            date.toJavaLocalDate(),
+            HijrahDate.from(date.toJavaLocalDate())
+        )
+        return DailyPrayer(
+            dayOfMonth = date.day,
+            prayers = prayersWithCurrent,
+            gregorianDate = timeState.gregorianDayAndName,
+            hijriDate = timeState.hijriDate
+        )
     }
 
     private fun emitSuccess(

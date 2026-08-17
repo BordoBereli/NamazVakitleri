@@ -1,6 +1,7 @@
 package com.kutluoglu.prayer_feature.prayertimes
 
 import android.util.Log
+import androidx.lifecycle.ViewModelStore
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.core.common.getZoneIdFromLocation
@@ -21,8 +22,12 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.withTimeout
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
@@ -30,9 +35,11 @@ import kotlinx.datetime.LocalTime
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 import kotlinx.datetime.yearMonth
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import java.util.concurrent.atomic.AtomicInteger
 import kotlin.Result.Companion.success
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -46,6 +53,7 @@ class PrayerTimesViewModelTest {
     private lateinit var calculator: PrayerLogicEngine
     private lateinit var formatter: PrayerFormatter
     private lateinit var viewModel: PrayerTimesViewModel
+    private lateinit var viewModelStore: ViewModelStore
 
     private val mockLocation = LocationData(
         latitude = 41.0082,
@@ -96,8 +104,16 @@ class PrayerTimesViewModelTest {
             saveMonthlyPrayerTimesUseCase,
             activeLocationProvider,
             calculator,
-            formatter
+            formatter,
+            UnconfinedTestDispatcher()
         )
+        viewModelStore = ViewModelStore()
+        viewModelStore.put("viewModel", viewModel)
+    }
+
+    @AfterEach
+    fun tearDown() {
+        viewModelStore.clear()
     }
 
     @Test
@@ -357,5 +373,110 @@ class PrayerTimesViewModelTest {
             assertThat(success.monthlyPrayers.first().prayers.first().name).isEqualTo("FajrB")
             cancelAndIgnoreRemainingEvents()
         }
+    }
+
+    @Test
+    fun `location change emits Loading before new data`() = runTest {
+        val locA = LocationData(41.0082, 28.9784, "Turkey", "TR", "Istanbul", null)
+        val locB = LocationData(39.9334, 32.8597, "Turkey", "TR", "Ankara", null)
+        val gate = CompletableDeferred<Unit>()
+        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any()) } coAnswers {
+            val latitude = arg<Double>(1)
+            if (latitude == locB.latitude) gate.await()
+            success(mockPrayerList)
+        }
+
+        activeLocationProvider.set(locA)
+        viewModel.loadMonthlyPrayerTimes()
+
+        viewModel.uiState.test {
+            val first = awaitItem()
+            assertThat(first).isInstanceOf(PrayerTimesUiState.Success::class.java)
+
+            activeLocationProvider.set(locB)
+            val loading = awaitItem()
+            assertThat(loading).isInstanceOf(PrayerTimesUiState.Loading::class.java)
+
+            gate.complete(Unit)
+            val success = awaitItem()
+            assertThat(success).isInstanceOf(PrayerTimesUiState.Success::class.java)
+            val successState = success as PrayerTimesUiState.Success
+            assertThat(successState.locationState.locationData).isEqualTo(locB)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `location change triggers reload without manual call`() = runTest {
+        val locA = LocationData(41.0082, 28.9784, "Turkey", "TR", "Istanbul", null)
+        val locB = LocationData(39.9334, 32.8597, "Turkey", "TR", "Ankara", null)
+        val prayerListB = mockPrayerList.map { it.copy(name = "${it.name}B") }
+        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any()) } coAnswers {
+            val latitude = arg<Double>(1)
+            if (latitude == locB.latitude) success(prayerListB) else success(mockPrayerList)
+        }
+
+        activeLocationProvider.set(locA)
+        viewModel.loadMonthlyPrayerTimes()
+
+        viewModel.uiState.test {
+            val first = awaitItem()
+            assertThat(first).isInstanceOf(PrayerTimesUiState.Success::class.java)
+
+            activeLocationProvider.set(locB)
+            val loading = awaitItem()
+            assertThat(loading).isInstanceOf(PrayerTimesUiState.Loading::class.java)
+
+            val second = awaitItem()
+            assertThat(second).isInstanceOf(PrayerTimesUiState.Success::class.java)
+            val success = second as PrayerTimesUiState.Success
+            assertThat(success.locationState.locationData).isEqualTo(locB)
+            assertThat(success.monthlyPrayers.first().prayers.first().name).isEqualTo("FajrB")
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `per-day computation runs concurrently`() = runTest {
+        val gate = CompletableDeferred<Unit>()
+        val started = AtomicInteger(0)
+        val maxConcurrent = AtomicInteger(0)
+        val active = AtomicInteger(0)
+        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any()) } coAnswers {
+            val now = active.incrementAndGet()
+            maxConcurrent.updateAndGet { maxOf(it, now) }
+            started.incrementAndGet()
+            gate.await()
+            active.decrementAndGet()
+            success(mockPrayerList)
+        }
+
+        val store = ViewModelStore()
+        val viewModel = PrayerTimesViewModel(
+            getPrayerTimesUseCase,
+            getMonthlyPrayerTimesUseCase,
+            saveMonthlyPrayerTimesUseCase,
+            activeLocationProvider,
+            calculator,
+            formatter,
+            Dispatchers.Default
+        )
+        store.put("viewModel", viewModel)
+        viewModel.loadMonthlyPrayerTimes()
+
+        val zoneId = getZoneIdFromLocation("TR")
+        val days = LocalDateTime.now(zoneId).date.yearMonth.numberOfDays
+        try {
+            withTimeout(5_000) {
+                while (started.get() < days) {
+                    delay(10)
+                }
+            }
+        } finally {
+            gate.complete(Unit)
+            store.clear()
+        }
+
+        assertThat(maxConcurrent.get()).isGreaterThan(1)
     }
 }
