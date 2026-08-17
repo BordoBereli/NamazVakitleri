@@ -22,11 +22,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -58,6 +56,12 @@ import com.kutluoglu.prayer_feature.prayertimes.PrayerTimesUiState
 import com.kutluoglu.prayer_feature.prayertimes.R
 import kotlinx.datetime.YearMonth
 import kotlinx.datetime.number
+
+private val CardCornerSize = 12.dp
+private val HeaderBackgroundAlpha = 0.1F
+private val TodayBorderAlpha = 0.7F
+private val HeaderSurfaceAlpha = 0.5f
+private val TodayHijriAlpha = 0.7f
 
 @Composable
 fun PrayerContainer(
@@ -98,8 +102,7 @@ private fun PrayerTimesContent(
     }
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.secondary), // Apply background to the whole container
+            .fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         // --- Header Items ---
@@ -131,7 +134,7 @@ private fun TitleHeader(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1F))
+            .background(color = MaterialTheme.colorScheme.primary.copy(alpha = HeaderBackgroundAlpha))
             .padding(vertical = 16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
@@ -174,17 +177,17 @@ private fun TitleHeader(
 }
 
 @Composable
-fun PrayersHeader(prayers: List<Prayer>) {
-    LazyRow(
+private fun PrayersHeader(prayers: List<Prayer>) {
+    Row(
         modifier = Modifier
             .padding(horizontal = 16.dp)
             .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
-            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)),
+            .clip(RoundedCornerShape(CardCornerSize))
+            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = HeaderSurfaceAlpha)),
         horizontalArrangement = Arrangement.SpaceAround, // Distributes space evenly
         verticalAlignment = Alignment.CenterVertically
     ) {
-        items(prayers, key = { it.name }) { prayer ->
+        prayers.forEach { prayer ->
             Column(
                 modifier = Modifier.padding(8.dp),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -234,17 +237,16 @@ private fun PrayerList(
 @Composable
 private fun DailyPrayerCard(dailyPrayer: DailyPrayer, isToday: Boolean) {
     val borderColorFromTheme = if (isToday) MaterialTheme.colorScheme.primary else Color.Transparent
-    val shapeCornerSize = 12.dp
+    val cardShape = RoundedCornerShape(CardCornerSize)
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .border(
                 width = 1.dp,
-                color = borderColorFromTheme.copy(alpha = 0.7F),
-                shape = RoundedCornerShape(corner = CornerSize(shapeCornerSize))
-            )
-        ,
-        shape = RoundedCornerShape(shapeCornerSize),
+                color = borderColorFromTheme.copy(alpha = TodayBorderAlpha),
+                shape = cardShape
+            ),
+        shape = cardShape,
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(
@@ -273,12 +275,12 @@ private fun PrayersRow(prayers: List<Prayer>, isToday: Boolean) {
         MaterialTheme.colorScheme.onSurfaceVariant
     }
 
-    LazyRow(
+    Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceAround, // Distributes space evenly
         verticalAlignment = Alignment.CenterVertically
     ) {
-        items(prayers, key = { it.name }) { prayer ->
+        prayers.forEach { prayer ->
             val timeText = remember(prayer) { prayer.time.toString() }
             Text(
                 text = timeText,
@@ -299,7 +301,7 @@ private fun PrayerDateInfo(
     val numberBackgroundColor = if (isToday) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
     val numberColor = if (isToday) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
     val dateColor = if (isToday) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
-    val hijriDateColor = if (isToday) MaterialTheme.colorScheme.primary.copy(alpha = 0.7f) else MaterialTheme.colorScheme.onSurfaceVariant
+    val hijriDateColor = if (isToday) MaterialTheme.colorScheme.primary.copy(alpha = TodayHijriAlpha) else MaterialTheme.colorScheme.onSurfaceVariant
 
     Row(
         modifier = Modifier
