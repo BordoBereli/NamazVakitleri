@@ -5,10 +5,12 @@ import com.kutluoglu.prayer.model.location.LocationEntry
 import com.kutluoglu.prayer_location.data.LocationsDataStore
 import com.kutluoglu.prayer_location.data.LocationsMigration
 import com.kutluoglu.prayer_location.data.LocationsState
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.launch
 import org.koin.core.annotation.Single
 
 @Single
@@ -16,7 +18,8 @@ class LocationsCoordinator(
     private val locationsDataStore: LocationsDataStore,
     private val locationService: LocationService,
     private val activeLocationProvider: ActiveLocationProvider,
-    private val locationsMigration: LocationsMigration
+    private val locationsMigration: LocationsMigration,
+    private val refreshScope: CoroutineScope
 ) {
     private val _gpsLocation = MutableStateFlow<LocationData?>(null)
 
@@ -69,14 +72,33 @@ class LocationsCoordinator(
     }
 
     private suspend fun resolveGps(): LocationData? {
+        val cached = locationsDataStore.getLastGpsLocation() ?: _gpsLocation.value
+        if (cached != null) {
+            cacheAndLaunchRefresh(cached)
+            return cached
+        }
         val gps = refreshGps()
         if (gps != null) activeLocationProvider.set(gps)
         return gps
     }
 
+    private fun cacheAndLaunchRefresh(cached: LocationData) {
+        _gpsLocation.value = cached
+        activeLocationProvider.set(cached)
+        refreshScope.launch {
+            val fresh = locationService.getCurrentLocation() ?: return@launch
+            if (locationService.isDifferentThen(cached)) {
+                _gpsLocation.value = fresh
+                locationsDataStore.setLastGpsLocation(fresh)
+                activeLocationProvider.set(fresh)
+            }
+        }
+    }
+
     suspend fun refreshGps(): LocationData? {
         val gps = locationService.getCurrentLocation() ?: return null
         _gpsLocation.value = gps
+        locationsDataStore.setLastGpsLocation(gps)
         return gps
     }
 

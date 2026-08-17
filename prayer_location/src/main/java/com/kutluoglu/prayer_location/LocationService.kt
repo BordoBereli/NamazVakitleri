@@ -25,6 +25,7 @@ class LocationService(private val context: Context) {
 
     private val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
     private val geocoder = Geocoder(context, Locale.getDefault())
+    @Volatile
     private var currentLocation: LocationData? = null
 
     fun getLastKnownLocation(): LocationData? = currentLocation

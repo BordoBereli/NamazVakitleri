@@ -8,7 +8,11 @@ import com.kutluoglu.prayer_location.data.LocationsMigration
 import com.kutluoglu.prayer_location.data.LocationsState
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -20,13 +24,16 @@ class LocationsCoordinatorTest {
     private val locationService = mockk<LocationService>(relaxed = true)
     private val migration = mockk<LocationsMigration>(relaxed = true)
     private val provider = ActiveLocationProvider()
-    private val coordinator = LocationsCoordinator(dataStore, locationService, provider, migration)
+    private val refreshScope = CoroutineScope(SupervisorJob() + Dispatchers.Unconfined)
+    private val coordinator = LocationsCoordinator(dataStore, locationService, provider, migration, refreshScope)
 
     private val istanbul = LocationEntry(
         id = "loc-1",
         location = LocationData(41.0082, 28.9784, "Turkey", "TR", "Istanbul", null),
         displayName = "Istanbul, Turkey"
     )
+    private val gpsIstanbul = LocationData(41.0082, 28.9784, "Turkey", "TR", "Istanbul", null)
+    private val gpsBursa = LocationData(40.0, 29.0, "Turkey", "TR", "Bursa", null)
 
     @Test
     fun `observeState includes synthetic gps entry when enabled`() = runBlocking<Unit> {
@@ -79,6 +86,7 @@ class LocationsCoordinatorTest {
     fun `resolveInitial gps fallback updates provider`() = runBlocking<Unit> {
         val gps = LocationData(40.0, 29.0, "Turkey", "TR", "Bursa", null)
         coEvery { dataStore.getLocations() } returns LocationsState(gpsEnabled = true)
+        coEvery { dataStore.getLastGpsLocation() } returns null
         coEvery { locationService.getCurrentLocation() } returns gps
 
         val result = coordinator.resolveInitial()
@@ -91,6 +99,7 @@ class LocationsCoordinatorTest {
     fun `resolveSelected falls back to gps when no manual entries`() = runBlocking<Unit> {
         val gps = LocationData(40.0, 29.0, "Turkey", "TR", "Bursa", null)
         coEvery { dataStore.getLocations() } returns LocationsState(gpsEnabled = true)
+        coEvery { dataStore.getLastGpsLocation() } returns null
         coEvery { locationService.getCurrentLocation() } returns gps
 
         val result = coordinator.resolveSelected()
@@ -148,5 +157,66 @@ class LocationsCoordinatorTest {
         coordinator.resolveInitial()
 
         coVerify { migration.migrateIfNeeded() }
+    }
+
+    @Test
+    fun `resolveInitial returns cached gps instead of a fresh fix`() = runBlocking<Unit> {
+        coEvery { dataStore.getLocations() } returns LocationsState(
+            entries = listOf(istanbul),
+            gpsEnabled = true,
+            selectedId = LocationsCoordinator.GPS_LOCATION_ID
+        )
+        coEvery { dataStore.getLastGpsLocation() } returns gpsIstanbul
+        coEvery { locationService.getCurrentLocation() } returns gpsBursa
+
+        val result = coordinator.resolveInitial()
+
+        assertThat(result).isEqualTo(gpsIstanbul)
+        assertThat(provider.location.first()).isEqualTo(gpsIstanbul)
+    }
+
+    @Test
+    fun `background refresh updates location and persists when different`() = runBlocking<Unit> {
+        coEvery { dataStore.getLocations() } returns LocationsState(
+            entries = listOf(istanbul),
+            gpsEnabled = true,
+            selectedId = LocationsCoordinator.GPS_LOCATION_ID
+        )
+        coEvery { dataStore.getLastGpsLocation() } returns gpsIstanbul
+        coEvery { locationService.getCurrentLocation() } returns gpsBursa
+        every { locationService.isDifferentThen(gpsIstanbul) } returns true
+
+        coordinator.resolveInitial()
+
+        coVerify { dataStore.setLastGpsLocation(gpsBursa) }
+        assertThat(provider.location.first()).isEqualTo(gpsBursa)
+    }
+
+    @Test
+    fun `background refresh does not update when location is same`() = runBlocking<Unit> {
+        coEvery { dataStore.getLocations() } returns LocationsState(
+            entries = listOf(istanbul),
+            gpsEnabled = true,
+            selectedId = LocationsCoordinator.GPS_LOCATION_ID
+        )
+        coEvery { dataStore.getLastGpsLocation() } returns gpsIstanbul
+        coEvery { locationService.getCurrentLocation() } returns gpsIstanbul
+        every { locationService.isDifferentThen(gpsIstanbul) } returns false
+
+        coordinator.resolveInitial()
+
+        coVerify(exactly = 0) { dataStore.setLastGpsLocation(any()) }
+        assertThat(provider.location.first()).isEqualTo(gpsIstanbul)
+    }
+
+    @Test
+    fun `selectLocation gps uses cached gps without fresh fix`() = runBlocking<Unit> {
+        coEvery { dataStore.getLocations() } returns LocationsState(entries = listOf(istanbul))
+        coEvery { locationService.getCurrentLocation() } returns gpsBursa
+        coordinator.setGpsLocation(gpsIstanbul)
+
+        coordinator.selectLocation(LocationsCoordinator.GPS_LOCATION_ID)
+
+        coVerify(exactly = 0) { locationService.getCurrentLocation() }
     }
 }
