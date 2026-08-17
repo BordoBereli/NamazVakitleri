@@ -4,7 +4,9 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
+import androidx.datastore.preferences.core.stringPreferencesKey
 import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.location.LocationEntry
@@ -128,5 +130,25 @@ class LocationsDataStoreTest {
 
         val state = store.getLocations()
         assertThat(state.entries.map { it.id }).containsExactly("loc-1", "loc-2")
+    }
+
+    @Test
+    fun `last gps location round trips through the store`() = runBlocking<Unit> {
+        val gps = LocationData(40.0, 29.0, "Turkey", "TR", "Bursa", null)
+
+        assertThat(store.getLastGpsLocation()).isNull()
+
+        store.setLastGpsLocation(gps)
+
+        val freshStore = LocationsDataStore(dataStore)
+        assertThat(freshStore.getLastGpsLocation()).isEqualTo(gps)
+    }
+
+    @Test
+    fun `last gps location returns null when persisted value is corrupt`() = runBlocking<Unit> {
+        val corruptKey = stringPreferencesKey("last_gps_location")
+        dataStore.edit { prefs -> prefs[corruptKey] = "not-json" }
+
+        assertThat(store.getLastGpsLocation()).isNull()
     }
 }

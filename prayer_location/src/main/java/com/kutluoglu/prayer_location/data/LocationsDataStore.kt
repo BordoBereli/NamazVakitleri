@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.location.LocationEntry
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -23,6 +24,7 @@ class LocationsDataStore(
         val LOCATIONS = stringPreferencesKey("locations")
         val GPS_ENABLED = booleanPreferencesKey("gps_enabled")
         val SELECTED_ID = stringPreferencesKey("selected_location_id")
+        val LAST_GPS = stringPreferencesKey("last_gps_location")
     }
 
     fun observeLocations(): Flow<LocationsState> = dataStore.data.map { prefs ->
@@ -73,6 +75,16 @@ class LocationsDataStore(
 
     suspend fun replaceAll(entries: List<LocationEntry>) {
         dataStore.edit { prefs -> prefs[Keys.LOCATIONS] = json.encodeToString(entries) }
+    }
+
+    suspend fun getLastGpsLocation(): LocationData? {
+        val raw = dataStore.data.first()[Keys.LAST_GPS]
+        if (raw.isNullOrBlank()) return null
+        return runCatching { json.decodeFromString<LocationData>(raw) }.getOrNull()
+    }
+
+    suspend fun setLastGpsLocation(location: LocationData) {
+        dataStore.edit { prefs -> prefs[Keys.LAST_GPS] = json.encodeToString(location) }
     }
 
     private fun decodeEntries(raw: String?): List<LocationEntry> {
