@@ -9,6 +9,7 @@ ksp = "2.2.20-2.0.3"
 jetbrainsKotlinJvm = "2.2.20"
 kotlin = "2.2.20"
 coreKtx = "1.17.0"
+coreSplashscreen = "1.0.1"
 appcompat = "1.7.1"
 material = "1.13.0"
 kotlinxDatetime = "0.7.1"
@@ -43,6 +44,7 @@ robolectric = "4.14"
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
 assertj-core = { module = "org.assertj:assertj-core", version.ref = "assertjCore" }
 
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
