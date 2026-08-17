@@ -7,6 +7,8 @@ import com.kutluoglu.prayer.model.prayer.DailyPrayer
 import com.kutluoglu.prayer.model.prayer.JuristicMethod
 import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer.services.PrayerCalculationService
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.YearMonth
 import org.koin.core.annotation.Single
@@ -31,14 +33,16 @@ class PrayerDataStoreImp(
         val cacheKey = buildCacheKey(date, latitude, longitude, zoneId)
         prayerTimesCache.get(cacheKey)?.let { return it }
 
-        val calculated = prayerCalculationService.calculateDailyPrayerTimes(
-            latitude = latitude,
-            longitude = longitude,
-            zoneId = zoneId,
-            date = date,
-            calculationMethod = CalculationMethod.TURKEY_DIYANET,
-            juristicMethod = JuristicMethod.STANDARD
-        )
+        val calculated = withContext(Dispatchers.Default) {
+            prayerCalculationService.calculateDailyPrayerTimes(
+                latitude = latitude,
+                longitude = longitude,
+                zoneId = zoneId,
+                date = date,
+                calculationMethod = CalculationMethod.TURKEY_DIYANET,
+                juristicMethod = JuristicMethod.STANDARD
+            )
+        }
         prayerTimesCache.put(cacheKey, calculated)
         return calculated
     }

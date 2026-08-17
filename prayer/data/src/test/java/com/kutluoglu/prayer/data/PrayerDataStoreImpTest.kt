@@ -85,6 +85,32 @@ class PrayerDataStoreImpTest {
     }
 
     @Test
+    fun `calculation runs off main thread on cache miss`() = runTest {
+        // GIVEN a cache miss
+        val testDate = LocalDateTime.createBy(2024, 1, 1)
+        val zoneId = ZoneId.of("Europe/Istanbul")
+        val calculatedPrayers = listOf(
+            Prayer("Fajr", "الفجر", LocalTime.parse("05:00"), testDate.date)
+        )
+        coEvery { prayerTimesCache.get(any()) } returns null
+        val callerThread = Thread.currentThread().name
+        var calculationThread: String? = null
+        coEvery {
+            prayerCalculationService.calculateDailyPrayerTimes(any(), any(), any(), any(), any(), any())
+        } answers {
+            calculationThread = Thread.currentThread().name
+            calculatedPrayers
+        }
+
+        // WHEN requesting prayer times
+        dataStore.getPrayerTimes(testDate, 41.0, 29.0, zoneId)
+
+        // THEN the CPU-bound calculation must not run on the calling (main) thread
+        assertThat(calculationThread).isNotNull()
+        assertThat(calculationThread).isNotEqualTo(callerThread)
+    }
+
+    @Test
     fun `clearCache clears the prayer times cache`() = runTest {
         dataStore.clearCache()
 
