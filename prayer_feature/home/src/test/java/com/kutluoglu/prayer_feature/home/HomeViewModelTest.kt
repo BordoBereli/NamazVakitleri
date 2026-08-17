@@ -21,6 +21,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.verify
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -28,6 +29,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.AfterEach
@@ -256,6 +258,30 @@ class HomeViewModelTest {
 
         assertThat(vm.prayerDataByLocation.value.keys).containsExactly("loc-1", "loc-2")
         assertThat(vm.activeLocationId.value).isEqualTo("loc-1")
+    }
+
+    @Test
+    fun `Ready is set after active location loads without waiting for other locations`() = runTest {
+        val locA = LocationData(41.0082, 28.9784, "Turkey", "TR", "Istanbul", null)
+        val locB = LocationData(39.9334, 32.8597, "Turkey", "TR", "Ankara", null)
+        val entryA = LocationEntry("loc-1", locA, displayName = "Istanbul, Turkey")
+        val entryB = LocationEntry("loc-2", locB, displayName = "Ankara, Turkey")
+        val slowLoad = CompletableDeferred<LoadedPrayerData>()
+        coEvery { locationsCoordinator.observeState() } returns flowOf(
+            LocationsState(entries = listOf(entryA, entryB), selectedId = "loc-1")
+        )
+        coEvery { locationsCoordinator.resolveInitial() } returns locA
+        coEvery { prayerTimesLoader.load(locA) } returns success(loadedData(locA))
+        coEvery { prayerTimesLoader.load(locB) } coAnswers {
+            Result.success(slowLoad.await())
+        }
+
+        val vm = viewModel()
+
+        assertThat(vm.screenGate.value).isEqualTo(HomeScreenGate.Ready)
+
+        slowLoad.complete(loadedData(locB))
+        runCurrent()
     }
 
     @Test

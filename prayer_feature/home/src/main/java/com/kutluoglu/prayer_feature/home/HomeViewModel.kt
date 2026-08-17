@@ -139,42 +139,67 @@ class HomeViewModel(
     }
 
     private suspend fun handleState(state: LocationsState) {
-        stateMutex.withLock {
-            val activeId = state.selectedId ?: state.entries.firstOrNull()?.id
-            if (activeId == null) {
-                fail(HomeErrorMapper.getUserFriendlyErrorMessage(null))
-                return@withLock
-            }
+        val activeId = state.selectedId ?: state.entries.firstOrNull()?.id
+        if (activeId == null) {
+            fail(HomeErrorMapper.getUserFriendlyErrorMessage(null))
+            return
+        }
+        val loaded = stateMutex.withLock {
             _activeLocationId.value = activeId
-            loadAllLocations(state)
-            val activeData = _prayerDataByLocation.value[activeId]
+            val activeData = loadActiveLocation(state, activeId)
             if (activeData != null) {
                 _screenGate.value = HomeScreenGate.Ready
                 startCountdownFor(activeId)
+                true
             } else {
                 fail(HomeErrorMapper.getUserFriendlyErrorMessage(null))
+                false
             }
+        }
+        if (loaded) {
+            preloadOtherLocations(state, activeId)
         }
     }
 
-    private suspend fun loadAllLocations(state: LocationsState) {
-        val current = _prayerDataByLocation.value.toMutableMap()
-        coroutineScope {
-            state.entries.map { entry ->
-                async {
-                    val cached = current[entry.id]
-                    val locationChanged = cached?.locationState?.locationData != entry.location
-                    if (cached == null || locationChanged) {
-                        prayerTimesLoader.load(entry.location)
-                            .onSuccess { loaded -> current[entry.id] = loaded }
-                            .onFailure { error ->
-                                Log.e("HomeViewModel", "Failed to pre-load ${entry.id}: ${error.message}")
-                            }
+    private suspend fun loadActiveLocation(state: LocationsState, activeId: String): LoadedPrayerData? {
+        val entry = state.entries.firstOrNull { it.id == activeId } ?: return null
+        val cached = _prayerDataByLocation.value[activeId]
+        val locationChanged = cached?.locationState?.locationData != entry.location
+        if (cached != null && !locationChanged) return cached
+        return prayerTimesLoader.load(entry.location)
+            .onSuccess { loaded ->
+                _prayerDataByLocation.value = _prayerDataByLocation.value + (activeId to loaded)
+            }
+            .onFailure { error ->
+                Log.e("HomeViewModel", "Failed to load active location ${entry.id}: ${error.message}")
+            }
+            .getOrNull()
+    }
+
+    private fun preloadOtherLocations(state: LocationsState, activeId: String) {
+        val others = state.entries.filter { it.id != activeId }
+        if (others.isEmpty()) return
+        viewModelScope.launch {
+            coroutineScope {
+                others.map { entry ->
+                    async {
+                        val cached = _prayerDataByLocation.value[entry.id]
+                        val locationChanged = cached?.locationState?.locationData != entry.location
+                        if (cached == null || locationChanged) {
+                            prayerTimesLoader.load(entry.location)
+                                .onSuccess { loaded ->
+                                    stateMutex.withLock {
+                                        _prayerDataByLocation.value = _prayerDataByLocation.value + (entry.id to loaded)
+                                    }
+                                }
+                                .onFailure { error ->
+                                    Log.e("HomeViewModel", "Failed to pre-load ${entry.id}: ${error.message}")
+                                }
+                        }
                     }
-                }
-            }.awaitAll()
+                }.awaitAll()
+            }
         }
-        _prayerDataByLocation.value = current
     }
 
     private fun refreshPrayerState() {
