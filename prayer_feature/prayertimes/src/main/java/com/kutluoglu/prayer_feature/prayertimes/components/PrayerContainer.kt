@@ -46,6 +46,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.kutluoglu.core.common.extractWeekdayName
 import com.kutluoglu.core.common.gregorianShortFormatter
 import com.kutluoglu.core.designsystem.components.ErrorMessage
 import com.kutluoglu.core.designsystem.components.LoadingIndicator
@@ -253,9 +254,10 @@ private fun DailyPrayerCard(dailyPrayer: DailyPrayer, isToday: Boolean) {
         ) {
             PrayersRow(dailyPrayer.prayers, isToday)
             Spacer(Modifier.height(12.dp))
+            val weekdayName = remember(dailyPrayer.gregorianDate) { extractWeekdayName(dailyPrayer.gregorianDate) }
             PrayerDateInfo(
                 dayOfMonth = dailyPrayer.dayOfMonth,
-                nameOfMonth = dailyPrayer.gregorianDate,
+                weekdayName = weekdayName,
                 hijriDate = dailyPrayer.hijriDate,
                 isToday = isToday
             )
@@ -277,8 +279,9 @@ private fun PrayersRow(prayers: List<Prayer>, isToday: Boolean) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         items(prayers, key = { it.name }) { prayer ->
+            val timeText = remember(prayer) { prayer.time.toString() }
             Text(
-                text = prayer.time.toString(),
+                text = timeText,
                 style = MaterialTheme.typography.titleMedium,
                 color = textColor
             )
@@ -289,7 +292,7 @@ private fun PrayersRow(prayers: List<Prayer>, isToday: Boolean) {
 @Composable
 private fun PrayerDateInfo(
         dayOfMonth: Int,
-        nameOfMonth: String,
+        weekdayName: String,
         hijriDate: String,
         isToday: Boolean,
 ) {
@@ -326,7 +329,7 @@ private fun PrayerDateInfo(
                 )
             }
             Text(
-                text = nameOfMonth.split(" ").last(),
+                text = weekdayName,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = dateColor

@@ -44,3 +44,6 @@ val gregorianShortFormatter = DateTimeFormatter
 val gregorianDayAndNameFormatter = DateTimeFormatter
     .ofPattern("dd EEEE")  // Day number + full day name
     .withLocale(Locale.getDefault())
+
+fun extractWeekdayName(gregorianDayAndName: String): String =
+    gregorianDayAndName.substringAfterLast(' ')
