@@ -50,7 +50,7 @@ class GetSettingsUseCaseTest {
 
         // Assert
         assertThat(result.calculationMethod).isEqualTo("TURKEY_DIYANET")
-        assertThat(result.language).isEqualTo("tr")
+        assertThat(result.language).isEqualTo("system")
         assertThat(result.hijriAdjustment).isEqualTo(0)
     }
 }

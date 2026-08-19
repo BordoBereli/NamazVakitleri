@@ -3,7 +3,7 @@ package com.kutluoglu.prayer_settings.domain.model
 data class Settings(
     val location: LocationSettings = LocationSettings(),
     val calculationMethod: String = "TURKEY_DIYANET",
-    val language: String = "tr",
+    val language: String = "system",
     val hijriAdjustment: Int = 0
 )
 

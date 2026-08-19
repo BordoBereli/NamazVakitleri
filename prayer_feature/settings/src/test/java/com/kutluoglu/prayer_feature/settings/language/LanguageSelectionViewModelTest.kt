@@ -67,7 +67,7 @@ class LanguageSelectionViewModelTest {
         assertThat(state).isInstanceOf(LanguageUiState.LanguagesLoaded::class.java)
         val loadedState = state as LanguageUiState.LanguagesLoaded
         assertThat(loadedState.languages).hasSize(15)
-        assertThat(loadedState.selectedLanguage).isEqualTo("tr")
+        assertThat(loadedState.selectedLanguage).isEqualTo("system")
     }
 
     @Test

@@ -16,7 +16,7 @@ class SettingsTest {
         assertThat(settings.location.cityName).isEqualTo("Istanbul")
         assertThat(settings.location.country).isEqualTo("Turkey")
         assertThat(settings.calculationMethod).isEqualTo("TURKEY_DIYANET")
-        assertThat(settings.language).isEqualTo("tr")
+        assertThat(settings.language).isEqualTo("system")
         assertThat(settings.hijriAdjustment).isEqualTo(0)
     }
 
