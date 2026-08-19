@@ -12,6 +12,7 @@ import com.kutluoglu.prayer_feature.common.states.TimeUiState
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
@@ -40,7 +41,7 @@ class PrayerTimesLoaderTest {
         val dhuhr = Prayer(name = "Öğle", arabicName = "الظهر", time = LocalTime(12, 30), date = date)
         coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any(), any()) } returns success(listOf(fajr, dhuhr))
         every { formatter.withLocalizedNames(any()) } returns listOf(fajr, dhuhr)
-        every { formatter.getInitialTimeInfo(any(), any(), any()) } returns TimeUiState(gregorianFullDate = "02 Ağustos 2026")
+        every { formatter.getInitialTimeInfo(any(), any(), any(), any()) } returns TimeUiState(gregorianFullDate = "02 Ağustos 2026")
         every { formatter.locationInfo(any()) } returns "Istanbul, TR"
         every { calculator.findCurrentAndNextPrayer(any(), any()) } returns Pair(fajr, dhuhr)
 
@@ -66,6 +67,21 @@ class PrayerTimesLoaderTest {
 
         assertThat(result.isFailure).isTrue()
         assertThat(result.exceptionOrNull()?.message).isEqualTo("fetch failed")
+    }
+
+    @Test
+    fun `load passes hijri adjustment to formatter`() = runTest {
+        val date = LocalDate(2026, 8, 2)
+        val fajr = Prayer(name = "İmsak", arabicName = "الفجر", time = LocalTime(5, 0), date = date)
+        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any(), any()) } returns success(listOf(fajr))
+        every { formatter.withLocalizedNames(any()) } returns listOf(fajr)
+        every { formatter.locationInfo(any()) } returns "Istanbul, TR"
+        every { calculator.findCurrentAndNextPrayer(any(), any()) } returns Pair(fajr, null)
+
+        val loader = PrayerTimesLoader(getPrayerTimesUseCase, calculator, formatter)
+        loader.load(location, CalculationMethod.TURKEY_DIYANET, hijriAdjustment = 7)
+
+        verify { formatter.getInitialTimeInfo(any(), any(), any(), 7) }
     }
 
     @Test

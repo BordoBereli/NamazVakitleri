@@ -105,7 +105,7 @@ class HomeViewModelTest {
             LocationsState(entries = listOf(entry), selectedId = "loc-1")
         )
         coEvery { locationsCoordinator.resolveInitial() } returns location
-        coEvery { prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET) } returns success(loadedData())
+        coEvery { prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET, any()) } returns success(loadedData())
 
         val vm = viewModel()
         assertThat(vm.screenGate.value).isEqualTo(HomeScreenGate.Ready)
@@ -117,11 +117,11 @@ class HomeViewModelTest {
             LocationsState(entries = listOf(entry), selectedId = "loc-1")
         )
         coEvery { locationsCoordinator.resolveInitial() } returns location
-        coEvery { prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET) } returns success(loadedData())
+        coEvery { prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET, any()) } returns success(loadedData())
 
         val vm = viewModel()
 
-        coVerify(exactly = 1) { prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET) }
+        coVerify(exactly = 1) { prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET, any()) }
     }
 
     @Test
@@ -130,7 +130,7 @@ class HomeViewModelTest {
             LocationsState(entries = listOf(entry), selectedId = "loc-1")
         )
         coEvery { locationsCoordinator.resolveInitial() } returns location
-        coEvery { prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET) } returns
+        coEvery { prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET, any()) } returns
             Result.failure(RuntimeException("fetch failed"))
 
         val vm = viewModel()
@@ -143,7 +143,7 @@ class HomeViewModelTest {
             LocationsState(entries = listOf(entry), selectedId = "loc-1")
         )
         coEvery { locationsCoordinator.resolveInitial() } returns location
-        coEvery { prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET) } returns
+        coEvery { prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET, any()) } returns
             Result.failure(RuntimeException("fetch failed"))
 
         val vm = viewModel()
@@ -159,7 +159,7 @@ class HomeViewModelTest {
         )
         coEvery { locationsCoordinator.resolveInitial() } returns null
         coEvery { locationsCoordinator.resolveSelected() } returns location
-        coEvery { prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET) } returns success(loadedData())
+        coEvery { prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET, any()) } returns success(loadedData())
 
         val vm = viewModel()
         vm.onEvent(HomeEvent.OnRefresh)
@@ -183,7 +183,7 @@ class HomeViewModelTest {
             LocationsState(entries = listOf(entry), selectedId = "loc-1")
         )
         coEvery { locationsCoordinator.resolveInitial() } returns location
-        coEvery { prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET) } returns success(loadedData())
+        coEvery { prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET, any()) } returns success(loadedData())
 
         val vm = viewModel()
         vm.onEvent(HomeEvent.OnLocationSelected("loc-1"))
@@ -202,16 +202,16 @@ class HomeViewModelTest {
         )
         coEvery { locationsCoordinator.observeState() } returns stateFlow
         coEvery { locationsCoordinator.resolveInitial() } returns locA
-        coEvery { prayerTimesLoader.load(locA, CalculationMethod.TURKEY_DIYANET) } returns success(loadedData(locA))
-        coEvery { prayerTimesLoader.load(locB, CalculationMethod.TURKEY_DIYANET) } returns success(loadedData(locB))
+        coEvery { prayerTimesLoader.load(locA, CalculationMethod.TURKEY_DIYANET, any()) } returns success(loadedData(locA))
+        coEvery { prayerTimesLoader.load(locB, CalculationMethod.TURKEY_DIYANET, any()) } returns success(loadedData(locB))
 
         val vm = viewModel()
-        coVerify(exactly = 1) { prayerTimesLoader.load(locB, CalculationMethod.TURKEY_DIYANET) } // pre-loaded once
+        coVerify(exactly = 1) { prayerTimesLoader.load(locB, CalculationMethod.TURKEY_DIYANET, any()) } // pre-loaded once
 
         stateFlow.value = LocationsState(entries = listOf(entryA, entryB), selectedId = "loc-2")
 
         assertThat(vm.activeLocationId.value).isEqualTo("loc-2")
-        coVerify(exactly = 1) { prayerTimesLoader.load(locB, CalculationMethod.TURKEY_DIYANET) } // still once — cache hit, no reload
+        coVerify(exactly = 1) { prayerTimesLoader.load(locB, CalculationMethod.TURKEY_DIYANET, any()) } // still once — cache hit, no reload
     }
 
     @Test
@@ -225,15 +225,15 @@ class HomeViewModelTest {
         )
         coEvery { locationsCoordinator.observeState() } returns stateFlow
         coEvery { locationsCoordinator.resolveInitial() } returns locA
-        coEvery { prayerTimesLoader.load(locA, CalculationMethod.TURKEY_DIYANET) } returns success(loadedData(locA))
-        coEvery { prayerTimesLoader.load(locB, CalculationMethod.TURKEY_DIYANET) } returns success(loadedData(locB))
+        coEvery { prayerTimesLoader.load(locA, CalculationMethod.TURKEY_DIYANET, any()) } returns success(loadedData(locA))
+        coEvery { prayerTimesLoader.load(locB, CalculationMethod.TURKEY_DIYANET, any()) } returns success(loadedData(locB))
 
         val vm = viewModel()
-        coVerify(exactly = 1) { prayerTimesLoader.load(locA, CalculationMethod.TURKEY_DIYANET) }
+        coVerify(exactly = 1) { prayerTimesLoader.load(locA, CalculationMethod.TURKEY_DIYANET, any()) }
 
         stateFlow.value = LocationsState(entries = listOf(entryB), selectedId = "loc-1")
 
-        coVerify { prayerTimesLoader.load(locB, CalculationMethod.TURKEY_DIYANET) }
+        coVerify { prayerTimesLoader.load(locB, CalculationMethod.TURKEY_DIYANET, any()) }
     }
 
     @Test
@@ -243,7 +243,7 @@ class HomeViewModelTest {
         )
         coEvery { locationsCoordinator.observeState() } returns stateFlow
         coEvery { locationsCoordinator.resolveInitial() } returns location
-        coEvery { prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET) } returns success(loadedData())
+        coEvery { prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET, any()) } returns success(loadedData())
 
         val vm = viewModel()
         stateFlow.value = LocationsState()
@@ -261,8 +261,8 @@ class HomeViewModelTest {
             LocationsState(entries = listOf(entryA, entryB), selectedId = "loc-1")
         )
         coEvery { locationsCoordinator.resolveInitial() } returns locA
-        coEvery { prayerTimesLoader.load(locA, CalculationMethod.TURKEY_DIYANET) } returns success(loadedData())
-        coEvery { prayerTimesLoader.load(locB, CalculationMethod.TURKEY_DIYANET) } returns success(loadedData())
+        coEvery { prayerTimesLoader.load(locA, CalculationMethod.TURKEY_DIYANET, any()) } returns success(loadedData())
+        coEvery { prayerTimesLoader.load(locB, CalculationMethod.TURKEY_DIYANET, any()) } returns success(loadedData())
 
         val vm = viewModel()
 
@@ -281,8 +281,8 @@ class HomeViewModelTest {
             LocationsState(entries = listOf(entryA, entryB), selectedId = "loc-1")
         )
         coEvery { locationsCoordinator.resolveInitial() } returns locA
-        coEvery { prayerTimesLoader.load(locA, CalculationMethod.TURKEY_DIYANET) } returns success(loadedData(locA))
-        coEvery { prayerTimesLoader.load(locB, CalculationMethod.TURKEY_DIYANET) } coAnswers {
+        coEvery { prayerTimesLoader.load(locA, CalculationMethod.TURKEY_DIYANET, any()) } returns success(loadedData(locA))
+        coEvery { prayerTimesLoader.load(locB, CalculationMethod.TURKEY_DIYANET, any()) } coAnswers {
             Result.success(slowLoad.await())
         }
 
@@ -303,7 +303,7 @@ class HomeViewModelTest {
         coEvery { locationsCoordinator.resolveInitial() } returns location
         every { countdownEngine.prayerPassedSignal } returns prayerPassed
         every { countdownEngine.dayChangedSignal } returns MutableSharedFlow()
-        coEvery { prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET) } returns success(loadedData())
+        coEvery { prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET, any()) } returns success(loadedData())
 
         val vm = viewModel()
         assertThat(vm.screenGate.value).isEqualTo(HomeScreenGate.Ready)
@@ -326,16 +326,16 @@ class HomeViewModelTest {
         coEvery { locationsCoordinator.resolveSelected() } returns location
         coEvery { getSettingsUseCase() } returns Settings(calculationMethod = "TURKEY_DIYANET")
         every { settingsRepository.observeSettings() } returns settingsFlow
-        coEvery { prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET) } returns success(loadedData())
+        coEvery { prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET, any()) } returns success(loadedData())
 
         val vm = viewModel()
-        coVerify(exactly = 1) { prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET) }
+        coVerify(exactly = 1) { prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET, any()) }
 
         coEvery { getSettingsUseCase() } returns Settings(calculationMethod = "MWL")
-        coEvery { prayerTimesLoader.load(location, CalculationMethod.MWL) } returns success(loadedData())
+        coEvery { prayerTimesLoader.load(location, CalculationMethod.MWL, any()) } returns success(loadedData())
         settingsFlow.value = Settings(calculationMethod = "MWL")
 
-        coVerify { prayerTimesLoader.load(location, CalculationMethod.MWL) }
+        coVerify { prayerTimesLoader.load(location, CalculationMethod.MWL, any()) }
     }
 
     @Test
@@ -348,14 +348,14 @@ class HomeViewModelTest {
         coEvery { locationsCoordinator.resolveSelected() } returns location
         coEvery { getSettingsUseCase() } returns Settings(calculationMethod = "TURKEY_DIYANET")
         every { settingsRepository.observeSettings() } returns settingsFlow
-        coEvery { prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET) } returns success(loadedData())
+        coEvery { prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET, any()) } returns success(loadedData())
 
         val vm = viewModel()
         assertThat(vm.screenGate.value).isEqualTo(HomeScreenGate.Ready)
 
         val gate = CompletableDeferred<LoadedPrayerData>()
         coEvery { getSettingsUseCase() } returns Settings(calculationMethod = "MWL")
-        coEvery { prayerTimesLoader.load(location, CalculationMethod.MWL) } coAnswers {
+        coEvery { prayerTimesLoader.load(location, CalculationMethod.MWL, any()) } coAnswers {
             Result.success(gate.await())
         }
         settingsFlow.value = Settings(calculationMethod = "MWL")

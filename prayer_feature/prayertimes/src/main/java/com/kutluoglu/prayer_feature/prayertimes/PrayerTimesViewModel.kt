@@ -87,7 +87,7 @@ class PrayerTimesViewModel(
         }
         settingsObserverJob = viewModelScope.launch {
             settingsRepository.observeSettings()
-                .map { it.calculationMethod }
+                .map { it.calculationMethod to it.hijriAdjustment }
                 .distinctUntilChanged()
                 .drop(1)
                 .collect {
@@ -160,12 +160,14 @@ class PrayerTimesViewModel(
                 isLoading = false
                 return@launch
             }
-            val calculationMethod = CalculationMethod.fromSettingsId(getSettingsUseCase().calculationMethod)
+            val settings = getSettingsUseCase()
+            val calculationMethod = CalculationMethod.fromSettingsId(settings.calculationMethod)
+            val hijriAdjustment = settings.hijriAdjustment
             try {
                 val locationCache = monthCache.getOrPut(locationId) { mutableMapOf() }
                 val cached = locationCache[month]
                 if (cached != null) {
-                    emitSuccess(month, cached, locationId, location, resolvedZoneId)
+                    emitSuccess(month, cached, locationId, location, resolvedZoneId, hijriAdjustment)
                     return@launch
                 }
                 val persistedMonth = getMonthlyPrayerTimesUseCase(
@@ -177,9 +179,17 @@ class PrayerTimesViewModel(
                 )
                 if (persistedMonth != null) {
                     val today = LocalDateTime.now(resolvedZoneId).date
-                    val refreshed = refreshCurrentPrayerFlags(persistedMonth, today, resolvedZoneId)
+                    val adjusted = persistedMonth.map { daily ->
+                        daily.copy(
+                            hijriDate = formatter.formatHijriDate(
+                                HijrahDate.from(month.onDay(daily.dayOfMonth).toJavaLocalDate()),
+                                hijriAdjustment
+                            )
+                        )
+                    }
+                    val refreshed = refreshCurrentPrayerFlags(adjusted, today, resolvedZoneId)
                     locationCache[month] = refreshed
-                    emitSuccess(month, refreshed, locationId, location, resolvedZoneId)
+                    emitSuccess(month, refreshed, locationId, location, resolvedZoneId, hijriAdjustment)
                     return@launch
                 }
                 val today = LocalDateTime.now(resolvedZoneId)
@@ -187,7 +197,7 @@ class PrayerTimesViewModel(
                     coroutineScope {
                         (1..month.numberOfDays).map { day ->
                             async(computationDispatcher) {
-                                computeDailyPrayer(day, month, location, resolvedZoneId, today, calculationMethod)
+                                computeDailyPrayer(day, month, location, resolvedZoneId, today, calculationMethod, hijriAdjustment)
                             }
                         }.awaitAll()
                     }
@@ -208,7 +218,7 @@ class PrayerTimesViewModel(
                     calculationMethod = calculationMethod,
                     prayers = monthlyPrayers
                 )
-                emitSuccess(month, monthlyPrayers, locationId, location, resolvedZoneId)
+                emitSuccess(month, monthlyPrayers, locationId, location, resolvedZoneId, hijriAdjustment)
             } finally {
                 isLoading = false
                 val next = pendingMonth
@@ -226,7 +236,8 @@ class PrayerTimesViewModel(
         location: LocationData,
         resolvedZoneId: ZoneId,
         today: LocalDateTime,
-        calculationMethod: CalculationMethod
+        calculationMethod: CalculationMethod,
+        hijriAdjustment: Int
     ): DailyPrayer {
         val date = month.onDay(day)
         val prayerTimes = getPrayerTimesUseCase(
@@ -249,7 +260,8 @@ class PrayerTimesViewModel(
         val timeState = formatter.getInitialTimeInfo(
             resolvedZoneId,
             date.toJavaLocalDate(),
-            HijrahDate.from(date.toJavaLocalDate())
+            HijrahDate.from(date.toJavaLocalDate()),
+            hijriAdjustment
         )
         return DailyPrayer(
             dayOfMonth = date.day,
@@ -264,7 +276,8 @@ class PrayerTimesViewModel(
         monthlyPrayers: List<DailyPrayer>,
         locationId: String,
         location: LocationData,
-        resolvedZoneId: ZoneId
+        resolvedZoneId: ZoneId,
+        hijriAdjustment: Int
     ) {
         if (month != selectedMonth() || locationId != activeLocationId) return
         val today = LocalDateTime.now(resolvedZoneId)
@@ -273,7 +286,7 @@ class PrayerTimesViewModel(
             currentDayOfMonth = today.day,
             selectedMonth = month,
             isCurrentMonth = month == today.date.yearMonth,
-            timeState = formatter.getInitialTimeInfo(resolvedZoneId),
+            timeState = formatter.getInitialTimeInfo(resolvedZoneId, hijriAdjustment = hijriAdjustment),
             locationState = LocationUiState(
                 locationData = location,
                 locationInfoText = formatter.locationInfo(location)

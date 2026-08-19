@@ -25,6 +25,7 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import io.mockk.verify
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -32,6 +33,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withTimeout
 import kotlinx.datetime.DateTimeUnit
@@ -103,11 +105,11 @@ class PrayerTimesViewModelTest {
         every { settingsRepository.observeSettings() } returns flowOf(Settings())
         every { calculator.findCurrentAndNextPrayer(any(), any()) } returns Pair(null, null)
         every { formatter.withLocalizedNames(any()) } answers { firstArg() }
-        every { formatter.getInitialTimeInfo(any(), any(), any()) } returns TimeUiState(
+        every { formatter.getInitialTimeInfo(any(), any(), any(), any()) } returns TimeUiState(
             gregorianDayAndName = "1 Monday",
             hijriDate = "1 Muharram 1448"
         )
-        every { formatter.getInitialTimeInfo(any()) } returns TimeUiState(gregorianShortDate = "August 2026")
+        every { formatter.getInitialTimeInfo(any(), any()) } returns TimeUiState(gregorianShortDate = "August 2026")
         every { formatter.locationInfo(any()) } returns "Istanbul, TR"
 
         viewModel = PrayerTimesViewModel(
@@ -146,6 +148,15 @@ class PrayerTimesViewModelTest {
             assertThat(success.currentDayOfMonth).isEqualTo(LocalDateTime.now(zoneId).day)
             cancelAndIgnoreRemainingEvents()
         }
+    }
+
+    @Test
+    fun `loads month with hijri adjustment from settings`() = runTest {
+        coEvery { getSettingsUseCase() } returns Settings(calculationMethod = "TURKEY_DIYANET", hijriAdjustment = 5)
+
+        viewModel.loadMonthlyPrayerTimes()
+
+        verify(atLeast = 1) { formatter.getInitialTimeInfo(any(), any(), any(), 5) }
     }
 
     @Test
@@ -251,6 +262,51 @@ class PrayerTimesViewModelTest {
             cancelAndIgnoreRemainingEvents()
         }
         assertThat(callCount).isEqualTo(0)
+    }
+
+    @Test
+    fun `persisted month hijri dates are recomputed with the adjustment`() = runTest {
+        val zoneId = getZoneIdFromLocation("TR")
+        val currentMonth = LocalDateTime.now(zoneId).date.yearMonth
+        val cachedMonth = (1..currentMonth.numberOfDays).map { day ->
+            DailyPrayer(
+                dayOfMonth = day,
+                gregorianDate = "$day Monday",
+                hijriDate = "01 Muharram 1448",
+                prayers = mockPrayerList
+            )
+        }
+        coEvery { getMonthlyPrayerTimesUseCase.invoke(any(), any(), any(), any(), any()) } returns cachedMonth
+        coEvery { getSettingsUseCase() } returns Settings(calculationMethod = "TURKEY_DIYANET", hijriAdjustment = 5)
+        every { formatter.formatHijriDate(any(), any()) } returns "06 Muharram 1448"
+
+        viewModel.loadMonthlyPrayerTimes()
+
+        viewModel.uiState.test {
+            val state = awaitItem()
+            assertThat(state).isInstanceOf(PrayerTimesUiState.Success::class.java)
+            val success = state as PrayerTimesUiState.Success
+            assertThat(success.monthlyPrayers.first().hijriDate).isEqualTo("06 Muharram 1448")
+            verify(atLeast = 1) { formatter.formatHijriDate(any(), 5) }
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `changing hijri adjustment reloads the month`() = runTest {
+        val settingsFlow = MutableStateFlow(Settings(calculationMethod = "TURKEY_DIYANET", hijriAdjustment = 0))
+        every { settingsRepository.observeSettings() } returns settingsFlow
+        var loadCount = 0
+        coEvery { getMonthlyPrayerTimesUseCase.invoke(any(), any(), any(), any(), any()) } answers {
+            loadCount++
+            null
+        }
+
+        viewModel.loadMonthlyPrayerTimes()
+        settingsFlow.value = Settings(calculationMethod = "TURKEY_DIYANET", hijriAdjustment = 3)
+        runCurrent()
+
+        assertThat(loadCount).isGreaterThan(1)
     }
 
     @Test

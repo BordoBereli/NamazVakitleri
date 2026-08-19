@@ -44,6 +44,8 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kutluoglu.core.common.extractWeekdayName
@@ -227,12 +229,13 @@ private fun PrayersHeader(prayers: List<Prayer>) {
             .fillMaxWidth()
             .clip(RoundedCornerShape(CARD_CORNER_SIZE))
             .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = HEADER_SURFACE_ALPHA)),
-        horizontalArrangement = Arrangement.SpaceAround, // Distributes space evenly
         verticalAlignment = Alignment.CenterVertically
     ) {
         prayers.forEach { prayer ->
             Column(
-                modifier = Modifier.padding(8.dp),
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 2.dp, vertical = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -244,8 +247,11 @@ private fun PrayersHeader(prayers: List<Prayer>) {
                 )
                 Text(
                     text = prayer.name,
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.primary
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                    maxLines = 1,
+                    softWrap = false,
+                    overflow = TextOverflow.Clip
                 )
             }
         }
@@ -319,15 +325,19 @@ private fun PrayersRow(prayers: List<Prayer>, isToday: Boolean) {
 
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceAround, // Distributes space evenly
         verticalAlignment = Alignment.CenterVertically
     ) {
         prayers.forEach { prayer ->
             val timeText = remember(prayer) { prayer.time.toString() }
             Text(
                 text = timeText,
+                modifier = Modifier.weight(1f),
                 style = MaterialTheme.typography.titleMedium,
-                color = textColor
+                color = textColor,
+                textAlign = TextAlign.Center,
+                maxLines = 1,
+                softWrap = false,
+                overflow = TextOverflow.Clip
             )
         }
     }
@@ -348,11 +358,11 @@ private fun PrayerDateInfo(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
+            .padding(horizontal = 4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Row(
+            modifier = Modifier.weight(1f),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
@@ -376,14 +386,22 @@ private fun PrayerDateInfo(
                 text = weekdayName,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
-                color = dateColor
+                color = dateColor,
+                textAlign = TextAlign.Start,
+                maxLines = 1,
+                softWrap = false,
+                overflow = TextOverflow.Clip
             )
         }
         Text(
             text = hijriDate,
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Medium,
-            color = hijriDateColor
+            color = hijriDateColor,
+            textAlign = TextAlign.End,
+            maxLines = 1,
+            softWrap = false,
+            overflow = TextOverflow.Clip
         )
     }
 }

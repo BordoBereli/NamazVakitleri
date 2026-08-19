@@ -127,7 +127,8 @@ class HomeViewModel(
                 _locationsState.value = state
                 val activeId = state.selectedId ?: state.entries.firstOrNull()?.id
                 if (activeId != null) {
-                    val result = prayerTimesLoader.load(location, currentCalculationMethod())
+                    val (method, adjustment) = currentSettings()
+                    val result = prayerTimesLoader.load(location, method, adjustment)
                     if (result.isSuccess) {
                         val loaded = result.getOrThrow()
                         stateMutex.withLock {
@@ -188,7 +189,8 @@ class HomeViewModel(
         val cached = _prayerDataByLocation.value[activeId]
         val locationChanged = cached?.locationState?.locationData != entry.location
         if (cached != null && !locationChanged) return cached
-        return prayerTimesLoader.load(entry.location, currentCalculationMethod())
+        val (method, adjustment) = currentSettings()
+        return prayerTimesLoader.load(entry.location, method, adjustment)
             .onSuccess { loaded ->
                 _prayerDataByLocation.value = _prayerDataByLocation.value + (activeId to loaded)
             }
@@ -208,7 +210,8 @@ class HomeViewModel(
                         val cached = _prayerDataByLocation.value[entry.id]
                         val locationChanged = cached?.locationState?.locationData != entry.location
                         if (cached == null || locationChanged) {
-                            prayerTimesLoader.load(entry.location, currentCalculationMethod())
+                            val (method, adjustment) = currentSettings()
+                            prayerTimesLoader.load(entry.location, method, adjustment)
                                 .onSuccess { loaded ->
                                     stateMutex.withLock {
                                         _prayerDataByLocation.value = _prayerDataByLocation.value + (entry.id to loaded)
@@ -253,8 +256,10 @@ class HomeViewModel(
         quranVerseLoader.setSheetVisible(isVisible)
     }
 
-    private suspend fun currentCalculationMethod(): CalculationMethod =
-        CalculationMethod.fromSettingsId(getSettingsUseCase().calculationMethod)
+    private suspend fun currentSettings(): Pair<CalculationMethod, Int> {
+        val settings = getSettingsUseCase()
+        return CalculationMethod.fromSettingsId(settings.calculationMethod) to settings.hijriAdjustment
+    }
 
     private fun fail(message: String) {
         _screenGate.value = HomeScreenGate.Error(message)
