@@ -92,17 +92,28 @@ class HomeUiStateMergerTest {
     }
 
     @Test
-    fun `Ready gate with null location throws`() {
-        val result = runCatching {
-            mergeToHomeUiState(
-                gate = HomeScreenGate.Ready,
-                location = null,
-                time = time,
-                prayer = prayer,
-                countdown = countdown,
-                quran = quran
-            )
-        }
-        assertThat(result.isFailure).isTrue()
+    fun `Ready gate with null location returns Loading instead of crashing`() {
+        val result = mergeToHomeUiState(
+            gate = HomeScreenGate.Ready,
+            location = null,
+            time = time,
+            prayer = prayer,
+            countdown = countdown,
+            quran = quran
+        )
+        assertThat(result).isEqualTo(HomeUiState.Loading)
+    }
+
+    @Test
+    fun `Ready gate with null time and prayer returns Loading instead of crashing`() {
+        val result = mergeToHomeUiState(
+            gate = HomeScreenGate.Ready,
+            location = location,
+            time = null,
+            prayer = null,
+            countdown = countdown,
+            quran = quran
+        )
+        assertThat(result).isEqualTo(HomeUiState.Loading)
     }
 }

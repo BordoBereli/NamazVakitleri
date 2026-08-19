@@ -337,4 +337,33 @@ class HomeViewModelTest {
 
         coVerify { prayerTimesLoader.load(location, CalculationMethod.MWL) }
     }
+
+    @Test
+    fun `calculation method change keeps gate Loading while data is cleared and reloading`() = runTest {
+        val settingsFlow = MutableStateFlow(Settings(calculationMethod = "TURKEY_DIYANET"))
+        coEvery { locationsCoordinator.observeState() } returns flowOf(
+            LocationsState(entries = listOf(entry), selectedId = "loc-1")
+        )
+        coEvery { locationsCoordinator.resolveInitial() } returns location
+        coEvery { locationsCoordinator.resolveSelected() } returns location
+        coEvery { getSettingsUseCase() } returns Settings(calculationMethod = "TURKEY_DIYANET")
+        every { settingsRepository.observeSettings() } returns settingsFlow
+        coEvery { prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET) } returns success(loadedData())
+
+        val vm = viewModel()
+        assertThat(vm.screenGate.value).isEqualTo(HomeScreenGate.Ready)
+
+        val gate = CompletableDeferred<LoadedPrayerData>()
+        coEvery { getSettingsUseCase() } returns Settings(calculationMethod = "MWL")
+        coEvery { prayerTimesLoader.load(location, CalculationMethod.MWL) } coAnswers {
+            Result.success(gate.await())
+        }
+        settingsFlow.value = Settings(calculationMethod = "MWL")
+
+        assertThat(vm.screenGate.value).isEqualTo(HomeScreenGate.Loading)
+        assertThat(vm.prayerDataByLocation.value).isEmpty()
+
+        gate.complete(loadedData())
+        runCurrent()
+    }
 }

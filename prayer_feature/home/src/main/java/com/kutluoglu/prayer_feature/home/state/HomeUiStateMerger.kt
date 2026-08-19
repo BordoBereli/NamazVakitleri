@@ -38,13 +38,19 @@ fun mergeToHomeUiState(
     return when (gate) {
         HomeScreenGate.Loading -> HomeUiState.Loading
         is HomeScreenGate.Error -> HomeUiState.Error(gate.message)
-        HomeScreenGate.Ready -> HomeUiState.Success(
-            timeState = requireNotNull(time),
-            prayerState = requireNotNull(prayer),
-            locationState = requireNotNull(location),
-            countdownState = countdown,
-            quranVerse = quran.verse,
-            isVerseDetailSheetVisible = quran.isSheetVisible
-        )
+        HomeScreenGate.Ready -> {
+            if (time == null || prayer == null || location == null) {
+                HomeUiState.Loading
+            } else {
+                HomeUiState.Success(
+                    timeState = time,
+                    prayerState = prayer,
+                    locationState = location,
+                    countdownState = countdown,
+                    quranVerse = quran.verse,
+                    isVerseDetailSheetVisible = quran.isSheetVisible
+                )
+            }
+        }
     }
 }

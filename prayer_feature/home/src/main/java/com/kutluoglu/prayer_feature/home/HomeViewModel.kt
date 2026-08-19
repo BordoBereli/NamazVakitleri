@@ -86,6 +86,7 @@ class HomeViewModel(
                 .distinctUntilChanged()
                 .drop(1)
                 .collect {
+                    _screenGate.value = HomeScreenGate.Loading
                     _prayerDataByLocation.value = emptyMap()
                     loadPrayerTimesForCurrentLocation()
                 }
@@ -163,6 +164,9 @@ class HomeViewModel(
             return
         }
         val loaded = stateMutex.withLock {
+            if (_activeLocationId.value != activeId) {
+                _screenGate.value = HomeScreenGate.Loading
+            }
             _activeLocationId.value = activeId
             val activeData = loadActiveLocation(state, activeId)
             if (activeData != null) {
