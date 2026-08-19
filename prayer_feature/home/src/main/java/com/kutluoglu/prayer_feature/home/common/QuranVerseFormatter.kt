@@ -13,29 +13,30 @@ import org.koin.core.annotation.Factory
 @Factory
 class QuranVerseFormatter {
     fun getLocalizedNameOf(quranVerse: AyahData, context: Context, ): String {
-        val englishName = quranVerse.surah.englishName
+        val surahNumber = quranVerse.surah.number
         return try {
-            getLocalizedSurahName(context, englishName)
+            getLocalizedSurahName(context, surahNumber, quranVerse.surah.englishName)
         } catch(e: Exception) {
-            Log.e("QuranVerseFormatter", "$englishName is got error with ${e.message}")
-            englishName
+            Log.e("QuranVerseFormatter", "Surah $surahNumber is got error with ${e.message}")
+            quranVerse.surah.englishName
         }
     }
 
     /**
      * A function that provides a localized name for a given Surah.
-     * It converts the English name (e.g., "Al-Fatihah") into a resource identifier
-     * (e.g., "surah_al_fatihah") and fetches the corresponding string for the current locale.
+     * It looks up the string resource keyed by the language-agnostic Surah number
+     * (e.g., "surah_name_1") and fetches the corresponding string for the current locale.
      *
-     * @param englishName The English name of the Surah from the data model.
-     * @return The localized Surah name if a resource is found, otherwise falls back to the original English name.
+     * @param surahNumber The Surah number (1-114) from the data model. Stable and independent
+     *                    of any translation or transliteration, so it is language agnostic.
+     * @param fallback The English name of the Surah, used when no resource is found.
+     * @return The localized Surah name if a resource is found, otherwise falls back to the English name.
      */
 
-    private fun getLocalizedSurahName(context: Context, englishName: String): String {
-        // 1. Convert the English name to a valid resource key format.
-        // "Al-Fatihah" -> "surah_al_fatihah"
-        // "An-Nas" -> "surah_an_nas"
-        val resourceKey = "surah_${englishName.replace('-', '_').lowercase()}"
+    private fun getLocalizedSurahName(context: Context, surahNumber: Int, fallback: String): String {
+        // 1. Build the resource key from the stable Surah number.
+        // "1" -> "surah_name_1"
+        val resourceKey = "surah_name_$surahNumber"
 
         // 2. Get the resource ID from the generated key.
         val resourceId = context.resources.getIdentifier(
@@ -45,11 +46,11 @@ class QuranVerseFormatter {
         )
 
         // 3. If the resource ID is valid (not 0), return the localized string.
-        //    Otherwise, fallback gracefully to the original English name.
+        //    Otherwise, fallback gracefully to the English name.
         return if (resourceId != 0) {
             context.getString(resourceId)
         } else {
-            englishName // Fallback
+            fallback
         }
     }
 }
