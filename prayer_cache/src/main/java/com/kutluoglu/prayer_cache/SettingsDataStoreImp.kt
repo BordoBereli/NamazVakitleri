@@ -31,7 +31,7 @@ class SettingsDataStoreImp(
         private val KEY_TIMEZONE = stringPreferencesKey("location_timezone")
 
         private const val DEFAULT_CALCULATION_METHOD = "TURKEY_DIYANET"
-        private const val DEFAULT_LANGUAGE = "tr"
+        private const val DEFAULT_LANGUAGE = "system"
         private const val DEFAULT_HIJRI_ADJUSTMENT = "0"
         private const val DEFAULT_LATITUDE = 41.0082
         private const val DEFAULT_LONGITUDE = 28.9784
