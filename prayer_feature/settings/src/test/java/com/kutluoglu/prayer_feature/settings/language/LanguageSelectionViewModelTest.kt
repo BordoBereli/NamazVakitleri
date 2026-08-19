@@ -66,8 +66,22 @@ class LanguageSelectionViewModelTest {
         val state = viewModel.uiState.value
         assertThat(state).isInstanceOf(LanguageUiState.LanguagesLoaded::class.java)
         val loadedState = state as LanguageUiState.LanguagesLoaded
-        assertThat(loadedState.languages).hasSize(15)
+        assertThat(loadedState.languages).hasSize(16)
         assertThat(loadedState.selectedLanguage).isEqualTo("system")
+    }
+
+    @Test
+    fun `languages should contain system entry first`() {
+        val state = viewModel.uiState.value
+        val loadedState = state as LanguageUiState.LanguagesLoaded
+        assertThat(loadedState.languages.first().code).isEqualTo("system")
+    }
+
+    @Test
+    fun `selecting system entry persists system`() = runTest {
+        val system = languages.first { it.code == "system" }
+        viewModel.onEvent(LanguageEvent.SelectLanguage(system))
+        coVerify { updateLanguageUseCase("system") }
     }
 
     @Test

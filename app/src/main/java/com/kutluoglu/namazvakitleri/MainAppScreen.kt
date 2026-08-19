@@ -1,5 +1,8 @@
 package com.kutluoglu.namazvakitleri
 
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,6 +14,7 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -26,6 +30,8 @@ import androidx.navigation.compose.navigation
 import com.kutluoglu.prayer_feature.prayertimes.navigation.prayerTimesGraph
 import com.kutluoglu.prayer_feature.qibla.navigation.qiblaGraph
 import com.kutluoglu.prayer_feature.settings.settingsGraph
+import com.kutluoglu.namazvakitleri.locale.LocaleManager
+import org.koin.android.ext.android.get
 
 
 @Composable
@@ -35,6 +41,14 @@ fun MainAppScreen() {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     // Get the current route from the back stack entry
     val currentGraph = navBackStackEntry?.destination?.parent?.route
+
+    val context = LocalContext.current
+    val activity = context.findActivity()
+
+    fun applyLanguage(language: String) {
+        activity?.get<LocaleManager>()?.setLanguage(language)
+        activity?.recreate()
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -99,8 +113,14 @@ fun MainAppScreen() {
                 route = PrayerNestedGraph.SETTINGS,
                 startDestination = Screen.SettingsScreen.route
             ) {
-                settingsGraph(navController)
+                settingsGraph(navController, onLanguageSelected = ::applyLanguage)
             }
         }
     }
+}
+
+private tailrec fun Context.findActivity(): Activity? = when (this) {
+    is Activity -> this
+    is ContextWrapper -> baseContext.findActivity()
+    else -> null
 }

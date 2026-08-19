@@ -26,7 +26,7 @@ class LanguageSelectionViewModel(
     private val _selectedLanguage = MutableSharedFlow<String>()
     val selectedLanguage: SharedFlow<String> = _selectedLanguage.asSharedFlow()
 
-    private var currentLanguageCode: String = "tr"
+    private var currentLanguageCode: String = "system"
 
     init {
         loadCurrentLanguage()

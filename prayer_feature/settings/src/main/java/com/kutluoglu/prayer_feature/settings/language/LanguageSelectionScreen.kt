@@ -47,6 +47,7 @@ data class Language(
 )
 
 val languages = listOf(
+    Language("system", "System default", "System default"),
     Language("tr", "Turkish", "Türkçe"),
     Language("en", "English", "English"),
     Language("ar", "Arabic", "العربية"),

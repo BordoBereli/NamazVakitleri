@@ -11,7 +11,10 @@ import com.kutluoglu.prayer_feature.settings.location.MyLocationsRoute
 import com.kutluoglu.prayer_navigation.core.Screen
 import com.kutluoglu.prayer.model.location.City
 
-fun NavGraphBuilder.settingsGraph(navController: NavController) {
+fun NavGraphBuilder.settingsGraph(
+    navController: NavController,
+    onLanguageSelected: (String) -> Unit
+) {
     composable(Screen.SettingsScreen.route) {
         SettingsRoute(
             onNavigateToMyLocations = {
@@ -68,6 +71,7 @@ fun NavGraphBuilder.settingsGraph(navController: NavController) {
             onNavigateBack = { navController.popBackStack() },
             onLanguageSelected = { language ->
                 navController.popBackStack()
+                onLanguageSelected(language)
             }
         )
     }
