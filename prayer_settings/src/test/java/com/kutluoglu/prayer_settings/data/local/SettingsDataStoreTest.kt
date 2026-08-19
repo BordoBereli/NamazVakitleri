@@ -84,4 +84,10 @@ class SettingsDataStoreTest {
         val settings = dataStore.getSettings()
         assertThat(settings.location.district).isEqualTo("Ortahisar")
     }
+
+    @Test
+    fun `default language is system`() = runBlocking {
+        val settings = dataStore.getSettings()
+        assertThat(settings.language).isEqualTo("system")
+    }
 }

@@ -55,7 +55,7 @@ class SettingsDataStore(
                 timeZone = preferences[PreferencesKeys.TIME_ZONE] ?: "Europe/Istanbul"
             ),
             calculationMethod = preferences[PreferencesKeys.CALCULATION_METHOD] ?: "TURKEY_DIYANET",
-            language = preferences[PreferencesKeys.LANGUAGE] ?: "tr",
+            language = preferences[PreferencesKeys.LANGUAGE] ?: "system",
             hijriAdjustment = preferences[PreferencesKeys.HIJRI_ADJUSTMENT] ?: 0
         )
     }
@@ -72,7 +72,7 @@ class SettingsDataStore(
                     timeZone = preferences[PreferencesKeys.TIME_ZONE] ?: "Europe/Istanbul"
                 ),
                 calculationMethod = preferences[PreferencesKeys.CALCULATION_METHOD] ?: "TURKEY_DIYANET",
-                language = preferences[PreferencesKeys.LANGUAGE] ?: "tr",
+                language = preferences[PreferencesKeys.LANGUAGE] ?: "system",
                 hijriAdjustment = preferences[PreferencesKeys.HIJRI_ADJUSTMENT] ?: 0
             )
         }
