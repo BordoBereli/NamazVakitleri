@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="navigation_home">হোম</string>
+    <string name="navigation_prayer_times">নামাজ</string>
+    <string name="navigation_qibla">কিবলা</string>
+    <string name="navigation_settings">সেটিংস</string>
+</resources>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="navigation_home">หน้าหลัก</string>
+    <string name="navigation_prayer_times">ละหมาด</string>
+    <string name="navigation_qibla">กิบลัต</string>
+    <string name="navigation_settings">การตั้งค่า</string>
+</resources>

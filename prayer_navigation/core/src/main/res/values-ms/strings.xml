@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="navigation_home">Utama</string>
+    <string name="navigation_prayer_times">Solat</string>
+    <string name="navigation_qibla">Kiblat</string>
+    <string name="navigation_settings">Tetapan</string>
+</resources>

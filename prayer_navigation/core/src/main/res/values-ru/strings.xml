@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="navigation_home">Главная</string>
+    <string name="navigation_prayer_times">Намазы</string>
+    <string name="navigation_qibla">Кибла</string>
+    <string name="navigation_settings">Настройки</string>
+</resources>

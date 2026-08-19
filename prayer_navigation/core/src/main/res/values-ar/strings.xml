@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="navigation_home">الرئيسية</string>
+    <string name="navigation_prayer_times">الصلوات</string>
+    <string name="navigation_qibla">القبلة</string>
+    <string name="navigation_settings">الإعدادات</string>
+</resources>

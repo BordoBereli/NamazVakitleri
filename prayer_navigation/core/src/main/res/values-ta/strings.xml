@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="navigation_home">முகப்பு</string>
+    <string name="navigation_prayer_times">தொழுகைகள்</string>
+    <string name="navigation_qibla">கிப்லா</string>
+    <string name="navigation_settings">அமைப்புகள்</string>
+</resources>

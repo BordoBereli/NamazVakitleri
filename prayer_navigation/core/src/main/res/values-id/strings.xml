@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="navigation_home">Beranda</string>
+    <string name="navigation_prayer_times">Salat</string>
+    <string name="navigation_qibla">Kiblat</string>
+    <string name="navigation_settings">Pengaturan</string>
+</resources>
