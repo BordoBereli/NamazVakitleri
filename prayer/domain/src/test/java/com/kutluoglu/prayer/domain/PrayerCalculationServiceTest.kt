@@ -49,5 +49,27 @@ class PrayerCalculationServiceTest {
         assertThat(maghribPrayer.time).isEqualTo(LocalTime.parse("19:21"))
         assertThat(ishaPrayer.time).isEqualTo(LocalTime.parse("20:42"))
     }
+
+    @Test
+    fun `different calculation methods produce different maghrib times`() {
+        val service = PrayerTimeEngine()
+        val date = LocalDateTime.createBy(2025, 9, 15)
+        val latitude = 41.03648429460445
+        val longitude = 28.79004556525033
+        val zoneId = ZoneId.systemDefault()
+
+        val turkey = service.calculateDailyPrayerTimes(
+            latitude, longitude, zoneId, date,
+            CalculationMethod.TURKEY_DIYANET, JuristicMethod.STANDARD
+        )
+        val mwl = service.calculateDailyPrayerTimes(
+            latitude, longitude, zoneId, date,
+            CalculationMethod.MWL, JuristicMethod.STANDARD
+        )
+
+        val turkeyMaghrib = turkey.first { it.name == "Maghrib" }.time
+        val mwlMaghrib = mwl.first { it.name == "Maghrib" }.time
+        assertThat(turkeyMaghrib).isNotEqualTo(mwlMaghrib)
+    }
 }
 

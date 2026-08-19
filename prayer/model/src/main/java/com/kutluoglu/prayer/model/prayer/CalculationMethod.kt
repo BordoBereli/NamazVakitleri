@@ -2,6 +2,14 @@ package com.kutluoglu.prayer.model.prayer
 
 enum class CalculationMethod {
     TURKEY_DIYANET,
+    MWL,
     ISNA,
-    MUSLIM_WORLD_LEAGUE
+    EGYPT,
+    MAKKAH,
+    KARACHI;
+
+    companion object {
+        fun fromSettingsId(id: String): CalculationMethod =
+            entries.firstOrNull { it.name == id } ?: TURKEY_DIYANET
+    }
 }

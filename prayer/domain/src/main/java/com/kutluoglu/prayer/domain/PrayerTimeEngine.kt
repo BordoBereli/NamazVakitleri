@@ -78,16 +78,17 @@ class PrayerTimeEngine : PrayerCalculationService {
         calculationMethod: CalculationMethod,
         juristicMethod: JuristicMethod
     ): CalculationParameters {
-        val method = when (calculationMethod) {
-            CalculationMethod.TURKEY_DIYANET -> com.batoulapps.adhan2.CalculationMethod.TURKEY
-            CalculationMethod.ISNA -> com.batoulapps.adhan2.CalculationMethod.NORTH_AMERICA
-            CalculationMethod.MUSLIM_WORLD_LEAGUE -> com.batoulapps.adhan2.CalculationMethod.MUSLIM_WORLD_LEAGUE
+        val params = when (calculationMethod) {
+            CalculationMethod.TURKEY_DIYANET -> com.batoulapps.adhan2.CalculationMethod.TURKEY.parameters
+            CalculationMethod.MWL -> com.batoulapps.adhan2.CalculationMethod.MUSLIM_WORLD_LEAGUE.parameters
+            CalculationMethod.ISNA -> com.batoulapps.adhan2.CalculationMethod.NORTH_AMERICA.parameters
+            CalculationMethod.EGYPT -> com.batoulapps.adhan2.CalculationMethod.EGYPTIAN.parameters
+            CalculationMethod.MAKKAH -> com.batoulapps.adhan2.CalculationMethod.UMM_AL_QURA.parameters
+            CalculationMethod.KARACHI -> com.batoulapps.adhan2.CalculationMethod.KARACHI.parameters
         }
-        var params = method.parameters
-        params = when(juristicMethod) {
-            JuristicMethod.STANDARD -> params.copy(madhab =  com.batoulapps.adhan2.Madhab.SHAFI)
+        return when (juristicMethod) {
+            JuristicMethod.STANDARD -> params.copy(madhab = com.batoulapps.adhan2.Madhab.SHAFI)
             JuristicMethod.HANAFI -> params.copy(madhab = com.batoulapps.adhan2.Madhab.HANAFI)
         }
-        return params
     }
 }
