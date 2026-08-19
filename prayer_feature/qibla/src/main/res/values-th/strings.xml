@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="qibla_calibrate">ขยับโทรศัพท์เป็นรูปเลข 8 เพื่อปรับเทียบ</string>
+    <string name="qibla_calibration_required">ต้องปรับเทียบ</string>
+    <string name="qibla_accuracy_medium_badge">ความแม่นยำปานกลาง</string>
+    <string name="qibla_accuracy_high_badge">ความแม่นยำสูง</string>
+    <string name="qibla_waiting_location">กำลังรอตำแหน่งที่ตั้ง...</string>
+    <string name="qibla_location_error">ข้อผิดพลาด: ไม่มีตำแหน่งที่ตั้ง กรุณาตรวจสอบบริการตำแหน่งของคุณ</string>
+    <string name="qibla_degrees_north">%1$d° เหนือ</string>
+    <string name="qibla_turn_right_pill">เลี้ยวขวา</string>
+    <string name="qibla_turn_left_pill">เลี้ยวซ้าย</string>
+    <string name="qibla_aligned_pill">หันหน้าเข้าสู่กิบลัต</string>
+    <string name="qibla_compass_arrow">ทิศกิบลัต</string>
+    <string name="qibla_kaaba">กะอ์บะฮ์</string>
+</resources>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="qibla_calibrate">Gerakkan ponsel membentuk angka 8 untuk kalibrasi</string>
+    <string name="qibla_calibration_required">Kalibrasi Diperlukan</string>
+    <string name="qibla_accuracy_medium_badge">Akurasi Sedang</string>
+    <string name="qibla_accuracy_high_badge">Akurasi Tinggi</string>
+    <string name="qibla_waiting_location">Menunggu lokasi...</string>
+    <string name="qibla_location_error">Kesalahan: Lokasi tidak tersedia. Periksa layanan lokasi Anda.</string>
+    <string name="qibla_degrees_north">%1$d° Utara</string>
+    <string name="qibla_turn_right_pill">Belok kanan</string>
+    <string name="qibla_turn_left_pill">Belok kiri</string>
+    <string name="qibla_aligned_pill">Menghadap Kiblat</string>
+    <string name="qibla_compass_arrow">Arah Kiblat</string>
+    <string name="qibla_kaaba">Ka\'bah</string>
+</resources>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="qibla_calibrate">حرّك هاتفك على شكل رقم 8 للمعايرة</string>
+    <string name="qibla_calibration_required">المعايرة مطلوبة</string>
+    <string name="qibla_accuracy_medium_badge">دقة متوسطة</string>
+    <string name="qibla_accuracy_high_badge">دقة عالية</string>
+    <string name="qibla_waiting_location">بانتظار الموقع...</string>
+    <string name="qibla_location_error">خطأ: الموقع غير متاح. يرجى التحقق من خدمات الموقع.</string>
+    <string name="qibla_degrees_north">%1$d° شمالاً</string>
+    <string name="qibla_turn_right_pill">انعطف يميناً</string>
+    <string name="qibla_turn_left_pill">انعطف يساراً</string>
+    <string name="qibla_aligned_pill">مواجه للقبلة</string>
+    <string name="qibla_compass_arrow">اتجاه القبلة</string>
+    <string name="qibla_kaaba">الكعبة</string>
+</resources>

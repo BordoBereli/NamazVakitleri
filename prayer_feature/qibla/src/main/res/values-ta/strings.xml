@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="qibla_calibrate">அளவீட்டிற்காக போனை 8 வடிவில் நகர்த்தவும்</string>
+    <string name="qibla_calibration_required">அளவீடு தேவை</string>
+    <string name="qibla_accuracy_medium_badge">நடுத்தர துல்லியம்</string>
+    <string name="qibla_accuracy_high_badge">உயர் துல்லியம்</string>
+    <string name="qibla_waiting_location">இருப்பிடத்திற்காக காத்திருக்கிறது...</string>
+    <string name="qibla_location_error">பிழை: இருப்பிடம் கிடைக்கவில்லை. உங்கள் இருப்பிட சேவைகளைச் சரிபார்க்கவும்.</string>
+    <string name="qibla_degrees_north">%1$d° வடக்கு</string>
+    <string name="qibla_turn_right_pill">வலது திரும்பு</string>
+    <string name="qibla_turn_left_pill">இடது திரும்பு</string>
+    <string name="qibla_aligned_pill">கிப்லாவை நோக்கி</string>
+    <string name="qibla_compass_arrow">கிப்லா திசை</string>
+    <string name="qibla_kaaba">காபா</string>
+</resources>

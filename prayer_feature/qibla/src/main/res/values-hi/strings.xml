@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="qibla_calibrate">कैलिब्रेट करने के लिए फ़ोन को 8 की आकृति में घुमाएँ</string>
+    <string name="qibla_calibration_required">कैलिब्रेशन आवश्यक है</string>
+    <string name="qibla_accuracy_medium_badge">मध्यम सटीकता</string>
+    <string name="qibla_accuracy_high_badge">उच्च सटीकता</string>
+    <string name="qibla_waiting_location">स्थान की प्रतीक्षा...</string>
+    <string name="qibla_location_error">त्रुटि: स्थान उपलब्ध नहीं। कृपया अपनी स्थान सेवाएँ जाँचें।</string>
+    <string name="qibla_degrees_north">%1$d° उत्तर</string>
+    <string name="qibla_turn_right_pill">दाएँ मुड़ें</string>
+    <string name="qibla_turn_left_pill">बाएँ मुड़ें</string>
+    <string name="qibla_aligned_pill">क़िबला की ओर</string>
+    <string name="qibla_compass_arrow">क़िबला दिशा</string>
+    <string name="qibla_kaaba">काबा</string>
+</resources>

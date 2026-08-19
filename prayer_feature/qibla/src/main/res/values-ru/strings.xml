@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="qibla_calibrate">Поверните телефон восьмёркой для калибровки</string>
+    <string name="qibla_calibration_required">Требуется калибровка</string>
+    <string name="qibla_accuracy_medium_badge">Средняя точность</string>
+    <string name="qibla_accuracy_high_badge">Высокая точность</string>
+    <string name="qibla_waiting_location">Ожидание местоположения...</string>
+    <string name="qibla_location_error">Ошибка: местоположение недоступно. Проверьте службы геолокации.</string>
+    <string name="qibla_degrees_north">%1$d° север</string>
+    <string name="qibla_turn_right_pill">Поверните направо</string>
+    <string name="qibla_turn_left_pill">Поверните налево</string>
+    <string name="qibla_aligned_pill">Вы направлены к Кибле</string>
+    <string name="qibla_compass_arrow">Направление Киблы</string>
+    <string name="qibla_kaaba">Кааба</string>
+</resources>

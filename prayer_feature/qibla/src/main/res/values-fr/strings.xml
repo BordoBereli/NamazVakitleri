@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="qibla_calibrate">Déplacez votre téléphone en forme de 8 pour calibrer</string>
+    <string name="qibla_calibration_required">Calibrage requis</string>
+    <string name="qibla_accuracy_medium_badge">Précision moyenne</string>
+    <string name="qibla_accuracy_high_badge">Haute précision</string>
+    <string name="qibla_waiting_location">En attente de la localisation...</string>
+    <string name="qibla_location_error">Erreur : localisation indisponible. Vérifiez vos services de localisation.</string>
+    <string name="qibla_degrees_north">%1$d° Nord</string>
+    <string name="qibla_turn_right_pill">Tournez à droite</string>
+    <string name="qibla_turn_left_pill">Tournez à gauche</string>
+    <string name="qibla_aligned_pill">Face à la Qibla</string>
+    <string name="qibla_compass_arrow">Direction de la Qibla</string>
+    <string name="qibla_kaaba">Kaaba</string>
+</resources>

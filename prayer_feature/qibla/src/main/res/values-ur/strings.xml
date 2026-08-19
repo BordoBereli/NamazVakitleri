@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="qibla_calibrate">انشانکاری کے لیے فون کو 8 کی شکل میں حرکت دیں</string>
+    <string name="qibla_calibration_required">انشانکاری درکار ہے</string>
+    <string name="qibla_accuracy_medium_badge">درمیانی درستگی</string>
+    <string name="qibla_accuracy_high_badge">اعلی درستگی</string>
+    <string name="qibla_waiting_location">مقام کا انتظار...</string>
+    <string name="qibla_location_error">خرابی: مقام دستیاب نہیں۔ براہ کرم اپنی مقام خدمات چیک کریں۔</string>
+    <string name="qibla_degrees_north">%1$d° شمال</string>
+    <string name="qibla_turn_right_pill">دائیں مڑیں</string>
+    <string name="qibla_turn_left_pill">بائیں مڑیں</string>
+    <string name="qibla_aligned_pill">قبلہ کی سمت میں</string>
+    <string name="qibla_compass_arrow">قبلہ کی سمت</string>
+    <string name="qibla_kaaba">کعبہ</string>
+</resources>
