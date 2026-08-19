@@ -67,7 +67,7 @@ class CalculationMethodViewModelTest {
         val state = viewModel.uiState.value
         assertThat(state).isInstanceOf(CalculationMethodUiState.MethodsLoaded::class.java)
         val loadedState = state as CalculationMethodUiState.MethodsLoaded
-        assertThat(loadedState.methods).hasSize(8)
+        assertThat(loadedState.methods).hasSize(6)
         assertThat(loadedState.selectedMethod).isEqualTo("TURKEY_DIYANET")
     }
 
@@ -83,8 +83,6 @@ class CalculationMethodViewModelTest {
         assertThat(methodIds).contains("EGYPT")
         assertThat(methodIds).contains("MAKKAH")
         assertThat(methodIds).contains("KARACHI")
-        assertThat(methodIds).contains("TEHRAN")
-        assertThat(methodIds).contains("JAFARI")
     }
 
     @Test
@@ -123,7 +121,7 @@ class CalculationMethodViewModelTest {
         val state = viewModel.uiState.value
         assertThat(state).isInstanceOf(CalculationMethodUiState.MethodsLoaded::class.java)
         val loadedState = state as CalculationMethodUiState.MethodsLoaded
-        assertThat(loadedState.methods).hasSize(8)
+        assertThat(loadedState.methods).hasSize(6)
     }
 
     @Test
@@ -131,7 +129,7 @@ class CalculationMethodViewModelTest {
         val state = viewModel.uiState.value
         val loadedState = state as CalculationMethodUiState.MethodsLoaded
 
-        assertThat(loadedState.methods).hasSize(8)
+        assertThat(loadedState.methods).hasSize(6)
     }
 
     @Test

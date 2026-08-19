@@ -12,9 +12,7 @@ data class CalculationMethod(
             CalculationMethod("ISNA", "Islamic Society of North America", "ISNA"),
             CalculationMethod("EGYPT", "Egyptian General Authority", "Egyptian method"),
             CalculationMethod("MAKKAH", "Umm Al-Qura University", "Makkah method"),
-            CalculationMethod("KARACHI", "University of Islamic Sciences, Karachi", "Karachi method"),
-            CalculationMethod("TEHRAN", "Institute of Geophysics, University of Tehran", "Tehran method"),
-            CalculationMethod("JAFARI", "Jaafari (Imami Shiah)", "Jaafari method")
+            CalculationMethod("KARACHI", "University of Islamic Sciences, Karachi", "Karachi method")
         )
 
         fun fromId(id: String): CalculationMethod? = methods.find { it.id == id }
