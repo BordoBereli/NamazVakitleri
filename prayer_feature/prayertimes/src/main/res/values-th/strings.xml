@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="page_title">เวลาละหมาด</string>
+    <string name="page_sub_title">ตารางละหมาดรายเดือน</string>
+    <string name="image_desc">โดม</string>
+    <string name="today">วันนี้</string>
+    <string name="previous_month">เดือนก่อนหน้า</string>
+    <string name="next_month">เดือนถัดไป</string>
+</resources>

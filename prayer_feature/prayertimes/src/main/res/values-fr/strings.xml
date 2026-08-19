@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="page_title">Heures de prière</string>
+    <string name="page_sub_title">Horaires mensuels de prière</string>
+    <string name="image_desc">Coupole</string>
+    <string name="today">Aujourd\'hui</string>
+    <string name="previous_month">Mois précédent</string>
+    <string name="next_month">Mois suivant</string>
+</resources>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="page_title">Gebetszeiten</string>
+    <string name="page_sub_title">Monatliche Gebetszeiten</string>
+    <string name="image_desc">Kuppel</string>
+    <string name="today">Heute</string>
+    <string name="previous_month">Vorheriger Monat</string>
+    <string name="next_month">Nächster Monat</string>
+</resources>

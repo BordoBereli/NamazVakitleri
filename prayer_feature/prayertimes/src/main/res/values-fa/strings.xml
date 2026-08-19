@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="page_title">اوقات شرعی</string>
+    <string name="page_sub_title">برنامه ماهانه نماز</string>
+    <string name="image_desc">گنبد</string>
+    <string name="today">امروز</string>
+    <string name="previous_month">ماه قبل</string>
+    <string name="next_month">ماه بعد</string>
+</resources>

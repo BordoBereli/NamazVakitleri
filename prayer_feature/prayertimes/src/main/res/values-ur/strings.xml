@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="page_title">نماز کے اوقات</string>
+    <string name="page_sub_title">ماہانہ نماز کا نظام</string>
+    <string name="image_desc">گنبد</string>
+    <string name="today">آج</string>
+    <string name="previous_month">پچھلا مہینہ</string>
+    <string name="next_month">اگلا مہینہ</string>
+</resources>

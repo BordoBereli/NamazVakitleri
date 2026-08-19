@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="page_title">नमाज़ के समय</string>
+    <string name="page_sub_title">मासिक नमाज़ अनुसूची</string>
+    <string name="image_desc">गुंबद</string>
+    <string name="today">आज</string>
+    <string name="previous_month">पिछला महीना</string>
+    <string name="next_month">अगला महीना</string>
+</resources>

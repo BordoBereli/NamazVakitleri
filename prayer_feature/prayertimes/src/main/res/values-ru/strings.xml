@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="page_title">Время намаза</string>
+    <string name="page_sub_title">Месячное расписание намазов</string>
+    <string name="image_desc">Купол</string>
+    <string name="today">Сегодня</string>
+    <string name="previous_month">Предыдущий месяц</string>
+    <string name="next_month">Следующий месяц</string>
+</resources>

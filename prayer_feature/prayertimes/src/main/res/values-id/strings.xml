@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="page_title">Waktu Salat</string>
+    <string name="page_sub_title">Jadwal Salat Bulanan</string>
+    <string name="image_desc">Kubah</string>
+    <string name="today">Hari Ini</string>
+    <string name="previous_month">Bulan sebelumnya</string>
+    <string name="next_month">Bulan berikutnya</string>
+</resources>
