@@ -8,12 +8,16 @@ import com.kutluoglu.core.common.getZoneIdFromLocation
 import com.kutluoglu.core.common.now
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
 import com.kutluoglu.prayer.model.location.LocationData
+import com.kutluoglu.prayer.model.prayer.CalculationMethod
 import com.kutluoglu.prayer.model.prayer.DailyPrayer
 import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer.usecases.prayer.GetMonthlyPrayerTimesUseCase
 import com.kutluoglu.prayer.usecases.prayer.GetPrayerTimesUseCase
 import com.kutluoglu.prayer.usecases.prayer.SaveMonthlyPrayerTimesUseCase
 import com.kutluoglu.prayer_location.ActiveLocationProvider
+import com.kutluoglu.prayer_settings.domain.model.Settings
+import com.kutluoglu.prayer_settings.domain.repository.SettingsRepository
+import com.kutluoglu.prayer_settings.domain.usecase.GetSettingsUseCase
 import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
 import com.kutluoglu.prayer_feature.common.states.TimeUiState
 import io.mockk.coEvery
@@ -25,6 +29,8 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withTimeout
@@ -52,6 +58,8 @@ class PrayerTimesViewModelTest {
     private lateinit var activeLocationProvider: ActiveLocationProvider
     private lateinit var calculator: PrayerLogicEngine
     private lateinit var formatter: PrayerFormatter
+    private lateinit var getSettingsUseCase: GetSettingsUseCase
+    private lateinit var settingsRepository: SettingsRepository
     private lateinit var viewModel: PrayerTimesViewModel
     private lateinit var viewModelStore: ViewModelStore
 
@@ -85,10 +93,14 @@ class PrayerTimesViewModelTest {
         activeLocationProvider.set(mockLocation)
         calculator = mockk(relaxed = true)
         formatter = mockk(relaxed = true)
+        getSettingsUseCase = mockk()
+        settingsRepository = mockk()
 
-        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any()) } returns success(mockPrayerList)
-        coEvery { getMonthlyPrayerTimesUseCase.invoke(any(), any(), any(), any()) } returns null
-        coEvery { saveMonthlyPrayerTimesUseCase.invoke(any(), any(), any(), any(), any()) } returns Unit
+        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any(), any()) } returns success(mockPrayerList)
+        coEvery { getMonthlyPrayerTimesUseCase.invoke(any(), any(), any(), any(), any()) } returns null
+        coEvery { saveMonthlyPrayerTimesUseCase.invoke(any(), any(), any(), any(), any(), any()) } returns Unit
+        coEvery { getSettingsUseCase() } returns Settings(calculationMethod = "TURKEY_DIYANET")
+        every { settingsRepository.observeSettings() } returns flowOf(Settings())
         every { calculator.findCurrentAndNextPrayer(any(), any()) } returns Pair(null, null)
         every { formatter.withLocalizedNames(any()) } answers { firstArg() }
         every { formatter.getInitialTimeInfo(any(), any(), any()) } returns TimeUiState(
@@ -105,6 +117,8 @@ class PrayerTimesViewModelTest {
             activeLocationProvider,
             calculator,
             formatter,
+            getSettingsUseCase,
+            settingsRepository,
             UnconfinedTestDispatcher()
         )
         viewModelStore = ViewModelStore()
@@ -191,7 +205,7 @@ class PrayerTimesViewModelTest {
     @Test
     fun `revisiting a cached month does not recompute`() = runTest {
         var callCount = 0
-        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any()) } answers {
+        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any(), any()) } answers {
             callCount++
             success(mockPrayerList)
         }
@@ -219,9 +233,9 @@ class PrayerTimesViewModelTest {
                 prayers = mockPrayerList
             )
         }
-        coEvery { getMonthlyPrayerTimesUseCase.invoke(any(), any(), any(), any()) } returns cachedMonth
+        coEvery { getMonthlyPrayerTimesUseCase.invoke(any(), any(), any(), any(), any()) } returns cachedMonth
         var callCount = 0
-        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any()) } answers {
+        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any(), any()) } answers {
             callCount++
             success(mockPrayerList)
         }
@@ -243,7 +257,7 @@ class PrayerTimesViewModelTest {
     fun `saves month to persistent cache after per-day computation`() = runTest {
         val zoneId = getZoneIdFromLocation("TR")
         val currentMonth = LocalDateTime.now(zoneId).date.yearMonth
-        coEvery { getMonthlyPrayerTimesUseCase.invoke(any(), any(), any(), any()) } returns null
+        coEvery { getMonthlyPrayerTimesUseCase.invoke(any(), any(), any(), any(), any()) } returns null
 
         viewModel.loadMonthlyPrayerTimes()
 
@@ -258,6 +272,7 @@ class PrayerTimesViewModelTest {
                 mockLocation.latitude,
                 mockLocation.longitude,
                 zoneId,
+                CalculationMethod.TURKEY_DIYANET,
                 any()
             )
         }
@@ -267,7 +282,7 @@ class PrayerTimesViewModelTest {
     fun `navigation during an in-flight load is not dropped`() = runTest {
         val gate = CompletableDeferred<Unit>()
         var callCount = 0
-        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any()) } coAnswers {
+        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any(), any()) } coAnswers {
             callCount++
             if (callCount == 1) gate.await()
             success(mockPrayerList)
@@ -297,7 +312,7 @@ class PrayerTimesViewModelTest {
         val locA = LocationData(41.0082, 28.9784, "Turkey", "TR", "Istanbul", null)
         val locB = LocationData(39.9334, 32.8597, "Turkey", "TR", "Ankara", null)
         var callCount = 0
-        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any()) } answers {
+        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any(), any()) } answers {
             callCount++
             success(mockPrayerList)
         }
@@ -323,7 +338,7 @@ class PrayerTimesViewModelTest {
     fun `month position is remembered per location`() = runTest {
         val locA = LocationData(41.0082, 28.9784, "Turkey", "TR", "Istanbul", null)
         val locB = LocationData(39.9334, 32.8597, "Turkey", "TR", "Ankara", null)
-        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any()) } returns success(mockPrayerList)
+        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any(), any()) } returns success(mockPrayerList)
 
         activeLocationProvider.set(locA)
         viewModel.loadMonthlyPrayerTimes()
@@ -353,7 +368,7 @@ class PrayerTimesViewModelTest {
         val prayerListB = mockPrayerList.map { it.copy(name = "${it.name}B") }
         val gate = CompletableDeferred<Unit>()
         var callCount = 0
-        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any()) } coAnswers {
+        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any(), any()) } coAnswers {
             callCount++
             val latitude = arg<Double>(1)
             if (callCount == 1) gate.await()
@@ -380,7 +395,7 @@ class PrayerTimesViewModelTest {
         val locA = LocationData(41.0082, 28.9784, "Turkey", "TR", "Istanbul", null)
         val locB = LocationData(39.9334, 32.8597, "Turkey", "TR", "Ankara", null)
         val gate = CompletableDeferred<Unit>()
-        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any()) } coAnswers {
+        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any(), any()) } coAnswers {
             val latitude = arg<Double>(1)
             if (latitude == locB.latitude) gate.await()
             success(mockPrayerList)
@@ -411,7 +426,7 @@ class PrayerTimesViewModelTest {
         val locA = LocationData(41.0082, 28.9784, "Turkey", "TR", "Istanbul", null)
         val locB = LocationData(39.9334, 32.8597, "Turkey", "TR", "Ankara", null)
         val prayerListB = mockPrayerList.map { it.copy(name = "${it.name}B") }
-        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any()) } coAnswers {
+        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any(), any()) } coAnswers {
             val latitude = arg<Double>(1)
             if (latitude == locB.latitude) success(prayerListB) else success(mockPrayerList)
         }
@@ -442,7 +457,7 @@ class PrayerTimesViewModelTest {
         val started = AtomicInteger(0)
         val maxConcurrent = AtomicInteger(0)
         val active = AtomicInteger(0)
-        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any()) } coAnswers {
+        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any(), any()) } coAnswers {
             val now = active.incrementAndGet()
             maxConcurrent.updateAndGet { maxOf(it, now) }
             started.incrementAndGet()
@@ -459,6 +474,8 @@ class PrayerTimesViewModelTest {
             activeLocationProvider,
             calculator,
             formatter,
+            getSettingsUseCase,
+            settingsRepository,
             Dispatchers.Default
         )
         store.put("viewModel", viewModel)
@@ -478,5 +495,29 @@ class PrayerTimesViewModelTest {
         }
 
         assertThat(maxConcurrent.get()).isGreaterThan(1)
+    }
+
+    @Test
+    fun `calculation method change clears month cache and reloads`() = runTest {
+        val settingsFlow = MutableStateFlow(Settings(calculationMethod = "TURKEY_DIYANET"))
+        every { settingsRepository.observeSettings() } returns settingsFlow
+        var callCount = 0
+        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any(), any()) } answers {
+            callCount++
+            success(mockPrayerList)
+        }
+
+        viewModel.loadMonthlyPrayerTimes()
+        val callsAfterInitial = callCount
+
+        coEvery { getSettingsUseCase() } returns Settings(calculationMethod = "MWL")
+        settingsFlow.value = Settings(calculationMethod = "MWL")
+
+        viewModel.uiState.test {
+            val state = awaitItem()
+            assertThat(state).isInstanceOf(PrayerTimesUiState.Success::class.java)
+            cancelAndIgnoreRemainingEvents()
+        }
+        assertThat(callCount).isGreaterThan(callsAfterInitial)
     }
 }

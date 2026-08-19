@@ -6,11 +6,14 @@ import com.kutluoglu.core.common.getZoneIdFromLocation
 import com.kutluoglu.core.common.now
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
 import com.kutluoglu.prayer.model.location.LocationData
+import com.kutluoglu.prayer.model.prayer.CalculationMethod
 import com.kutluoglu.prayer.model.prayer.DailyPrayer
 import com.kutluoglu.prayer.usecases.prayer.GetMonthlyPrayerTimesUseCase
 import com.kutluoglu.prayer.usecases.prayer.GetPrayerTimesUseCase
 import com.kutluoglu.prayer.usecases.prayer.SaveMonthlyPrayerTimesUseCase
 import com.kutluoglu.prayer_location.ActiveLocationProvider
+import com.kutluoglu.prayer_settings.domain.repository.SettingsRepository
+import com.kutluoglu.prayer_settings.domain.usecase.GetSettingsUseCase
 import com.kutluoglu.prayer_feature.common.states.LocationUiState
 import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
 import kotlinx.coroutines.CancellationException
@@ -23,6 +26,9 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DateTimeUnit
@@ -46,6 +52,8 @@ class PrayerTimesViewModel(
         private val activeLocationProvider: ActiveLocationProvider,
         private val calculator: PrayerLogicEngine,
         private val formatter: PrayerFormatter,
+        private val getSettingsUseCase: GetSettingsUseCase,
+        private val settingsRepository: SettingsRepository,
         private val computationDispatcher: CoroutineDispatcher = Dispatchers.Default
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<PrayerTimesUiState>(PrayerTimesUiState.Loading)
@@ -63,6 +71,7 @@ class PrayerTimesViewModel(
     private var isLoading = false
     private var pendingMonth: YearMonth? = null
     private var locationObservationJob: Job? = null
+    private var settingsObserverJob: Job? = null
 
     fun loadMonthlyPrayerTimes() {
         if (locationObservationJob?.isActive == true) return
@@ -72,6 +81,19 @@ class PrayerTimesViewModel(
                     if (location == null) {
                         _uiState.value = PrayerTimesUiState.Error("Failed to get active location.")
                     } else {
+                        loadForLocation(location)
+                    }
+                }
+        }
+        settingsObserverJob = viewModelScope.launch {
+            settingsRepository.observeSettings()
+                .map { it.calculationMethod }
+                .distinctUntilChanged()
+                .drop(1)
+                .collect {
+                    monthCache.clear()
+                    val location = activeLocationProvider.location.value
+                    if (location != null) {
                         loadForLocation(location)
                     }
                 }
@@ -138,6 +160,7 @@ class PrayerTimesViewModel(
                 isLoading = false
                 return@launch
             }
+            val calculationMethod = CalculationMethod.fromSettingsId(getSettingsUseCase().calculationMethod)
             try {
                 val locationCache = monthCache.getOrPut(locationId) { mutableMapOf() }
                 val cached = locationCache[month]
@@ -149,7 +172,8 @@ class PrayerTimesViewModel(
                     month = month,
                     latitude = location.latitude,
                     longitude = location.longitude,
-                    zoneId = resolvedZoneId
+                    zoneId = resolvedZoneId,
+                    calculationMethod = calculationMethod
                 )
                 if (persistedMonth != null) {
                     val today = LocalDateTime.now(resolvedZoneId).date
@@ -163,7 +187,7 @@ class PrayerTimesViewModel(
                     coroutineScope {
                         (1..month.numberOfDays).map { day ->
                             async(computationDispatcher) {
-                                computeDailyPrayer(day, month, location, resolvedZoneId, today)
+                                computeDailyPrayer(day, month, location, resolvedZoneId, today, calculationMethod)
                             }
                         }.awaitAll()
                     }
@@ -181,6 +205,7 @@ class PrayerTimesViewModel(
                     latitude = location.latitude,
                     longitude = location.longitude,
                     zoneId = resolvedZoneId,
+                    calculationMethod = calculationMethod,
                     prayers = monthlyPrayers
                 )
                 emitSuccess(month, monthlyPrayers, locationId, location, resolvedZoneId)
@@ -200,14 +225,16 @@ class PrayerTimesViewModel(
         month: YearMonth,
         location: LocationData,
         resolvedZoneId: ZoneId,
-        today: LocalDateTime
+        today: LocalDateTime,
+        calculationMethod: CalculationMethod
     ): DailyPrayer {
         val date = month.onDay(day)
         val prayerTimes = getPrayerTimesUseCase(
             date = date.atTime(0, 0),
             latitude = location.latitude,
             longitude = location.longitude,
-            zoneId = resolvedZoneId
+            zoneId = resolvedZoneId,
+            calculationMethod = calculationMethod
         ).getOrElse { throw it }
         val langDetectedPrayerTimes = formatter.withLocalizedNames(prayerTimes)
         val isToday = date == today.date
