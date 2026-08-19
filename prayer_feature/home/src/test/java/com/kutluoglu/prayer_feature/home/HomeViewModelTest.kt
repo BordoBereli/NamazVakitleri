@@ -339,6 +339,27 @@ class HomeViewModelTest {
     }
 
     @Test
+    fun `language change clears cache and reloads`() = runTest {
+        val settingsFlow = MutableStateFlow(Settings(language = "system"))
+        coEvery { locationsCoordinator.observeState() } returns flowOf(
+            LocationsState(entries = listOf(entry), selectedId = "loc-1")
+        )
+        coEvery { locationsCoordinator.resolveInitial() } returns location
+        coEvery { locationsCoordinator.resolveSelected() } returns location
+        coEvery { getSettingsUseCase() } returns Settings(language = "system")
+        every { settingsRepository.observeSettings() } returns settingsFlow
+        coEvery { prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET, any()) } returns success(loadedData())
+
+        val vm = viewModel()
+        coVerify(exactly = 1) { prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET, any()) }
+
+        coEvery { getSettingsUseCase() } returns Settings(language = "en")
+        settingsFlow.value = Settings(language = "en")
+
+        coVerify(atLeast = 2) { prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET, any()) }
+    }
+
+    @Test
     fun `calculation method change keeps gate Loading while data is cleared and reloading`() = runTest {
         val settingsFlow = MutableStateFlow(Settings(calculationMethod = "TURKEY_DIYANET"))
         coEvery { locationsCoordinator.observeState() } returns flowOf(

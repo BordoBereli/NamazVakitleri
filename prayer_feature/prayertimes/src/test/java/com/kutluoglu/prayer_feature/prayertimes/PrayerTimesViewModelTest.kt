@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelStore
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.core.common.getZoneIdFromLocation
+import com.kutluoglu.core.common.gregorianDayAndNameFormatter
 import com.kutluoglu.core.common.now
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
 import com.kutluoglu.prayer.model.location.LocationData
@@ -41,7 +42,9 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.minus
+import kotlinx.datetime.onDay
 import kotlinx.datetime.plus
+import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.yearMonth
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -575,5 +578,80 @@ class PrayerTimesViewModelTest {
             cancelAndIgnoreRemainingEvents()
         }
         assertThat(callCount).isGreaterThan(callsAfterInitial)
+    }
+
+    @Test
+    fun `language change clears month cache and reloads`() = runTest {
+        val settingsFlow = MutableStateFlow(Settings(language = "system"))
+        every { settingsRepository.observeSettings() } returns settingsFlow
+        var callCount = 0
+        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any(), any()) } answers {
+            callCount++
+            success(mockPrayerList)
+        }
+
+        viewModel.loadMonthlyPrayerTimes()
+        val callsAfterInitial = callCount
+
+        coEvery { getSettingsUseCase() } returns Settings(language = "en")
+        settingsFlow.value = Settings(language = "en")
+
+        viewModel.uiState.test {
+            val state = awaitItem()
+            assertThat(state).isInstanceOf(PrayerTimesUiState.Success::class.java)
+            cancelAndIgnoreRemainingEvents()
+        }
+        assertThat(callCount).isGreaterThan(callsAfterInitial)
+    }
+
+    @Test
+    fun `persisted month prayer names are re-localized on load`() = runTest {
+        val zoneId = getZoneIdFromLocation("TR")
+        val currentMonth = LocalDateTime.now(zoneId).date.yearMonth
+        val cachedMonth = (1..currentMonth.numberOfDays).map { day ->
+            DailyPrayer(
+                dayOfMonth = day,
+                gregorianDate = "$day Monday",
+                hijriDate = "$day Muharram 1448",
+                prayers = mockPrayerList
+            )
+        }
+        coEvery { getMonthlyPrayerTimesUseCase.invoke(any(), any(), any(), any(), any()) } returns cachedMonth
+        val localized = mockPrayerList.map { it.copy(name = "${it.name}L") }
+        every { formatter.withLocalizedNames(any()) } returns localized
+
+        viewModel.loadMonthlyPrayerTimes()
+
+        viewModel.uiState.test {
+            val state = awaitItem()
+            val success = state as PrayerTimesUiState.Success
+            assertThat(success.monthlyPrayers.first().prayers.first().name).isEqualTo("FajrL")
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `persisted month gregorian dates are re-formatted on load`() = runTest {
+        val zoneId = getZoneIdFromLocation("TR")
+        val currentMonth = LocalDateTime.now(zoneId).date.yearMonth
+        val cachedMonth = (1..currentMonth.numberOfDays).map { day ->
+            DailyPrayer(
+                dayOfMonth = day,
+                gregorianDate = "stale date",
+                hijriDate = "$day Muharram 1448",
+                prayers = mockPrayerList
+            )
+        }
+        coEvery { getMonthlyPrayerTimesUseCase.invoke(any(), any(), any(), any(), any()) } returns cachedMonth
+
+        viewModel.loadMonthlyPrayerTimes()
+
+        viewModel.uiState.test {
+            val state = awaitItem()
+            val success = state as PrayerTimesUiState.Success
+            val expected = currentMonth.onDay(1).toJavaLocalDate().format(gregorianDayAndNameFormatter)
+            assertThat(success.monthlyPrayers.first().gregorianDate).isEqualTo(expected)
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 }

@@ -82,7 +82,7 @@ class HomeViewModel(
         }
         settingsObserverJob = viewModelScope.launch {
             settingsRepository.observeSettings()
-                .map { it.calculationMethod }
+                .map { it.calculationMethod to it.language }
                 .distinctUntilChanged()
                 .drop(1)
                 .collect {

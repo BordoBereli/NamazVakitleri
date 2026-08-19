@@ -3,6 +3,7 @@ package com.kutluoglu.prayer_feature.prayertimes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kutluoglu.core.common.getZoneIdFromLocation
+import com.kutluoglu.core.common.gregorianDayAndNameFormatter
 import com.kutluoglu.core.common.now
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
 import com.kutluoglu.prayer.model.location.LocationData
@@ -87,7 +88,7 @@ class PrayerTimesViewModel(
         }
         settingsObserverJob = viewModelScope.launch {
             settingsRepository.observeSettings()
-                .map { it.calculationMethod to it.hijriAdjustment }
+                .map { Triple(it.calculationMethod, it.hijriAdjustment, it.language) }
                 .distinctUntilChanged()
                 .drop(1)
                 .collect {
@@ -181,6 +182,8 @@ class PrayerTimesViewModel(
                     val today = LocalDateTime.now(resolvedZoneId).date
                     val adjusted = persistedMonth.map { daily ->
                         daily.copy(
+                            prayers = formatter.withLocalizedNames(daily.prayers),
+                            gregorianDate = month.onDay(daily.dayOfMonth).toJavaLocalDate().format(gregorianDayAndNameFormatter),
                             hijriDate = formatter.formatHijriDate(
                                 HijrahDate.from(month.onDay(daily.dayOfMonth).toJavaLocalDate()),
                                 hijriAdjustment
