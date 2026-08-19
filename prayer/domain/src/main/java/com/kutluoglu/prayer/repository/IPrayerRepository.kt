@@ -1,5 +1,6 @@
 package com.kutluoglu.prayer.repository
 
+import com.kutluoglu.prayer.model.prayer.CalculationMethod
 import com.kutluoglu.prayer.model.prayer.DailyPrayer
 import com.kutluoglu.prayer.model.prayer.Prayer
 import kotlinx.datetime.LocalDateTime
@@ -20,6 +21,7 @@ interface IPrayerRepository {
             latitude: Double,
             longitude: Double,
             zoneId: ZoneId,
+            calculationMethod: CalculationMethod = CalculationMethod.TURKEY_DIYANET,
     ): List<Prayer>
 
     /**
@@ -31,6 +33,7 @@ interface IPrayerRepository {
             latitude: Double,
             longitude: Double,
             zoneId: ZoneId,
+            calculationMethod: CalculationMethod = CalculationMethod.TURKEY_DIYANET,
     ): List<DailyPrayer>?
 
     /**
@@ -42,6 +45,7 @@ interface IPrayerRepository {
             latitude: Double,
             longitude: Double,
             zoneId: ZoneId,
+            calculationMethod: CalculationMethod = CalculationMethod.TURKEY_DIYANET,
             prayers: List<DailyPrayer>,
     )
 

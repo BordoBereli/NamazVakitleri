@@ -4,6 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.core.common.createBy
 import com.kutluoglu.prayer.data.prayer.PrayerRepository
 import com.kutluoglu.prayer.data.repository.prayer.PrayerDataStore
+import com.kutluoglu.prayer.model.prayer.CalculationMethod
 import com.kutluoglu.prayer.model.prayer.DailyPrayer
 import com.kutluoglu.prayer.model.prayer.Prayer
 import io.mockk.coEvery
@@ -52,14 +53,14 @@ class PrayerRepositoryTest {
 
         // Stub the mock: When prayerDataStore.getPrayerTimes is called with ANY arguments,
         // it should return our mockPrayerList.
-        coEvery { prayerDataStore.getPrayerTimes(any(), any(), any(), any()) } returns mockPrayerList
+        coEvery { prayerDataStore.getPrayerTimes(any(), any(), any(), any(), any()) } returns mockPrayerList
 
         // Act (When)
-        val result = repository.getPrayerTimes(testDate, testLatitude, testLongitude, zoneId)
+        val result = repository.getPrayerTimes(testDate, testLatitude, testLongitude, zoneId, CalculationMethod.TURKEY_DIYANET)
 
         // Assert (Then)
         // Verify that the data store was called exactly once.
-        coVerify(exactly = 1) { prayerDataStore.getPrayerTimes(testDate, testLatitude, testLongitude, zoneId) }
+        coVerify(exactly = 1) { prayerDataStore.getPrayerTimes(testDate, testLatitude, testLongitude, zoneId, CalculationMethod.TURKEY_DIYANET) }
 
         // Verify that the result from the repository is the same as the one we told the mock to return.
         assertThat(result).isEqualTo(mockPrayerList)
@@ -90,12 +91,12 @@ class PrayerRepositoryTest {
                 )
             )
         )
-        coEvery { prayerDataStore.getMonthlyPrayerTimes(any(), any(), any(), any()) } returns mockMonth
+        coEvery { prayerDataStore.getMonthlyPrayerTimes(any(), any(), any(), any(), any()) } returns mockMonth
 
-        val result = repository.getMonthlyPrayerTimes(month, 41.0, 29.0, zoneId)
+        val result = repository.getMonthlyPrayerTimes(month, 41.0, 29.0, zoneId, CalculationMethod.TURKEY_DIYANET)
 
         coVerify(exactly = 1) {
-            prayerDataStore.getMonthlyPrayerTimes(month, 41.0, 29.0, zoneId)
+            prayerDataStore.getMonthlyPrayerTimes(month, 41.0, 29.0, zoneId, CalculationMethod.TURKEY_DIYANET)
         }
         assertThat(result).isEqualTo(mockMonth)
     }
@@ -114,12 +115,12 @@ class PrayerRepositoryTest {
                 )
             )
         )
-        coEvery { prayerDataStore.saveMonthlyPrayerTimes(any(), any(), any(), any(), any()) } returns Unit
+        coEvery { prayerDataStore.saveMonthlyPrayerTimes(any(), any(), any(), any(), any(), any()) } returns Unit
 
-        repository.saveMonthlyPrayerTimes(month, 41.0, 29.0, zoneId, monthToSave)
+        repository.saveMonthlyPrayerTimes(month, 41.0, 29.0, zoneId, CalculationMethod.TURKEY_DIYANET, monthToSave)
 
         coVerify(exactly = 1) {
-            prayerDataStore.saveMonthlyPrayerTimes(month, 41.0, 29.0, zoneId, monthToSave)
+            prayerDataStore.saveMonthlyPrayerTimes(month, 41.0, 29.0, zoneId, CalculationMethod.TURKEY_DIYANET, monthToSave)
         }
     }
 }

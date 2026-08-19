@@ -1,6 +1,7 @@
 package com.kutluoglu.prayer.data.prayer
 
 import com.kutluoglu.prayer.data.repository.prayer.PrayerDataStore
+import com.kutluoglu.prayer.model.prayer.CalculationMethod
 import com.kutluoglu.prayer.model.prayer.DailyPrayer
 import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer.repository.IPrayerRepository
@@ -18,11 +19,13 @@ class PrayerRepository(
         latitude: Double,
         longitude: Double,
         zoneId: ZoneId,
+        calculationMethod: CalculationMethod,
     ): List<Prayer> = prayerDataStore.getPrayerTimes(
         date = date,
         latitude = latitude,
         longitude = longitude,
-        zoneId = zoneId
+        zoneId = zoneId,
+        calculationMethod = calculationMethod
     )
 
     override suspend fun getMonthlyPrayerTimes(
@@ -30,11 +33,13 @@ class PrayerRepository(
         latitude: Double,
         longitude: Double,
         zoneId: ZoneId,
+        calculationMethod: CalculationMethod,
     ): List<DailyPrayer>? = prayerDataStore.getMonthlyPrayerTimes(
         month = month,
         latitude = latitude,
         longitude = longitude,
-        zoneId = zoneId
+        zoneId = zoneId,
+        calculationMethod = calculationMethod
     )
 
     override suspend fun saveMonthlyPrayerTimes(
@@ -42,6 +47,7 @@ class PrayerRepository(
         latitude: Double,
         longitude: Double,
         zoneId: ZoneId,
+        calculationMethod: CalculationMethod,
         prayers: List<DailyPrayer>,
     ) {
         prayerDataStore.saveMonthlyPrayerTimes(
@@ -49,6 +55,7 @@ class PrayerRepository(
             latitude = latitude,
             longitude = longitude,
             zoneId = zoneId,
+            calculationMethod = calculationMethod,
             prayers = prayers
         )
     }

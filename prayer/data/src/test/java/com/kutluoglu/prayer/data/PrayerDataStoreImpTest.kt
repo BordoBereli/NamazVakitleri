@@ -57,11 +57,11 @@ class PrayerDataStoreImpTest {
         coEvery { prayerTimesCache.get(any()) } returns cachedPrayers
 
         // WHEN requesting prayer times
-        val result = dataStore.getPrayerTimes(testDate, 41.0, 29.0, zoneId)
+        val result = dataStore.getPrayerTimes(testDate, 41.0, 29.0, zoneId, CalculationMethod.TURKEY_DIYANET)
 
         // THEN the cached prayers are returned and no calculation happens
         assertThat(result).isEqualTo(cachedPrayers)
-        coVerify(exactly = 1) { prayerTimesCache.get("2024-01-01|41.0|29.0|Europe/Istanbul") }
+        coVerify(exactly = 1) { prayerTimesCache.get("2024-01-01|41.0|29.0|Europe/Istanbul|TURKEY_DIYANET") }
         coVerify(exactly = 0) {
             prayerCalculationService.calculateDailyPrayerTimes(any(), any(), any(), any(), any(), any())
         }
@@ -81,7 +81,7 @@ class PrayerDataStoreImpTest {
         } returns calculatedPrayers
 
         // WHEN requesting prayer times
-        val result = dataStore.getPrayerTimes(testDate, 41.0, 29.0, zoneId)
+        val result = dataStore.getPrayerTimes(testDate, 41.0, 29.0, zoneId, CalculationMethod.TURKEY_DIYANET)
 
         // THEN it calculates with the standard Turkey method and stores the result
         assertThat(result).isEqualTo(calculatedPrayers)
@@ -92,7 +92,7 @@ class PrayerDataStoreImpTest {
             )
         }
         coVerify(exactly = 1) {
-            prayerTimesCache.put("2024-01-01|41.0|29.0|Europe/Istanbul", calculatedPrayers)
+            prayerTimesCache.put("2024-01-01|41.0|29.0|Europe/Istanbul|TURKEY_DIYANET", calculatedPrayers)
         }
     }
 
@@ -117,7 +117,7 @@ class PrayerDataStoreImpTest {
         }
 
         // WHEN requesting prayer times
-        dataStore.getPrayerTimes(testDate, 41.0, 29.0, zoneId)
+        dataStore.getPrayerTimes(testDate, 41.0, 29.0, zoneId, CalculationMethod.TURKEY_DIYANET)
 
         // THEN the CPU-bound calculation must not run on the calling (main) thread
         assertThat(calculationThread).isNotNull()
@@ -147,11 +147,11 @@ class PrayerDataStoreImpTest {
         )
         coEvery { prayerTimesCache.getMonth(any()) } returns cachedMonth
 
-        val result = dataStore.getMonthlyPrayerTimes(month, 41.0, 29.0, zoneId)
+        val result = dataStore.getMonthlyPrayerTimes(month, 41.0, 29.0, zoneId, CalculationMethod.TURKEY_DIYANET)
 
         assertThat(result).isEqualTo(cachedMonth)
         coVerify(exactly = 1) {
-            prayerTimesCache.getMonth("2024-01|41.0|29.0|Europe/Istanbul")
+            prayerTimesCache.getMonth("2024-01|41.0|29.0|Europe/Istanbul|TURKEY_DIYANET")
         }
     }
 
@@ -170,10 +170,10 @@ class PrayerDataStoreImpTest {
             )
         )
 
-        dataStore.saveMonthlyPrayerTimes(month, 41.0, 29.0, zoneId, monthToSave)
+        dataStore.saveMonthlyPrayerTimes(month, 41.0, 29.0, zoneId, CalculationMethod.TURKEY_DIYANET, monthToSave)
 
         coVerify(exactly = 1) {
-            prayerTimesCache.putMonth("2024-01|41.0|29.0|Europe/Istanbul", monthToSave)
+            prayerTimesCache.putMonth("2024-01|41.0|29.0|Europe/Istanbul|TURKEY_DIYANET", monthToSave)
         }
     }
 
@@ -194,7 +194,7 @@ class PrayerDataStoreImpTest {
             prayerCalculationService.calculateDailyPrayerTimes(any(), any(), any(), any(), any(), any())
         } returnsMany listOf(todayPrayers, tomorrowPrayers)
 
-        val result = dataStore.getPrayerTimes(testDate, 41.0, 29.0, zoneId)
+        val result = dataStore.getPrayerTimes(testDate, 41.0, 29.0, zoneId, CalculationMethod.TURKEY_DIYANET)
 
         assertThat(result).isEqualTo(todayPrayers)
         coVerify(exactly = 1) {
@@ -210,10 +210,10 @@ class PrayerDataStoreImpTest {
             )
         }
         coVerify(exactly = 1) {
-            prayerTimesCache.put("2024-01-01|41.0|29.0|Europe/Istanbul", todayPrayers)
+            prayerTimesCache.put("2024-01-01|41.0|29.0|Europe/Istanbul|TURKEY_DIYANET", todayPrayers)
         }
         coVerify(exactly = 1) {
-            prayerTimesCache.put("2024-01-02|41.0|29.0|Europe/Istanbul", tomorrowPrayers)
+            prayerTimesCache.put("2024-01-02|41.0|29.0|Europe/Istanbul|TURKEY_DIYANET", tomorrowPrayers)
         }
     }
 
@@ -229,13 +229,13 @@ class PrayerDataStoreImpTest {
         val tomorrowPrayers = listOf(
             Prayer("Fajr", "الفجر", LocalTime.parse("05:01"), tomorrow.date)
         )
-        coEvery { prayerTimesCache.get("2024-01-01|41.0|29.0|Europe/Istanbul") } returns null
-        coEvery { prayerTimesCache.get("2024-01-02|41.0|29.0|Europe/Istanbul") } returns tomorrowPrayers
+        coEvery { prayerTimesCache.get("2024-01-01|41.0|29.0|Europe/Istanbul|TURKEY_DIYANET") } returns null
+        coEvery { prayerTimesCache.get("2024-01-02|41.0|29.0|Europe/Istanbul|TURKEY_DIYANET") } returns tomorrowPrayers
         coEvery {
             prayerCalculationService.calculateDailyPrayerTimes(any(), any(), any(), any(), any(), any())
         } returns todayPrayers
 
-        val result = dataStore.getPrayerTimes(testDate, 41.0, 29.0, zoneId)
+        val result = dataStore.getPrayerTimes(testDate, 41.0, 29.0, zoneId, CalculationMethod.TURKEY_DIYANET)
 
         assertThat(result).isEqualTo(todayPrayers)
         coVerify(exactly = 1) {
@@ -251,10 +251,10 @@ class PrayerDataStoreImpTest {
             )
         }
         coVerify(exactly = 1) {
-            prayerTimesCache.put("2024-01-01|41.0|29.0|Europe/Istanbul", todayPrayers)
+            prayerTimesCache.put("2024-01-01|41.0|29.0|Europe/Istanbul|TURKEY_DIYANET", todayPrayers)
         }
         coVerify(exactly = 0) {
-            prayerTimesCache.put("2024-01-02|41.0|29.0|Europe/Istanbul", any())
+            prayerTimesCache.put("2024-01-02|41.0|29.0|Europe/Istanbul|TURKEY_DIYANET", any())
         }
     }
 
@@ -270,11 +270,11 @@ class PrayerDataStoreImpTest {
             prayerCalculationService.calculateDailyPrayerTimes(any(), any(), any(), any(), any(), any())
         } returns todayPrayers andThenThrows RuntimeException("pre-cache failed")
 
-        val result = dataStore.getPrayerTimes(testDate, 41.0, 29.0, zoneId)
+        val result = dataStore.getPrayerTimes(testDate, 41.0, 29.0, zoneId, CalculationMethod.TURKEY_DIYANET)
 
         assertThat(result).isEqualTo(todayPrayers)
         coVerify(exactly = 1) {
-            prayerTimesCache.put("2024-01-01|41.0|29.0|Europe/Istanbul", todayPrayers)
+            prayerTimesCache.put("2024-01-01|41.0|29.0|Europe/Istanbul|TURKEY_DIYANET", todayPrayers)
         }
     }
 
@@ -290,13 +290,13 @@ class PrayerDataStoreImpTest {
         val tomorrowPrayers = listOf(
             Prayer("Fajr", "الفجر", LocalTime.parse("05:01"), tomorrow.date)
         )
-        coEvery { prayerTimesCache.get("2024-01-01|41.0|29.0|Europe/Istanbul") } returns cachedToday
-        coEvery { prayerTimesCache.get("2024-01-02|41.0|29.0|Europe/Istanbul") } returns null
+        coEvery { prayerTimesCache.get("2024-01-01|41.0|29.0|Europe/Istanbul|TURKEY_DIYANET") } returns cachedToday
+        coEvery { prayerTimesCache.get("2024-01-02|41.0|29.0|Europe/Istanbul|TURKEY_DIYANET") } returns null
         coEvery {
             prayerCalculationService.calculateDailyPrayerTimes(any(), any(), any(), any(), any(), any())
         } returns tomorrowPrayers
 
-        val result = dataStore.getPrayerTimes(testDate, 41.0, 29.0, zoneId)
+        val result = dataStore.getPrayerTimes(testDate, 41.0, 29.0, zoneId, CalculationMethod.TURKEY_DIYANET)
 
         assertThat(result).isEqualTo(cachedToday)
         coVerify(exactly = 0) {
@@ -312,7 +312,32 @@ class PrayerDataStoreImpTest {
             )
         }
         coVerify(exactly = 1) {
-            prayerTimesCache.put("2024-01-02|41.0|29.0|Europe/Istanbul", tomorrowPrayers)
+            prayerTimesCache.put("2024-01-02|41.0|29.0|Europe/Istanbul|TURKEY_DIYANET", tomorrowPrayers)
+        }
+    }
+
+    @Test
+    fun `getPrayerTimes uses the provided calculation method and keys cache by method`() = runTest {
+        val testDate = LocalDateTime.createBy(2024, 1, 1)
+        val zoneId = ZoneId.of("Europe/Istanbul")
+        val calculatedPrayers = listOf(
+            Prayer("Fajr", "الفجر", LocalTime.parse("05:00"), testDate.date)
+        )
+        coEvery { prayerTimesCache.get(any()) } returns null
+        coEvery {
+            prayerCalculationService.calculateDailyPrayerTimes(any(), any(), any(), any(), any(), any())
+        } returns calculatedPrayers
+
+        dataStore.getPrayerTimes(testDate, 41.0, 29.0, zoneId, CalculationMethod.MWL)
+
+        coVerify(exactly = 1) {
+            prayerCalculationService.calculateDailyPrayerTimes(
+                41.0, 29.0, zoneId, testDate,
+                CalculationMethod.MWL, JuristicMethod.STANDARD
+            )
+        }
+        coVerify(exactly = 1) {
+            prayerTimesCache.put("2024-01-01|41.0|29.0|Europe/Istanbul|MWL", calculatedPrayers)
         }
     }
 }

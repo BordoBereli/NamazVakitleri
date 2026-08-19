@@ -1,5 +1,6 @@
 package com.kutluoglu.prayer.usecases.prayer
 
+import com.kutluoglu.prayer.model.prayer.CalculationMethod
 import com.kutluoglu.prayer.model.prayer.DailyPrayer
 import com.kutluoglu.prayer.repository.IPrayerRepository
 import kotlinx.datetime.YearMonth
@@ -19,10 +20,12 @@ class GetMonthlyPrayerTimesUseCase(
         latitude: Double,
         longitude: Double,
         zoneId: ZoneId,
+        calculationMethod: CalculationMethod = CalculationMethod.TURKEY_DIYANET,
     ): List<DailyPrayer>? = prayerRepository.getMonthlyPrayerTimes(
         month = month,
         latitude = latitude,
         longitude = longitude,
-        zoneId = zoneId
+        zoneId = zoneId,
+        calculationMethod = calculationMethod
     )
 }

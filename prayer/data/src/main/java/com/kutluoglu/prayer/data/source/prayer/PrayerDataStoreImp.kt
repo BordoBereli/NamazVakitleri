@@ -36,12 +36,13 @@ class PrayerDataStoreImp(
             date: LocalDateTime,
             latitude: Double,
             longitude: Double,
-            zoneId: ZoneId
+            zoneId: ZoneId,
+            calculationMethod: CalculationMethod,
     ): List<Prayer> {
-        val cacheKey = buildCacheKey(date, latitude, longitude, zoneId)
+        val cacheKey = buildCacheKey(date, latitude, longitude, zoneId, calculationMethod)
         val cached = prayerTimesCache.get(cacheKey)
         if (cached != null) {
-            preCacheTomorrow(date, latitude, longitude, zoneId)
+            preCacheTomorrow(date, latitude, longitude, zoneId, calculationMethod)
             return cached
         }
 
@@ -51,12 +52,12 @@ class PrayerDataStoreImp(
                 longitude = longitude,
                 zoneId = zoneId,
                 date = date,
-                calculationMethod = CalculationMethod.TURKEY_DIYANET,
+                calculationMethod = calculationMethod,
                 juristicMethod = JuristicMethod.STANDARD
             )
         }
         prayerTimesCache.put(cacheKey, calculated)
-        preCacheTomorrow(date, latitude, longitude, zoneId)
+        preCacheTomorrow(date, latitude, longitude, zoneId, calculationMethod)
         return calculated
     }
 
@@ -64,20 +65,21 @@ class PrayerDataStoreImp(
             date: LocalDateTime,
             latitude: Double,
             longitude: Double,
-            zoneId: ZoneId
+            zoneId: ZoneId,
+            calculationMethod: CalculationMethod
     ) {
         preCacheScope.launch {
             runCatching {
                 val tomorrow = date.date.plus(1, DateTimeUnit.DAY)
                     .atTime(date.hour, date.minute, date.second, date.nanosecond)
-                val tomorrowKey = buildCacheKey(tomorrow, latitude, longitude, zoneId)
+                val tomorrowKey = buildCacheKey(tomorrow, latitude, longitude, zoneId, calculationMethod)
                 if (prayerTimesCache.get(tomorrowKey) != null) return@runCatching
                 val tomorrowPrayers = prayerCalculationService.calculateDailyPrayerTimes(
                     latitude = latitude,
                     longitude = longitude,
                     zoneId = zoneId,
                     date = tomorrow,
-                    calculationMethod = CalculationMethod.TURKEY_DIYANET,
+                    calculationMethod = calculationMethod,
                     juristicMethod = JuristicMethod.STANDARD
                 )
                 prayerTimesCache.put(tomorrowKey, tomorrowPrayers)
@@ -91,9 +93,10 @@ class PrayerDataStoreImp(
             month: YearMonth,
             latitude: Double,
             longitude: Double,
-            zoneId: ZoneId
+            zoneId: ZoneId,
+            calculationMethod: CalculationMethod,
     ): List<DailyPrayer>? {
-        val cacheKey = buildMonthCacheKey(month, latitude, longitude, zoneId)
+        val cacheKey = buildMonthCacheKey(month, latitude, longitude, zoneId, calculationMethod)
         return prayerTimesCache.getMonth(cacheKey)
     }
 
@@ -102,9 +105,10 @@ class PrayerDataStoreImp(
             latitude: Double,
             longitude: Double,
             zoneId: ZoneId,
+            calculationMethod: CalculationMethod,
             prayers: List<DailyPrayer>
     ) {
-        val cacheKey = buildMonthCacheKey(month, latitude, longitude, zoneId)
+        val cacheKey = buildMonthCacheKey(month, latitude, longitude, zoneId, calculationMethod)
         prayerTimesCache.putMonth(cacheKey, prayers)
     }
 
@@ -116,13 +120,15 @@ class PrayerDataStoreImp(
             date: LocalDateTime,
             latitude: Double,
             longitude: Double,
-            zoneId: ZoneId
-    ): String = "${date.date}|$latitude|$longitude|${zoneId.id}"
+            zoneId: ZoneId,
+            calculationMethod: CalculationMethod
+    ): String = "${date.date}|$latitude|$longitude|${zoneId.id}|$calculationMethod"
 
     private fun buildMonthCacheKey(
             month: YearMonth,
             latitude: Double,
             longitude: Double,
-            zoneId: ZoneId
-    ): String = "$month|$latitude|$longitude|${zoneId.id}"
+            zoneId: ZoneId,
+            calculationMethod: CalculationMethod
+    ): String = "$month|$latitude|$longitude|${zoneId.id}|$calculationMethod"
 }

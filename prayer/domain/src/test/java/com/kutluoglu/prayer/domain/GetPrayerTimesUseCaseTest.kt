@@ -41,7 +41,7 @@ class GetPrayerTimesUseCaseTest {
                     notificationEnabled = false
                 )
             )
-        coEvery { prayerRepository.getPrayerTimes(any(), any(), any(), zoneId) } returns mockPrayerList
+        coEvery { prayerRepository.getPrayerTimes(any(), any(), any(), zoneId, any()) } returns mockPrayerList
 
         // Act
         val result = useCase(testDate, 41.0, 29.0, zoneId)
@@ -55,7 +55,7 @@ class GetPrayerTimesUseCaseTest {
     fun `invoke should return Failure Result when repository throws exception`() = runTest {
         // Arrange
         val exception = RuntimeException("Database error")
-        coEvery { prayerRepository.getPrayerTimes(any(), any(), any(), zoneId) } throws exception
+        coEvery { prayerRepository.getPrayerTimes(any(), any(), any(), zoneId, any()) } throws exception
 
         // Act
         val result = useCase(testDate, 41.0, 29.0, zoneId)
