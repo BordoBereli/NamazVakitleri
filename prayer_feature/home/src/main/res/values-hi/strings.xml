@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">NamazVakitleri</string>
+    <string name="home_page_fallback">मस्जिद-ए-नबवी</string>
+    <string name="prayer_times_title">दैनिक नमाज़</string>
+    <string name="view_all_prayers">सभी देखें >></string>
+    <string name="time_until_message">अगली नमाज़ तक का समय</string>
+    <string name="time_until_prayer_format">%1$s तक का समय</string>
+    <string name="time_until_sunrise">सूर्योदय तक का समय</string>
+    <string name="unknown_error_message">अज्ञात त्रुटि</string>
+    <string name="share_verse">आयत साझा करें</string>
+    <string name="no_verse_available">(कोई आयत उपलब्ध नहीं।)</string>
+    <string name="shared_from_app">%1$s से साझा किया गया</string>
+    <string name="retry">पुनः प्रयास करें</string>
+</resources>

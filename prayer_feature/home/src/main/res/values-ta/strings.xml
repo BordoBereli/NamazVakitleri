@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">NamazVakitleri</string>
+    <string name="home_page_fallback">மஸ்ஜித்-இ-நபவி</string>
+    <string name="prayer_times_title">தினசரி தொழுகைகள்</string>
+    <string name="view_all_prayers">அனைத்தையும் காண்க >></string>
+    <string name="time_until_message">அடுத்த தொழுகை வரை நேரம்</string>
+    <string name="time_until_prayer_format">%1$s வரை நேரம்</string>
+    <string name="time_until_sunrise">சூரிய உதயம் வரை நேரம்</string>
+    <string name="unknown_error_message">அறியப்படாத பிழை</string>
+    <string name="share_verse">வசனத்தைப் பகிர்</string>
+    <string name="no_verse_available">(வசனம் கிடைக்கவில்லை.)</string>
+    <string name="shared_from_app">%1$s இலிருந்து பகிரப்பட்டது</string>
+    <string name="retry">மீண்டும் முயற்சி</string>
+</resources>

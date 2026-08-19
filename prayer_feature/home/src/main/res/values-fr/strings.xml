@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">NamazVakitleri</string>
+    <string name="home_page_fallback">Masjid an-Nabawi</string>
+    <string name="prayer_times_title">Prières quotidiennes</string>
+    <string name="view_all_prayers">Tout voir >></string>
+    <string name="time_until_message">Temps avant la prochaine prière</string>
+    <string name="time_until_prayer_format">Temps avant %1$s</string>
+    <string name="time_until_sunrise">Temps avant le lever du soleil</string>
+    <string name="unknown_error_message">Erreur inconnue</string>
+    <string name="share_verse">Partager le verset</string>
+    <string name="no_verse_available">(Aucun verset disponible.)</string>
+    <string name="shared_from_app">Partagé depuis %1$s</string>
+    <string name="retry">Réessayer</string>
+</resources>

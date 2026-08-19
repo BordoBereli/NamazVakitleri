@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">NamazVakitleri</string>
+    <string name="home_page_fallback">Масджид ан-Набави</string>
+    <string name="prayer_times_title">Ежедневные намазы</string>
+    <string name="view_all_prayers">Смотреть все >></string>
+    <string name="time_until_message">Время до следующего намаза</string>
+    <string name="time_until_prayer_format">Время до %1$s</string>
+    <string name="time_until_sunrise">Время до восхода</string>
+    <string name="unknown_error_message">Неизвестная ошибка</string>
+    <string name="share_verse">Поделиться аятом</string>
+    <string name="no_verse_available">(Аят недоступен.)</string>
+    <string name="shared_from_app">Поделились из %1$s</string>
+    <string name="retry">Повторить</string>
+</resources>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">NamazVakitleri</string>
+    <string name="home_page_fallback">มัสยิดอันนะบะวี</string>
+    <string name="prayer_times_title">ละหมาดประจำวัน</string>
+    <string name="view_all_prayers">ดูทั้งหมด >></string>
+    <string name="time_until_message">เวลาจนถึงละหมาดถัดไป</string>
+    <string name="time_until_prayer_format">เวลาจนถึง %1$s</string>
+    <string name="time_until_sunrise">เวลาจนถึงพระอาทิตย์ขึ้น</string>
+    <string name="unknown_error_message">ข้อผิดพลาดที่ไม่รู้จัก</string>
+    <string name="share_verse">แชร์โองการ</string>
+    <string name="no_verse_available">(ไม่มีโองการ)</string>
+    <string name="shared_from_app">แชร์จาก %1$s</string>
+    <string name="retry">ลองอีกครั้ง</string>
+</resources>

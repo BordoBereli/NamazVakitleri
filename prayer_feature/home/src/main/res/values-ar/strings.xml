@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">NamazVakitleri</string>
+    <string name="home_page_fallback">المسجد النبوي</string>
+    <string name="prayer_times_title">صلوات اليوم</string>
+    <string name="view_all_prayers">عرض الكل >></string>
+    <string name="time_until_message">الوقت المتبقي حتى الصلاة القادمة</string>
+    <string name="time_until_prayer_format">الوقت المتبقي حتى %1$s</string>
+    <string name="time_until_sunrise">الوقت المتبقي حتى الشروق</string>
+    <string name="unknown_error_message">خطأ غير معروف</string>
+    <string name="share_verse">مشاركة الآية</string>
+    <string name="no_verse_available">(لا توجد آية متاحة.)</string>
+    <string name="shared_from_app">تمت المشاركة من %1$s</string>
+    <string name="retry">إعادة المحاولة</string>
+</resources>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">NamazVakitleri</string>
+    <string name="home_page_fallback">Masjid Nabawi</string>
+    <string name="prayer_times_title">Salat Harian</string>
+    <string name="view_all_prayers">Lihat Semua >></string>
+    <string name="time_until_message">Waktu hingga salat berikutnya</string>
+    <string name="time_until_prayer_format">Waktu hingga %1$s</string>
+    <string name="time_until_sunrise">Waktu hingga matahari terbit</string>
+    <string name="unknown_error_message">Kesalahan tidak diketahui</string>
+    <string name="share_verse">Bagikan Ayat</string>
+    <string name="no_verse_available">(Tidak ada ayat tersedia.)</string>
+    <string name="shared_from_app">Dibagikan dari %1$s</string>
+    <string name="retry">Coba Lagi</string>
+</resources>

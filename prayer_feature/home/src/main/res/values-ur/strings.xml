@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">NamazVakitleri</string>
+    <string name="home_page_fallback">مسجد نبوی</string>
+    <string name="prayer_times_title">روزانہ نمازیں</string>
+    <string name="view_all_prayers">سب دیکھیں >></string>
+    <string name="time_until_message">اگلی نماز تک باقی وقت</string>
+    <string name="time_until_prayer_format">%1$s تک باقی وقت</string>
+    <string name="time_until_sunrise">طلوع آفتاب تک باقی وقت</string>
+    <string name="unknown_error_message">نامعلوم خرابی</string>
+    <string name="share_verse">آیت شیئر کریں</string>
+    <string name="no_verse_available">(کوئی آیت دستیاب نہیں۔)</string>
+    <string name="shared_from_app">%1$s سے شیئر کیا گیا</string>
+    <string name="retry">دوبارہ کوشش کریں</string>
+</resources>

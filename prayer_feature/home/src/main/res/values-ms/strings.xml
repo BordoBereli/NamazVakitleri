@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">NamazVakitleri</string>
+    <string name="home_page_fallback">Masjid Nabawi</string>
+    <string name="prayer_times_title">Solat Harian</string>
+    <string name="view_all_prayers">Lihat Semua >></string>
+    <string name="time_until_message">Masa sehingga solat seterusnya</string>
+    <string name="time_until_prayer_format">Masa sehingga %1$s</string>
+    <string name="time_until_sunrise">Masa sehingga matahari terbit</string>
+    <string name="unknown_error_message">Ralat tidak diketahui</string>
+    <string name="share_verse">Kongsi Ayat</string>
+    <string name="no_verse_available">(Tiada ayat tersedia.)</string>
+    <string name="shared_from_app">Dikongsi daripada %1$s</string>
+    <string name="retry">Cuba Lagi</string>
+</resources>

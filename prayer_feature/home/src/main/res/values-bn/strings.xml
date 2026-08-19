@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">NamazVakitleri</string>
+    <string name="home_page_fallback">মসজিদে নববী</string>
+    <string name="prayer_times_title">দৈনিক নামাজ</string>
+    <string name="view_all_prayers">সব দেখুন >></string>
+    <string name="time_until_message">পরবর্তী নামাজ পর্যন্ত সময়</string>
+    <string name="time_until_prayer_format">%1$s পর্যন্ত সময়</string>
+    <string name="time_until_sunrise">সূর্যোদয় পর্যন্ত সময়</string>
+    <string name="unknown_error_message">অজানা ত্রুটি</string>
+    <string name="share_verse">আয়াত শেয়ার করুন</string>
+    <string name="no_verse_available">(কোনো আয়াত উপলব্ধ নেই।)</string>
+    <string name="shared_from_app">%1$s থেকে শেয়ার করা হয়েছে</string>
+    <string name="retry">আবার চেষ্টা করুন</string>
+</resources>
