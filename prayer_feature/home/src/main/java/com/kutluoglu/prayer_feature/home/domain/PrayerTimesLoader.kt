@@ -4,6 +4,7 @@ import com.kutluoglu.core.common.getZoneIdFromLocation
 import com.kutluoglu.core.common.now
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
 import com.kutluoglu.prayer.model.location.LocationData
+import com.kutluoglu.prayer.model.prayer.CalculationMethod
 import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer.usecases.prayer.GetPrayerTimesUseCase
 import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
@@ -31,14 +32,15 @@ class PrayerTimesLoader(
     private val calculator: PrayerLogicEngine,
     private val formatter: PrayerFormatter
 ) {
-    suspend fun load(location: LocationData): Result<LoadedPrayerData> {
+    suspend fun load(location: LocationData, calculationMethod: CalculationMethod): Result<LoadedPrayerData> {
         val zoneId = getZoneIdFromLocation(location.countryCode)
         val locationDateTime = LocalDateTime.now(zoneId)
         return getPrayerTimesUseCase(
             date = locationDateTime,
             latitude = location.latitude,
             longitude = location.longitude,
-            zoneId = zoneId
+            zoneId = zoneId,
+            calculationMethod = calculationMethod
         ).map { prayerTimes ->
             val localized = formatter.withLocalizedNames(prayerTimes)
             LoadedPrayerData(

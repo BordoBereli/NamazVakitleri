@@ -4,6 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.core.common.getZoneIdFromLocation
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
 import com.kutluoglu.prayer.model.location.LocationData
+import com.kutluoglu.prayer.model.prayer.CalculationMethod
 import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer.usecases.prayer.GetPrayerTimesUseCase
 import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
@@ -37,14 +38,14 @@ class PrayerTimesLoaderTest {
         val date = LocalDate(2026, 8, 2)
         val fajr = Prayer(name = "İmsak", arabicName = "الفجر", time = LocalTime(5, 0), date = date)
         val dhuhr = Prayer(name = "Öğle", arabicName = "الظهر", time = LocalTime(12, 30), date = date)
-        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any()) } returns success(listOf(fajr, dhuhr))
+        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any(), any()) } returns success(listOf(fajr, dhuhr))
         every { formatter.withLocalizedNames(any()) } returns listOf(fajr, dhuhr)
         every { formatter.getInitialTimeInfo(any(), any(), any()) } returns TimeUiState(gregorianFullDate = "02 Ağustos 2026")
         every { formatter.locationInfo(any()) } returns "Istanbul, TR"
         every { calculator.findCurrentAndNextPrayer(any(), any()) } returns Pair(fajr, dhuhr)
 
         val loader = PrayerTimesLoader(getPrayerTimesUseCase, calculator, formatter)
-        val result = loader.load(location)
+        val result = loader.load(location, CalculationMethod.TURKEY_DIYANET)
 
         assertThat(result.isSuccess).isTrue()
         val loaded = result.getOrThrow()
@@ -57,11 +58,11 @@ class PrayerTimesLoaderTest {
 
     @Test
     fun `load maps failure to a failed Result`() = runTest {
-        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any()) } returns
+        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any(), any()) } returns
             Result.failure(RuntimeException("fetch failed"))
 
         val loader = PrayerTimesLoader(getPrayerTimesUseCase, calculator, formatter)
-        val result = loader.load(location)
+        val result = loader.load(location, CalculationMethod.TURKEY_DIYANET)
 
         assertThat(result.isFailure).isTrue()
         assertThat(result.exceptionOrNull()?.message).isEqualTo("fetch failed")

@@ -5,6 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kutluoglu.prayer_location.LocationsCoordinator
 import com.kutluoglu.prayer_location.data.LocationsState
+import com.kutluoglu.prayer.model.prayer.CalculationMethod
+import com.kutluoglu.prayer_settings.domain.repository.SettingsRepository
+import com.kutluoglu.prayer_settings.domain.usecase.GetSettingsUseCase
 import com.kutluoglu.prayer_feature.home.domain.CountdownEngine
 import com.kutluoglu.prayer_feature.home.domain.LoadedPrayerData
 import com.kutluoglu.prayer_feature.home.domain.PrayerTimesLoader
@@ -20,8 +23,10 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -33,7 +38,9 @@ class HomeViewModel(
     private val locationsCoordinator: LocationsCoordinator,
     private val prayerTimesLoader: PrayerTimesLoader,
     private val countdownEngine: CountdownEngine,
-    private val quranVerseLoader: QuranVerseLoader
+    private val quranVerseLoader: QuranVerseLoader,
+    private val getSettingsUseCase: GetSettingsUseCase,
+    private val settingsRepository: SettingsRepository
 ) : ViewModel() {
 
     private val _screenGate = MutableStateFlow<HomeScreenGate>(HomeScreenGate.Loading)
@@ -56,6 +63,7 @@ class HomeViewModel(
     private var locationsObserverJob: Job? = null
     private var prayerPassedObserverJob: Job? = null
     private var dayChangedObserverJob: Job? = null
+    private var settingsObserverJob: Job? = null
 
     init {
         locationsObserverJob = viewModelScope.launch {
@@ -71,6 +79,16 @@ class HomeViewModel(
         }
         dayChangedObserverJob = viewModelScope.launch {
             countdownEngine.dayChangedSignal.collect { loadPrayerTimesForCurrentLocation() }
+        }
+        settingsObserverJob = viewModelScope.launch {
+            settingsRepository.observeSettings()
+                .map { it.calculationMethod }
+                .distinctUntilChanged()
+                .drop(1)
+                .collect {
+                    _prayerDataByLocation.value = emptyMap()
+                    loadPrayerTimesForCurrentLocation()
+                }
         }
         loadInitialLocation()
     }
@@ -108,7 +126,7 @@ class HomeViewModel(
                 _locationsState.value = state
                 val activeId = state.selectedId ?: state.entries.firstOrNull()?.id
                 if (activeId != null) {
-                    val result = prayerTimesLoader.load(location)
+                    val result = prayerTimesLoader.load(location, currentCalculationMethod())
                     if (result.isSuccess) {
                         val loaded = result.getOrThrow()
                         stateMutex.withLock {
@@ -166,7 +184,7 @@ class HomeViewModel(
         val cached = _prayerDataByLocation.value[activeId]
         val locationChanged = cached?.locationState?.locationData != entry.location
         if (cached != null && !locationChanged) return cached
-        return prayerTimesLoader.load(entry.location)
+        return prayerTimesLoader.load(entry.location, currentCalculationMethod())
             .onSuccess { loaded ->
                 _prayerDataByLocation.value = _prayerDataByLocation.value + (activeId to loaded)
             }
@@ -186,7 +204,7 @@ class HomeViewModel(
                         val cached = _prayerDataByLocation.value[entry.id]
                         val locationChanged = cached?.locationState?.locationData != entry.location
                         if (cached == null || locationChanged) {
-                            prayerTimesLoader.load(entry.location)
+                            prayerTimesLoader.load(entry.location, currentCalculationMethod())
                                 .onSuccess { loaded ->
                                     stateMutex.withLock {
                                         _prayerDataByLocation.value = _prayerDataByLocation.value + (entry.id to loaded)
@@ -231,6 +249,9 @@ class HomeViewModel(
         quranVerseLoader.setSheetVisible(isVisible)
     }
 
+    private suspend fun currentCalculationMethod(): CalculationMethod =
+        CalculationMethod.fromSettingsId(getSettingsUseCase().calculationMethod)
+
     private fun fail(message: String) {
         _screenGate.value = HomeScreenGate.Error(message)
     }
@@ -241,5 +262,6 @@ class HomeViewModel(
         locationsObserverJob?.cancel()
         prayerPassedObserverJob?.cancel()
         dayChangedObserverJob?.cancel()
+        settingsObserverJob?.cancel()
     }
 }
