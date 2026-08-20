@@ -60,4 +60,8 @@ class SettingsRepositoryImpl(
     override suspend fun updateHijriAdjustment(days: Int) {
         settingsDataStore.updateHijriAdjustment(days)
     }
+
+    override suspend fun updateCrashlyticsEnabled(enabled: Boolean) {
+        settingsDataStore.updateCrashlyticsEnabled(enabled)
+    }
 }

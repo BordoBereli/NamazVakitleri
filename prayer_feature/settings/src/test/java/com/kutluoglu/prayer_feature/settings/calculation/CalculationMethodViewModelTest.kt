@@ -1,6 +1,7 @@
 package com.kutluoglu.prayer_feature.settings.calculation
 
 import com.google.common.truth.Truth.assertThat
+import com.kutluoglu.core.common.analytics.AnalyticsTracker
 import com.kutluoglu.prayer_feature.settings.MainCoroutineRule
 import com.kutluoglu.prayer_settings.domain.model.CalculationMethod
 import com.kutluoglu.prayer_settings.domain.model.Settings
@@ -21,6 +22,7 @@ class CalculationMethodViewModelTest {
 
     private lateinit var getSettingsUseCase: GetSettingsUseCase
     private lateinit var updateCalculationMethodUseCase: UpdateCalculationMethodUseCase
+    private val analyticsTracker = mockk<AnalyticsTracker>(relaxed = true)
     private lateinit var viewModel: CalculationMethodViewModel
 
     @BeforeEach
@@ -29,14 +31,14 @@ class CalculationMethodViewModelTest {
         updateCalculationMethodUseCase = mockk()
         coEvery { getSettingsUseCase() } returns Settings()
         coEvery { updateCalculationMethodUseCase(any()) } returns Unit
-        viewModel = CalculationMethodViewModel(getSettingsUseCase, updateCalculationMethodUseCase)
+        viewModel = CalculationMethodViewModel(getSettingsUseCase, updateCalculationMethodUseCase, analyticsTracker)
     }
 
     @Test
     fun `init loads current method from settings and pre-selects it`() = runTest {
         coEvery { getSettingsUseCase() } returns Settings(calculationMethod = "ISNA")
 
-        val viewModel = CalculationMethodViewModel(getSettingsUseCase, updateCalculationMethodUseCase)
+        val viewModel = CalculationMethodViewModel(getSettingsUseCase, updateCalculationMethodUseCase, analyticsTracker)
 
         val state = viewModel.uiState.value
         assertThat(state).isInstanceOf(CalculationMethodUiState.MethodsLoaded::class.java)

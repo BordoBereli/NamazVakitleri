@@ -12,4 +12,6 @@
     <string name="no_verse_available">(Tidak ada ayat tersedia.)</string>
     <string name="shared_from_app">Dibagikan dari %1$s</string>
     <string name="retry">Coba Lagi</string>
+    <string name="choose_location">Pilih Lokasi</string>
+    <string name="no_location_selected">Tidak ada lokasi yang dipilih. Silakan pilih lokasi untuk melihat waktu salat.</string>
 </resources>

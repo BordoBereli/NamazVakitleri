@@ -12,4 +12,6 @@
     <string name="no_verse_available">(Kein Vers verfügbar.)</string>
     <string name="shared_from_app">Geteilt aus %1$s</string>
     <string name="retry">Wiederholen</string>
+    <string name="choose_location">Standort wählen</string>
+    <string name="no_location_selected">Kein Standort ausgewählt. Bitte wählen Sie einen Standort, um Gebetszeiten zu sehen.</string>
 </resources>

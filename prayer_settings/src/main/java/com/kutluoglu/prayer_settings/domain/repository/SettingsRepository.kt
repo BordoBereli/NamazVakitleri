@@ -11,4 +11,5 @@ interface SettingsRepository {
     suspend fun updateCalculationMethod(method: String)
     suspend fun updateLanguage(language: String)
     suspend fun updateHijriAdjustment(days: Int)
+    suspend fun updateCrashlyticsEnabled(enabled: Boolean)
 }

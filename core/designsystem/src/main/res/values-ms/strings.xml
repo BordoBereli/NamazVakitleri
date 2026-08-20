@@ -15,6 +15,7 @@
     <string name="location_permission_needed">Kebenaran Lokasi Diperlukan</string>
     <string name="permission_grant_message">Waktu solat dikira berdasarkan lokasi semasa anda. Sila berikan kebenaran untuk meneruskan.</string>
     <string name="grant_permission">Berikan Kebenaran</string>
+    <string name="choose_location">Pilih Lokasi</string>
     <string name="back">Kembali</string>
     <string name="settings">Tetapan</string>
     <string name="select_calculation_method">Pilih Kaedah Pengiraan</string>

@@ -157,7 +157,7 @@ private fun PrayerTimesHeader(
 }
 
 private fun selectedMonthLabel(month: YearMonth): String =
-    java.time.YearMonth.of(month.year, month.month.number).format(gregorianShortFormatter)
+    java.time.YearMonth.of(month.year, month.month.number).format(gregorianShortFormatter())
 
 @Composable
 private fun TitleHeader(

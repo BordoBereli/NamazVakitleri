@@ -12,4 +12,6 @@
     <string name="no_verse_available">(لا توجد آية متاحة.)</string>
     <string name="shared_from_app">تمت المشاركة من %1$s</string>
     <string name="retry">إعادة المحاولة</string>
+    <string name="choose_location">اختر الموقع</string>
+    <string name="no_location_selected">لم يتم تحديد موقع. يرجى اختيار موقع لعرض أوقات الصلاة.</string>
 </resources>

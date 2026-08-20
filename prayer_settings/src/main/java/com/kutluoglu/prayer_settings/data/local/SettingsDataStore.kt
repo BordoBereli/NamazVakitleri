@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
@@ -42,6 +43,7 @@ class SettingsDataStore(
         val CALCULATION_METHOD = stringPreferencesKey("calculation_method")
         val LANGUAGE = stringPreferencesKey("language")
         val HIJRI_ADJUSTMENT = intPreferencesKey("hijri_adjustment")
+        val CRASHLYTICS_ENABLED = booleanPreferencesKey("crashlytics_enabled")
     }
     
     fun observeSettings(): Flow<Settings> = dataStore.data.map { preferences ->
@@ -56,7 +58,8 @@ class SettingsDataStore(
             ),
             calculationMethod = preferences[PreferencesKeys.CALCULATION_METHOD] ?: "TURKEY_DIYANET",
             language = preferences[PreferencesKeys.LANGUAGE] ?: "system",
-            hijriAdjustment = preferences[PreferencesKeys.HIJRI_ADJUSTMENT] ?: 0
+            hijriAdjustment = preferences[PreferencesKeys.HIJRI_ADJUSTMENT] ?: 0,
+            crashlyticsEnabled = preferences[PreferencesKeys.CRASHLYTICS_ENABLED] ?: true
         )
     }
     
@@ -73,7 +76,8 @@ class SettingsDataStore(
                 ),
                 calculationMethod = preferences[PreferencesKeys.CALCULATION_METHOD] ?: "TURKEY_DIYANET",
                 language = preferences[PreferencesKeys.LANGUAGE] ?: "system",
-                hijriAdjustment = preferences[PreferencesKeys.HIJRI_ADJUSTMENT] ?: 0
+                hijriAdjustment = preferences[PreferencesKeys.HIJRI_ADJUSTMENT] ?: 0,
+                crashlyticsEnabled = preferences[PreferencesKeys.CRASHLYTICS_ENABLED] ?: true
             )
         }
     }
@@ -108,6 +112,12 @@ class SettingsDataStore(
     suspend fun updateHijriAdjustment(days: Int) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.HIJRI_ADJUSTMENT] = days
+        }
+    }
+
+    suspend fun updateCrashlyticsEnabled(enabled: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.CRASHLYTICS_ENABLED] = enabled
         }
     }
 }

@@ -7,6 +7,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performTouchInput
+import com.kutluoglu.core.common.analytics.AnalyticsTracker
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.location.LocationEntry
 import com.kutluoglu.prayer_location.LocationsCoordinator
@@ -29,6 +30,7 @@ class MyLocationsScreenTest {
     val composeTestRule = createComposeRule()
 
     private val coordinator = mockk<LocationsCoordinator>(relaxed = true)
+    private val analyticsTracker = mockk<AnalyticsTracker>(relaxed = true)
 
     private val istanbul = LocationEntry(
         id = "loc-1",
@@ -56,7 +58,7 @@ class MyLocationsScreenTest {
     }
 
     private fun launchScreen() {
-        val viewModel = MyLocationsViewModel(coordinator)
+        val viewModel = MyLocationsViewModel(coordinator, analyticsTracker)
         composeTestRule.setContent {
             MyLocationsRoute(
                 onNavigateBack = {},

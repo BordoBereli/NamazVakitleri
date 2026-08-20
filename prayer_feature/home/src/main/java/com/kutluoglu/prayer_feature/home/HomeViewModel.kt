@@ -3,6 +3,9 @@ package com.kutluoglu.prayer_feature.home
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kutluoglu.core.common.analytics.AnalyticsEvents
+import com.kutluoglu.core.common.analytics.AnalyticsParams
+import com.kutluoglu.core.common.analytics.AnalyticsTracker
 import com.kutluoglu.prayer_location.LocationsCoordinator
 import com.kutluoglu.prayer_location.data.LocationsState
 import com.kutluoglu.prayer.model.prayer.CalculationMethod
@@ -25,6 +28,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -40,7 +44,8 @@ class HomeViewModel(
     private val countdownEngine: CountdownEngine,
     private val quranVerseLoader: QuranVerseLoader,
     private val getSettingsUseCase: GetSettingsUseCase,
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
+    private val analyticsTracker: AnalyticsTracker
 ) : ViewModel() {
 
     private val _screenGate = MutableStateFlow<HomeScreenGate>(HomeScreenGate.Loading)
@@ -91,17 +96,73 @@ class HomeViewModel(
                     loadPrayerTimesForCurrentLocation()
                 }
         }
+        observeAnalytics()
         loadInitialLocation()
+    }
+
+    private fun observeAnalytics() {
+        viewModelScope.launch {
+            _screenGate
+                .filterIsInstance<HomeScreenGate.Ready>()
+                .collect { logHomeLoaded() }
+        }
+        viewModelScope.launch {
+            quranVerseLoader.quranState
+                .map { it.verse }
+                .distinctUntilChanged()
+                .collect { verse ->
+                    if (verse != null) {
+                        analyticsTracker.logEvent(
+                            AnalyticsEvents.QURAN_VERSE_LOADED,
+                            mapOf(
+                                AnalyticsParams.SUCCESS to true,
+                                AnalyticsParams.SURAH to verse.surah.englishName,
+                                AnalyticsParams.AYAH to verse.numberInSurah
+                            )
+                        )
+                    }
+                }
+        }
+    }
+
+    private suspend fun logHomeLoaded() {
+        val state = _locationsState.value
+        val activeId = state.selectedId ?: state.entries.firstOrNull()?.id
+        val activeEntry = state.entries.firstOrNull { it.id == activeId }
+        val method = currentSettings().first
+        analyticsTracker.logEvent(
+            AnalyticsEvents.HOME_LOADED,
+            mapOf(
+                AnalyticsParams.LOCATION_COUNT to state.entries.size,
+                AnalyticsParams.ACTIVE_LOCATION_TYPE to (if (activeEntry?.isAutoGps == true) "gps" else "manual"),
+                AnalyticsParams.CALCULATION_METHOD to method.name
+            )
+        )
     }
 
     fun onEvent(event: HomeEvent) {
         when (event) {
-            HomeEvent.OnRefresh -> loadPrayerTimesForCurrentLocation()
+            HomeEvent.OnRefresh -> {
+                analyticsTracker.logEvent(AnalyticsEvents.PULL_TO_REFRESH)
+                loadPrayerTimesForCurrentLocation()
+            }
             HomeEvent.OnPermissionsGranted -> loadPrayerTimesForCurrentLocation()
             HomeEvent.OnLoadQuranVerse -> loadRandomVerse()
-            HomeEvent.OnVerseClicked -> setVerseSheetVisibility(isVisible = true)
-            HomeEvent.OnVerseDetailDismissed -> setVerseSheetVisibility(isVisible = false)
-            is HomeEvent.OnLocationSelected -> selectLocation(event.locationId)
+            HomeEvent.OnVerseClicked -> {
+                analyticsTracker.logEvent(AnalyticsEvents.QURAN_VERSE_OPENED)
+                setVerseSheetVisibility(isVisible = true)
+            }
+            HomeEvent.OnVerseDetailDismissed -> {
+                analyticsTracker.logEvent(AnalyticsEvents.QURAN_VERSE_DISMISSED)
+                setVerseSheetVisibility(isVisible = false)
+            }
+            is HomeEvent.OnLocationSelected -> {
+                analyticsTracker.logEvent(
+                    AnalyticsEvents.LOCATION_SWITCHED,
+                    mapOf(AnalyticsParams.LOCATION_ID to event.locationId)
+                )
+                selectLocation(event.locationId)
+            }
         }
     }
 

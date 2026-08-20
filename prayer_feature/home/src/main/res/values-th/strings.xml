@@ -12,4 +12,6 @@
     <string name="no_verse_available">(ไม่มีโองการ)</string>
     <string name="shared_from_app">แชร์จาก %1$s</string>
     <string name="retry">ลองอีกครั้ง</string>
+    <string name="choose_location">เลือกสถานที่</string>
+    <string name="no_location_selected">ยังไม่ได้เลือกสถานที่ กรุณาเลือกสถานที่เพื่อดูเวลาละหมาด</string>
 </resources>

@@ -4,6 +4,9 @@ import android.hardware.SensorManager
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kutluoglu.core.common.analytics.AnalyticsEvents
+import com.kutluoglu.core.common.analytics.AnalyticsParams
+import com.kutluoglu.core.common.analytics.AnalyticsTracker
 import com.kutluoglu.prayer.usecases.qibla.CalculateQiblaUseCase
 import com.kutluoglu.prayer_location.ActiveLocationProvider
 import kotlinx.coroutines.FlowPreview
@@ -32,7 +35,8 @@ data class QiblaUiState(
 @KoinViewModel
 class QiblaViewModel(
     private val activeLocationProvider: ActiveLocationProvider,
-    private val calculateQiblaUseCase: CalculateQiblaUseCase
+    private val calculateQiblaUseCase: CalculateQiblaUseCase,
+    private val analyticsTracker: AnalyticsTracker
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(QiblaUiState())
     val uiState: StateFlow<QiblaUiState> = _uiState
@@ -43,11 +47,19 @@ class QiblaViewModel(
         )
 
     private var observationJob: Job? = null
+    private var hasLoggedAlignment = false
 
     fun onEvent(event: QiblaEvent) {
         when (event) {
-            QiblaEvent.OnStart -> startQiblaObservation()
-            QiblaEvent.OnStop -> stopQiblaObservation()
+            QiblaEvent.OnStart -> {
+                analyticsTracker.logEvent(AnalyticsEvents.QIBLA_COMPASS_STARTED)
+                hasLoggedAlignment = false
+                startQiblaObservation()
+            }
+            QiblaEvent.OnStop -> {
+                analyticsTracker.logEvent(AnalyticsEvents.QIBLA_COMPASS_STOPPED)
+                stopQiblaObservation()
+            }
         }
     }
 
@@ -76,6 +88,7 @@ class QiblaViewModel(
                                     error = null
                                 )
                             }
+                            trackAlignment(currQiblaState.qiblaAngle)
                         } else {
                             _uiState.update { it.copy(isLocationAvailable = false, error = "Location not found") }
                         }
@@ -97,6 +110,23 @@ class QiblaViewModel(
         observationJob?.cancel()
         observationJob = null
         calculateQiblaUseCase.stop()
+    }
+
+    private fun trackAlignment(qiblaAngle: Float) {
+        val aligned = kotlin.math.abs(qiblaAngle) <= ALIGNMENT_THRESHOLD_DEGREES
+        if (aligned && !hasLoggedAlignment) {
+            hasLoggedAlignment = true
+            analyticsTracker.logEvent(
+                AnalyticsEvents.QIBLA_ALIGNED,
+                mapOf(AnalyticsParams.DEGREES_OFF to qiblaAngle)
+            )
+        } else if (!aligned) {
+            hasLoggedAlignment = false
+        }
+    }
+
+    private companion object {
+        const val ALIGNMENT_THRESHOLD_DEGREES = 5f
     }
 
     override fun onCleared() {

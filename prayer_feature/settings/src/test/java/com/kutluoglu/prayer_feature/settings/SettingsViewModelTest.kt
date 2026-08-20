@@ -2,6 +2,7 @@ package com.kutluoglu.prayer_feature.settings
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
+import com.kutluoglu.core.common.analytics.AnalyticsTracker
 import com.kutluoglu.prayer.usecases.prayer.ClearPrayerTimesCacheUseCase
 import com.kutluoglu.prayer_settings.domain.model.LocationSettings
 import com.kutluoglu.prayer_settings.domain.model.Settings
@@ -34,6 +35,7 @@ class SettingsViewModelTest {
     private lateinit var updateHijriAdjustmentUseCase: UpdateHijriAdjustmentUseCase
     private lateinit var clearLocationCacheUseCase: ClearLocationCacheUseCase
     private lateinit var clearPrayerTimesCacheUseCase: ClearPrayerTimesCacheUseCase
+    private val analyticsTracker = mockk<AnalyticsTracker>(relaxed = true)
     private lateinit var viewModel: SettingsViewModel
 
     @BeforeEach
@@ -55,7 +57,8 @@ class SettingsViewModelTest {
             updateLanguageUseCase,
             updateHijriAdjustmentUseCase,
             clearLocationCacheUseCase,
-            clearPrayerTimesCacheUseCase
+            clearPrayerTimesCacheUseCase,
+            analyticsTracker
         )
     }
 

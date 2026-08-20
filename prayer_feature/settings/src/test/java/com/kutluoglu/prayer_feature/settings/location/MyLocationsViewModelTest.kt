@@ -1,6 +1,7 @@
 package com.kutluoglu.prayer_feature.settings.location
 
 import com.google.common.truth.Truth.assertThat
+import com.kutluoglu.core.common.analytics.AnalyticsTracker
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.location.LocationEntry
 import com.kutluoglu.prayer_location.LocationsCoordinator
@@ -23,6 +24,7 @@ import org.junit.jupiter.api.Test
 class MyLocationsViewModelTest {
 
     private val coordinator = mockk<LocationsCoordinator>(relaxed = true)
+    private val analyticsTracker = mockk<AnalyticsTracker>(relaxed = true)
     private lateinit var viewModel: MyLocationsViewModel
 
     private val istanbul = LocationEntry(
@@ -37,7 +39,7 @@ class MyLocationsViewModelTest {
         coEvery { coordinator.observeState() } returns MutableStateFlow(
             LocationsState(entries = listOf(istanbul), gpsEnabled = false, selectedId = "loc-1")
         )
-        viewModel = MyLocationsViewModel(coordinator)
+        viewModel = MyLocationsViewModel(coordinator, analyticsTracker)
     }
 
     @AfterEach

@@ -1,6 +1,7 @@
 package com.kutluoglu.prayer_feature.settings.hijri
 
 import com.google.common.truth.Truth.assertThat
+import com.kutluoglu.core.common.analytics.AnalyticsTracker
 import com.kutluoglu.prayer_feature.settings.MainCoroutineRule
 import com.kutluoglu.prayer_settings.domain.model.Settings
 import com.kutluoglu.prayer_settings.domain.usecase.GetSettingsUseCase
@@ -20,6 +21,7 @@ class HijriAdjustmentViewModelTest {
 
     private lateinit var getSettingsUseCase: GetSettingsUseCase
     private lateinit var updateHijriAdjustmentUseCase: UpdateHijriAdjustmentUseCase
+    private val analyticsTracker = mockk<AnalyticsTracker>(relaxed = true)
     private lateinit var viewModel: HijriAdjustmentViewModel
 
     @BeforeEach
@@ -28,14 +30,14 @@ class HijriAdjustmentViewModelTest {
         updateHijriAdjustmentUseCase = mockk()
         coEvery { getSettingsUseCase() } returns Settings()
         coEvery { updateHijriAdjustmentUseCase(any()) } returns Unit
-        viewModel = HijriAdjustmentViewModel(getSettingsUseCase, updateHijriAdjustmentUseCase)
+        viewModel = HijriAdjustmentViewModel(getSettingsUseCase, updateHijriAdjustmentUseCase, analyticsTracker)
     }
 
     @Test
     fun `init loads current adjustment from settings`() = runTest {
         coEvery { getSettingsUseCase() } returns Settings(hijriAdjustment = 5)
 
-        val viewModel = HijriAdjustmentViewModel(getSettingsUseCase, updateHijriAdjustmentUseCase)
+        val viewModel = HijriAdjustmentViewModel(getSettingsUseCase, updateHijriAdjustmentUseCase, analyticsTracker)
 
         assertThat(viewModel.currentAdjustment.value).isEqualTo(5)
     }

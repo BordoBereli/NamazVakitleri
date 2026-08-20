@@ -40,10 +40,21 @@ fun HomeScreen(
             restoreState = true
         }
     }
+    val onChooseLocation = {
+        navController.navigate(Screen.LocationSelectionScreen.route) {
+            popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+            launchSingleTop = true
+            restoreState = true
+        }
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         PermissionHandler(
-            onPermissionsGranted = { onEvent(HomeEvent.OnPermissionsGranted) }
+            onPermissionsGranted = { onEvent(HomeEvent.OnPermissionsGranted) },
+            onChooseLocation = onChooseLocation,
+            // If the user already has a manually selected location, don't block the UI
+            // behind the location permission.
+            canProceedWithoutPermission = locationsState.entries.isNotEmpty()
         ) {
             LocationPager(
                 entries = locationsState.entries,
@@ -54,6 +65,7 @@ fun HomeScreen(
                 quranVerseFormatter = quranVerseFormatter,
                 onPrayerTimesClick = onPrayerTimesClick,
                 onAddLocation = onAddLocation,
+                onChooseLocation = onChooseLocation,
                 onEvent = onEvent
             )
         }

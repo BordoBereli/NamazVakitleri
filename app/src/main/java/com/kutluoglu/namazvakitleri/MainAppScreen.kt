@@ -13,12 +13,16 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.kutluoglu.core.common.analytics.AnalyticsEvents
+import com.kutluoglu.core.common.analytics.AnalyticsParams
+import com.kutluoglu.core.common.analytics.AnalyticsTracker
 import com.kutluoglu.prayer_navigation.core.Destination
 import com.kutluoglu.prayer_navigation.core.NavButton
 import com.kutluoglu.prayer_navigation.core.PrayerNestedGraph
@@ -32,6 +36,7 @@ import com.kutluoglu.prayer_feature.qibla.navigation.qiblaGraph
 import com.kutluoglu.prayer_feature.settings.settingsGraph
 import com.kutluoglu.namazvakitleri.locale.LocaleManager
 import org.koin.android.ext.android.get
+import org.koin.compose.koinInject
 
 
 @Composable
@@ -41,6 +46,18 @@ fun MainAppScreen() {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     // Get the current route from the back stack entry
     val currentGraph = navBackStackEntry?.destination?.parent?.route
+    val currentRoute = navBackStackEntry?.destination?.route
+    val analyticsTracker: AnalyticsTracker = koinInject()
+
+    // Track screen views for analytics
+    LaunchedEffect(currentRoute) {
+        if (currentRoute != null) {
+            analyticsTracker.logEvent(
+                AnalyticsEvents.SCREEN_VIEW,
+                mapOf(AnalyticsParams.SCREEN_NAME to currentRoute)
+            )
+        }
+    }
 
     val context = LocalContext.current
     val activity = context.findActivity()

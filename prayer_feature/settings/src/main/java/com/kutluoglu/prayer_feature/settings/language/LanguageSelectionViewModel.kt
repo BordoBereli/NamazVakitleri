@@ -3,6 +3,9 @@ package com.kutluoglu.prayer_feature.settings.language
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kutluoglu.core.common.analytics.AnalyticsEvents
+import com.kutluoglu.core.common.analytics.AnalyticsParams
+import com.kutluoglu.core.common.analytics.AnalyticsTracker
 import com.kutluoglu.prayer_settings.domain.usecase.GetSettingsUseCase
 import com.kutluoglu.prayer_settings.domain.usecase.UpdateLanguageUseCase
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -17,7 +20,8 @@ import org.koin.android.annotation.KoinViewModel
 @KoinViewModel
 class LanguageSelectionViewModel(
     private val getSettingsUseCase: GetSettingsUseCase,
-    private val updateLanguageUseCase: UpdateLanguageUseCase
+    private val updateLanguageUseCase: UpdateLanguageUseCase,
+    private val analyticsTracker: AnalyticsTracker
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<LanguageUiState>(LanguageUiState.Loading)
@@ -57,6 +61,7 @@ class LanguageSelectionViewModel(
     }
 
     private fun selectLanguage(language: Language) {
+        val previousLanguageCode = currentLanguageCode
         currentLanguageCode = language.code
         _uiState.value = LanguageUiState.LanguagesLoaded(
             languages = languages,
@@ -64,6 +69,13 @@ class LanguageSelectionViewModel(
         )
         viewModelScope.launch {
             updateLanguageUseCase(language.code)
+            analyticsTracker.logEvent(
+                AnalyticsEvents.LANGUAGE_CHANGED,
+                mapOf(
+                    AnalyticsParams.FROM to previousLanguageCode,
+                    AnalyticsParams.TO to language.code
+                )
+            )
             _selectedLanguage.emit(language.code)
         }
     }

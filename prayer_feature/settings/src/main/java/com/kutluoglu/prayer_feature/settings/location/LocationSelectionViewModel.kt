@@ -2,6 +2,9 @@ package com.kutluoglu.prayer_feature.settings.location
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kutluoglu.core.common.analytics.AnalyticsEvents
+import com.kutluoglu.core.common.analytics.AnalyticsParams
+import com.kutluoglu.core.common.analytics.AnalyticsTracker
 import com.kutluoglu.prayer.model.location.City
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.location.LocationEntry
@@ -33,6 +36,7 @@ class LocationSelectionViewModel(
     private val searchLocationUseCase: SearchLocationUseCase,
     private val locationServiceHelper: LocationServiceHelper,
     private val locationsCoordinator: LocationsCoordinator,
+    private val analyticsTracker: AnalyticsTracker,
     private val defaultDispatcher: CoroutineDispatcher = Dispatchers.Default
 ) : ViewModel() {
 
@@ -207,14 +211,29 @@ class LocationSelectionViewModel(
             
             try {
                 val results = searchLocationUseCase(query)
+                analyticsTracker.logEvent(
+                    AnalyticsEvents.LOCATION_SEARCH,
+                    mapOf(
+                        AnalyticsParams.QUERY to query,
+                        AnalyticsParams.RESULT_COUNT to results.size
+                    )
+                )
                 _uiState.value = LocationSelectionUiState.SearchResults(
                     results = results,
                     query = query,
                     searchHistory = searchHistory.toList()
                 )
             } catch (e: NetworkException) {
+                analyticsTracker.logEvent(
+                    AnalyticsEvents.LOCATION_SEARCH_ERROR,
+                    mapOf(AnalyticsParams.REASON to "network")
+                )
                 _uiState.value = LocationSelectionUiState.Error(getUserFriendlyErrorMessage(e))
             } catch (e: Exception) {
+                analyticsTracker.logEvent(
+                    AnalyticsEvents.LOCATION_SEARCH_ERROR,
+                    mapOf(AnalyticsParams.REASON to (e.message ?: "unknown"))
+                )
                 _uiState.value = LocationSelectionUiState.Error(getUserFriendlyErrorMessage(e))
             }
         }
@@ -273,6 +292,7 @@ class LocationSelectionViewModel(
         viewModelScope.launch {
             addToHistory(city)
             saveLocation(city)
+            logLocationSelected(city)
             _selectedCity.emit(city)
         }
     }
@@ -281,8 +301,21 @@ class LocationSelectionViewModel(
         viewModelScope.launch {
             addToHistory(district)
             saveLocation(district)
+            logLocationSelected(district)
             _selectedCity.emit(district)
         }
+    }
+
+    private fun logLocationSelected(city: City) {
+        analyticsTracker.logEvent(
+            AnalyticsEvents.LOCATION_SELECTED,
+            mapOf(
+                AnalyticsParams.COUNTRY to (city.country ?: ""),
+                AnalyticsParams.CITY to (city.city ?: ""),
+                AnalyticsParams.PROVINCE to (city.province ?: ""),
+                AnalyticsParams.DISTRICT to (city.county ?: "")
+            )
+        )
     }
 
     private suspend fun saveLocation(city: City) {
@@ -303,6 +336,10 @@ class LocationSelectionViewModel(
                 displayName = listOfNotNull(location.county, location.city, location.country)
                     .joinToString(", ").ifBlank { "My Location" }
             )
+        )
+        analyticsTracker.logEvent(
+            AnalyticsEvents.LOCATION_ADDED,
+            mapOf(AnalyticsParams.SOURCE to "search")
         )
     }
 
@@ -348,6 +385,7 @@ class LocationSelectionViewModel(
     }
 
     private fun useMyLocation() {
+        analyticsTracker.logEvent(AnalyticsEvents.USE_MY_LOCATION)
         viewModelScope.launch {
             _uiState.value = LocationSelectionUiState.MapView(
                 selectedLocation = null,
@@ -456,6 +494,7 @@ class LocationSelectionViewModel(
     }
 
     private fun confirmMapLocation(location: MapLocationState) {
+        analyticsTracker.logEvent(AnalyticsEvents.MAP_LOCATION_CONFIRMED)
         viewModelScope.launch {
             val city = City(
                 name = location.cityName ?: location.county ?: "Unknown",

@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -43,12 +44,18 @@ import com.kutluoglu.core.designsystem.R
  * showing a rationale, or guiding the user to settings.
  *
  * @param onPermissionsGranted A lambda that is invoked when permissions are granted.
+ * @param onChooseLocation An optional action to let the user pick a location manually
+ *   instead of granting the permission (e.g. navigate to the location selection screen).
+ * @param canProceedWithoutPermission When true, the content is shown even if the
+ *   permission is not granted (e.g. the user already has a manually selected location).
  * @param content The composable content to display when all permissions are granted.
  */
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun PermissionHandler(
     onPermissionsGranted: () -> Unit,
+    onChooseLocation: (() -> Unit)? = null,
+    canProceedWithoutPermission: Boolean = false,
     content: @Composable () -> Unit
 ) {
     // --- START OF THE FIX ---
@@ -92,31 +99,35 @@ fun PermissionHandler(
         }
     }
 
-    ShowOf(permissionState, content)
+    ShowOf(permissionState, onChooseLocation, canProceedWithoutPermission, content)
 }
 
 @Composable
 @OptIn(ExperimentalPermissionsApi::class)
 private fun ShowOf(
         permissionState: MultiplePermissionsState,
+        onChooseLocation: (() -> Unit)?,
+        canProceedWithoutPermission: Boolean,
         content: @Composable (() -> Unit)
 ) {
     when {
-        // If all permissions are granted, display the main content.
-        permissionState.allPermissionsGranted -> {
+        // If all permissions are granted, or the user can proceed without them
+        // (e.g. already has a manually selected location), display the main content.
+        permissionState.allPermissionsGranted || canProceedWithoutPermission -> {
             content()
         }
 
         // If rationale should be shown, display the rationale UI.
         permissionState.shouldShowRationale   -> {
             PermissionRationale(
-                onRequestPermission = { permissionState.launchMultiplePermissionRequest() }
+                onRequestPermission = { permissionState.launchMultiplePermissionRequest() },
+                onChooseLocation = onChooseLocation
             )
         }
 
         // Otherwise, it's the first launch or permissions are permanently denied.
         else                                  -> {
-            PermissionFirstLaunchOrDenied(permissionState)
+            PermissionFirstLaunchOrDenied(permissionState, onChooseLocation)
         }
     }
 }
@@ -124,7 +135,8 @@ private fun ShowOf(
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 private fun PermissionFirstLaunchOrDenied(
-    permissionState: MultiplePermissionsState
+    permissionState: MultiplePermissionsState,
+    onChooseLocation: (() -> Unit)?
 ) {
     val context = LocalContext.current
     var hasLaunched by remember { mutableStateOf(false) }
@@ -168,12 +180,19 @@ private fun PermissionFirstLaunchOrDenied(
         }) {
             Text(stringResource(R.string.open_settings))
         }
+        if (onChooseLocation != null) {
+            Spacer(modifier = Modifier.height(8.dp))
+            OutlinedButton(onClick = onChooseLocation) {
+                Text(stringResource(R.string.choose_location))
+            }
+        }
     }
 }
 
 @Composable
 private fun PermissionRationale(
-    onRequestPermission: () -> Unit
+    onRequestPermission: () -> Unit,
+    onChooseLocation: (() -> Unit)?
 ) {
     Column(
         modifier = Modifier
@@ -199,6 +218,12 @@ private fun PermissionRationale(
         Spacer(modifier = Modifier.height(24.dp))
         Button(onClick = onRequestPermission) {
             Text(stringResource(R.string.grant_permission))
+        }
+        if (onChooseLocation != null) {
+            Spacer(modifier = Modifier.height(8.dp))
+            OutlinedButton(onClick = onChooseLocation) {
+                Text(stringResource(R.string.choose_location))
+            }
         }
     }
 }

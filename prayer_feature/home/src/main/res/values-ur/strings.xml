@@ -12,4 +12,6 @@
     <string name="no_verse_available">(کوئی آیت دستیاب نہیں۔)</string>
     <string name="shared_from_app">%1$s سے شیئر کیا گیا</string>
     <string name="retry">دوبارہ کوشش کریں</string>
+    <string name="choose_location">مقام منتخب کریں</string>
+    <string name="no_location_selected">کوئی مقام منتخب نہیں کیا گیا۔ نماز کے اوقات دیکھنے کے لیے براہ کرم مقام منتخب کریں۔</string>
 </resources>

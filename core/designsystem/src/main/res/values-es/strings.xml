@@ -15,6 +15,7 @@
     <string name="location_permission_needed">Permiso de ubicación requerido</string>
     <string name="permission_grant_message">Los horarios de oración se calculan según tu ubicación actual. Por favor, concede el permiso para continuar.</string>
     <string name="grant_permission">Conceder permiso</string>
+    <string name="choose_location">Elegir ubicación</string>
     <string name="back">Atrás</string>
     <string name="settings">Configuración</string>
     <string name="select_calculation_method">Seleccionar método de cálculo</string>

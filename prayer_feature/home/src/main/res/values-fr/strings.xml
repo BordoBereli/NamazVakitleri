@@ -12,4 +12,6 @@
     <string name="no_verse_available">(Aucun verset disponible.)</string>
     <string name="shared_from_app">Partagé depuis %1$s</string>
     <string name="retry">Réessayer</string>
+    <string name="choose_location">Choisir un lieu</string>
+    <string name="no_location_selected">Aucun lieu sélectionné. Veuillez choisir un lieu pour voir les heures de prière.</string>
 </resources>

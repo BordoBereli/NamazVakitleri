@@ -2,6 +2,8 @@ package com.kutluoglu.prayer_feature.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kutluoglu.core.common.analytics.AnalyticsEvents
+import com.kutluoglu.core.common.analytics.AnalyticsTracker
 import com.kutluoglu.prayer.usecases.prayer.ClearPrayerTimesCacheUseCase
 import com.kutluoglu.prayer_settings.domain.model.LocationSettings
 import com.kutluoglu.prayer_settings.domain.usecase.ClearLocationCacheUseCase
@@ -23,7 +25,8 @@ class SettingsViewModel(
     private val updateLanguageUseCase: UpdateLanguageUseCase,
     private val updateHijriAdjustmentUseCase: UpdateHijriAdjustmentUseCase,
     private val clearLocationCacheUseCase: ClearLocationCacheUseCase,
-    private val clearPrayerTimesCacheUseCase: ClearPrayerTimesCacheUseCase
+    private val clearPrayerTimesCacheUseCase: ClearPrayerTimesCacheUseCase,
+    private val analyticsTracker: AnalyticsTracker
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<SettingsUiState>(SettingsUiState.Loading)
@@ -110,6 +113,7 @@ class SettingsViewModel(
             try {
                 clearLocationCacheUseCase()
                 clearPrayerTimesCacheUseCase()
+                analyticsTracker.logEvent(AnalyticsEvents.CACHE_CLEARED)
                 loadSettings()
             } catch (e: Exception) {
                 _uiState.value = SettingsUiState.Error(e.message ?: "Failed to clear cache")

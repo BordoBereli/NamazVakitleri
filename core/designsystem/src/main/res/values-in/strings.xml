@@ -15,6 +15,7 @@
     <string name="location_permission_needed">Izin Lokasi Diperlukan</string>
     <string name="permission_grant_message">Waktu prayer dihitung berdasarkan lokasi Anda saat ini. Silakan berikan izin untuk melanjutkan.</string>
     <string name="grant_permission">Berikan Izin</string>
+    <string name="choose_location">Pilih Lokasi</string>
     <string name="select_location">Pilih Lokasi</string>
     <string name="back">Kembali</string>
     <string name="preset_cities">Kota Terpreset</string>

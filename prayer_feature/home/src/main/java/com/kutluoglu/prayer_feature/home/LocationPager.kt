@@ -49,6 +49,7 @@ fun LocationPager(
     quranVerseFormatter: QuranVerseFormatter,
     onPrayerTimesClick: () -> Unit,
     onAddLocation: () -> Unit,
+    onChooseLocation: () -> Unit,
     onEvent: (HomeEvent) -> Unit
 ) {
     val selectedIndex = entries.indexOfFirst { it.id == selectedId }
@@ -102,6 +103,7 @@ fun LocationPager(
                     quranVerseFormatter = quranVerseFormatter,
                     isAutoGps = entry.isAutoGps,
                     onPrayerTimesClick = onPrayerTimesClick,
+                    onChooseLocation = onChooseLocation,
                     onEvent = onEvent
                 )
                 data != null -> LocationPagePreview(
@@ -171,6 +173,7 @@ private fun PrayerContent(
     quranVerseFormatter: QuranVerseFormatter,
     isAutoGps: Boolean = false,
     onPrayerTimesClick: () -> Unit,
+    onChooseLocation: () -> Unit,
     onEvent: (HomeEvent) -> Unit
 ) {
     val successState = uiState as? HomeUiState.Success
@@ -187,7 +190,8 @@ private fun PrayerContent(
         if (errorState != null) {
             HomeErrorContent(
                 message = errorState.message,
-                onRetry = { onEvent(HomeEvent.OnRefresh) }
+                onRetry = { onEvent(HomeEvent.OnRefresh) },
+                onChooseLocation = onChooseLocation
             )
             return@Scaffold
         }

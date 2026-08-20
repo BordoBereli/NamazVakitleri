@@ -12,4 +12,6 @@
     <string name="no_verse_available">(No hay versículo disponible.)</string>
     <string name="shared_from_app">Compartido desde %1$s</string>
     <string name="retry">Reintentar</string>
+    <string name="choose_location">Elegir ubicación</string>
+    <string name="no_location_selected">No se ha seleccionado ninguna ubicación. Elija una ubicación para ver los horarios de oración.</string>
 </resources>

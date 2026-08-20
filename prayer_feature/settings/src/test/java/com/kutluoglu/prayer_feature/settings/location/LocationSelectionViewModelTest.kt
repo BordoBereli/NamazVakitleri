@@ -2,6 +2,7 @@ package com.kutluoglu.prayer_feature.settings.location
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
+import com.kutluoglu.core.common.analytics.AnalyticsTracker
 import com.kutluoglu.prayer_settings.data.location.LocationServiceHelper
 import com.kutluoglu.prayer_remote.location.NetworkException
 import com.kutluoglu.prayer.model.location.City
@@ -35,6 +36,7 @@ class LocationSelectionViewModelTest {
     private lateinit var searchLocationUseCase: SearchLocationUseCase
     private lateinit var locationServiceHelper: LocationServiceHelper
     private lateinit var locationsCoordinator: LocationsCoordinator
+    private val analyticsTracker = mockk<AnalyticsTracker>(relaxed = true)
     private lateinit var viewModel: LocationSelectionViewModel
 
     private val presetCities = listOf(
@@ -55,6 +57,7 @@ class LocationSelectionViewModelTest {
             searchLocationUseCase,
             locationServiceHelper,
             locationsCoordinator,
+            analyticsTracker,
             defaultDispatcher = mainCoroutineRule.dispatcher
         )
     }

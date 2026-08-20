@@ -2,9 +2,11 @@ package com.kutluoglu.prayer_settings.data.location
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.pm.PackageManager
 import android.location.Address
 import android.location.Geocoder
 import android.os.Build
+import androidx.core.content.ContextCompat
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
@@ -25,6 +27,7 @@ class LocationServiceHelper(
 
     @SuppressLint("MissingPermission")
     suspend fun getCurrentLocation(): LocationData? {
+        if (!hasLocationPermission()) return null
         return withContext(Dispatchers.IO) {
             val coordinates = awaitLastLocation() ?: return@withContext null
             val address = getAddress(coordinates.latitude, coordinates.longitude)
@@ -58,6 +61,11 @@ class LocationServiceHelper(
                 cancellationTokenSource.cancel()
             }
         }
+    }
+
+    private fun hasLocationPermission(): Boolean {
+        return ContextCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+            ContextCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
     }
 
     private suspend fun getAddress(lat: Double, lon: Double): Address? {

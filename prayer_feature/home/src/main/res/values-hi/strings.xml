@@ -12,4 +12,6 @@
     <string name="no_verse_available">(कोई आयत उपलब्ध नहीं।)</string>
     <string name="shared_from_app">%1$s से साझा किया गया</string>
     <string name="retry">पुनः प्रयास करें</string>
+    <string name="choose_location">स्थान चुनें</string>
+    <string name="no_location_selected">कोई स्थान चयनित नहीं है। नमाज़ का समय देखने के लिए कृपया स्थान चुनें।</string>
 </resources>

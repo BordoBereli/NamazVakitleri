@@ -3,6 +3,7 @@ package com.kutluoglu.prayer_feature.qibla
 import android.util.Log
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
+import com.kutluoglu.core.common.analytics.AnalyticsTracker
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.qibla.QiblaState
 import com.kutluoglu.prayer.usecases.qibla.CalculateQiblaUseCase
@@ -28,6 +29,7 @@ class QiblaViewModelTest {
 
     private val calculateQiblaUseCase = mockk<CalculateQiblaUseCase>(relaxed = true)
     private val provider = ActiveLocationProvider()
+    private val analyticsTracker = mockk<AnalyticsTracker>(relaxed = true)
     private lateinit var viewModel: QiblaViewModel
 
     private val location = LocationData(
@@ -47,7 +49,7 @@ class QiblaViewModelTest {
 
         Dispatchers.setMain(UnconfinedTestDispatcher())
         provider.set(location)
-        viewModel = QiblaViewModel(provider, calculateQiblaUseCase)
+        viewModel = QiblaViewModel(provider, calculateQiblaUseCase, analyticsTracker)
     }
 
     @AfterEach

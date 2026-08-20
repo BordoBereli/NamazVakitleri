@@ -1,6 +1,7 @@
 package com.kutluoglu.prayer_feature.settings.language
 
 import com.google.common.truth.Truth.assertThat
+import com.kutluoglu.core.common.analytics.AnalyticsTracker
 import com.kutluoglu.prayer_feature.settings.MainCoroutineRule
 import com.kutluoglu.prayer_settings.domain.model.Settings
 import com.kutluoglu.prayer_settings.domain.usecase.GetSettingsUseCase
@@ -20,6 +21,7 @@ class LanguageSelectionViewModelTest {
 
     private lateinit var getSettingsUseCase: GetSettingsUseCase
     private lateinit var updateLanguageUseCase: UpdateLanguageUseCase
+    private val analyticsTracker = mockk<AnalyticsTracker>(relaxed = true)
     private lateinit var viewModel: LanguageSelectionViewModel
 
     @BeforeEach
@@ -28,14 +30,14 @@ class LanguageSelectionViewModelTest {
         updateLanguageUseCase = mockk()
         coEvery { getSettingsUseCase() } returns Settings()
         coEvery { updateLanguageUseCase(any()) } returns Unit
-        viewModel = LanguageSelectionViewModel(getSettingsUseCase, updateLanguageUseCase)
+        viewModel = LanguageSelectionViewModel(getSettingsUseCase, updateLanguageUseCase, analyticsTracker)
     }
 
     @Test
     fun `init loads current language from settings and pre-selects it`() = runTest {
         coEvery { getSettingsUseCase() } returns Settings(language = "en")
 
-        val viewModel = LanguageSelectionViewModel(getSettingsUseCase, updateLanguageUseCase)
+        val viewModel = LanguageSelectionViewModel(getSettingsUseCase, updateLanguageUseCase, analyticsTracker)
 
         val state = viewModel.uiState.value
         assertThat(state).isInstanceOf(LanguageUiState.LanguagesLoaded::class.java)

@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModelStore
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
+import com.kutluoglu.core.common.analytics.AnalyticsTracker
 import com.kutluoglu.core.common.getZoneIdFromLocation
 import com.kutluoglu.core.common.gregorianDayAndNameFormatter
 import com.kutluoglu.core.common.now
@@ -65,6 +66,7 @@ class PrayerTimesViewModelTest {
     private lateinit var formatter: PrayerFormatter
     private lateinit var getSettingsUseCase: GetSettingsUseCase
     private lateinit var settingsRepository: SettingsRepository
+    private val analyticsTracker = mockk<AnalyticsTracker>(relaxed = true)
     private lateinit var viewModel: PrayerTimesViewModel
     private lateinit var viewModelStore: ViewModelStore
 
@@ -124,6 +126,7 @@ class PrayerTimesViewModelTest {
             formatter,
             getSettingsUseCase,
             settingsRepository,
+            analyticsTracker,
             UnconfinedTestDispatcher()
         )
         viewModelStore = ViewModelStore()
@@ -535,6 +538,7 @@ class PrayerTimesViewModelTest {
             formatter,
             getSettingsUseCase,
             settingsRepository,
+            analyticsTracker,
             Dispatchers.Default
         )
         store.put("viewModel", viewModel)
@@ -649,7 +653,7 @@ class PrayerTimesViewModelTest {
         viewModel.uiState.test {
             val state = awaitItem()
             val success = state as PrayerTimesUiState.Success
-            val expected = currentMonth.onDay(1).toJavaLocalDate().format(gregorianDayAndNameFormatter)
+            val expected = currentMonth.onDay(1).toJavaLocalDate().format(gregorianDayAndNameFormatter())
             assertThat(success.monthlyPrayers.first().gregorianDate).isEqualTo(expected)
             cancelAndIgnoreRemainingEvents()
         }

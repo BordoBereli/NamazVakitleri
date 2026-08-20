@@ -15,6 +15,7 @@
     <string name="location_permission_needed">Требуется разрешение на местоположение</string>
     <string name="permission_grant_message">Время намаза рассчитывается на основе вашего текущего местоположения. Пожалуйста, предоставьте разрешение, чтобы продолжить.</string>
     <string name="grant_permission">Предоставить разрешение</string>
+    <string name="choose_location">Выбрать местоположение</string>
     <string name="back">Назад</string>
     <string name="settings">Настройки</string>
     <string name="select_calculation_method">Выберите метод расчёта</string>

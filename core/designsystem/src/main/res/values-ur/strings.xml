@@ -15,6 +15,7 @@
     <string name="location_permission_needed">مقام کی اجازت درکار ہے</string>
     <string name="permission_grant_message">نماز کے اوقات آپ کے موجودہ مقام کی بنیاد پر شمار کیے جاتے ہیں۔ براہ کرم جاری رکھنے کے لیے اجازت دیں۔</string>
     <string name="grant_permission">اجازت دیں</string>
+    <string name="choose_location">مقام منتخب کریں</string>
     <string name="back">واپس</string>
     <string name="settings">ترتیبات</string>
     <string name="select_calculation_method">حساب کا طریقہ منتخب کریں</string>

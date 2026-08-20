@@ -2,6 +2,7 @@ package com.kutluoglu.prayer_feature.home
 
 import android.util.Log
 import com.google.common.truth.Truth.assertThat
+import com.kutluoglu.core.common.analytics.AnalyticsTracker
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.location.LocationEntry
 import com.kutluoglu.prayer.model.prayer.CalculationMethod
@@ -51,6 +52,7 @@ class HomeViewModelTest {
     private val quranVerseLoader: QuranVerseLoader = mockk(relaxed = true)
     private val getSettingsUseCase: GetSettingsUseCase = mockk(relaxed = true)
     private val settingsRepository: SettingsRepository = mockk(relaxed = true)
+    private val analyticsTracker: AnalyticsTracker = mockk(relaxed = true)
 
     private val location = LocationData(
         latitude = 41.0082,
@@ -80,7 +82,8 @@ class HomeViewModelTest {
         countdownEngine,
         quranVerseLoader,
         getSettingsUseCase,
-        settingsRepository
+        settingsRepository,
+        analyticsTracker
     )
 
     @BeforeEach

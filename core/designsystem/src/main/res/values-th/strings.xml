@@ -15,6 +15,7 @@
     <string name="location_permission_needed">ต้องได้รับอนุญาตตำแหน่งที่ตั้ง</string>
     <string name="permission_grant_message">เวลาละหมาดคำนวณจากตำแหน่งปัจจุบันของคุณ กรุณาอนุญาตเพื่อดำเนินการต่อ</string>
     <string name="grant_permission">อนุญาต</string>
+    <string name="choose_location">เลือกสถานที่</string>
     <string name="back">กลับ</string>
     <string name="settings">การตั้งค่า</string>
     <string name="select_calculation_method">เลือกวิธีการคำนวณ</string>

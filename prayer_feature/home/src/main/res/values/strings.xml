@@ -129,5 +129,7 @@
     <string name="no_verse_available">(No verse available.)</string>
     <string name="shared_from_app">Shared from %1$s</string>
     <string name="retry">Retry</string>
+    <string name="choose_location">Choose Location</string>
+    <string name="no_location_selected">No location selected. Please choose a location to see prayer times.</string>
 
 </resources>

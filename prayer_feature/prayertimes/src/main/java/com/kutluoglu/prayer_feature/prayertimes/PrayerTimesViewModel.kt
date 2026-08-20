@@ -2,6 +2,9 @@ package com.kutluoglu.prayer_feature.prayertimes
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kutluoglu.core.common.analytics.AnalyticsEvents
+import com.kutluoglu.core.common.analytics.AnalyticsParams
+import com.kutluoglu.core.common.analytics.AnalyticsTracker
 import com.kutluoglu.core.common.getZoneIdFromLocation
 import com.kutluoglu.core.common.gregorianDayAndNameFormatter
 import com.kutluoglu.core.common.now
@@ -55,6 +58,7 @@ class PrayerTimesViewModel(
         private val formatter: PrayerFormatter,
         private val getSettingsUseCase: GetSettingsUseCase,
         private val settingsRepository: SettingsRepository,
+        private val analyticsTracker: AnalyticsTracker,
         private val computationDispatcher: CoroutineDispatcher = Dispatchers.Default
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<PrayerTimesUiState>(PrayerTimesUiState.Loading)
@@ -81,6 +85,10 @@ class PrayerTimesViewModel(
                 .collect { location ->
                     if (location == null) {
                         _uiState.value = PrayerTimesUiState.Error("Failed to get active location.")
+                        analyticsTracker.logEvent(
+                            AnalyticsEvents.PRAYER_TIMES_ERROR,
+                            mapOf(AnalyticsParams.REASON to "no_active_location")
+                        )
                     } else {
                         loadForLocation(location)
                     }
@@ -116,9 +124,30 @@ class PrayerTimesViewModel(
 
     fun onEvent(event: PrayerTimesEvent) {
         when (event) {
-            PrayerTimesEvent.OnPreviousMonth -> navigateToMonth(selectedMonth().minus(1, DateTimeUnit.MONTH))
-            PrayerTimesEvent.OnNextMonth -> navigateToMonth(selectedMonth().plus(1, DateTimeUnit.MONTH))
-            PrayerTimesEvent.OnToday -> navigateToMonth(currentMonth())
+            PrayerTimesEvent.OnPreviousMonth -> {
+                analyticsTracker.logEvent(
+                    AnalyticsEvents.MONTH_NAVIGATED,
+                    mapOf(
+                        AnalyticsParams.DIRECTION to "previous",
+                        AnalyticsParams.TARGET_MONTH to selectedMonth().minus(1, DateTimeUnit.MONTH).toString()
+                    )
+                )
+                navigateToMonth(selectedMonth().minus(1, DateTimeUnit.MONTH))
+            }
+            PrayerTimesEvent.OnNextMonth -> {
+                analyticsTracker.logEvent(
+                    AnalyticsEvents.MONTH_NAVIGATED,
+                    mapOf(
+                        AnalyticsParams.DIRECTION to "next",
+                        AnalyticsParams.TARGET_MONTH to selectedMonth().plus(1, DateTimeUnit.MONTH).toString()
+                    )
+                )
+                navigateToMonth(selectedMonth().plus(1, DateTimeUnit.MONTH))
+            }
+            PrayerTimesEvent.OnToday -> {
+                analyticsTracker.logEvent(AnalyticsEvents.TODAY_PRESSED)
+                navigateToMonth(currentMonth())
+            }
         }
     }
 
@@ -183,7 +212,7 @@ class PrayerTimesViewModel(
                     val adjusted = persistedMonth.map { daily ->
                         daily.copy(
                             prayers = formatter.withLocalizedNames(daily.prayers),
-                            gregorianDate = month.onDay(daily.dayOfMonth).toJavaLocalDate().format(gregorianDayAndNameFormatter),
+                            gregorianDate = month.onDay(daily.dayOfMonth).toJavaLocalDate().format(gregorianDayAndNameFormatter()),
                             hijriDate = formatter.formatHijriDate(
                                 HijrahDate.from(month.onDay(daily.dayOfMonth).toJavaLocalDate()),
                                 hijriAdjustment
@@ -209,6 +238,10 @@ class PrayerTimesViewModel(
                 } catch (e: Exception) {
                     _uiState.value = PrayerTimesUiState.Error(
                         e.message ?: "Failed to load prayer times."
+                    )
+                    analyticsTracker.logEvent(
+                        AnalyticsEvents.PRAYER_TIMES_ERROR,
+                        mapOf(AnalyticsParams.REASON to (e.message ?: "unknown"))
                     )
                     return@launch
                 }

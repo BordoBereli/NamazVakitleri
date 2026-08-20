@@ -12,4 +12,6 @@
     <string name="no_verse_available">(Аят недоступен.)</string>
     <string name="shared_from_app">Поделились из %1$s</string>
     <string name="retry">Повторить</string>
+    <string name="choose_location">Выбрать местоположение</string>
+    <string name="no_location_selected">Местоположение не выбрано. Выберите местоположение, чтобы увидеть время намаза.</string>
 </resources>

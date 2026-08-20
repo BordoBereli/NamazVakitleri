@@ -3,6 +3,9 @@ package com.kutluoglu.prayer_feature.settings.hijri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kutluoglu.core.common.analytics.AnalyticsEvents
+import com.kutluoglu.core.common.analytics.AnalyticsParams
+import com.kutluoglu.core.common.analytics.AnalyticsTracker
 import com.kutluoglu.prayer_settings.domain.usecase.GetSettingsUseCase
 import com.kutluoglu.prayer_settings.domain.usecase.UpdateHijriAdjustmentUseCase
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -17,7 +20,8 @@ import org.koin.android.annotation.KoinViewModel
 @KoinViewModel
 class HijriAdjustmentViewModel(
     private val getSettingsUseCase: GetSettingsUseCase,
-    private val updateHijriAdjustmentUseCase: UpdateHijriAdjustmentUseCase
+    private val updateHijriAdjustmentUseCase: UpdateHijriAdjustmentUseCase,
+    private val analyticsTracker: AnalyticsTracker
 ) : ViewModel() {
 
     private val _currentAdjustment = MutableStateFlow(0)
@@ -43,6 +47,10 @@ class HijriAdjustmentViewModel(
     fun confirmAdjustment(days: Int) {
         viewModelScope.launch {
             updateHijriAdjustmentUseCase(days)
+            analyticsTracker.logEvent(
+                AnalyticsEvents.HIJRI_ADJUSTMENT_CHANGED,
+                mapOf(AnalyticsParams.VALUE to days)
+            )
             _confirmedAdjustment.emit(days)
         }
     }

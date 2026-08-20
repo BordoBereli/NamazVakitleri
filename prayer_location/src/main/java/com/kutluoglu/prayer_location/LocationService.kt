@@ -2,10 +2,12 @@ package com.kutluoglu.prayer_location
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.pm.PackageManager
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
 import android.os.Build
+import androidx.core.content.ContextCompat
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
@@ -33,6 +35,7 @@ class LocationService(private val context: Context) {
     // This is the main public function that will be called from the ViewModel
     @SuppressLint("MissingPermission") // Permissions are handled at the UI layer
     suspend fun getCurrentLocation(): LocationData? {
+        if (!hasLocationPermission()) return null
         return withContext(Dispatchers.IO) {
             // 1. Get Coordinates
             val coordinates: Location = awaitLastLocation() ?: return@withContext null
@@ -79,6 +82,11 @@ class LocationService(private val context: Context) {
             results
         )
         return results[0] > 1000
+    }
+
+    private fun hasLocationPermission(): Boolean {
+        return ContextCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+            ContextCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
     }
 
     // A helper function to promisify the Google Play Services location API

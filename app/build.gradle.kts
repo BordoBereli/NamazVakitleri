@@ -5,6 +5,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.google.services)
+    alias(libs.plugins.firebase.crashlytics.gradle)
 }
 
 android {
@@ -83,10 +85,15 @@ dependencies {
 
     implementation(libs.kotlinx.datetime)
 
+    // Firebase
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics)
+
     // Koin
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.core)
     implementation(libs.koin.android)
+    implementation(libs.koin.android.compose)
     implementation(libs.koin.annotations)
     ksp(libs.koin.ksp)
 

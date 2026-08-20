@@ -4,7 +4,8 @@ data class Settings(
     val location: LocationSettings = LocationSettings(),
     val calculationMethod: String = "TURKEY_DIYANET",
     val language: String = "system",
-    val hijriAdjustment: Int = 0
+    val hijriAdjustment: Int = 0,
+    val crashlyticsEnabled: Boolean = true
 )
 
 data class LocationSettings(

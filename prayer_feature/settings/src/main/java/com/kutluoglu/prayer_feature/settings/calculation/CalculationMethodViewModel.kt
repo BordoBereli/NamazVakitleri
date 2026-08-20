@@ -3,6 +3,9 @@ package com.kutluoglu.prayer_feature.settings.calculation
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kutluoglu.core.common.analytics.AnalyticsEvents
+import com.kutluoglu.core.common.analytics.AnalyticsParams
+import com.kutluoglu.core.common.analytics.AnalyticsTracker
 import com.kutluoglu.prayer_settings.domain.model.CalculationMethod
 import com.kutluoglu.prayer_settings.domain.usecase.GetSettingsUseCase
 import com.kutluoglu.prayer_settings.domain.usecase.UpdateCalculationMethodUseCase
@@ -18,7 +21,8 @@ import org.koin.android.annotation.KoinViewModel
 @KoinViewModel
 class CalculationMethodViewModel(
     private val getSettingsUseCase: GetSettingsUseCase,
-    private val updateCalculationMethodUseCase: UpdateCalculationMethodUseCase
+    private val updateCalculationMethodUseCase: UpdateCalculationMethodUseCase,
+    private val analyticsTracker: AnalyticsTracker
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<CalculationMethodUiState>(CalculationMethodUiState.Loading)
@@ -63,6 +67,7 @@ class CalculationMethodViewModel(
     }
 
     private fun selectMethod(method: CalculationMethod) {
+        val previousMethodId = currentMethodId
         currentMethodId = method.id
         _uiState.value = CalculationMethodUiState.MethodsLoaded(
             methods = CalculationMethod.methods,
@@ -70,6 +75,13 @@ class CalculationMethodViewModel(
         )
         viewModelScope.launch {
             updateCalculationMethodUseCase(method.id)
+            analyticsTracker.logEvent(
+                AnalyticsEvents.CALCULATION_METHOD_CHANGED,
+                mapOf(
+                    AnalyticsParams.FROM to previousMethodId,
+                    AnalyticsParams.TO to method.id
+                )
+            )
             _selectedMethod.emit(method.id)
         }
     }

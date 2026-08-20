@@ -61,7 +61,7 @@ class PrayerContainerTest {
     // The month label is rendered via gregorianShortFormatter ("MMMM yyyy") with the device
     // locale, so compute the expected label the same way to keep the assertion locale-independent.
     private val expectedMonthLabel: String =
-        java.time.YearMonth.of(2026, 8).format(gregorianShortFormatter)
+        java.time.YearMonth.of(2026, 8).format(gregorianShortFormatter())
 
     @Test
     fun successStateRendersMonthLabelAndAllPrayerNamesInHeader() {

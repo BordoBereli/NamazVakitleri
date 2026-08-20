@@ -15,6 +15,7 @@
     <string name="location_permission_needed">مجوز موقعیت مکانی لازم است</string>
     <string name="permission_grant_message">اوقات شرعی بر اساس موقعیت فعلی شما محاسبه می‌شود. لطفاً برای ادامه مجوز دهید.</string>
     <string name="grant_permission">اعطای مجوز</string>
+    <string name="choose_location">انتخاب مکان</string>
     <string name="back">بازگشت</string>
     <string name="settings">تنظیمات</string>
     <string name="select_calculation_method">انتخاب روش محاسبه</string>

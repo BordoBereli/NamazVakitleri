@@ -129,5 +129,7 @@
     <string name="no_verse_available">(Ayet bilgisi henüz hazır değil.)</string>
     <string name="shared_from_app">%1$s Uygulaması</string>
     <string name="retry">Tekrar Dene</string>
+    <string name="choose_location">Konum Seç</string>
+    <string name="no_location_selected">Konum seçilmedi. Namaz vakitlerini görmek için lütfen bir konum seçin.</string>
 
 </resources>

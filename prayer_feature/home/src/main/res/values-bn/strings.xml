@@ -12,4 +12,6 @@
     <string name="no_verse_available">(কোনো আয়াত উপলব্ধ নেই।)</string>
     <string name="shared_from_app">%1$s থেকে শেয়ার করা হয়েছে</string>
     <string name="retry">আবার চেষ্টা করুন</string>
+    <string name="choose_location">অবস্থান নির্বাচন করুন</string>
+    <string name="no_location_selected">কোনো অবস্থান নির্বাচন করা হয়নি। নামাজের সময় দেখতে একটি অবস্থান চয়ন করুন।</string>
 </resources>

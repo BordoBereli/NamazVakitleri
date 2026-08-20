@@ -19,3 +19,31 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# --- Crashlytics ---
+# Preserve line numbers so Crashlytics can map stack traces to source.
+-keepattributes SourceFile,LineNumberTable
+# errorprone annotations are referenced by Google libraries but not shipped at runtime.
+-dontwarn com.google.errorprone.annotations.**
+
+# --- kotlinx.serialization ---
+-keepattributes *Annotation*, InnerClasses
+-dontnote kotlinx.serialization.AnnotationsKt
+-keepclassmembers class kotlinx.serialization.json.** {
+    *** Companion;
+}
+-keepclasseswithmembers class kotlinx.serialization.json.** {
+    kotlinx.serialization.KSerializer serializer(...);
+}
+-keep,includedescriptorclasses class com.kutluoglu.**$$serializer { *; }
+-keepclassmembers class com.kutluoglu.** {
+    *** Companion;
+}
+-keepclasseswithmembers class com.kutluoglu.** {
+    kotlinx.serialization.KSerializer serializer(...);
+}
+
+# --- osmdroid ---
+# osmdroid does not ship consumer rules and relies on reflection for tile providers.
+-keep class org.osmdroid.** { *; }
+-dontwarn org.osmdroid.**

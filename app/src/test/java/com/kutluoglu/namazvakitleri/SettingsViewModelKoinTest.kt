@@ -1,6 +1,7 @@
 package com.kutluoglu.namazvakitleri
 
 import com.google.common.truth.Truth.assertThat
+import com.kutluoglu.core.common.analytics.AnalyticsTracker
 import com.kutluoglu.prayer.usecases.prayer.ClearPrayerTimesCacheUseCase
 import com.kutluoglu.prayer_feature.settings.SettingsViewModel
 import com.kutluoglu.prayer_settings.domain.usecase.ClearLocationCacheUseCase
@@ -40,6 +41,7 @@ class SettingsViewModelKoinTest {
             modules(
                 appModule,
                 module {
+                    single<AnalyticsTracker> { mockk(relaxed = true) }
                     single<GetSettingsUseCase> { mockk(relaxed = true) }
                     single<UpdateLocationUseCase> { mockk(relaxed = true) }
                     single<UpdateCalculationMethodUseCase> { mockk(relaxed = true) }

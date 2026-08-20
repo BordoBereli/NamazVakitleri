@@ -34,15 +34,15 @@ class PrayerFormatter(
     ): TimeUiState {
         return TimeUiState(
             hijriDate = formatHijriDate(hijrahDate, hijriAdjustment),
-            gregorianFullDate = today.format(gregorianFullFormatter),
-            gregorianShortDate = today.format(gregorianShortFormatter),
-            gregorianDayAndName = today.format(gregorianDayAndNameFormatter),
+            gregorianFullDate = today.format(gregorianFullFormatter()),
+            gregorianShortDate = today.format(gregorianShortFormatter()),
+            gregorianDayAndName = today.format(gregorianDayAndNameFormatter()),
             currentTime = getFormattedCurrentTime(zoneId)
         )
     }
 
     fun formatHijriDate(hijrahDate: HijrahDate, hijriAdjustment: Int): String =
-        hijrahDate.plus(hijriAdjustment.toLong(), ChronoUnit.DAYS).format(hijriFormatter)
+        hijrahDate.plus(hijriAdjustment.toLong(), ChronoUnit.DAYS).format(hijriFormatter())
 
     fun getFormattedCurrentTime(zoneId: ZoneId): String {
         return LocalTime.now(zoneId).format(timeFormatter)

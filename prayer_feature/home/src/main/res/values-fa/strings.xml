@@ -12,4 +12,6 @@
     <string name="no_verse_available">(آیه‌ای در دسترس نیست.)</string>
     <string name="shared_from_app">اشتراک‌گذاری از %1$s</string>
     <string name="retry">تلاش مجدد</string>
+    <string name="choose_location">انتخاب مکان</string>
+    <string name="no_location_selected">هیچ مکانی انتخاب نشده است. لطفاً برای مشاهده اوقات نماز مکانی را انتخاب کنید.</string>
 </resources>

@@ -3,8 +3,10 @@ package com.kutluoglu.prayer_feature.settings.location
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -100,6 +102,10 @@ import com.kutluoglu.core.designsystem.components.SkeletonList
 import com.kutluoglu.prayer.model.location.City
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
+import com.kutluoglu.core.common.analytics.AnalyticsEvents
+import com.kutluoglu.core.common.analytics.AnalyticsParams
+import com.kutluoglu.core.common.analytics.AnalyticsTracker
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
@@ -115,6 +121,8 @@ fun LocationSelectionRoute(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
+    val activity = LocalActivity.current
+    val analyticsTracker: AnalyticsTracker = koinInject()
     
     var selectedTabIndex by remember { mutableIntStateOf(0) }
     var searchQuery by remember { mutableStateOf("") }
@@ -133,9 +141,26 @@ fun LocationSelectionRoute(
     ) { permissions ->
         val fineLocationGranted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true
         val coarseLocationGranted = permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
-        
+
         if (fineLocationGranted || coarseLocationGranted) {
+            analyticsTracker.logEvent(
+                AnalyticsEvents.PERMISSION_GRANTED,
+                mapOf(AnalyticsParams.PERMISSION to "location")
+            )
             viewModel.onEvent(LocationSelectionEvent.UseMyLocation)
+        } else {
+            val permanentDenial = activity == null ||
+                !ActivityCompat.shouldShowRequestPermissionRationale(
+                    activity,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                )
+            analyticsTracker.logEvent(
+                AnalyticsEvents.PERMISSION_DENIED,
+                mapOf(
+                    AnalyticsParams.PERMISSION to "location",
+                    AnalyticsParams.IS_PERMANENT_DENIAL to permanentDenial
+                )
+            )
         }
     }
 
@@ -154,6 +179,10 @@ fun LocationSelectionRoute(
         if (hasLocationPermission()) {
             viewModel.onEvent(LocationSelectionEvent.UseMyLocation)
         } else {
+            analyticsTracker.logEvent(
+                AnalyticsEvents.PERMISSION_REQUESTED,
+                mapOf(AnalyticsParams.PERMISSION to "location")
+            )
             locationPermissionLauncher.launch(
                 arrayOf(
                     Manifest.permission.ACCESS_FINE_LOCATION,
