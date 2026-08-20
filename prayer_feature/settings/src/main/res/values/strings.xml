@@ -45,4 +45,6 @@
     <string name="selected">Selected</string>
     <string name="reorder">Reorder</string>
     <string name="no_locations_yet">No locations yet — add one below</string>
+    <string name="location_permission_required">Location permission is required to use your current location.</string>
+    <string name="open_settings">Open Settings</string>
 </resources>
