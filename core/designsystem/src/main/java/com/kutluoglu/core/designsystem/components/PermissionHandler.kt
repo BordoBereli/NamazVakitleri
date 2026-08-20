@@ -61,6 +61,9 @@ fun PermissionHandler(
     // --- START OF THE FIX ---
     // A simple counter state that we will increment to force recomposition.
     var permissionCheckTrigger by remember { mutableIntStateOf(0) }
+    // Tracks whether the permission request has been answered by the user.
+    // Used to distinguish the first-launch request from a permanent denial.
+    var permissionResultReceived by remember { mutableStateOf(false) }
 
     // We now pass the trigger as a key to rememberMultiplePermissionsState.
     // When the key changes, the state will be re-created and re-evaluated.
@@ -69,6 +72,7 @@ fun PermissionHandler(
         onPermissionsResult = {
             // This is another way to force a check after a result.
             permissionCheckTrigger++
+            permissionResultReceived = true
         }
     )
     // --- END OF THE FIX ---
@@ -99,7 +103,7 @@ fun PermissionHandler(
         }
     }
 
-    ShowOf(permissionState, onChooseLocation, canProceedWithoutPermission, content)
+    ShowOf(permissionState, onChooseLocation, canProceedWithoutPermission, permissionResultReceived, content)
 }
 
 @Composable
@@ -108,6 +112,7 @@ private fun ShowOf(
         permissionState: MultiplePermissionsState,
         onChooseLocation: (() -> Unit)?,
         canProceedWithoutPermission: Boolean,
+        permissionResultReceived: Boolean,
         content: @Composable (() -> Unit)
 ) {
     when {
@@ -127,7 +132,7 @@ private fun ShowOf(
 
         // Otherwise, it's the first launch or permissions are permanently denied.
         else                                  -> {
-            PermissionFirstLaunchOrDenied(permissionState, onChooseLocation)
+            PermissionFirstLaunchOrDenied(permissionState, onChooseLocation, permissionResultReceived)
         }
     }
 }
@@ -136,18 +141,29 @@ private fun ShowOf(
 @Composable
 private fun PermissionFirstLaunchOrDenied(
     permissionState: MultiplePermissionsState,
+    onChooseLocation: (() -> Unit)?,
+    permissionResultReceived: Boolean
+) {
+    if (!permissionResultReceived) {
+        // First launch — the system permission dialog is being shown.
+        // Show a neutral rationale instead of a "permanently denied" error page.
+        LaunchedEffect(Unit) {
+            permissionState.launchMultiplePermissionRequest()
+        }
+        PermissionRationale(
+            onRequestPermission = { permissionState.launchMultiplePermissionRequest() },
+            onChooseLocation = onChooseLocation
+        )
+    } else {
+        PermissionPermanentlyDenied(onChooseLocation)
+    }
+}
+
+@Composable
+private fun PermissionPermanentlyDenied(
     onChooseLocation: (() -> Unit)?
 ) {
     val context = LocalContext.current
-    var hasLaunched by remember { mutableStateOf(false) }
-
-    // This effect runs on composition.
-    LaunchedEffect(Unit) {
-        if (!hasLaunched) {
-            permissionState.launchMultiplePermissionRequest()
-            hasLaunched = true
-        }
-    }
 
     // This UI is shown if the user permanently denies the permission.
     Column(
