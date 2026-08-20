@@ -44,5 +44,5 @@
     <string name="delete">நீக்கு</string>
     <string name="selected">தேர்ந்தெடுக்கப்பட்டது</string>
     <string name="reorder">மறுவரிசைப்படுத்து</string>
-    <string name="no_locations_yet">இன்னும் இருப்பிடங்கள் இல்லை — கீழே ஒன்றைச் சேர்க்கவும்</string>
+    <string name="no_locations_yet">இன்னும் இருப்பிடங்கள் இல்லை — இருப்பிடம் சேர் பொத்தானைப் பயன்படுத்தி ஒன்றைச் சேர்க்கவும்</string>
 </resources>

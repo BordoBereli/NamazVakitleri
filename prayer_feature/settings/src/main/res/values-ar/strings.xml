@@ -44,5 +44,5 @@
     <string name="delete">حذف</string>
     <string name="selected">محدد</string>
     <string name="reorder">إعادة ترتيب</string>
-    <string name="no_locations_yet">لا توجد مواقع بعد — أضف واحداً أدناه</string>
+    <string name="no_locations_yet">لا توجد مواقع بعد — أضف واحداً باستخدام زر إضافة موقع</string>
 </resources>

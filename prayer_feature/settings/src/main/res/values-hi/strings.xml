@@ -44,5 +44,5 @@
     <string name="delete">हटाएं</string>
     <string name="selected">चयनित</string>
     <string name="reorder">पुनः क्रमबद्ध करें</string>
-    <string name="no_locations_yet">अभी कोई स्थान नहीं — नीचे एक जोड़ें</string>
+    <string name="no_locations_yet">अभी कोई स्थान नहीं — स्थान जोड़ें बटन से एक जोड़ें</string>
 </resources>

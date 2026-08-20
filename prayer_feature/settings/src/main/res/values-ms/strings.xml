@@ -44,5 +44,5 @@
     <string name="delete">Padam</string>
     <string name="selected">Dipilih</string>
     <string name="reorder">Susun semula</string>
-    <string name="no_locations_yet">Belum ada lokasi — tambah satu di bawah</string>
+    <string name="no_locations_yet">Belum ada lokasi — tambah satu dengan butang Tambah lokasi</string>
 </resources>

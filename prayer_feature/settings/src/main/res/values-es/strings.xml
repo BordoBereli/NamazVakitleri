@@ -44,5 +44,5 @@
     <string name="delete">Eliminar</string>
     <string name="selected">Seleccionado</string>
     <string name="reorder">Reordenar</string>
-    <string name="no_locations_yet">Aún no hay ubicaciones — añade una abajo</string>
+    <string name="no_locations_yet">Aún no hay ubicaciones — añade una con el botón Añadir ubicación</string>
 </resources>

@@ -44,5 +44,5 @@
     <string name="delete">মুছুন</string>
     <string name="selected">নির্বাচিত</string>
     <string name="reorder">পুনরায় সাজান</string>
-    <string name="no_locations_yet">এখনও কোনো অবস্থান নেই — নিচে একটি যোগ করুন</string>
+    <string name="no_locations_yet">এখনও কোনো অবস্থান নেই — অবস্থান যোগ করুন বাটন দিয়ে একটি যোগ করুন</string>
 </resources>

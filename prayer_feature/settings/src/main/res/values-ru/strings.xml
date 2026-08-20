@@ -44,5 +44,5 @@
     <string name="delete">Удалить</string>
     <string name="selected">Выбрано</string>
     <string name="reorder">Изменить порядок</string>
-    <string name="no_locations_yet">Пока нет местоположений — добавьте одно ниже</string>
+    <string name="no_locations_yet">Пока нет местоположений — добавьте одно с помощью кнопки «Добавить местоположение»</string>
 </resources>
