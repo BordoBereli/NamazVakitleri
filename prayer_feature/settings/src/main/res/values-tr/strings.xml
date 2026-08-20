@@ -45,4 +45,6 @@
     <string name="selected">Seçili</string>
     <string name="reorder">Yeniden sırala</string>
     <string name="no_locations_yet">Henüz konum yok — aşağıdan bir tane ekleyin</string>
+    <string name="location_permission_required">Mevcut konumunuzu kullanmak için konum izni gereklidir.</string>
+    <string name="open_settings">Ayarları Aç</string>
 </resources>
