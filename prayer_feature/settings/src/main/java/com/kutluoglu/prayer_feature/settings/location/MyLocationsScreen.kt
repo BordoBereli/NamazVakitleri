@@ -1,5 +1,13 @@
 package com.kutluoglu.prayer_feature.settings.location
 
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.provider.Settings
+import androidx.activity.compose.LocalActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,26 +34,40 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.kutluoglu.prayer.model.location.LocationEntry
 import com.kutluoglu.prayer_feature.settings.R
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
@@ -67,6 +89,54 @@ fun MyLocationsRoute(
         if (fromIndex != -1 && toIndex != -1) {
             entries.add(toIndex, entries.removeAt(fromIndex))
         }
+    }
+
+    val context = LocalContext.current
+    val activity = LocalActivity.current
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    var permissionCheckTrigger by remember { mutableIntStateOf(0) }
+
+    fun hasLocationPermission(): Boolean =
+        ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+            ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+
+    val permissionGranted = remember(permissionCheckTrigger) { hasLocationPermission() }
+
+    val locationPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val fineGranted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true
+        val coarseGranted = permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
+        if (fineGranted || coarseGranted) {
+            viewModel.onEvent(MyLocationsEvent.SetGpsEnabled(true))
+        } else {
+            val permanentDenial = activity == null ||
+                !ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.ACCESS_FINE_LOCATION)
+            scope.launch {
+                val actionLabel = if (permanentDenial) context.getString(R.string.open_settings) else null
+                val result = snackbarHostState.showSnackbar(
+                    message = context.getString(R.string.location_permission_required),
+                    actionLabel = actionLabel,
+                    duration = if (actionLabel != null) SnackbarDuration.Long else SnackbarDuration.Short
+                )
+                if (result == SnackbarResult.ActionPerformed) {
+                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                        data = Uri.fromParts("package", context.packageName, null)
+                    }
+                    context.startActivity(intent)
+                }
+            }
+        }
+    }
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) permissionCheckTrigger++
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
     LaunchedEffect(state.entries) {
@@ -107,7 +177,8 @@ fun MyLocationsRoute(
                     }
                 }
             )
-        }
+        },
+        snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { padding ->
         Column(modifier = Modifier.fillMaxSize().padding(padding)) {
             Row(
@@ -119,8 +190,23 @@ fun MyLocationsRoute(
                     Text(stringResource(R.string.auto_updates_as_you_travel), style = MaterialTheme.typography.bodySmall)
                 }
                 Switch(
-                    checked = state.gpsEnabled,
-                    onCheckedChange = { viewModel.onEvent(MyLocationsEvent.SetGpsEnabled(it)) }
+                    checked = state.gpsEnabled && permissionGranted,
+                    onCheckedChange = { enabled ->
+                        if (enabled) {
+                            if (permissionGranted) {
+                                viewModel.onEvent(MyLocationsEvent.SetGpsEnabled(true))
+                            } else {
+                                locationPermissionLauncher.launch(
+                                    arrayOf(
+                                        Manifest.permission.ACCESS_FINE_LOCATION,
+                                        Manifest.permission.ACCESS_COARSE_LOCATION
+                                    )
+                                )
+                            }
+                        } else {
+                            viewModel.onEvent(MyLocationsEvent.SetGpsEnabled(false))
+                        }
+                    }
                 )
             }
             Button(

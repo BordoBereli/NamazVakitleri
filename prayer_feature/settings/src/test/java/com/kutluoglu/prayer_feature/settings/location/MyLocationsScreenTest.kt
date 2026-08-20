@@ -1,12 +1,18 @@
 package com.kutluoglu.prayer_feature.settings.location
 
+import android.Manifest
+import androidx.activity.ComponentActivity
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.assertIsOff
+import androidx.compose.ui.test.isToggleable
+import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTouchInput
+import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.core.common.analytics.AnalyticsTracker
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.location.LocationEntry
@@ -20,6 +26,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
@@ -27,7 +34,7 @@ import org.robolectric.annotation.Config
 class MyLocationsScreenTest {
 
     @get:Rule
-    val composeTestRule = createComposeRule()
+    val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
     private val coordinator = mockk<LocationsCoordinator>(relaxed = true)
     private val analyticsTracker = mockk<AnalyticsTracker>(relaxed = true)
@@ -106,5 +113,50 @@ class MyLocationsScreenTest {
 
         composeTestRule.waitForIdle()
         coVerify { coordinator.reorderLocations(listOf("loc-2", "loc-1")) }
+    }
+
+    @Test
+    fun `toggle is off when location permission is missing even if gps is enabled`() {
+        shadowOf(composeTestRule.activity).denyPermissions(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        )
+        setState(listOf(istanbul), gpsEnabled = true, selectedId = "loc-1")
+        launchScreen()
+
+        composeTestRule.onNode(isToggleable()).assertIsOff()
+    }
+
+    @Test
+    fun `toggling on with permission granted enables gps`() {
+        shadowOf(composeTestRule.activity).grantPermissions(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        )
+        setState(listOf(istanbul), gpsEnabled = false, selectedId = "loc-1")
+        launchScreen()
+
+        composeTestRule.onNode(isToggleable()).performClick()
+
+        composeTestRule.waitForIdle()
+        coVerify { coordinator.setGpsEnabled(true) }
+    }
+
+    @Test
+    fun `toggling on without permission requests permission and does not enable gps`() {
+        shadowOf(composeTestRule.activity).denyPermissions(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        )
+        setState(listOf(istanbul), gpsEnabled = false, selectedId = "loc-1")
+        launchScreen()
+
+        composeTestRule.onNode(isToggleable()).performClick()
+
+        composeTestRule.waitForIdle()
+        coVerify(exactly = 0) { coordinator.setGpsEnabled(any()) }
+        assertThat(shadowOf(composeTestRule.activity).lastRequestedPermission.requestedPermissions)
+            .asList()
+            .contains(Manifest.permission.ACCESS_FINE_LOCATION)
     }
 }
