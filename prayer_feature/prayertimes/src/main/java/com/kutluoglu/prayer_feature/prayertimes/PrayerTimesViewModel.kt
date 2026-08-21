@@ -20,6 +20,7 @@ import com.kutluoglu.prayer_settings.domain.repository.SettingsRepository
 import com.kutluoglu.prayer_settings.domain.usecase.GetSettingsUseCase
 import com.kutluoglu.prayer_feature.common.states.LocationUiState
 import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
+import com.kutluoglu.prayer_feature.common.states.TimeUiState
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -37,6 +38,8 @@ import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.YearMonth
@@ -212,7 +215,7 @@ class PrayerTimesViewModel(
                 val locationCache = monthCache.getOrPut(locationId) { mutableMapOf() }
                 val cached = locationCache[month]
                 if (cached != null) {
-                    emitSuccess(month, cached, locationId, location, resolvedZoneId, hijriAdjustment)
+                    emitPartial(month, cached, buildPayload(locationId, location, resolvedZoneId, hijriAdjustment))
                     return@launch
                 }
                 val persistedMonth = getMonthlyPrayerTimesUseCase(
@@ -236,17 +239,30 @@ class PrayerTimesViewModel(
                     }
                     val refreshed = refreshCurrentPrayerFlags(adjusted, today, resolvedZoneId)
                     locationCache[month] = refreshed
-                    emitSuccess(month, refreshed, locationId, location, resolvedZoneId, hijriAdjustment)
+                    emitPartial(month, refreshed, buildPayload(locationId, location, resolvedZoneId, hijriAdjustment))
                     return@launch
                 }
                 val today = LocalDateTime.now(resolvedZoneId)
+                val payload = buildPayload(locationId, location, resolvedZoneId, hijriAdjustment)
                 val monthlyPrayers = try {
                     coroutineScope {
-                        (1..month.numberOfDays).map { day ->
+                        val results = arrayOfNulls<DailyPrayer>(month.numberOfDays)
+                        val mutex = Mutex()
+                        val todayDayOfMonth = today.dayOfMonth
+                        val orderedDays = listOf(todayDayOfMonth) +
+                            (1..month.numberOfDays).filter { it != todayDayOfMonth }
+                        orderedDays.map { day ->
                             async(computationDispatcher) {
-                                computeDailyPrayer(day, month, location, resolvedZoneId, today, calculationMethod, hijriAdjustment)
+                                val computed = computeDailyPrayer(
+                                    day, month, location, resolvedZoneId, today, calculationMethod, hijriAdjustment
+                                )
+                                mutex.withLock {
+                                    results[day - 1] = computed
+                                    emitPartial(month, results.filterNotNull().sortedBy { it.dayOfMonth }, payload)
+                                }
                             }
                         }.awaitAll()
+                        results.filterNotNull().sortedBy { it.dayOfMonth }
                     }
                 } catch (e: CancellationException) {
                     throw e
@@ -261,7 +277,7 @@ class PrayerTimesViewModel(
                     return@launch
                 }
                 locationCache[month] = monthlyPrayers
-                emitSuccess(month, monthlyPrayers, locationId, location, resolvedZoneId, hijriAdjustment)
+                emitPartial(month, monthlyPrayers, payload)
                 backgroundSaveScope.launch {
                     runCatching {
                         saveMonthlyPrayerTimesUseCase(
@@ -332,26 +348,40 @@ class PrayerTimesViewModel(
         )
     }
 
-    private fun emitSuccess(
-        month: YearMonth,
-        monthlyPrayers: List<DailyPrayer>,
+    private data class SuccessPayload(
+        val locationId: String,
+        val timeState: TimeUiState,
+        val locationState: LocationUiState
+    )
+
+    private suspend fun buildPayload(
         locationId: String,
         location: LocationData,
         resolvedZoneId: ZoneId,
         hijriAdjustment: Int
+    ): SuccessPayload = SuccessPayload(
+        locationId = locationId,
+        timeState = formatter.getInitialTimeInfo(resolvedZoneId, hijriAdjustment = hijriAdjustment),
+        locationState = LocationUiState(
+            locationData = location,
+            locationInfoText = formatter.locationInfo(location)
+        )
+    )
+
+    private fun emitPartial(
+        month: YearMonth,
+        monthlyPrayers: List<DailyPrayer>,
+        payload: SuccessPayload
     ) {
-        if (month != selectedMonth() || locationId != activeLocationId) return
-        val today = LocalDateTime.now(resolvedZoneId)
+        if (month != selectedMonth() || payload.locationId != activeLocationId) return
+        val today = LocalDateTime.now(zoneId ?: ZoneId.systemDefault())
         _uiState.value = PrayerTimesUiState.Success(
             monthlyPrayers = monthlyPrayers,
             currentDayOfMonth = today.day,
             selectedMonth = month,
             isCurrentMonth = month == today.date.yearMonth,
-            timeState = formatter.getInitialTimeInfo(resolvedZoneId, hijriAdjustment = hijriAdjustment),
-            locationState = LocationUiState(
-                locationData = location,
-                locationInfoText = formatter.locationInfo(location)
-            )
+            timeState = payload.timeState,
+            locationState = payload.locationState
         )
     }
 

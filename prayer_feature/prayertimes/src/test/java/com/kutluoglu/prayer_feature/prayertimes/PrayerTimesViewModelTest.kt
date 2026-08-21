@@ -257,6 +257,44 @@ class PrayerTimesViewModelTest {
     }
 
     @Test
+    fun `cold load streams today first then completes full sorted month`() = runTest {
+        val zoneId = getZoneIdFromLocation("TR")
+        val today = LocalDateTime.now(zoneId).date.dayOfMonth
+        val days = currentMonthDays()
+        val gates = mutableMapOf<Int, CompletableDeferred<Unit>>()
+        coEvery {
+            getPrayerTimesUseCase.invoke(any(), any(), any(), any(), any(), any())
+        } coAnswers {
+            val date = firstArg<LocalDateTime>()
+            gates.getOrPut(date.date.dayOfMonth) { CompletableDeferred() }.await()
+            success(mockPrayerList)
+        }
+
+        viewModel.loadMonthlyPrayerTimes()
+
+        viewModel.uiState.test {
+            assertThat(awaitItem()).isEqualTo(PrayerTimesUiState.Loading)
+
+            gates.getValue(today).complete(Unit)
+            var todayOnly = withTimeout(5_000) { awaitItem() }
+            while ((todayOnly as? PrayerTimesUiState.Success)?.monthlyPrayers?.size != 1) {
+                todayOnly = withTimeout(5_000) { awaitItem() }
+            }
+            assertThat(todayOnly.monthlyPrayers.map { it.dayOfMonth }).containsExactly(today)
+
+            gates.filterKeys { it != today }.values.forEach { it.complete(Unit) }
+
+            var final = withTimeout(5_000) { awaitItem() }
+            while ((final as? PrayerTimesUiState.Success)?.monthlyPrayers?.size != days) {
+                final = withTimeout(5_000) { awaitItem() }
+            }
+            assertThat(final.monthlyPrayers.map { it.dayOfMonth })
+                .isEqualTo((1..days).toList())
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
     fun `failing monthly save keeps success state and logs analytics`() = runTest {
         coEvery {
             saveMonthlyPrayerTimesUseCase.invoke(any(), any(), any(), any(), any(), any())
