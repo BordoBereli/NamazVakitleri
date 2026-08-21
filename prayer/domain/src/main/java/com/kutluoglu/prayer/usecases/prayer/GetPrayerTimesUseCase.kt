@@ -17,10 +17,11 @@ class GetPrayerTimesUseCase(
             longitude: Double,
             zoneId: ZoneId,
             calculationMethod: CalculationMethod = CalculationMethod.TURKEY_DIYANET,
+            persistDailyCache: Boolean = true,
     ): Result<List<Prayer>> {
         return try {
             val prayerTimes = prayerRepository.getPrayerTimes(
-                date, latitude, longitude, zoneId, calculationMethod
+                date, latitude, longitude, zoneId, calculationMethod, persistDailyCache
             )
             Result.success(prayerTimes)
         } catch (e: Exception) {

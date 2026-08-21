@@ -2,10 +2,12 @@ package com.kutluoglu.prayer.domain
 
 import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.core.common.createBy
+import com.kutluoglu.prayer.model.prayer.CalculationMethod
 import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer.repository.IPrayerRepository
 import com.kutluoglu.prayer.usecases.prayer.GetPrayerTimesUseCase
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.LocalDateTime
@@ -63,5 +65,37 @@ class GetPrayerTimesUseCaseTest {
         // Assert
         assertThat(result.isFailure).isTrue()
         assertThat(result.exceptionOrNull()).isEqualTo(exception)
+    }
+
+    @Test
+    fun `invoke forwards persistDailyCache=false to repository`() = runTest {
+        coEvery {
+            prayerRepository.getPrayerTimes(any(), any(), any(), zoneId, any(), any())
+        } returns emptyList()
+
+        useCase(testDate, 41.0, 29.0, zoneId, persistDailyCache = false)
+
+        coVerify(exactly = 1) {
+            prayerRepository.getPrayerTimes(
+                testDate, 41.0, 29.0, zoneId,
+                CalculationMethod.TURKEY_DIYANET, false
+            )
+        }
+    }
+
+    @Test
+    fun `invoke defaults persistDailyCache=true to repository`() = runTest {
+        coEvery {
+            prayerRepository.getPrayerTimes(any(), any(), any(), zoneId, any(), any())
+        } returns emptyList()
+
+        useCase(testDate, 41.0, 29.0, zoneId)
+
+        coVerify(exactly = 1) {
+            prayerRepository.getPrayerTimes(
+                testDate, 41.0, 29.0, zoneId,
+                CalculationMethod.TURKEY_DIYANET, true
+            )
+        }
     }
 }
