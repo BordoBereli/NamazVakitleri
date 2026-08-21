@@ -22,6 +22,7 @@ import com.kutluoglu.prayer_feature.common.states.LocationUiState
 import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -45,6 +46,7 @@ import kotlinx.datetime.plus
 import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.yearMonth
 import org.koin.android.annotation.KoinViewModel
+import org.koin.core.annotation.Named
 import java.time.ZoneId
 import java.time.chrono.HijrahDate
 
@@ -59,6 +61,7 @@ class PrayerTimesViewModel(
         private val getSettingsUseCase: GetSettingsUseCase,
         private val settingsRepository: SettingsRepository,
         private val analyticsTracker: AnalyticsTracker,
+        @Named("prayerSaveScope") private val backgroundSaveScope: CoroutineScope,
         private val computationDispatcher: CoroutineDispatcher = Dispatchers.Default
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<PrayerTimesUiState>(PrayerTimesUiState.Loading)
@@ -246,15 +249,24 @@ class PrayerTimesViewModel(
                     return@launch
                 }
                 locationCache[month] = monthlyPrayers
-                saveMonthlyPrayerTimesUseCase(
-                    month = month,
-                    latitude = location.latitude,
-                    longitude = location.longitude,
-                    zoneId = resolvedZoneId,
-                    calculationMethod = calculationMethod,
-                    prayers = monthlyPrayers
-                )
                 emitSuccess(month, monthlyPrayers, locationId, location, resolvedZoneId, hijriAdjustment)
+                backgroundSaveScope.launch {
+                    runCatching {
+                        saveMonthlyPrayerTimesUseCase(
+                            month = month,
+                            latitude = location.latitude,
+                            longitude = location.longitude,
+                            zoneId = resolvedZoneId,
+                            calculationMethod = calculationMethod,
+                            prayers = monthlyPrayers
+                        )
+                    }.onFailure {
+                        analyticsTracker.logEvent(
+                            AnalyticsEvents.PRAYER_TIMES_ERROR,
+                            mapOf(AnalyticsParams.REASON to "monthly_save_failed")
+                        )
+                    }
+                }
             } finally {
                 isLoading = false
                 val next = pendingMonth

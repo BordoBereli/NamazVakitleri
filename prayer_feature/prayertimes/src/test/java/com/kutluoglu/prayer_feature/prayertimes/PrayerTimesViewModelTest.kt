@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.lifecycle.ViewModelStore
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
+import com.kutluoglu.core.common.analytics.AnalyticsEvents
+import com.kutluoglu.core.common.analytics.AnalyticsParams
 import com.kutluoglu.core.common.analytics.AnalyticsTracker
 import com.kutluoglu.core.common.getZoneIdFromLocation
 import com.kutluoglu.core.common.gregorianDayAndNameFormatter
@@ -29,12 +31,15 @@ import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withTimeout
@@ -67,6 +72,7 @@ class PrayerTimesViewModelTest {
     private lateinit var getSettingsUseCase: GetSettingsUseCase
     private lateinit var settingsRepository: SettingsRepository
     private val analyticsTracker = mockk<AnalyticsTracker>(relaxed = true)
+    private val backgroundSaveScope = CoroutineScope(SupervisorJob() + UnconfinedTestDispatcher())
     private lateinit var viewModel: PrayerTimesViewModel
     private lateinit var viewModelStore: ViewModelStore
 
@@ -127,6 +133,7 @@ class PrayerTimesViewModelTest {
             getSettingsUseCase,
             settingsRepository,
             analyticsTracker,
+            backgroundSaveScope,
             UnconfinedTestDispatcher()
         )
         viewModelStore = ViewModelStore()
@@ -168,6 +175,58 @@ class PrayerTimesViewModelTest {
     private fun currentMonthDays(): Int {
         val zoneId = getZoneIdFromLocation("TR")
         return LocalDateTime.now(zoneId).date.yearMonth.numberOfDays
+    }
+
+    @Test
+    fun `monthly save runs in background after success is emitted`() = runTest {
+        val saveGate = CompletableDeferred<Unit>()
+        coEvery {
+            saveMonthlyPrayerTimesUseCase.invoke(any(), any(), any(), any(), any(), any())
+        } coAnswers { saveGate.await(); Unit }
+
+        viewModel.loadMonthlyPrayerTimes()
+
+        viewModel.uiState.test {
+            var state = withTimeout(5_000) { awaitItem() }
+            while (state is PrayerTimesUiState.Loading) {
+                state = withTimeout(5_000) { awaitItem() }
+            }
+            assertThat(state).isInstanceOf(PrayerTimesUiState.Success::class.java)
+
+            assertThat(saveGate.isCompleted).isFalse()
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        saveGate.complete(Unit)
+        advanceUntilIdle()
+        coVerify(exactly = 1) {
+            saveMonthlyPrayerTimesUseCase.invoke(any(), any(), any(), any(), any(), any())
+        }
+    }
+
+    @Test
+    fun `failing monthly save keeps success state and logs analytics`() = runTest {
+        coEvery {
+            saveMonthlyPrayerTimesUseCase.invoke(any(), any(), any(), any(), any(), any())
+        } throws RuntimeException("disk full")
+
+        viewModel.loadMonthlyPrayerTimes()
+
+        viewModel.uiState.test {
+            var state = withTimeout(5_000) { awaitItem() }
+            while (state is PrayerTimesUiState.Loading) {
+                state = withTimeout(5_000) { awaitItem() }
+            }
+            assertThat(state).isInstanceOf(PrayerTimesUiState.Success::class.java)
+            cancelAndIgnoreRemainingEvents()
+        }
+        advanceUntilIdle()
+        coVerify(exactly = 1) {
+            analyticsTracker.logEvent(
+                AnalyticsEvents.PRAYER_TIMES_ERROR,
+                mapOf(AnalyticsParams.REASON to "monthly_save_failed")
+            )
+        }
     }
 
     @Test
@@ -553,6 +612,7 @@ class PrayerTimesViewModelTest {
             getSettingsUseCase,
             settingsRepository,
             analyticsTracker,
+            backgroundSaveScope,
             Dispatchers.Default
         )
         store.put("viewModel", viewModel)
