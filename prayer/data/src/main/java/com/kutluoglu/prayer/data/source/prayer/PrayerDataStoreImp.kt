@@ -38,11 +38,12 @@ class PrayerDataStoreImp(
             longitude: Double,
             zoneId: ZoneId,
             calculationMethod: CalculationMethod,
+            persistDailyCache: Boolean,
     ): List<Prayer> {
         val cacheKey = buildCacheKey(date, latitude, longitude, zoneId, calculationMethod)
         val cached = prayerTimesCache.get(cacheKey)
         if (cached != null) {
-            preCacheTomorrow(date, latitude, longitude, zoneId, calculationMethod)
+            if (persistDailyCache) preCacheTomorrow(date, latitude, longitude, zoneId, calculationMethod)
             return cached
         }
 
@@ -56,8 +57,10 @@ class PrayerDataStoreImp(
                 juristicMethod = JuristicMethod.STANDARD
             )
         }
-        prayerTimesCache.put(cacheKey, calculated)
-        preCacheTomorrow(date, latitude, longitude, zoneId, calculationMethod)
+        if (persistDailyCache) {
+            prayerTimesCache.put(cacheKey, calculated)
+            preCacheTomorrow(date, latitude, longitude, zoneId, calculationMethod)
+        }
         return calculated
     }
 

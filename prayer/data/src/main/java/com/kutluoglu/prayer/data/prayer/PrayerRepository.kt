@@ -20,12 +20,14 @@ class PrayerRepository(
         longitude: Double,
         zoneId: ZoneId,
         calculationMethod: CalculationMethod,
+        persistDailyCache: Boolean,
     ): List<Prayer> = prayerDataStore.getPrayerTimes(
         date = date,
         latitude = latitude,
         longitude = longitude,
         zoneId = zoneId,
-        calculationMethod = calculationMethod
+        calculationMethod = calculationMethod,
+        persistDailyCache = persistDailyCache
     )
 
     override suspend fun getMonthlyPrayerTimes(

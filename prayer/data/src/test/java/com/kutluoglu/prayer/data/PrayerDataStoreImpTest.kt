@@ -68,6 +68,56 @@ class PrayerDataStoreImpTest {
     }
 
     @Test
+    fun `getPrayerTimes in bulk mode calculates without caching or pre-caching`() = runTest {
+        val testDate = LocalDateTime.createBy(2024, 1, 1)
+        val zoneId = ZoneId.of("Europe/Istanbul")
+        val calculatedPrayers = listOf(
+            Prayer("Fajr", "الفجر", LocalTime.parse("05:00"), testDate.date)
+        )
+        coEvery { prayerTimesCache.get(any()) } returns null
+        coEvery {
+            prayerCalculationService.calculateDailyPrayerTimes(any(), any(), any(), any(), any(), any())
+        } returns calculatedPrayers
+
+        val result = dataStore.getPrayerTimes(
+            testDate, 41.0, 29.0, zoneId,
+            CalculationMethod.TURKEY_DIYANET, persistDailyCache = false
+        )
+
+        assertThat(result).isEqualTo(calculatedPrayers)
+        coVerify(exactly = 1) {
+            prayerCalculationService.calculateDailyPrayerTimes(
+                41.0, 29.0, zoneId, testDate,
+                CalculationMethod.TURKEY_DIYANET, JuristicMethod.STANDARD
+            )
+        }
+        coVerify(exactly = 0) { prayerTimesCache.put(any(), any()) }
+    }
+
+    @Test
+    fun `getPrayerTimes in bulk mode skips pre-caching on cache hit`() = runTest {
+        val testDate = LocalDateTime.createBy(2024, 1, 1)
+        val zoneId = ZoneId.of("Europe/Istanbul")
+        val cachedToday = listOf(
+            Prayer("Fajr", "الفجر", LocalTime.parse("05:00"), testDate.date)
+        )
+        coEvery {
+            prayerTimesCache.get("2024-01-01|41.0|29.0|Europe/Istanbul|TURKEY_DIYANET")
+        } returns cachedToday
+
+        val result = dataStore.getPrayerTimes(
+            testDate, 41.0, 29.0, zoneId,
+            CalculationMethod.TURKEY_DIYANET, persistDailyCache = false
+        )
+
+        assertThat(result).isEqualTo(cachedToday)
+        coVerify(exactly = 0) { prayerTimesCache.put(any(), any()) }
+        coVerify(exactly = 0) {
+            prayerCalculationService.calculateDailyPrayerTimes(any(), any(), any(), any(), any(), any())
+        }
+    }
+
+    @Test
     fun `getPrayerTimes calculates and caches when cache miss`() = runTest {
         // GIVEN a cache miss
         val testDate = LocalDateTime.createBy(2024, 1, 1)

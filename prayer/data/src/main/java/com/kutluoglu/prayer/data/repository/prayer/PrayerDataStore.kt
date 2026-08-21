@@ -25,6 +25,7 @@ interface PrayerDataStore {
         longitude: Double,
         zoneId: ZoneId,
         calculationMethod: CalculationMethod = CalculationMethod.TURKEY_DIYANET,
+        persistDailyCache: Boolean = true,
     ): List<Prayer>
 
     suspend fun getMonthlyPrayerTimes(
