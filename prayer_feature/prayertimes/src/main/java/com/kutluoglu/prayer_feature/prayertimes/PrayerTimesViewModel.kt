@@ -28,6 +28,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -50,6 +51,8 @@ import org.koin.core.annotation.Named
 import java.time.ZoneId
 import java.time.chrono.HijrahDate
 
+private const val LOCATION_RESOLUTION_TIMEOUT_MS = 15_000L
+
 @KoinViewModel
 class PrayerTimesViewModel(
         private val getPrayerTimesUseCase: GetPrayerTimesUseCase,
@@ -62,7 +65,8 @@ class PrayerTimesViewModel(
         private val settingsRepository: SettingsRepository,
         private val analyticsTracker: AnalyticsTracker,
         @Named("prayerSaveScope") private val backgroundSaveScope: CoroutineScope,
-        private val computationDispatcher: CoroutineDispatcher = Dispatchers.Default
+        private val computationDispatcher: CoroutineDispatcher = Dispatchers.Default,
+        private val locationResolutionTimeoutMs: Long = LOCATION_RESOLUTION_TIMEOUT_MS
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<PrayerTimesUiState>(PrayerTimesUiState.Loading)
     val uiState: StateFlow<PrayerTimesUiState> = _uiState
@@ -80,6 +84,7 @@ class PrayerTimesViewModel(
     private var pendingMonth: YearMonth? = null
     private var locationObservationJob: Job? = null
     private var settingsObserverJob: Job? = null
+    private var locationTimeoutJob: Job? = null
 
     fun loadMonthlyPrayerTimes() {
         if (locationObservationJob?.isActive == true) return
@@ -87,12 +92,19 @@ class PrayerTimesViewModel(
             activeLocationProvider.location
                 .collect { location ->
                     if (location == null) {
-                        _uiState.value = PrayerTimesUiState.Error("Failed to get active location.")
-                        analyticsTracker.logEvent(
-                            AnalyticsEvents.PRAYER_TIMES_ERROR,
-                            mapOf(AnalyticsParams.REASON to "no_active_location")
-                        )
+                        _uiState.value = PrayerTimesUiState.Loading
+                        locationTimeoutJob?.cancel()
+                        locationTimeoutJob = viewModelScope.launch {
+                            delay(locationResolutionTimeoutMs)
+                            _uiState.value =
+                                PrayerTimesUiState.Error("Failed to get active location.")
+                            analyticsTracker.logEvent(
+                                AnalyticsEvents.PRAYER_TIMES_ERROR,
+                                mapOf(AnalyticsParams.REASON to "no_active_location")
+                            )
+                        }
                     } else {
+                        locationTimeoutJob?.cancel()
                         loadForLocation(location)
                     }
                 }

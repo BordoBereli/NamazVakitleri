@@ -123,6 +123,12 @@ class PrayerTimesViewModelTest {
         every { formatter.getInitialTimeInfo(any(), any()) } returns TimeUiState(gregorianShortDate = "August 2026")
         every { formatter.locationInfo(any()) } returns "Istanbul, TR"
 
+        buildViewModel()
+        viewModelStore = ViewModelStore()
+        viewModelStore.put("viewModel", viewModel)
+    }
+
+    private fun buildViewModel(locationResolutionTimeoutMs: Long = 15_000L) {
         viewModel = PrayerTimesViewModel(
             getPrayerTimesUseCase,
             getMonthlyPrayerTimesUseCase,
@@ -134,10 +140,9 @@ class PrayerTimesViewModelTest {
             settingsRepository,
             analyticsTracker,
             backgroundSaveScope,
-            UnconfinedTestDispatcher()
+            UnconfinedTestDispatcher(),
+            locationResolutionTimeoutMs
         )
-        viewModelStore = ViewModelStore()
-        viewModelStore.put("viewModel", viewModel)
     }
 
     @AfterEach
@@ -201,6 +206,53 @@ class PrayerTimesViewModelTest {
         advanceUntilIdle()
         coVerify(exactly = 1) {
             saveMonthlyPrayerTimesUseCase.invoke(any(), any(), any(), any(), any(), any())
+        }
+    }
+
+    @Test
+    fun `null location stays Loading and errors only after timeout`() = runTest {
+        activeLocationProvider.set(null)
+        buildViewModel(locationResolutionTimeoutMs = 100)
+
+        viewModel.loadMonthlyPrayerTimes()
+
+        viewModel.uiState.test {
+            assertThat(awaitItem()).isEqualTo(PrayerTimesUiState.Loading)
+            val state = withTimeout(5_000) { awaitItem() }
+            assertThat(state).isInstanceOf(PrayerTimesUiState.Error::class.java)
+            cancelAndIgnoreRemainingEvents()
+        }
+        coVerify(exactly = 1) {
+            analyticsTracker.logEvent(
+                AnalyticsEvents.PRAYER_TIMES_ERROR,
+                mapOf(AnalyticsParams.REASON to "no_active_location")
+            )
+        }
+    }
+
+    @Test
+    fun `location arriving before timeout cancels the pending error`() = runTest {
+        activeLocationProvider.set(null)
+        buildViewModel(locationResolutionTimeoutMs = 10_000)
+
+        viewModel.loadMonthlyPrayerTimes()
+        activeLocationProvider.set(mockLocation)
+
+        viewModel.uiState.test {
+            var state = withTimeout(5_000) { awaitItem() }
+            while (state is PrayerTimesUiState.Loading) {
+                state = withTimeout(5_000) { awaitItem() }
+            }
+            assertThat(state).isInstanceOf(PrayerTimesUiState.Success::class.java)
+            delay(200)
+            assertThat(viewModel.uiState.value).isInstanceOf(PrayerTimesUiState.Success::class.java)
+            cancelAndIgnoreRemainingEvents()
+        }
+        coVerify(exactly = 0) {
+            analyticsTracker.logEvent(
+                AnalyticsEvents.PRAYER_TIMES_ERROR,
+                mapOf(AnalyticsParams.REASON to "no_active_location")
+            )
         }
     }
 
