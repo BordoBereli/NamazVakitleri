@@ -281,7 +281,8 @@ class PrayerTimesViewModel(
             latitude = location.latitude,
             longitude = location.longitude,
             zoneId = resolvedZoneId,
-            calculationMethod = calculationMethod
+            calculationMethod = calculationMethod,
+            persistDailyCache = false
         ).getOrElse { throw it }
         val langDetectedPrayerTimes = formatter.withLocalizedNames(prayerTimes)
         val isToday = date == today.date
