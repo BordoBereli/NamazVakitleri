@@ -188,31 +188,23 @@ private fun NotificationsContent(
                 }
             }
         )
-        if (showNotificationRationale && !hasNotificationPermission && settings.enabled) {
-            if (notificationPermanentlyDenied) {
-                PermissionHintRow(
-                    text = stringResource(R.string.notification_permission_rationale),
-                    actionText = stringResource(R.string.open_settings),
-                    onAction = {
-                        showNotificationRationale = false
-                        context.startActivity(
-                            Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                                data = Uri.parse("package:${context.packageName}")
-                            }
-                        )
-                    }
-                )
-            } else {
-                PermissionHintRow(
-                    text = stringResource(R.string.notification_permission_rationale),
-                    actionText = stringResource(R.string.grant_permission),
-                    onAction = {
-                        showNotificationRationale = false
-                        notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        NotificationPermissionRationale(
+            showRationale = showNotificationRationale,
+            hasPermission = hasNotificationPermission,
+            permanentlyDenied = notificationPermanentlyDenied,
+            onGrantPermission = {
+                showNotificationRationale = false
+                notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            },
+            onOpenSettings = {
+                showNotificationRationale = false
+                context.startActivity(
+                    Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                        data = Uri.parse("package:${context.packageName}")
                     }
                 )
             }
-        }
+        )
         if (!canScheduleExactAlarms) {
             PermissionHintRow(
                 text = stringResource(R.string.exact_alarm_hint),
@@ -368,6 +360,31 @@ private fun PermissionHintRow(
         )
         TextButton(onClick = onAction) {
             Text(actionText)
+        }
+    }
+}
+
+@Composable
+internal fun NotificationPermissionRationale(
+    showRationale: Boolean,
+    hasPermission: Boolean,
+    permanentlyDenied: Boolean,
+    onGrantPermission: () -> Unit,
+    onOpenSettings: () -> Unit
+) {
+    if (showRationale && !hasPermission) {
+        if (permanentlyDenied) {
+            PermissionHintRow(
+                text = stringResource(R.string.notification_permission_rationale),
+                actionText = stringResource(R.string.open_settings),
+                onAction = onOpenSettings
+            )
+        } else {
+            PermissionHintRow(
+                text = stringResource(R.string.notification_permission_rationale),
+                actionText = stringResource(R.string.grant_permission),
+                onAction = onGrantPermission
+            )
         }
     }
 }
