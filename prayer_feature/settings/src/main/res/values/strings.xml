@@ -85,4 +85,5 @@
     <string name="vibration">Vibration</string>
     <string name="send_test_notification">Send test notification</string>
     <string name="minutes_before">minutes before</string>
+    <string name="cancel">Cancel</string>
 </resources>

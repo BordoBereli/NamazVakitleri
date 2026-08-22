@@ -83,4 +83,5 @@
     <string name="vibration">وائبریشن</string>
     <string name="send_test_notification">ٹیسٹ اطلاع بھیجیں</string>
     <string name="minutes_before">منٹ پہلے</string>
+    <string name="cancel">منسوخ</string>
 </resources>

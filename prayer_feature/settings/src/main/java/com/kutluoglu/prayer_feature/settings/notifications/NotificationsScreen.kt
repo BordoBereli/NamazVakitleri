@@ -3,6 +3,8 @@ package com.kutluoglu.prayer_feature.settings.notifications
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -40,9 +42,7 @@ import androidx.compose.ui.unit.dp
 import com.kutluoglu.core.designsystem.components.LoadingIndicator
 import com.kutluoglu.prayer_feature.settings.R
 import com.kutluoglu.prayer_notifications.domain.NotificationSettings
-import com.kutluoglu.prayer_notifications.manager.PrayerNotificationManager
 import org.koin.androidx.compose.koinViewModel
-import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,7 +51,6 @@ fun NotificationsRoute(
     viewModel: NotificationsViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val notificationManager: PrayerNotificationManager = koinInject()
 
     Scaffold(
         topBar = {
@@ -91,7 +90,6 @@ fun NotificationsRoute(
                 is NotificationsUiState.Success -> {
                     NotificationsContent(
                         settings = state.settings,
-                        notificationManager = notificationManager,
                         onEvent = viewModel::onEvent
                     )
                 }
@@ -104,7 +102,6 @@ fun NotificationsRoute(
 @Composable
 private fun NotificationsContent(
     settings: NotificationSettings,
-    notificationManager: PrayerNotificationManager,
     onEvent: (NotificationsEvent) -> Unit
 ) {
     var showTimePicker by remember { mutableStateOf(false) }
@@ -200,10 +197,7 @@ private fun NotificationsContent(
             onCheckedChange = { onEvent(NotificationsEvent.SetVibrationEnabled(it)) }
         )
         Button(
-            onClick = {
-                notificationManager.createChannels(settings)
-                notificationManager.showTestNotification()
-            },
+            onClick = { onEvent(NotificationsEvent.SendTest) },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(stringResource(R.string.send_test_notification))
@@ -244,6 +238,7 @@ private fun ToggleRow(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun PrePrayerMinutesSelector(
     selectedMinutes: Int,
@@ -261,12 +256,12 @@ private fun PrePrayerMinutesSelector(
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             options.forEach { minutes ->
                 FilterChip(
                     selected = selectedMinutes == minutes,
                     onClick = { onMinutesSelected(minutes) },
-                    label = { Text("$minutes ${stringResource(R.string.minutes_before)}") }
+                    label = { Text("$minutes") }
                 )
             }
         }
@@ -319,7 +314,7 @@ private fun TimePickerDialog(
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.back))
+                Text(stringResource(R.string.cancel))
             }
         }
     )

@@ -83,4 +83,5 @@
     <string name="vibration">لرزش</string>
     <string name="send_test_notification">ارسال اعلان آزمایشی</string>
     <string name="minutes_before">دقیقه قبل</string>
+    <string name="cancel">لغو</string>
 </resources>

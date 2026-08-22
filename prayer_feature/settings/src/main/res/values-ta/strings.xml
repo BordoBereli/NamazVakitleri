@@ -83,4 +83,5 @@
     <string name="vibration">அதிர்வு</string>
     <string name="send_test_notification">சோதனை அறிவிப்பை அனுப்பு</string>
     <string name="minutes_before">நிமிடங்களுக்கு முன்</string>
+    <string name="cancel">ரத்து</string>
 </resources>

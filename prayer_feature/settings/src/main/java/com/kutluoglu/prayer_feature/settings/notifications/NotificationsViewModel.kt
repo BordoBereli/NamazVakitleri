@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.kutluoglu.prayer_notifications.domain.NotificationSettings
 import com.kutluoglu.prayer_notifications.domain.usecases.GetNotificationSettingsUseCase
 import com.kutluoglu.prayer_notifications.domain.usecases.UpdateNotificationSettingsUseCase
+import com.kutluoglu.prayer_notifications.manager.PrayerNotificationManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,7 +15,8 @@ import org.koin.android.annotation.KoinViewModel
 @KoinViewModel
 class NotificationsViewModel(
     private val getSettingsUseCase: GetNotificationSettingsUseCase,
-    private val updateSettingsUseCase: UpdateNotificationSettingsUseCase
+    private val updateSettingsUseCase: UpdateNotificationSettingsUseCase,
+    private val notificationManager: PrayerNotificationManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<NotificationsUiState>(NotificationsUiState.Loading)
@@ -47,8 +49,14 @@ class NotificationsViewModel(
             is NotificationsEvent.SetSpecialDaysEnabled -> update { it.copy(specialDaysEnabled = event.enabled) }
             is NotificationsEvent.SetSoundEnabled -> update { it.copy(soundEnabled = event.enabled) }
             is NotificationsEvent.SetVibrationEnabled -> update { it.copy(vibrationEnabled = event.enabled) }
-            NotificationsEvent.SendTest -> Unit
+            NotificationsEvent.SendTest -> sendTestNotification()
         }
+    }
+
+    private fun sendTestNotification() {
+        val settings = (_uiState.value as? NotificationsUiState.Success)?.settings ?: return
+        notificationManager.createChannels(settings)
+        notificationManager.showTestNotification()
     }
 
     private fun load() {

@@ -83,4 +83,5 @@
     <string name="vibration">কম্পন</string>
     <string name="send_test_notification">পরীক্ষা বিজ্ঞপ্তি পাঠান</string>
     <string name="minutes_before">মিনিট আগে</string>
+    <string name="cancel">বাতিল</string>
 </resources>

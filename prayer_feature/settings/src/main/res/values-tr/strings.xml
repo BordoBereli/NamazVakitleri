@@ -85,4 +85,5 @@
     <string name="vibration">Titreşim</string>
     <string name="send_test_notification">Test bildirimi gönder</string>
     <string name="minutes_before">dakika önce</string>
+    <string name="cancel">İptal</string>
 </resources>

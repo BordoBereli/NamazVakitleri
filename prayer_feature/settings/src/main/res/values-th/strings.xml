@@ -83,4 +83,5 @@
     <string name="vibration">การสั่น</string>
     <string name="send_test_notification">ส่งการแจ้งเตือนทดสอบ</string>
     <string name="minutes_before">นาทีก่อน</string>
+    <string name="cancel">ยกเลิก</string>
 </resources>
