@@ -7,5 +7,5 @@ import org.koin.core.annotation.Factory
 class ScheduleNotificationsUseCase(
     private val scheduler: PrayerNotificationScheduler
 ) {
-    fun invoke() = scheduler.scheduleAll()
+    operator fun invoke() = scheduler.scheduleAll()
 }

@@ -27,6 +27,9 @@ class UpdateNotificationSettingsUseCase(
         dataStore.updateSpecialDaysEnabled(settings.specialDaysEnabled)
         dataStore.updateSoundEnabled(settings.soundEnabled)
         dataStore.updateVibrationEnabled(settings.vibrationEnabled)
+        settings.prayerToggles.forEach { (key, enabled) ->
+            dataStore.updatePrayerToggle(key, enabled)
+        }
         if (settings.enabled) scheduler.scheduleAll() else scheduler.cancelAll()
     }
 }
