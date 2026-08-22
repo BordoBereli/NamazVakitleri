@@ -39,6 +39,7 @@ assertjCore = "3.27.5"
 mockk = "1.14.5"
 espressoCore = "3.7.0"
 playServicesLocation = "21.3.0"
+workRuntime = "2.10.0"
 truth = "1.1.3"
 turbine = "1.2.1"
 junit = "4.13.2"
@@ -72,6 +73,7 @@ kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-c
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
+androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntime" }
 
 adhan = { module = "com.batoulapps.adhan:adhan2", version.ref = "adhan2" }
 coil = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }

@@ -68,6 +68,7 @@ dependencies {
     implementation(project(":prayer_settings"))
     implementation(project(":prayer_location"))
     implementation(project(":prayer_qibla"))
+    implementation(project(":prayer_notifications"))
     implementation(project(":prayer_remote"))
 
     implementation(libs.androidx.core.ktx)

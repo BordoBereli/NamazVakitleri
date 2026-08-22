@@ -52,4 +52,5 @@ include(":prayer_feature:prayertimes")
 
 include(":prayer_feature:qibla")
 include(":prayer_qibla")
+include(":prayer_notifications")
 include(":prayer_feature:settings")
