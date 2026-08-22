@@ -1,6 +1,6 @@
 package com.kutluoglu.prayer_feature.settings.calculation
 
-import com.kutluoglu.prayer_settings.domain.model.CalculationMethod
+import com.kutluoglu.prayer.model.prayer.CalculationMethod
 
 sealed class CalculationMethodUiState {
     data object Loading : CalculationMethodUiState()

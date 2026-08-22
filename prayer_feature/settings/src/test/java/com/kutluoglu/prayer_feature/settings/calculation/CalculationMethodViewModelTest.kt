@@ -2,8 +2,8 @@ package com.kutluoglu.prayer_feature.settings.calculation
 
 import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.core.common.analytics.AnalyticsTracker
+import com.kutluoglu.prayer.model.prayer.CalculationMethod
 import com.kutluoglu.prayer_feature.settings.MainCoroutineRule
-import com.kutluoglu.prayer_settings.domain.model.CalculationMethod
 import com.kutluoglu.prayer_settings.domain.model.Settings
 import com.kutluoglu.prayer_settings.domain.usecase.GetSettingsUseCase
 import com.kutluoglu.prayer_settings.domain.usecase.UpdateCalculationMethodUseCase
@@ -48,7 +48,7 @@ class CalculationMethodViewModelTest {
 
     @Test
     fun `selectMethod persists the selected method`() = runTest {
-        val newMethod = CalculationMethod.methods.first { it.id == "MWL" }
+        val newMethod = CalculationMethod.entries.first { it.name == "MWL" }
         viewModel.onEvent(CalculationMethodEvent.SelectMethod(newMethod))
 
         coVerify { updateCalculationMethodUseCase("MWL") }
@@ -56,7 +56,7 @@ class CalculationMethodViewModelTest {
 
     @Test
     fun `selectMethod updates selected method in state`() = runTest {
-        val newMethod = CalculationMethod.methods.first { it.id == "MWL" }
+        val newMethod = CalculationMethod.entries.first { it.name == "MWL" }
         viewModel.onEvent(CalculationMethodEvent.SelectMethod(newMethod))
 
         val state = viewModel.uiState.value
@@ -77,7 +77,7 @@ class CalculationMethodViewModelTest {
     fun `methods should contain all expected calculation methods`() {
         val state = viewModel.uiState.value
         val loadedState = state as CalculationMethodUiState.MethodsLoaded
-        val methodIds = loadedState.methods.map { it.id }
+        val methodIds = loadedState.methods.map { it.name }
 
         assertThat(methodIds).contains("TURKEY_DIYANET")
         assertThat(methodIds).contains("MWL")
@@ -100,19 +100,18 @@ class CalculationMethodViewModelTest {
         val loadedState = state as CalculationMethodUiState.MethodsLoaded
 
         loadedState.methods.forEach { method ->
-            assertThat(method.id).isNotEmpty()
             assertThat(method.name).isNotEmpty()
         }
     }
 
     @Test
     fun `selecting all methods sequentially should work`() = runTest {
-        CalculationMethod.methods.forEach { method ->
+        CalculationMethod.entries.forEach { method ->
             viewModel.onEvent(CalculationMethodEvent.SelectMethod(method))
 
             val state = viewModel.uiState.value
             val loadedState = state as CalculationMethodUiState.MethodsLoaded
-            assertThat(loadedState.selectedMethod).isEqualTo(method.id)
+            assertThat(loadedState.selectedMethod).isEqualTo(method.name)
         }
     }
 
@@ -139,7 +138,7 @@ class CalculationMethodViewModelTest {
         val state = viewModel.uiState.value
         val loadedState = state as CalculationMethodUiState.MethodsLoaded
 
-        val ids = loadedState.methods.map { it.id }
+        val ids = loadedState.methods.map { it.name }
         assertThat(ids.toSet()).hasSize(ids.size)
     }
 
@@ -148,7 +147,7 @@ class CalculationMethodViewModelTest {
         val state = viewModel.uiState.value
         val loadedState = state as CalculationMethodUiState.MethodsLoaded
 
-        assertThat(loadedState.selectedMethod).isEqualTo(loadedState.methods.first().id)
+        assertThat(loadedState.selectedMethod).isEqualTo(loadedState.methods.first().name)
     }
 
     @Test
@@ -156,8 +155,20 @@ class CalculationMethodViewModelTest {
         val state = viewModel.uiState.value
         val loadedState = state as CalculationMethodUiState.MethodsLoaded
 
-        val turkeyMethod = loadedState.methods.find { it.id == "TURKEY_DIYANET" }
+        val turkeyMethod = loadedState.methods.find { it.name == "TURKEY_DIYANET" }
         assertThat(turkeyMethod).isNotNull()
-        assertThat(turkeyMethod?.name).contains("Turkey")
+        assertThat(turkeyMethod?.name).isEqualTo("TURKEY_DIYANET")
+    }
+
+    @Test
+    fun `loadMethods exposes the six enum methods`() = runTest {
+        coEvery { getSettingsUseCase() } returns Settings()
+        val viewModel = CalculationMethodViewModel(getSettingsUseCase, updateCalculationMethodUseCase, analyticsTracker)
+        val state = viewModel.uiState.value
+        assertThat(state).isInstanceOf(CalculationMethodUiState.MethodsLoaded::class.java)
+        val methods = (state as CalculationMethodUiState.MethodsLoaded).methods
+        assertThat(methods.map { it.name }).containsExactly(
+            "TURKEY_DIYANET", "MWL", "ISNA", "EGYPT", "MAKKAH", "KARACHI"
+        )
     }
 }

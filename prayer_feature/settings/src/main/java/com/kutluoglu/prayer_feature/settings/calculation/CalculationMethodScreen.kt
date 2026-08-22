@@ -43,7 +43,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.kutluoglu.core.designsystem.R
 import com.kutluoglu.core.designsystem.components.LoadingIndicator
-import com.kutluoglu.prayer_settings.domain.model.CalculationMethod
+import com.kutluoglu.prayer.model.prayer.CalculationMethod
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 
@@ -99,7 +99,7 @@ fun CalculationMethodRoute(
                         items(state.methods) { method ->
                             MethodItem(
                                 method = method,
-                                isSelected = method.id == state.selectedMethod,
+                                isSelected = method.name == state.selectedMethod,
                                 onClick = { viewModel.onEvent(CalculationMethodEvent.SelectMethod(method)) }
                             )
                         }
@@ -173,11 +173,6 @@ private fun MethodItem(
                 Text(
                     text = method.name,
                     style = MaterialTheme.typography.bodyLarge
-                )
-                Text(
-                    text = method.description,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
             if (isSelected) {

@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.kutluoglu.core.common.analytics.AnalyticsEvents
 import com.kutluoglu.core.common.analytics.AnalyticsParams
 import com.kutluoglu.core.common.analytics.AnalyticsTracker
-import com.kutluoglu.prayer_settings.domain.model.CalculationMethod
+import com.kutluoglu.prayer.model.prayer.CalculationMethod
 import com.kutluoglu.prayer_settings.domain.usecase.GetSettingsUseCase
 import com.kutluoglu.prayer_settings.domain.usecase.UpdateCalculationMethodUseCase
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -58,7 +58,7 @@ class CalculationMethodViewModel(
     private fun loadMethods() {
         try {
             _uiState.value = CalculationMethodUiState.MethodsLoaded(
-                methods = CalculationMethod.methods,
+                methods = CalculationMethod.entries,
                 selectedMethod = currentMethodId
             )
         } catch (e: Exception) {
@@ -68,21 +68,21 @@ class CalculationMethodViewModel(
 
     private fun selectMethod(method: CalculationMethod) {
         val previousMethodId = currentMethodId
-        currentMethodId = method.id
+        currentMethodId = method.name
         _uiState.value = CalculationMethodUiState.MethodsLoaded(
-            methods = CalculationMethod.methods,
-            selectedMethod = method.id
+            methods = CalculationMethod.entries,
+            selectedMethod = method.name
         )
         viewModelScope.launch {
-            updateCalculationMethodUseCase(method.id)
+            updateCalculationMethodUseCase(method.name)
             analyticsTracker.logEvent(
                 AnalyticsEvents.CALCULATION_METHOD_CHANGED,
                 mapOf(
                     AnalyticsParams.FROM to previousMethodId,
-                    AnalyticsParams.TO to method.id
+                    AnalyticsParams.TO to method.name
                 )
             )
-            _selectedMethod.emit(method.id)
+            _selectedMethod.emit(method.name)
         }
     }
 }

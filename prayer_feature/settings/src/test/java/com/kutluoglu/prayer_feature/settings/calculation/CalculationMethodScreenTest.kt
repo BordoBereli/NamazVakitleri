@@ -53,12 +53,12 @@ class CalculationMethodScreenTest {
     fun `renders all six supported calculation methods`() {
         launchScreen()
 
-        composeTestRule.onNodeWithText("Turkey (Diyanet)").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Muslim World League").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Islamic Society of North America").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Egyptian General Authority").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Umm Al-Qura University").assertIsDisplayed()
-        composeTestRule.onNodeWithText("University of Islamic Sciences, Karachi").assertIsDisplayed()
+        composeTestRule.onNodeWithText("TURKEY_DIYANET").assertIsDisplayed()
+        composeTestRule.onNodeWithText("MWL").assertIsDisplayed()
+        composeTestRule.onNodeWithText("ISNA").assertIsDisplayed()
+        composeTestRule.onNodeWithText("EGYPT").assertIsDisplayed()
+        composeTestRule.onNodeWithText("MAKKAH").assertIsDisplayed()
+        composeTestRule.onNodeWithText("KARACHI").assertIsDisplayed()
         composeTestRule.onAllNodes(isSelectable()).assertCountEquals(6)
 
         composeTestRule.onNodeWithText("Jaafari (Imami Shiah)").assertDoesNotExist()
@@ -69,12 +69,12 @@ class CalculationMethodScreenTest {
     fun `selecting a method persists it and marks it selected`() {
         launchScreen()
 
-        composeTestRule.onNodeWithText("Umm Al-Qura University").performClick()
+        composeTestRule.onNodeWithText("MAKKAH").performClick()
         composeTestRule.waitForIdle()
 
         coVerify { updateCalculationMethodUseCase("MAKKAH") }
         composeTestRule.onNode(
-            isSelectable() and hasParent(hasAnyDescendant(hasText("Umm Al-Qura University"))),
+            isSelectable() and hasParent(hasAnyDescendant(hasText("MAKKAH"))),
             useUnmergedTree = true
         ).assertIsSelected()
     }
