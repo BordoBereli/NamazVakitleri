@@ -8,6 +8,7 @@ import com.kutluoglu.prayer_feature.settings.hijri.HijriAdjustmentRoute
 import com.kutluoglu.prayer_feature.settings.language.LanguageSelectionRoute
 import com.kutluoglu.prayer_feature.settings.location.LocationSelectionRoute
 import com.kutluoglu.prayer_feature.settings.location.MyLocationsRoute
+import com.kutluoglu.prayer_feature.settings.notifications.NotificationsRoute
 import com.kutluoglu.prayer_navigation.core.Screen
 import com.kutluoglu.prayer.model.location.City
 
@@ -28,6 +29,9 @@ fun NavGraphBuilder.settingsGraph(
             },
             onNavigateToLanguage = {
                 navController.navigate(Screen.LanguageSelectionScreen.route)
+            },
+            onNavigateToNotifications = {
+                navController.navigate(Screen.NotificationsScreen.route)
             }
         )
     }
@@ -73,6 +77,12 @@ fun NavGraphBuilder.settingsGraph(
                 navController.popBackStack()
                 onLanguageSelected(language)
             }
+        )
+    }
+
+    composable(Screen.NotificationsScreen.route) {
+        NotificationsRoute(
+            onNavigateBack = { navController.popBackStack() }
         )
     }
 }

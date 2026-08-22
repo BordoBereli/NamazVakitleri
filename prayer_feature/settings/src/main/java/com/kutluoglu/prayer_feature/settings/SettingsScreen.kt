@@ -19,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Public
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Schedule
@@ -63,6 +64,7 @@ fun SettingsScreen(
     onNavigateToCalculationMethod: () -> Unit,
     onNavigateToHijriAdjustment: () -> Unit,
     onNavigateToLanguage: () -> Unit,
+    onNavigateToNotifications: () -> Unit,
     viewModel: SettingsViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -105,7 +107,8 @@ fun SettingsScreen(
                         onNavigateToMyLocations = onNavigateToMyLocations,
                         onNavigateToCalculationMethod = onNavigateToCalculationMethod,
                         onNavigateToHijriAdjustment = onNavigateToHijriAdjustment,
-                        onNavigateToLanguage = onNavigateToLanguage
+                        onNavigateToLanguage = onNavigateToLanguage,
+                        onNavigateToNotifications = onNavigateToNotifications
                     )
                 }
             }
@@ -130,7 +133,8 @@ private fun SettingsContent(
     onNavigateToMyLocations: () -> Unit,
     onNavigateToCalculationMethod: () -> Unit,
     onNavigateToHijriAdjustment: () -> Unit,
-    onNavigateToLanguage: () -> Unit
+    onNavigateToLanguage: () -> Unit,
+    onNavigateToNotifications: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -190,6 +194,15 @@ private fun SettingsContent(
                     title = stringResource(R.string.language),
                     subtitle = getLanguageName(settings.language),
                     onClick = onNavigateToLanguage
+                )
+                
+                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+                
+                SettingsItem(
+                    icon = Icons.Default.Notifications,
+                    title = stringResource(SettingsR.string.notifications),
+                    subtitle = "",
+                    onClick = onNavigateToNotifications
                 )
             }
         }
