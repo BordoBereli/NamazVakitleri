@@ -3,17 +3,16 @@ package com.kutluoglu.prayer_notifications.scheduler
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import org.koin.core.annotation.Factory
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 
-@Factory
 class DailyRescheduleWorker(
     appContext: Context,
-    params: WorkerParameters,
-    private val scheduler: PrayerNotificationScheduler
-) : CoroutineWorker(appContext, params) {
+    params: WorkerParameters
+) : CoroutineWorker(appContext, params), KoinComponent {
 
     override suspend fun doWork(): Result {
-        scheduler.scheduleAll()
+        get<PrayerNotificationScheduler>().scheduleAllSuspending()
         return Result.success()
     }
 }
