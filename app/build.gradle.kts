@@ -67,7 +67,6 @@ dependencies {
     implementation(project(":prayer_feature:settings"))
     implementation(project(":prayer_settings"))
     implementation(project(":prayer_location"))
-    implementation(project(":prayer_cache"))
     implementation(project(":prayer_qibla"))
     implementation(project(":prayer_remote"))
 

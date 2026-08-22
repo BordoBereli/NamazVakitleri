@@ -7,7 +7,6 @@ import com.kutluoglu.prayer_feature.settings.language.LanguageSelectionViewModel
 import com.kutluoglu.prayer_feature.settings.location.LocationSelectionViewModel
 import com.kutluoglu.prayer_feature.settings.location.MyLocationsViewModel
 import com.kutluoglu.namazvakitleri.locale.LocaleManager
-import com.kutluoglu.prayer.data.repository.location.LocationDataStore
 import com.kutluoglu.prayer_settings.data.local.SettingsDataStore
 import com.kutluoglu.prayer_settings.data.repository.SettingsRepositoryImpl
 import com.kutluoglu.prayer_settings.domain.repository.LocationRepository

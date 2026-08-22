@@ -33,7 +33,6 @@ include(":prayer_navigation:core") // Navigation setup, destinations
 include(":prayer:domain") // Prayer calculations, business logic
 include(":prayer:model")  // Data classes
 include(":prayer:data")   // Repository implementations
-include(":prayer_cache")  // Local data sources
 include(":prayer_remote") // Remote data sources, Retrofit, API interfaces, network utils
 
 // Feature-specific Core

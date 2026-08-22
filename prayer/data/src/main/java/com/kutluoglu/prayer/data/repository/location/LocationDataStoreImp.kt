@@ -1,4 +1,4 @@
-package com.kutluoglu.prayer_cache
+package com.kutluoglu.prayer.data.repository.location
 
 import android.content.Context
 import androidx.datastore.core.DataStore
@@ -7,7 +7,6 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.kutluoglu.prayer.data.model.LocationDataModel
-import com.kutluoglu.prayer.data.repository.location.LocationDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
