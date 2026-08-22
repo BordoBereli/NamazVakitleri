@@ -74,6 +74,7 @@ object PrayerTimesTestTags {
     const val PreviousMonth = "previous_month_button"
     const val NextMonth = "next_month_button"
     const val Today = "today_button"
+    const val MonthHeader = "month_header"
 }
 
 @Composable
@@ -190,6 +191,7 @@ private fun TitleHeader(
         ) {
             Text(
                 text = selectedMonthLabel,
+                modifier = Modifier.testTag(PrayerTimesTestTags.MonthHeader),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold
             )

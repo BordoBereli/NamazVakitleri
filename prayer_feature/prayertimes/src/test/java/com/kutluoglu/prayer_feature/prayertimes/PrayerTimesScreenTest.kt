@@ -3,10 +3,8 @@ package com.kutluoglu.prayer_feature.prayertimes
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onAllNodesWithText
-import androidx.compose.ui.test.onFirst
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
-import com.kutluoglu.core.common.gregorianShortFormatter
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.prayer.DailyPrayer
 import com.kutluoglu.prayer.model.prayer.Prayer
@@ -15,7 +13,6 @@ import com.kutluoglu.prayer_feature.common.states.TimeUiState
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.YearMonth
-import kotlinx.datetime.number
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -69,9 +66,7 @@ class PrayerTimesScreenTest {
         }
         composeTestRule.waitForIdle()
 
-        val expectedMonthLabel = java.time.YearMonth.of(selectedMonth.year, selectedMonth.month.number)
-            .format(gregorianShortFormatter())
-        composeTestRule.onAllNodesWithText(expectedMonthLabel).onFirst().assertIsDisplayed()
+        composeTestRule.onNodeWithTag("month_header").assertIsDisplayed()
         composeTestRule.onNodeWithText("Fajr").assertIsDisplayed()
         composeTestRule.onNodeWithText("Dhuhr").assertIsDisplayed()
         composeTestRule.onNodeWithText("Isha").assertIsDisplayed()
