@@ -1,6 +1,7 @@
 package com.kutluoglu.prayer_feature.home.domain
 
 import android.util.Log
+import com.kutluoglu.core.common.utils.countryCodeFromTimeZone
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.usecases.location.GetSavedLocationUseCase
 import com.kutluoglu.prayer.usecases.location.ObserveLocationUseCase
@@ -103,23 +104,10 @@ class LocationCoordinator(
             latitude = locationSettings.latitude,
             longitude = locationSettings.longitude,
             country = locationSettings.country,
-            countryCode = getCountryCode(locationSettings.timeZone),
+            countryCode = countryCodeFromTimeZone(locationSettings.timeZone),
             city = locationSettings.cityName,
             county = locationSettings.district
         )
-    }
-
-    private fun getCountryCode(timeZone: String): String? {
-        return when {
-            timeZone.contains("Istanbul", ignoreCase = true) ||
-                timeZone.contains("Europe/Istanbul", ignoreCase = true) -> "TR"
-            timeZone.contains("Europe/Berlin", ignoreCase = true) -> "DE"
-            timeZone.contains("Europe/London", ignoreCase = true) -> "GB"
-            timeZone.contains("Europe/Paris", ignoreCase = true) -> "FR"
-            timeZone.contains("Asia/Jakarta", ignoreCase = true) -> "ID"
-            timeZone.contains("Asia/Riyadh", ignoreCase = true) -> "SA"
-            else -> null
-        }
     }
 
     /** Small helper so getSavedLocationUseCase().getOrNull() stays explicit about Result. */
