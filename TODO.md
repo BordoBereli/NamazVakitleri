@@ -18,6 +18,15 @@ Last updated: 2026-08-22
   - Retired the GPS drift prompt (auto GPS location updates on refresh instead).
   - Spec: `docs/superpowers/specs/2026-08-14-multiple-locations-design.md`; Plan: `docs/superpowers/plans/2026-08-14-multiple-locations.md`.
 
+- [x] **Prayer-time notifications system** (2026-08-22, TDD)
+  - New `prayer_notifications` module: `NotificationSettings` model + Preferences DataStore, pure `SchedulePlan` calculator, `PrayerNotificationManager` (4 channels), `AdhanPlayer`, `PrayerNotificationScheduler` (AlarmManager exact + WorkManager daily reschedule), `AlarmReceiver`/`BootReceiver`, and 4 use cases.
+  - Settings sub-screen with per-prayer toggles, adhan/countdown/pre-prayer reminder/daily reminder/jumu'ah/special-days/sound/vibration, test notification, and POST_NOTIFICATIONS + exact-alarm permission handling.
+  - Note: `adhan.mp3` is a silent placeholder — the real adhan audio must be provided before release.
+  - Spec: `docs/superpowers/specs/2026-08-22-notifications-calc-method-techdebt-design.md`; Plan: `docs/superpowers/plans/2026-08-22-notifications-calc-method-techdebt.md`.
+
+- [x] **Calculation-method name fix** (2026-08-22)
+  - Unified the duplicate `CalculationMethod` definitions into the `prayer/model` enum; localized display names for all 6 methods across 13 locales; enum-driven lookup in `SettingsScreen`; localized language display names.
+
 ---
 
 ## 🔴 Bugs (fix first)
