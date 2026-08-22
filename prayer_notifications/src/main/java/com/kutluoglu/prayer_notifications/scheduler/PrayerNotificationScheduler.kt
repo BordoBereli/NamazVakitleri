@@ -5,18 +5,29 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import com.kutluoglu.core.common.now
+import com.kutluoglu.prayer.model.prayer.CalculationMethod
+import com.kutluoglu.prayer.usecases.prayer.GetPrayerTimesUseCase
+import com.kutluoglu.prayer_location.LocationsCoordinator
 import com.kutluoglu.prayer_notifications.data.NotificationSettingsDataStore
 import com.kutluoglu.prayer_notifications.domain.SchedulePlan
+import com.kutluoglu.prayer_settings.domain.usecase.GetSettingsUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDateTime
 import org.koin.core.annotation.Single
+import java.time.Instant
+import java.time.ZoneId
 
 @Single
 class PrayerNotificationScheduler(
     private val context: Context,
     private val dataStore: NotificationSettingsDataStore,
     private val schedulePlan: SchedulePlan,
+    private val getPrayerTimesUseCase: GetPrayerTimesUseCase,
+    private val locationsCoordinator: LocationsCoordinator,
+    private val getSettingsUseCase: GetSettingsUseCase,
     private val scope: CoroutineScope = CoroutineScope(Dispatchers.IO)
 ) {
     companion object {
@@ -36,9 +47,33 @@ class PrayerNotificationScheduler(
                 cancelAll()
                 return@launch
             }
-            // TODO(Phase 5.4): load today's prayers for the active location and
-            // schedule each ScheduledAlarm via setExactAndAllowWhileIdle.
-            // This task wires the plumbing; the prayer loading is added in Task 5.4.
+            val location = locationsCoordinator.resolveSelected() ?: run {
+                cancelAll()
+                return@launch
+            }
+            val appSettings = getSettingsUseCase()
+            val zoneId = ZoneId.of(appSettings.location.timeZone)
+            val today = LocalDateTime.now(zoneId)
+            val method = CalculationMethod.fromSettingsId(appSettings.calculationMethod)
+            val prayers = getPrayerTimesUseCase(
+                date = today,
+                latitude = location.latitude,
+                longitude = location.longitude,
+                zoneId = zoneId,
+                calculationMethod = method
+            ).getOrNull() ?: return@launch
+
+            val enabled = settings.prayerToggles.filterValues { it }.keys
+            val alarms = schedulePlan.buildDailyAlarms(
+                prayers = prayers,
+                zoneId = zoneId,
+                now = Instant.now(),
+                enabledPrayers = enabled,
+                prePrayerMinutes = settings.prePrayerMinutes,
+                prePrayerEnabled = settings.prePrayerReminderEnabled
+            )
+            cancelAll()
+            alarms.forEach { scheduleAlarm(it.triggerAtMillis, it.requestCode, it.prayerKey) }
         }
     }
 

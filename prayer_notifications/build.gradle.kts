@@ -48,6 +48,7 @@ dependencies {
     implementation(project(":prayer:domain"))
     implementation(project(":prayer:data"))
     implementation(project(":prayer_location"))
+    implementation(project(":prayer_settings"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.kotlinx.datetime)
@@ -57,6 +58,7 @@ dependencies {
     api(platform(libs.koin.bom))
     api(libs.koin.core)
     api(libs.koin.annotations)
+    implementation(libs.koin.android)
     ksp(libs.koin.ksp)
 
     testImplementation(platform(libs.junit.bom))

@@ -6,9 +6,12 @@ import android.content.Context
 import android.content.Intent
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
+import com.kutluoglu.prayer.usecases.prayer.GetPrayerTimesUseCase
+import com.kutluoglu.prayer_location.LocationsCoordinator
 import com.kutluoglu.prayer_notifications.data.NotificationSettingsDataStore
 import com.kutluoglu.prayer_notifications.domain.NotificationSettings
 import com.kutluoglu.prayer_notifications.domain.SchedulePlan
+import com.kutluoglu.prayer_settings.domain.usecase.GetSettingsUseCase
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.CoroutineScope
@@ -29,11 +32,17 @@ class PrayerNotificationSchedulerTest {
     private val context: Context = ApplicationProvider.getApplicationContext()
     private val dataStore = mockk<NotificationSettingsDataStore>(relaxed = true)
     private val schedulePlan = SchedulePlan()
+    private val getPrayerTimesUseCase = mockk<GetPrayerTimesUseCase>(relaxed = true)
+    private val locationsCoordinator = mockk<LocationsCoordinator>(relaxed = true)
+    private val getSettingsUseCase = mockk<GetSettingsUseCase>(relaxed = true)
 
     private fun scheduler(scope: CoroutineScope) = PrayerNotificationScheduler(
         context = context,
         dataStore = dataStore,
         schedulePlan = schedulePlan,
+        getPrayerTimesUseCase = getPrayerTimesUseCase,
+        locationsCoordinator = locationsCoordinator,
+        getSettingsUseCase = getSettingsUseCase,
         scope = scope
     )
 
