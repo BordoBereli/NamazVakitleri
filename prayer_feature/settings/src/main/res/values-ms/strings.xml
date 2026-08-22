@@ -66,4 +66,21 @@
     <string name="language_ta">Tamil</string>
     <string name="language_th">Thai</string>
     <string name="language_ur">Urdu</string>
+    <string name="notifications">Pemberitahuan</string>
+    <string name="notifications_enabled">Aktifkan pemberitahuan</string>
+    <string name="prayer_fajr">Subuh</string>
+    <string name="prayer_dhuhr">Zuhur</string>
+    <string name="prayer_asr">Asar</string>
+    <string name="prayer_maghrib">Maghrib</string>
+    <string name="prayer_isha">Isyak</string>
+    <string name="adhan">Azan</string>
+    <string name="countdown">Kiraan detik</string>
+    <string name="pre_prayer_reminder">Peringatan sebelum solat</string>
+    <string name="daily_reminder">Peringatan harian</string>
+    <string name="jumuah">Jumaat</string>
+    <string name="special_days">Hari-hari istimewa</string>
+    <string name="sound">Bunyi</string>
+    <string name="vibration">Getaran</string>
+    <string name="send_test_notification">Hantar pemberitahuan ujian</string>
+    <string name="minutes_before">minit sebelum</string>
 </resources>

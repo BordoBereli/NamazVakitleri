@@ -66,4 +66,21 @@
     <string name="language_ta">تامیلی</string>
     <string name="language_th">تایلندی</string>
     <string name="language_ur">اردو</string>
+    <string name="notifications">اعلان‌ها</string>
+    <string name="notifications_enabled">فعال‌سازی اعلان‌ها</string>
+    <string name="prayer_fajr">فجر</string>
+    <string name="prayer_dhuhr">ظهر</string>
+    <string name="prayer_asr">عصر</string>
+    <string name="prayer_maghrib">مغرب</string>
+    <string name="prayer_isha">عشاء</string>
+    <string name="adhan">اذان</string>
+    <string name="countdown">شمارش معکوس</string>
+    <string name="pre_prayer_reminder">یادآوری قبل از نماز</string>
+    <string name="daily_reminder">یادآوری روزانه</string>
+    <string name="jumuah">جمعه</string>
+    <string name="special_days">روزهای خاص</string>
+    <string name="sound">صدا</string>
+    <string name="vibration">لرزش</string>
+    <string name="send_test_notification">ارسال اعلان آزمایشی</string>
+    <string name="minutes_before">دقیقه قبل</string>
 </resources>

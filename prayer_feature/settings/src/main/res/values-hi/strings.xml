@@ -66,4 +66,21 @@
     <string name="language_ta">तमिल</string>
     <string name="language_th">थाई</string>
     <string name="language_ur">उर्दू</string>
+    <string name="notifications">सूचनाएं</string>
+    <string name="notifications_enabled">सूचनाएं सक्षम करें</string>
+    <string name="prayer_fajr">फज्र</string>
+    <string name="prayer_dhuhr">ज़ुहर</string>
+    <string name="prayer_asr">अस्र</string>
+    <string name="prayer_maghrib">मग़रिब</string>
+    <string name="prayer_isha">ईशा</string>
+    <string name="adhan">अज़ान</string>
+    <string name="countdown">काउंटडाउन</string>
+    <string name="pre_prayer_reminder">नमाज़ से पहले अनुस्मारक</string>
+    <string name="daily_reminder">दैनिक अनुस्मारक</string>
+    <string name="jumuah">जुमुआ</string>
+    <string name="special_days">विशेष दिन</string>
+    <string name="sound">ध्वनि</string>
+    <string name="vibration">कंपन</string>
+    <string name="send_test_notification">परीक्षण सूचना भेजें</string>
+    <string name="minutes_before">मिनट पहले</string>
 </resources>

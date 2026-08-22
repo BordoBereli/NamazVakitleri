@@ -66,4 +66,21 @@
     <string name="language_ta">Tamil</string>
     <string name="language_th">Thailändisch</string>
     <string name="language_ur">Urdu</string>
+    <string name="notifications">Benachrichtigungen</string>
+    <string name="notifications_enabled">Benachrichtigungen aktivieren</string>
+    <string name="prayer_fajr">Fajr</string>
+    <string name="prayer_dhuhr">Dhuhr</string>
+    <string name="prayer_asr">Asr</string>
+    <string name="prayer_maghrib">Maghrib</string>
+    <string name="prayer_isha">Isha</string>
+    <string name="adhan">Adhan</string>
+    <string name="countdown">Countdown</string>
+    <string name="pre_prayer_reminder">Erinnerung vor dem Gebet</string>
+    <string name="daily_reminder">Tägliche Erinnerung</string>
+    <string name="jumuah">Dschumua</string>
+    <string name="special_days">Besondere Tage</string>
+    <string name="sound">Ton</string>
+    <string name="vibration">Vibration</string>
+    <string name="send_test_notification">Testbenachrichtigung senden</string>
+    <string name="minutes_before">Minuten vorher</string>
 </resources>

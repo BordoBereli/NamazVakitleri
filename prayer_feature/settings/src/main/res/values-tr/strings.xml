@@ -68,4 +68,21 @@
     <string name="language_ta">Tamilce</string>
     <string name="language_th">Tayca</string>
     <string name="language_ur">Urduca</string>
+    <string name="notifications">Bildirimler</string>
+    <string name="notifications_enabled">Bildirimleri etkinleştir</string>
+    <string name="prayer_fajr">İmsak</string>
+    <string name="prayer_dhuhr">Öğle</string>
+    <string name="prayer_asr">İkindi</string>
+    <string name="prayer_maghrib">Akşam</string>
+    <string name="prayer_isha">Yatsı</string>
+    <string name="adhan">Ezan</string>
+    <string name="countdown">Geri sayım</string>
+    <string name="pre_prayer_reminder">Namaz öncesi hatırlatma</string>
+    <string name="daily_reminder">Günlük hatırlatma</string>
+    <string name="jumuah">Cuma</string>
+    <string name="special_days">Özel günler</string>
+    <string name="sound">Ses</string>
+    <string name="vibration">Titreşim</string>
+    <string name="send_test_notification">Test bildirimi gönder</string>
+    <string name="minutes_before">dakika önce</string>
 </resources>

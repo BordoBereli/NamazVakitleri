@@ -66,4 +66,21 @@
     <string name="language_ta">ทมิฬ</string>
     <string name="language_th">ไทย</string>
     <string name="language_ur">อูรดู</string>
+    <string name="notifications">การแจ้งเตือน</string>
+    <string name="notifications_enabled">เปิดใช้งานการแจ้งเตือน</string>
+    <string name="prayer_fajr">ฟัจญร์</string>
+    <string name="prayer_dhuhr">ดุฮ์รี</string>
+    <string name="prayer_asr">อัสร์</string>
+    <string name="prayer_maghrib">มักริบ</string>
+    <string name="prayer_isha">อิชาอ์</string>
+    <string name="adhan">อาซาน</string>
+    <string name="countdown">การนับถอยหลัง</string>
+    <string name="pre_prayer_reminder">การเตือนก่อนละหมาด</string>
+    <string name="daily_reminder">การเตือนรายวัน</string>
+    <string name="jumuah">ญุมุอะฮ์</string>
+    <string name="special_days">วันพิเศษ</string>
+    <string name="sound">เสียง</string>
+    <string name="vibration">การสั่น</string>
+    <string name="send_test_notification">ส่งการแจ้งเตือนทดสอบ</string>
+    <string name="minutes_before">นาทีก่อน</string>
 </resources>

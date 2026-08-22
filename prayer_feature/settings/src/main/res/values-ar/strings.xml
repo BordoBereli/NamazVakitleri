@@ -66,4 +66,21 @@
     <string name="language_ta">التاميلية</string>
     <string name="language_th">التايلاندية</string>
     <string name="language_ur">الأردية</string>
+    <string name="notifications">الإشعارات</string>
+    <string name="notifications_enabled">تفعيل الإشعارات</string>
+    <string name="prayer_fajr">الفجر</string>
+    <string name="prayer_dhuhr">الظهر</string>
+    <string name="prayer_asr">العصر</string>
+    <string name="prayer_maghrib">المغرب</string>
+    <string name="prayer_isha">العشاء</string>
+    <string name="adhan">الأذان</string>
+    <string name="countdown">العد التنازلي</string>
+    <string name="pre_prayer_reminder">تذكير قبل الصلاة</string>
+    <string name="daily_reminder">تذكير يومي</string>
+    <string name="jumuah">الجمعة</string>
+    <string name="special_days">الأيام الخاصة</string>
+    <string name="sound">الصوت</string>
+    <string name="vibration">الاهتزاز</string>
+    <string name="send_test_notification">إرسال إشعار تجريبي</string>
+    <string name="minutes_before">دقائق قبل</string>
 </resources>

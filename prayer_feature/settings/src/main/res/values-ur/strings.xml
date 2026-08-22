@@ -66,4 +66,21 @@
     <string name="language_ta">تمل</string>
     <string name="language_th">تھائی</string>
     <string name="language_ur">اردو</string>
+    <string name="notifications">اطلاعات</string>
+    <string name="notifications_enabled">اطلاعات فعال کریں</string>
+    <string name="prayer_fajr">فجر</string>
+    <string name="prayer_dhuhr">ظہر</string>
+    <string name="prayer_asr">عصر</string>
+    <string name="prayer_maghrib">مغرب</string>
+    <string name="prayer_isha">عشاء</string>
+    <string name="adhan">اذان</string>
+    <string name="countdown">الٹی گنتی</string>
+    <string name="pre_prayer_reminder">نماز سے پہلے یاد دہانی</string>
+    <string name="daily_reminder">روزانہ یاد دہانی</string>
+    <string name="jumuah">جمعہ</string>
+    <string name="special_days">خاص دن</string>
+    <string name="sound">آواز</string>
+    <string name="vibration">وائبریشن</string>
+    <string name="send_test_notification">ٹیسٹ اطلاع بھیجیں</string>
+    <string name="minutes_before">منٹ پہلے</string>
 </resources>

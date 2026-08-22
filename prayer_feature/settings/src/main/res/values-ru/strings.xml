@@ -66,4 +66,21 @@
     <string name="language_ta">Тамильский</string>
     <string name="language_th">Тайский</string>
     <string name="language_ur">Урду</string>
+    <string name="notifications">Уведомления</string>
+    <string name="notifications_enabled">Включить уведомления</string>
+    <string name="prayer_fajr">Фаджр</string>
+    <string name="prayer_dhuhr">Зухр</string>
+    <string name="prayer_asr">Аср</string>
+    <string name="prayer_maghrib">Магриб</string>
+    <string name="prayer_isha">Иша</string>
+    <string name="adhan">Азан</string>
+    <string name="countdown">Обратный отсчёт</string>
+    <string name="pre_prayer_reminder">Напоминание перед намазом</string>
+    <string name="daily_reminder">Ежедневное напоминание</string>
+    <string name="jumuah">Джума</string>
+    <string name="special_days">Особые дни</string>
+    <string name="sound">Звук</string>
+    <string name="vibration">Вибрация</string>
+    <string name="send_test_notification">Отправить тестовое уведомление</string>
+    <string name="minutes_before">минут до</string>
 </resources>
