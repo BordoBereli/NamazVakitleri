@@ -7,7 +7,6 @@ import kotlinx.datetime.LocalTime
 import org.junit.jupiter.api.Test
 import java.time.Instant
 import java.time.ZoneId
-import java.time.ZoneOffset
 
 class SchedulePlanTest {
 
@@ -86,5 +85,33 @@ class SchedulePlanTest {
             prePrayerEnabled = false
         )
         assertThat(alarms.map { it.prayerKey }).containsExactly("Maghrib", "Isha")
+    }
+
+    @Test
+    fun `converts prayer time to correct epoch millis`() {
+        val plan = SchedulePlan()
+        val alarms = plan.buildDailyAlarms(
+            prayers = prayers,
+            zoneId = zone,
+            now = Instant.parse("2026-08-22T00:00:00Z"),
+            enabledPrayers = setOf("Fajr"),
+            prePrayerMinutes = 15,
+            prePrayerEnabled = false
+        )
+        assertThat(alarms[0].triggerAtMillis).isEqualTo(1787362200000L)
+    }
+
+    @Test
+    fun `skips pre-prayer alarm when it is already in the past`() {
+        val plan = SchedulePlan()
+        val alarms = plan.buildDailyAlarms(
+            prayers = prayers,
+            zoneId = zone,
+            now = Instant.parse("2026-08-22T16:50:00Z"), // 19:50 Istanbul
+            enabledPrayers = setOf("Maghrib"),
+            prePrayerMinutes = 15,
+            prePrayerEnabled = true
+        )
+        assertThat(alarms.map { it.prayerKey }).containsExactly("Maghrib")
     }
 }
