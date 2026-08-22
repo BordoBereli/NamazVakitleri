@@ -51,4 +51,19 @@
     <string name="selected">Dipilih</string>
     <string name="reorder">Susun semula</string>
     <string name="no_locations_yet">Belum ada lokasi — tambah satu dengan butang Tambah lokasi</string>
+    <string name="language_tr">Turki</string>
+    <string name="language_en">Inggeris</string>
+    <string name="language_ar">Arab</string>
+    <string name="language_de">Jerman</string>
+    <string name="language_fr">Perancis</string>
+    <string name="language_es">Sepanyol</string>
+    <string name="language_bn">Bengali</string>
+    <string name="language_fa">Parsi</string>
+    <string name="language_hi">Hindi</string>
+    <string name="language_id">Bahasa Indonesia</string>
+    <string name="language_ms">Bahasa Melayu</string>
+    <string name="language_ru">Rusia</string>
+    <string name="language_ta">Tamil</string>
+    <string name="language_th">Thai</string>
+    <string name="language_ur">Urdu</string>
 </resources>

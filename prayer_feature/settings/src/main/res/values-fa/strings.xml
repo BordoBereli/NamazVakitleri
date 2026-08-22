@@ -51,4 +51,19 @@
     <string name="selected">انتخاب شده</string>
     <string name="reorder">مرتب‌سازی مجدد</string>
     <string name="no_locations_yet">هنوز موقعیتی وجود ندارد — با دکمه افزودن موقعیت یکی اضافه کنید</string>
+    <string name="language_tr">ترکی</string>
+    <string name="language_en">انگلیسی</string>
+    <string name="language_ar">عربی</string>
+    <string name="language_de">آلمانی</string>
+    <string name="language_fr">فرانسوی</string>
+    <string name="language_es">اسپانیایی</string>
+    <string name="language_bn">بنگالی</string>
+    <string name="language_fa">فارسی</string>
+    <string name="language_hi">هندی</string>
+    <string name="language_id">اندونزیایی</string>
+    <string name="language_ms">مالایی</string>
+    <string name="language_ru">روسی</string>
+    <string name="language_ta">تامیلی</string>
+    <string name="language_th">تایلندی</string>
+    <string name="language_ur">اردو</string>
 </resources>

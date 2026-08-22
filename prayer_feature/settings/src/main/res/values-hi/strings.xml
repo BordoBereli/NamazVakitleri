@@ -51,4 +51,19 @@
     <string name="selected">चयनित</string>
     <string name="reorder">पुनः क्रमबद्ध करें</string>
     <string name="no_locations_yet">अभी कोई स्थान नहीं — स्थान जोड़ें बटन से एक जोड़ें</string>
+    <string name="language_tr">तुर्की</string>
+    <string name="language_en">अंग्रेज़ी</string>
+    <string name="language_ar">अरबी</string>
+    <string name="language_de">जर्मन</string>
+    <string name="language_fr">फ़्रेंच</string>
+    <string name="language_es">स्पेनिश</string>
+    <string name="language_bn">बंगाली</string>
+    <string name="language_fa">फ़ारसी</string>
+    <string name="language_hi">हिन्दी</string>
+    <string name="language_id">इंडोनेशियाई</string>
+    <string name="language_ms">मलय</string>
+    <string name="language_ru">रूसी</string>
+    <string name="language_ta">तमिल</string>
+    <string name="language_th">थाई</string>
+    <string name="language_ur">उर्दू</string>
 </resources>

@@ -51,4 +51,19 @@
     <string name="selected">محدد</string>
     <string name="reorder">إعادة ترتيب</string>
     <string name="no_locations_yet">لا توجد مواقع بعد — أضف واحداً باستخدام زر إضافة موقع</string>
+    <string name="language_tr">التركية</string>
+    <string name="language_en">الإنجليزية</string>
+    <string name="language_ar">العربية</string>
+    <string name="language_de">الألمانية</string>
+    <string name="language_fr">الفرنسية</string>
+    <string name="language_es">الإسبانية</string>
+    <string name="language_bn">البنغالية</string>
+    <string name="language_fa">الفارسية</string>
+    <string name="language_hi">الهندية</string>
+    <string name="language_id">الإندونيسية</string>
+    <string name="language_ms">الملايوية</string>
+    <string name="language_ru">الروسية</string>
+    <string name="language_ta">التاميلية</string>
+    <string name="language_th">التايلاندية</string>
+    <string name="language_ur">الأردية</string>
 </resources>

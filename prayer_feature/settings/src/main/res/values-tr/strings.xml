@@ -53,4 +53,19 @@
     <string name="no_locations_yet">Henüz konum yok — konum ekle butonuyla bir tane ekleyebilirsiniz</string>
     <string name="location_permission_required">Mevcut konumunuzu kullanmak için konum izni gereklidir.</string>
     <string name="open_settings">Ayarları Aç</string>
+    <string name="language_tr">Türkçe</string>
+    <string name="language_en">İngilizce</string>
+    <string name="language_ar">Arapça</string>
+    <string name="language_de">Almanca</string>
+    <string name="language_fr">Fransızca</string>
+    <string name="language_es">İspanyolca</string>
+    <string name="language_bn">Bengalce</string>
+    <string name="language_fa">Farsça</string>
+    <string name="language_hi">Hintçe</string>
+    <string name="language_id">Endonezce</string>
+    <string name="language_ms">Malayca</string>
+    <string name="language_ru">Rusça</string>
+    <string name="language_ta">Tamilce</string>
+    <string name="language_th">Tayca</string>
+    <string name="language_ur">Urduca</string>
 </resources>

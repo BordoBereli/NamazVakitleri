@@ -51,4 +51,19 @@
     <string name="selected">เลือกแล้ว</string>
     <string name="reorder">จัดเรียงใหม่</string>
     <string name="no_locations_yet">ยังไม่มีตำแหน่ง — เพิ่มหนึ่งรายการด้วยปุ่มเพิ่มตำแหน่ง</string>
+    <string name="language_tr">ตุรกี</string>
+    <string name="language_en">อังกฤษ</string>
+    <string name="language_ar">อาหรับ</string>
+    <string name="language_de">เยอรมัน</string>
+    <string name="language_fr">ฝรั่งเศส</string>
+    <string name="language_es">สเปน</string>
+    <string name="language_bn">เบงกาลี</string>
+    <string name="language_fa">เปอร์เซีย</string>
+    <string name="language_hi">ฮินดี</string>
+    <string name="language_id">อินโดนีเซีย</string>
+    <string name="language_ms">มาเลย์</string>
+    <string name="language_ru">รัสเซีย</string>
+    <string name="language_ta">ทมิฬ</string>
+    <string name="language_th">ไทย</string>
+    <string name="language_ur">อูรดู</string>
 </resources>

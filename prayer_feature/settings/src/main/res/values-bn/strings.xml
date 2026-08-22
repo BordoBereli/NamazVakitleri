@@ -51,4 +51,19 @@
     <string name="selected">নির্বাচিত</string>
     <string name="reorder">পুনরায় সাজান</string>
     <string name="no_locations_yet">এখনও কোনো অবস্থান নেই — অবস্থান যোগ করুন বাটন দিয়ে একটি যোগ করুন</string>
+    <string name="language_tr">তুর্কি</string>
+    <string name="language_en">ইংরেজি</string>
+    <string name="language_ar">আরবি</string>
+    <string name="language_de">জার্মান</string>
+    <string name="language_fr">ফরাসি</string>
+    <string name="language_es">স্প্যানিশ</string>
+    <string name="language_bn">বাংলা</string>
+    <string name="language_fa">ফার্সি</string>
+    <string name="language_hi">হিন্দি</string>
+    <string name="language_id">ইন্দোনেশীয়</string>
+    <string name="language_ms">মালয়</string>
+    <string name="language_ru">রুশ</string>
+    <string name="language_ta">তামিল</string>
+    <string name="language_th">থাই</string>
+    <string name="language_ur">উর্দু</string>
 </resources>

@@ -51,4 +51,19 @@
     <string name="selected">Выбрано</string>
     <string name="reorder">Изменить порядок</string>
     <string name="no_locations_yet">Пока нет местоположений — добавьте одно с помощью кнопки «Добавить местоположение»</string>
+    <string name="language_tr">Турецкий</string>
+    <string name="language_en">Английский</string>
+    <string name="language_ar">Арабский</string>
+    <string name="language_de">Немецкий</string>
+    <string name="language_fr">Французский</string>
+    <string name="language_es">Испанский</string>
+    <string name="language_bn">Бенгальский</string>
+    <string name="language_fa">Персидский</string>
+    <string name="language_hi">Хинди</string>
+    <string name="language_id">Индонезийский</string>
+    <string name="language_ms">Малайский</string>
+    <string name="language_ru">Русский</string>
+    <string name="language_ta">Тамильский</string>
+    <string name="language_th">Тайский</string>
+    <string name="language_ur">Урду</string>
 </resources>

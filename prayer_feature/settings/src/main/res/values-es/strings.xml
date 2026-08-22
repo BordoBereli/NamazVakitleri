@@ -51,4 +51,19 @@
     <string name="selected">Seleccionado</string>
     <string name="reorder">Reordenar</string>
     <string name="no_locations_yet">Aún no hay ubicaciones — añade una con el botón Añadir ubicación</string>
+    <string name="language_tr">Turco</string>
+    <string name="language_en">Inglés</string>
+    <string name="language_ar">Árabe</string>
+    <string name="language_de">Alemán</string>
+    <string name="language_fr">Francés</string>
+    <string name="language_es">Español</string>
+    <string name="language_bn">Bengalí</string>
+    <string name="language_fa">Persa</string>
+    <string name="language_hi">Hindi</string>
+    <string name="language_id">Indonesio</string>
+    <string name="language_ms">Malayo</string>
+    <string name="language_ru">Ruso</string>
+    <string name="language_ta">Tamil</string>
+    <string name="language_th">Tailandés</string>
+    <string name="language_ur">Urdu</string>
 </resources>

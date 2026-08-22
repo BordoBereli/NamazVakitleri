@@ -53,4 +53,19 @@
     <string name="no_locations_yet">No locations yet — use the Add location button to add one</string>
     <string name="location_permission_required">Location permission is required to use your current location.</string>
     <string name="open_settings">Open Settings</string>
+    <string name="language_tr">Türkçe</string>
+    <string name="language_en">English</string>
+    <string name="language_ar">العربية</string>
+    <string name="language_de">Deutsch</string>
+    <string name="language_fr">Français</string>
+    <string name="language_es">Español</string>
+    <string name="language_bn">বাংলা</string>
+    <string name="language_fa">فارسی</string>
+    <string name="language_hi">हिन्दी</string>
+    <string name="language_id">Bahasa Indonesia</string>
+    <string name="language_ms">Bahasa Melayu</string>
+    <string name="language_ru">Русский</string>
+    <string name="language_ta">தமிழ்</string>
+    <string name="language_th">ไทย</string>
+    <string name="language_ur">اردو</string>
 </resources>

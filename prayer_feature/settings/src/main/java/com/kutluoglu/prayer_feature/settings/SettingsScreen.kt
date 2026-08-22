@@ -325,12 +325,21 @@ private fun getCalculationMethodName(method: String): String {
 @Composable
 private fun getLanguageName(language: String): String {
     return when (language) {
-        "tr" -> "Türkçe"
-        "en" -> "English"
-        "ar" -> "العربية"
-        "de" -> "Deutsch"
-        "fr" -> "Français"
-        "es" -> "Español"
+        "tr" -> stringResource(SettingsR.string.language_tr)
+        "en" -> stringResource(SettingsR.string.language_en)
+        "ar" -> stringResource(SettingsR.string.language_ar)
+        "de" -> stringResource(SettingsR.string.language_de)
+        "fr" -> stringResource(SettingsR.string.language_fr)
+        "es" -> stringResource(SettingsR.string.language_es)
+        "bn" -> stringResource(SettingsR.string.language_bn)
+        "fa" -> stringResource(SettingsR.string.language_fa)
+        "hi" -> stringResource(SettingsR.string.language_hi)
+        "id" -> stringResource(SettingsR.string.language_id)
+        "ms" -> stringResource(SettingsR.string.language_ms)
+        "ru" -> stringResource(SettingsR.string.language_ru)
+        "ta" -> stringResource(SettingsR.string.language_ta)
+        "th" -> stringResource(SettingsR.string.language_th)
+        "ur" -> stringResource(SettingsR.string.language_ur)
         else -> language
     }
 }

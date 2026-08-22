@@ -51,4 +51,19 @@
     <string name="selected">தேர்ந்தெடுக்கப்பட்டது</string>
     <string name="reorder">மறுவரிசைப்படுத்து</string>
     <string name="no_locations_yet">இன்னும் இருப்பிடங்கள் இல்லை — இருப்பிடம் சேர் பொத்தானைப் பயன்படுத்தி ஒன்றைச் சேர்க்கவும்</string>
+    <string name="language_tr">துருக்கியம்</string>
+    <string name="language_en">ஆங்கிலம்</string>
+    <string name="language_ar">அரபு</string>
+    <string name="language_de">ஜெர்மன்</string>
+    <string name="language_fr">பிரெஞ்சு</string>
+    <string name="language_es">ஸ்பானிஷ்</string>
+    <string name="language_bn">வங்காளம்</string>
+    <string name="language_fa">பாரசீகம்</string>
+    <string name="language_hi">இந்தி</string>
+    <string name="language_id">இந்தோனேசியம்</string>
+    <string name="language_ms">மலாய்</string>
+    <string name="language_ru">ரஷ்யன்</string>
+    <string name="language_ta">தமிழ்</string>
+    <string name="language_th">தாய்</string>
+    <string name="language_ur">உருது</string>
 </resources>
