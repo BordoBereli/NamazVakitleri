@@ -43,6 +43,8 @@ class HomeScreenTest {
                 onEvent = {}
             )
         }
+        composeTestRule.waitForIdle()
         composeTestRule.onNodeWithText("Something went wrong").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Retry").assertIsDisplayed()
     }
 }
