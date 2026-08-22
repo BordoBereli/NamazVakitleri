@@ -50,7 +50,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.kutluoglu.core.designsystem.R
 import com.kutluoglu.core.designsystem.components.LoadingIndicator
+import com.kutluoglu.prayer.model.prayer.CalculationMethod
 import com.kutluoglu.prayer_feature.settings.R as SettingsR
+import com.kutluoglu.prayer_feature.settings.calculation.displayNameRes
 import com.kutluoglu.prayer_settings.domain.model.Settings
 import org.koin.androidx.compose.koinViewModel
 
@@ -317,15 +319,7 @@ private fun ClearCacheDialog(
 
 @Composable
 private fun getCalculationMethodName(method: String): String {
-    return when (method) {
-        "TURKEY_DIYANET" -> "Türkiye (Diyanet)"
-        "MUSLIM_WORLD_LEAGUE" -> "Muslim World League"
-        "EGYPT_SURVEY" -> "Egyptian Survey"
-        "MAKKAH" -> "Umm Al-Qura University"
-        "KARACHI" -> "University of Karachi"
-        "TEHRAN" -> "Institute of Geophysics, University of Tehran"
-        else -> method
-    }
+    return stringResource(CalculationMethod.fromSettingsId(method).displayNameRes())
 }
 
 @Composable
