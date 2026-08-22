@@ -364,6 +364,11 @@ private fun PermissionHintRow(
     }
 }
 
+internal fun shouldShowNotificationRationale(
+    showRationale: Boolean,
+    hasPermission: Boolean
+): Boolean = showRationale && !hasPermission
+
 @Composable
 internal fun NotificationPermissionRationale(
     showRationale: Boolean,
@@ -372,7 +377,7 @@ internal fun NotificationPermissionRationale(
     onGrantPermission: () -> Unit,
     onOpenSettings: () -> Unit
 ) {
-    if (showRationale && !hasPermission) {
+    if (shouldShowNotificationRationale(showRationale, hasPermission)) {
         if (permanentlyDenied) {
             PermissionHintRow(
                 text = stringResource(R.string.notification_permission_rationale),

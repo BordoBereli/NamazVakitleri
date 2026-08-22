@@ -156,4 +156,19 @@ class NotificationsScreenTest {
             composeTestRule.activity.getString(R.string.notification_permission_rationale)
         ).assertDoesNotExist()
     }
+
+    @Test
+    fun `shouldShowNotificationRationale returns true when rationale shown and permission missing`() {
+        assertThat(shouldShowNotificationRationale(showRationale = true, hasPermission = false)).isTrue()
+    }
+
+    @Test
+    fun `shouldShowNotificationRationale returns false when permission granted`() {
+        assertThat(shouldShowNotificationRationale(showRationale = true, hasPermission = true)).isFalse()
+    }
+
+    @Test
+    fun `shouldShowNotificationRationale returns false when no rationale`() {
+        assertThat(shouldShowNotificationRationale(showRationale = false, hasPermission = false)).isFalse()
+    }
 }
