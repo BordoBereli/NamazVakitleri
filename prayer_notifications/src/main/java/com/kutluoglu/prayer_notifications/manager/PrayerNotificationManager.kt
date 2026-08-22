@@ -5,7 +5,6 @@ import android.app.NotificationChannel
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.media.RingtoneManager
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.kutluoglu.prayer.model.prayer.Prayer
@@ -73,9 +72,6 @@ class PrayerNotificationManager(
             .setContentText("${prayer.name} time is now")
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-        if (settings.soundEnabled && !settings.adhanEnabled) {
-            builder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-        }
         notificationManager.notify(NOTIFICATION_ID_PRAYER, builder.build())
     }
 
