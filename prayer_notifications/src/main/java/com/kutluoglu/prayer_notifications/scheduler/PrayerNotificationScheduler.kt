@@ -11,15 +11,21 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.core.annotation.Single
-import java.time.Instant
 
 @Single
 class PrayerNotificationScheduler(
     private val context: Context,
     private val dataStore: NotificationSettingsDataStore,
     private val schedulePlan: SchedulePlan,
-    private val scope: CoroutineScope = CoroutineScope(Dispatchers.Default)
+    private val scope: CoroutineScope = CoroutineScope(Dispatchers.IO)
 ) {
+    companion object {
+        // Request codes come from SchedulePlan.buildDailyAlarms (starts at 1000).
+        // 5 prayers + 5 pre-prayers max = 10 codes; the range must cover it.
+        const val REQUEST_CODE_START = 1000
+        const val REQUEST_CODE_END = 1010
+    }
+
     private val alarmManager: AlarmManager =
         context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
@@ -38,12 +44,14 @@ class PrayerNotificationScheduler(
 
     fun cancelAll() {
         // Cancel all pending alarms by re-issuing the same PendingIntents with FLAG_NO_CREATE.
-        val intent = Intent(context, AlarmReceiver::class.java)
-        val pendingIntent = PendingIntent.getBroadcast(
-            context, 0, intent,
-            PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
-        )
-        pendingIntent?.let { alarmManager.cancel(it) }
+        for (code in REQUEST_CODE_START until REQUEST_CODE_END) {
+            val intent = Intent(context, AlarmReceiver::class.java)
+            val pendingIntent = PendingIntent.getBroadcast(
+                context, code, intent,
+                PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
+            )
+            pendingIntent?.let { alarmManager.cancel(it) }
+        }
     }
 
     private fun scheduleAlarm(triggerAtMillis: Long, requestCode: Int, prayerKey: String) {
