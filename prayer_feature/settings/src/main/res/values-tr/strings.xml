@@ -86,4 +86,8 @@
     <string name="send_test_notification">Test bildirimi gönder</string>
     <string name="minutes_before">dakika önce</string>
     <string name="cancel">İptal</string>
+
+    <string name="notification_permission_rationale">Namaz vakitleri uyarılarını ve hatırlatmaları göstermek için bildirim izni gereklidir.</string>
+    <string name="grant_permission">İzin ver</string>
+    <string name="exact_alarm_hint">Namaz bildirimlerini zamanında planlamak için kesin alarm izni gereklidir.</string>
 </resources>

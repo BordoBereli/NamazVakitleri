@@ -84,4 +84,9 @@
     <string name="send_test_notification">परीक्षण सूचना भेजें</string>
     <string name="minutes_before">मिनट पहले</string>
     <string name="cancel">रद्द करें</string>
+
+    <string name="notification_permission_rationale">नमाज़ के समय की चेतावनी और अनुस्मारक दिखाने के लिए सूचना अनुमति आवश्यक है।</string>
+    <string name="grant_permission">अनुमति दें</string>
+    <string name="exact_alarm_hint">समय पर नमाज़ सूचनाएँ निर्धारित करने के लिए सटीक अलार्म अनुमति आवश्यक है।</string>
+    <string name="open_settings">सेटिंग्स खोलें</string>
 </resources>

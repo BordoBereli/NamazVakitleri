@@ -84,4 +84,9 @@
     <string name="send_test_notification">Отправить тестовое уведомление</string>
     <string name="minutes_before">минут до</string>
     <string name="cancel">Отмена</string>
+
+    <string name="notification_permission_rationale">Для отображения предупреждений и напоминаний о времени намаза требуется разрешение на уведомления.</string>
+    <string name="grant_permission">Разрешить</string>
+    <string name="exact_alarm_hint">Для своевременного планирования уведомлений о намазе требуется разрешение на точные будильники.</string>
+    <string name="open_settings">Открыть настройки</string>
 </resources>

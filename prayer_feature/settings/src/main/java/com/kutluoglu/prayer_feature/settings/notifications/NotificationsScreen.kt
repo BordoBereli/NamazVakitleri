@@ -1,5 +1,13 @@
 package com.kutluoglu.prayer_feature.settings.notifications
 
+import android.Manifest
+import android.app.AlarmManager
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
+import android.provider.Settings
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,8 +45,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import com.kutluoglu.core.designsystem.components.LoadingIndicator
 import com.kutluoglu.prayer_feature.settings.R
 import com.kutluoglu.prayer_notifications.domain.NotificationSettings
@@ -105,6 +115,30 @@ private fun NotificationsContent(
     onEvent: (NotificationsEvent) -> Unit
 ) {
     var showTimePicker by remember { mutableStateOf(false) }
+    var showNotificationRationale by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+
+    val notificationPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (granted) {
+            onEvent(NotificationsEvent.SetEnabled(true))
+        } else {
+            showNotificationRationale = true
+        }
+    }
+
+    val hasNotificationPermission =
+        Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
+            ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+
+    val alarmManager = context.getSystemService(AlarmManager::class.java)
+    val canScheduleExactAlarms =
+        Build.VERSION.SDK_INT < Build.VERSION_CODES.S ||
+            alarmManager?.canScheduleExactAlarms() == true
 
     Column(
         modifier = Modifier
@@ -116,8 +150,36 @@ private fun NotificationsContent(
         ToggleRow(
             title = stringResource(R.string.notifications_enabled),
             checked = settings.enabled,
-            onCheckedChange = { onEvent(NotificationsEvent.SetEnabled(it)) }
+            onCheckedChange = { enabled ->
+                if (enabled && !hasNotificationPermission) {
+                    showNotificationRationale = false
+                    notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                } else {
+                    onEvent(NotificationsEvent.SetEnabled(enabled))
+                }
+            }
         )
+        if (showNotificationRationale) {
+            PermissionHintRow(
+                text = stringResource(R.string.notification_permission_rationale),
+                actionText = stringResource(R.string.grant_permission),
+                onAction = {
+                    showNotificationRationale = false
+                    notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                }
+            )
+        }
+        if (!canScheduleExactAlarms) {
+            PermissionHintRow(
+                text = stringResource(R.string.exact_alarm_hint),
+                actionText = stringResource(R.string.open_settings),
+                onAction = {
+                    context.startActivity(
+                        Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
+                    )
+                }
+            )
+        }
         HorizontalDivider()
         NotificationSettings.PRAYER_KEYS.forEach { key ->
             ToggleRow(
@@ -235,6 +297,30 @@ private fun ToggleRow(
             modifier = Modifier.weight(1f)
         )
         Switch(checked = checked, onCheckedChange = onCheckedChange)
+    }
+}
+
+@Composable
+private fun PermissionHintRow(
+    text: String,
+    actionText: String,
+    onAction: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.weight(1f)
+        )
+        TextButton(onClick = onAction) {
+            Text(actionText)
+        }
     }
 }
 

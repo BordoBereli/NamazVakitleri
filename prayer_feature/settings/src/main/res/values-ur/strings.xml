@@ -84,4 +84,9 @@
     <string name="send_test_notification">ٹیسٹ اطلاع بھیجیں</string>
     <string name="minutes_before">منٹ پہلے</string>
     <string name="cancel">منسوخ</string>
+
+    <string name="notification_permission_rationale">نماز کے اوقات کے انتباہات اور یاد دہانیاں دکھانے کے لیے اطلاع کی اجازت درکار ہے۔</string>
+    <string name="grant_permission">اجازت دیں</string>
+    <string name="exact_alarm_hint">نماز کی اطلاعات بروقت شیڈول کرنے کے لیے عین مطابق الارم کی اجازت درکار ہے۔</string>
+    <string name="open_settings">ترتیبات کھولیں</string>
 </resources>

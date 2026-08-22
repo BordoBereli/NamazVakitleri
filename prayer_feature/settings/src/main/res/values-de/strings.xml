@@ -84,4 +84,9 @@
     <string name="send_test_notification">Testbenachrichtigung senden</string>
     <string name="minutes_before">Minuten vorher</string>
     <string name="cancel">Abbrechen</string>
+
+    <string name="notification_permission_rationale">Die Benachrichtigungsberechtigung ist erforderlich, um Gebetszeiten und Erinnerungen anzuzeigen.</string>
+    <string name="grant_permission">Berechtigung erteilen</string>
+    <string name="exact_alarm_hint">Die Berechtigung für exakte Alarme ist erforderlich, um Gebetsbenachrichtigungen rechtzeitig zu planen.</string>
+    <string name="open_settings">Einstellungen öffnen</string>
 </resources>

@@ -84,4 +84,9 @@
     <string name="send_test_notification">ارسال اعلان آزمایشی</string>
     <string name="minutes_before">دقیقه قبل</string>
     <string name="cancel">لغو</string>
+
+    <string name="notification_permission_rationale">برای نمایش هشدارها و یادآوری‌های اوقات نماز، مجوز اعلان لازم است.</string>
+    <string name="grant_permission">اعطای مجوز</string>
+    <string name="exact_alarm_hint">برای زمان‌بندی به‌موقع اعلان‌های نماز، مجوز زنگ دقیق لازم است.</string>
+    <string name="open_settings">باز کردن تنظیمات</string>
 </resources>

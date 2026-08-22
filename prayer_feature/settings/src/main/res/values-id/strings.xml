@@ -84,4 +84,9 @@
     <string name="send_test_notification">Kirim notifikasi uji</string>
     <string name="minutes_before">menit sebelum</string>
     <string name="cancel">Batal</string>
+
+    <string name="notification_permission_rationale">Izin notifikasi diperlukan untuk menampilkan peringatan dan pengingat waktu salat.</string>
+    <string name="grant_permission">Beri izin</string>
+    <string name="exact_alarm_hint">Izin alarm presisi diperlukan untuk menjadwalkan notifikasi salat tepat waktu.</string>
+    <string name="open_settings">Buka Pengaturan</string>
 </resources>

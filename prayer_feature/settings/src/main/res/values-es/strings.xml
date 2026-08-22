@@ -84,4 +84,9 @@
     <string name="send_test_notification">Enviar notificación de prueba</string>
     <string name="minutes_before">minutos antes</string>
     <string name="cancel">Cancelar</string>
+
+    <string name="notification_permission_rationale">Se requiere el permiso de notificaciones para mostrar alertas y recordatorios de horarios de oración.</string>
+    <string name="grant_permission">Conceder permiso</string>
+    <string name="exact_alarm_hint">Se requiere el permiso de alarma exacta para programar las notificaciones de oración a tiempo.</string>
+    <string name="open_settings">Abrir ajustes</string>
 </resources>

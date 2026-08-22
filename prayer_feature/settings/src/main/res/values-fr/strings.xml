@@ -84,4 +84,9 @@
     <string name="send_test_notification">Envoyer une notification de test</string>
     <string name="minutes_before">minutes avant</string>
     <string name="cancel">Annuler</string>
+
+    <string name="notification_permission_rationale">L\'autorisation de notification est requise pour afficher les alertes et rappels des heures de prière.</string>
+    <string name="grant_permission">Accorder l\'autorisation</string>
+    <string name="exact_alarm_hint">L\'autorisation d\'alarme exacte est requise pour planifier les notifications de prière à l\'heure.</string>
+    <string name="open_settings">Ouvrir les paramètres</string>
 </resources>

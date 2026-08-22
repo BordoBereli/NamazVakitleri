@@ -84,4 +84,9 @@
     <string name="send_test_notification">إرسال إشعار تجريبي</string>
     <string name="minutes_before">دقائق قبل</string>
     <string name="cancel">إلغاء</string>
+
+    <string name="notification_permission_rationale">مطلوب إذن الإشعارات لعرض تنبيهات وتذكيرات مواقيت الصلاة.</string>
+    <string name="grant_permission">منح الإذن</string>
+    <string name="exact_alarm_hint">مطلوب إذن المنبه الدقيق لجدولة إشعارات الصلاة في وقتها.</string>
+    <string name="open_settings">فتح الإعدادات</string>
 </resources>
