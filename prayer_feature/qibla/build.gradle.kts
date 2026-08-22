@@ -39,6 +39,11 @@ android {
     buildFeatures {
         compose = true
     }
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
     composeOptions {
         kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
     }
@@ -95,6 +100,26 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     //endregion
+
+    //region --- Compose UI Testing (Robolectric) ---
+    testImplementation(platform(libs.androidx.compose.bom))
+    testImplementation(libs.androidx.compose.ui.test.junit4)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.junit.vintage.engine)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
+    //endregion
+
+    configurations.all {
+        resolutionStrategy {
+            force(
+                "androidx.test:core:1.7.0",
+                "androidx.test.ext:junit:1.3.0",
+                "androidx.test.espresso:espresso-core:3.7.0",
+                "androidx.test:monitor:1.8.0",
+                "androidx.test:runner:1.7.0"
+            )
+        }
+    }
 
     //region --- Testing Dependencies ---
     testImplementation(platform(libs.junit.bom))
