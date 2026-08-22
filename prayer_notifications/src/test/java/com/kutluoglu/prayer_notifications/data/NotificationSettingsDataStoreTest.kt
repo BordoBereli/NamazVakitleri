@@ -1,6 +1,12 @@
 package com.kutluoglu.prayer_notifications.data
 
 import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.emptyPreferences
+import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.test.runTest
@@ -35,11 +41,37 @@ class NotificationSettingsDataStoreTest {
     }
 
     @Test
+    fun `persists across store instances`() = runTest {
+        val dataStore: DataStore<Preferences> = PreferenceDataStoreFactory.create(
+            corruptionHandler = ReplaceFileCorruptionHandler { emptyPreferences() },
+            produceFile = { context.preferencesDataStoreFile("test_notif_persist") }
+        )
+        val store = NotificationSettingsDataStore(dataStore)
+        store.updateEnabled(true)
+
+        val freshStore = NotificationSettingsDataStore(dataStore)
+        assertThat(freshStore.getSettings().enabled).isTrue()
+    }
+
+    @Test
     fun `updatePrayerToggle persists per prayer`() = runTest {
         val store = freshStore()
         store.updatePrayerToggle("Fajr", false)
         val settings = store.getSettings()
         assertThat(settings.prayerToggles["Fajr"]).isFalse()
+        assertThat(settings.prayerToggles["Dhuhr"]).isTrue()
+    }
+
+    @Test
+    fun `updatePrayerToggle round-trips disable then re-enable`() = runTest {
+        val store = freshStore()
+        store.updatePrayerToggle("Fajr", false)
+        assertThat(store.getSettings().prayerToggles["Fajr"]).isFalse()
+        assertThat(store.getSettings().prayerToggles["Dhuhr"]).isTrue()
+
+        store.updatePrayerToggle("Fajr", true)
+        val settings = store.getSettings()
+        assertThat(settings.prayerToggles["Fajr"]).isTrue()
         assertThat(settings.prayerToggles["Dhuhr"]).isTrue()
     }
 
