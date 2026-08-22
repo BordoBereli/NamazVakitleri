@@ -3,6 +3,7 @@ package com.kutluoglu.prayer_notifications.manager
 import android.content.Context
 import android.media.AudioAttributes
 import android.media.MediaPlayer
+import android.util.Log
 import com.kutluoglu.prayer_notifications.R
 import org.koin.core.annotation.Single
 
@@ -14,8 +15,9 @@ class AdhanPlayer(
 
     fun play() {
         stop()
+        val player = MediaPlayer()
         try {
-            mediaPlayer = MediaPlayer().apply {
+            player.apply {
                 setAudioAttributes(
                     AudioAttributes.Builder()
                         .setUsage(AudioAttributes.USAGE_ALARM)
@@ -26,8 +28,10 @@ class AdhanPlayer(
                 prepare()
                 start()
             }
+            mediaPlayer = player
         } catch (e: Exception) {
-            // Fall back to notification sound handled by the channel; never crash.
+            runCatching { player.release() }
+            Log.e("AdhanPlayer", "Failed to play adhan -> ${e.message}")
         }
     }
 
