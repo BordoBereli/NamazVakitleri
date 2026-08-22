@@ -5,6 +5,9 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import com.kutluoglu.core.common.now
 import com.kutluoglu.prayer.model.prayer.CalculationMethod
 import com.kutluoglu.prayer.usecases.prayer.GetPrayerTimesUseCase
@@ -19,6 +22,7 @@ import kotlinx.datetime.LocalDateTime
 import org.koin.core.annotation.Single
 import java.time.Instant
 import java.time.ZoneId
+import java.util.concurrent.TimeUnit
 
 @Single
 class PrayerNotificationScheduler(
@@ -80,6 +84,14 @@ class PrayerNotificationScheduler(
             }
             cancelAll()
             alarms.forEach { scheduleAlarm(it.triggerAtMillis, it.requestCode, it.prayerKey) }
+            if (WorkManager.isInitialized()) {
+                val request = PeriodicWorkRequestBuilder<DailyRescheduleWorker>(1, TimeUnit.DAYS).build()
+                WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+                    "daily_prayer_reschedule",
+                    ExistingPeriodicWorkPolicy.KEEP,
+                    request
+                )
+            }
         }
     }
 
