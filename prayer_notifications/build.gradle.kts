@@ -60,9 +60,12 @@ dependencies {
     ksp(libs.koin.ksp)
 
     testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit)
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testImplementation(libs.junit.jupiter.params)
+    testRuntimeOnly(libs.junit.vintage.engine)
+    testImplementation("androidx.test:core:1.7.0")
     testImplementation(libs.koin.test.junit5)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.turbine)
