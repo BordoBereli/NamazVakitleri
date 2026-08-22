@@ -51,27 +51,33 @@ class PrayerNotificationScheduler(
                 cancelAll()
                 return@launch
             }
-            val appSettings = getSettingsUseCase()
-            val zoneId = ZoneId.of(appSettings.location.timeZone)
-            val today = LocalDateTime.now(zoneId)
-            val method = CalculationMethod.fromSettingsId(appSettings.calculationMethod)
-            val prayers = getPrayerTimesUseCase(
-                date = today,
-                latitude = location.latitude,
-                longitude = location.longitude,
-                zoneId = zoneId,
-                calculationMethod = method
-            ).getOrNull() ?: return@launch
+            val alarms = runCatching {
+                val appSettings = getSettingsUseCase()
+                val zoneId = runCatching { ZoneId.of(appSettings.location.timeZone) }
+                    .getOrDefault(ZoneId.systemDefault())
+                val today = LocalDateTime.now(zoneId)
+                val method = CalculationMethod.fromSettingsId(appSettings.calculationMethod)
+                val prayers = getPrayerTimesUseCase(
+                    date = today,
+                    latitude = location.latitude,
+                    longitude = location.longitude,
+                    zoneId = zoneId,
+                    calculationMethod = method
+                ).getOrNull() ?: emptyList()
 
-            val enabled = settings.prayerToggles.filterValues { it }.keys
-            val alarms = schedulePlan.buildDailyAlarms(
-                prayers = prayers,
-                zoneId = zoneId,
-                now = Instant.now(),
-                enabledPrayers = enabled,
-                prePrayerMinutes = settings.prePrayerMinutes,
-                prePrayerEnabled = settings.prePrayerReminderEnabled
-            )
+                val enabled = settings.prayerToggles.filterValues { it }.keys
+                schedulePlan.buildDailyAlarms(
+                    prayers = prayers,
+                    zoneId = zoneId,
+                    now = Instant.now(),
+                    enabledPrayers = enabled,
+                    prePrayerMinutes = settings.prePrayerMinutes,
+                    prePrayerEnabled = settings.prePrayerReminderEnabled
+                )
+            }.getOrElse {
+                cancelAll()
+                return@launch
+            }
             cancelAll()
             alarms.forEach { scheduleAlarm(it.triggerAtMillis, it.requestCode, it.prayerKey) }
         }
