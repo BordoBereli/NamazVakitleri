@@ -4,6 +4,12 @@
     <string name="settings">الإعدادات</string>
     <string name="select_calculation_method">اختر طريقة الحساب</string>
     <string name="calculation_method">طريقة الحساب</string>
+    <string name="calculation_method_turkey_diyanet">تركيا (ديانت)</string>
+    <string name="calculation_method_mwl">رابطة العالم الإسلامي</string>
+    <string name="calculation_method_isna">الجمعية الإسلامية لأمريكا الشمالية</string>
+    <string name="calculation_method_egypt">الهيئة المصرية العامة للمساحة</string>
+    <string name="calculation_method_makkah">جامعة أم القرى</string>
+    <string name="calculation_method_karachi">جامعة كراتشي</string>
     <string name="hijri_adjustment">تعديل الهجري</string>
     <string name="select_language">اختر اللغة</string>
     <string name="language">اللغة</string>

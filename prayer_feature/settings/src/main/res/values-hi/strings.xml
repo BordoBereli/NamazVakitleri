@@ -4,6 +4,12 @@
     <string name="settings">सेटिंग्स</string>
     <string name="select_calculation_method">गणना विधि चुनें</string>
     <string name="calculation_method">गणना विधि</string>
+    <string name="calculation_method_turkey_diyanet">तुर्की (दियानेत)</string>
+    <string name="calculation_method_mwl">मुस्लिम वर्ल्ड लीग</string>
+    <string name="calculation_method_isna">इस्लामिक सोसाइटी ऑफ नॉर्थ अमेरिका</string>
+    <string name="calculation_method_egypt">मिस्र का सामान्य प्राधिकरण</string>
+    <string name="calculation_method_makkah">उम्म अल-कुरा विश्वविद्यालय</string>
+    <string name="calculation_method_karachi">कराची विश्वविद्यालय</string>
     <string name="hijri_adjustment">हिजरी समायोजन</string>
     <string name="select_language">भाषा चुनें</string>
     <string name="language">भाषा</string>

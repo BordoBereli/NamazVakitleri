@@ -4,6 +4,12 @@
     <string name="settings">Ayarlar</string>
     <string name="select_calculation_method">Hesaplama Yöntemi Seç</string>
     <string name="calculation_method">Hesaplama Yöntemi</string>
+    <string name="calculation_method_turkey_diyanet">Türkiye (Diyanet)</string>
+    <string name="calculation_method_mwl">Müslüman Dünya Birliği</string>
+    <string name="calculation_method_isna">Kuzey Amerika İslam Toplumu</string>
+    <string name="calculation_method_egypt">Mısır Genel Kurumu</string>
+    <string name="calculation_method_makkah">Ümmü\'l-Kura Üniversitesi</string>
+    <string name="calculation_method_karachi">Karaçi Üniversitesi</string>
     <string name="hijri_adjustment">Hicri Ayarlama</string>
     <string name="select_language">Dil Seç</string>
     <string name="language">Dil</string>

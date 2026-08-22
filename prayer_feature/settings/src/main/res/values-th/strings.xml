@@ -4,6 +4,12 @@
     <string name="settings">การตั้งค่า</string>
     <string name="select_calculation_method">เลือกวิธีการคำนวณ</string>
     <string name="calculation_method">วิธีการคำนวณ</string>
+    <string name="calculation_method_turkey_diyanet">ตุรกี (ดิยาเนต)</string>
+    <string name="calculation_method_mwl">สันนิบาตมุสลิมโลก</string>
+    <string name="calculation_method_isna">สมาคมอิสลามแห่งอเมริกาเหนือ</string>
+    <string name="calculation_method_egypt">หน่วยงานทั่วไปของอียิปต์</string>
+    <string name="calculation_method_makkah">มหาวิทยาลัยอุมม์อัลกุรอา</string>
+    <string name="calculation_method_karachi">มหาวิทยาลัยการาจี</string>
     <string name="hijri_adjustment">การปรับฮิจเราะห์</string>
     <string name="select_language">เลือกภาษา</string>
     <string name="language">ภาษา</string>

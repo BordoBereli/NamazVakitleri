@@ -4,6 +4,12 @@
     <string name="settings">تنظیمات</string>
     <string name="select_calculation_method">انتخاب روش محاسبه</string>
     <string name="calculation_method">روش محاسبه</string>
+    <string name="calculation_method_turkey_diyanet">ترکیه (دیانت)</string>
+    <string name="calculation_method_mwl">اتحادیه جهانی مسلمانان</string>
+    <string name="calculation_method_isna">انجمن اسلامی آمریکای شمالی</string>
+    <string name="calculation_method_egypt">سازمان عمومی مصر</string>
+    <string name="calculation_method_makkah">دانشگاه ام القری</string>
+    <string name="calculation_method_karachi">دانشگاه کراچی</string>
     <string name="hijri_adjustment">تنظیم هجری</string>
     <string name="select_language">انتخاب زبان</string>
     <string name="language">زبان</string>

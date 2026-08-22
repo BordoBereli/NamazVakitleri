@@ -4,6 +4,12 @@
     <string name="settings">Pengaturan</string>
     <string name="select_calculation_method">Pilih Metode Perhitungan</string>
     <string name="calculation_method">Metode Perhitungan</string>
+    <string name="calculation_method_turkey_diyanet">Turki (Diyanet)</string>
+    <string name="calculation_method_mwl">Liga Muslim Dunia</string>
+    <string name="calculation_method_isna">Masyarakat Islam Amerika Utara</string>
+    <string name="calculation_method_egypt">Otoritas Umum Mesir</string>
+    <string name="calculation_method_makkah">Universitas Umm Al-Qura</string>
+    <string name="calculation_method_karachi">Universitas Karachi</string>
     <string name="hijri_adjustment">Penyesuaian Hijri</string>
     <string name="select_language">Pilih Bahasa</string>
     <string name="language">Bahasa</string>

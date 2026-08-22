@@ -4,6 +4,12 @@
     <string name="settings">ترتیبات</string>
     <string name="select_calculation_method">حساب کا طریقہ منتخب کریں</string>
     <string name="calculation_method">حساب کا طریقہ</string>
+    <string name="calculation_method_turkey_diyanet">ترکیہ (دیانت)</string>
+    <string name="calculation_method_mwl">مسلم ورلڈ لیگ</string>
+    <string name="calculation_method_isna">اسلامی سوسائٹی آف نارتھ امریکہ</string>
+    <string name="calculation_method_egypt">مصری جنرل اتھارٹی</string>
+    <string name="calculation_method_makkah">جامعہ ام القری</string>
+    <string name="calculation_method_karachi">جامعہ کراچی</string>
     <string name="hijri_adjustment">ہجری ایڈجسٹمنٹ</string>
     <string name="select_language">زبان منتخب کریں</string>
     <string name="language">زبان</string>

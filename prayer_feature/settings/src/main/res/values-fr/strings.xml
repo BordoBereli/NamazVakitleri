@@ -4,6 +4,12 @@
     <string name="settings">Paramètres</string>
     <string name="select_calculation_method">Sélectionner la méthode de calcul</string>
     <string name="calculation_method">Méthode de calcul</string>
+    <string name="calculation_method_turkey_diyanet">Turquie (Diyanet)</string>
+    <string name="calculation_method_mwl">Ligue islamique mondiale</string>
+    <string name="calculation_method_isna">Société islamique d\'Amérique du Nord</string>
+    <string name="calculation_method_egypt">Autorité générale égyptienne</string>
+    <string name="calculation_method_makkah">Université Umm Al-Qura</string>
+    <string name="calculation_method_karachi">Université de Karachi</string>
     <string name="hijri_adjustment">Ajustement hijri</string>
     <string name="select_language">Sélectionner la langue</string>
     <string name="language">Langue</string>
