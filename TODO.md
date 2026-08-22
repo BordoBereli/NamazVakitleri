@@ -84,9 +84,10 @@ Last updated: 2026-08-22
   - Extract to shared util.
   - Status: DONE 2026-08-22 — extracted to `CountryCodeUtils` in `core:common`; `HomeViewModel` and `SettingsRepositoryImpl` no longer hold their own copies.
 
-- [ ] **12. Legacy duplicate DataStores**
+- [x] **12. Legacy duplicate DataStores**
   - `prayer_cache/SettingsDataStoreImp.kt` + `LocationDataStoreImp.kt` (JSON-string based) vs `prayer_settings/data/local/SettingsDataStore.kt` (typed).
   - Two separate stores with different names; consolidate.
+  - Status: DONE 2026-08-22 — `prayer_cache` module removed. The legacy JSON-string `SettingsDataStore` was deleted as dead code; `LocationDataStoreImp` was moved into `prayer:data` (same package as its `LocationDataStore` interface) and is still used for migration by `LocationsMigration`.
 
 ## ⚪ Housekeeping
 

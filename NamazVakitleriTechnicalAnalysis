@@ -44,7 +44,6 @@ The project is a multi-module Gradle build. The real module list (from `settings
 :prayer:domain                Business logic, use cases, calculation service interface
 :prayer:model                 Data classes
 :prayer:data                  Repository implementations, DataStore-backed cache, data sources
-:prayer_cache                 Legacy JSON-string DataStore implementations (settings/location)
 :prayer_remote                Remote data sources (Quran API, Nominatim city search)
 :prayer_location              Location services wrapper, locations coordinator
 :prayer_settings              Settings data models, repositories, use cases
@@ -88,7 +87,7 @@ The project deliberately does **not** use Room. All persistence is built on Pref
 - `PrayerDataStoreImp` — cache-first: checks the cache, calculates on miss (via `PrayerCalculationService`), and stores the result.
 - `SettingsDataStore` (`prayer_settings`) — typed settings store (calculation method, language, hijri adjustment, crashlytics toggle).
 - `LocationsDataStore` (`prayer_location`) — locations list, GPS toggle, last GPS position.
-- `prayer_cache` module — legacy JSON-string `SettingsDataStoreImp` and `LocationDataStoreImp` (candidates for consolidation; see TODO).
+- `LocationDataStoreImp` (`prayer:data`) — legacy JSON-string location cache, kept for migration; lives in `prayer:data` alongside its `LocationDataStore` interface. The legacy JSON-string `SettingsDataStore` was deleted as dead code (2026-08-22).
 
 Real snippet — `PrayerTimesCache`:
 
@@ -200,7 +199,7 @@ Firebase Analytics and Firebase Crashlytics are initialized in `NamazVakitleriAp
 
 ## 10. Dependency Injection — Koin
 
-Koin 4 is used with KSP annotations. Each module has a `di` package (e.g., `PrayerFeatureHomeModule`, `PrayerLocationModule`, `PrayerRemoteModule`, `PrayerCacheModule`); the app root `AppModule` wires the settings/location repositories, use cases, and ViewModels. ViewModels are registered as `viewModel { }` / `@KoinViewModel` so they are screen-scoped rather than app-wide singletons.
+Koin 4 is used with KSP annotations. Each module has a `di` package (e.g., `PrayerFeatureHomeModule`, `PrayerLocationModule`, `PrayerRemoteModule`); the app root `AppModule` wires the settings/location repositories, use cases, and ViewModels. ViewModels are registered as `viewModel { }` / `@KoinViewModel` so they are screen-scoped rather than app-wide singletons.
 
 ---
 

@@ -25,7 +25,6 @@ Bu proje, ölçeklenebilir, test edilebilir ve bakımı kolay bir uygulama oluş
     -   `:core:designsystem`, `:core:common`: Tema, renkler, paylaşılan bileşenler ve yardımcı fonksiyonlar.
     -   `:prayer_navigation:core`: Navigasyon hedefleri ve iç içe graflar.
     -   `:prayer:domain`, `:prayer:model`, `:prayer:data`: İş mantığı, veri modelleri ve veri kaynakları (DataStore tabanlı önbellek).
-    -   `:prayer_cache`: Eski (legacy) JSON-tabanlı DataStore uygulamaları.
     -   `:prayer_remote`: Uzak veri kaynakları (Kuran API, şehir arama).
     -   `:prayer_location`: Konum servisleri ile ilgili mantığı soyutlayan modül.
     -   `:prayer_settings`: Ayarlar veri modelleri, depo ve use case'ler.
