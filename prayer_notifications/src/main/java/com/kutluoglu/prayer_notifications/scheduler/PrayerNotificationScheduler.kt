@@ -15,6 +15,7 @@ import com.kutluoglu.prayer.usecases.prayer.GetPrayerTimesUseCase
 import com.kutluoglu.prayer_location.LocationsCoordinator
 import com.kutluoglu.prayer_notifications.data.NotificationSettingsDataStore
 import com.kutluoglu.prayer_notifications.domain.SchedulePlan
+import com.kutluoglu.prayer_notifications.manager.PrayerNotificationManager
 import com.kutluoglu.prayer_settings.domain.usecase.GetSettingsUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -33,6 +34,7 @@ class PrayerNotificationScheduler(
     private val getPrayerTimesUseCase: GetPrayerTimesUseCase,
     private val locationsCoordinator: LocationsCoordinator,
     private val getSettingsUseCase: GetSettingsUseCase,
+    private val notificationManager: PrayerNotificationManager,
     private val scope: CoroutineScope = CoroutineScope(Dispatchers.IO)
 ) {
     companion object {
@@ -62,6 +64,7 @@ class PrayerNotificationScheduler(
             cancelDailyReschedule()
             return
         }
+        notificationManager.createChannels(settings)
         val alarms = runCatching {
             val appSettings = getSettingsUseCase()
             val zoneId = runCatching { ZoneId.of(appSettings.location.timeZone) }

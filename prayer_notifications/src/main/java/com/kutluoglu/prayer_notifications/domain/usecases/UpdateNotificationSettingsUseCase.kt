@@ -2,13 +2,15 @@ package com.kutluoglu.prayer_notifications.domain.usecases
 
 import com.kutluoglu.prayer_notifications.data.NotificationSettingsDataStore
 import com.kutluoglu.prayer_notifications.domain.NotificationSettings
+import com.kutluoglu.prayer_notifications.manager.PrayerNotificationManager
 import com.kutluoglu.prayer_notifications.scheduler.PrayerNotificationScheduler
 import org.koin.core.annotation.Factory
 
 @Factory
 class UpdateNotificationSettingsUseCase(
     private val dataStore: NotificationSettingsDataStore,
-    private val scheduler: PrayerNotificationScheduler
+    private val scheduler: PrayerNotificationScheduler,
+    private val notificationManager: PrayerNotificationManager
 ) {
     suspend operator fun invoke(settings: NotificationSettings) {
         dataStore.updateEnabled(settings.enabled)
@@ -30,6 +32,11 @@ class UpdateNotificationSettingsUseCase(
         settings.prayerToggles.forEach { (key, enabled) ->
             dataStore.updatePrayerToggle(key, enabled)
         }
-        if (settings.enabled) scheduler.scheduleAll() else scheduler.cancelAll()
+        if (settings.enabled) {
+            notificationManager.createChannels(settings)
+            scheduler.scheduleAll()
+        } else {
+            scheduler.cancelAll()
+        }
     }
 }

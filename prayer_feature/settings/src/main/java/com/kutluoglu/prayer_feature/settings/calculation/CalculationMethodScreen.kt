@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import com.kutluoglu.core.designsystem.R
 import com.kutluoglu.core.designsystem.components.LoadingIndicator
 import com.kutluoglu.prayer.model.prayer.CalculationMethod
+import com.kutluoglu.prayer_feature.settings.calculation.displayNameRes
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 
@@ -171,7 +172,7 @@ private fun MethodItem(
                     .padding(start = 8.dp)
             ) {
                 Text(
-                    text = method.name,
+                    text = stringResource(method.displayNameRes()),
                     style = MaterialTheme.typography.bodyLarge
                 )
             }

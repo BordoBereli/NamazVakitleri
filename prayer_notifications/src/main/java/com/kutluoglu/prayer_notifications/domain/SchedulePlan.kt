@@ -1,6 +1,7 @@
 package com.kutluoglu.prayer_notifications.domain
 
 import com.kutluoglu.prayer.model.prayer.Prayer
+import org.koin.core.annotation.Factory
 import java.time.Instant
 import java.time.LocalTime
 import java.time.ZoneId
@@ -12,6 +13,7 @@ data class ScheduledAlarm(
     val isPrePrayer: Boolean = false
 )
 
+@Factory
 class SchedulePlan {
 
     fun buildDailyAlarms(

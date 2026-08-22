@@ -13,6 +13,7 @@ import com.kutluoglu.prayer_location.LocationsCoordinator
 import com.kutluoglu.prayer_notifications.data.NotificationSettingsDataStore
 import com.kutluoglu.prayer_notifications.domain.NotificationSettings
 import com.kutluoglu.prayer_notifications.domain.SchedulePlan
+import com.kutluoglu.prayer_notifications.manager.PrayerNotificationManager
 import com.kutluoglu.prayer_settings.domain.model.LocationSettings
 import com.kutluoglu.prayer_settings.domain.model.Settings
 import com.kutluoglu.prayer_settings.domain.usecase.GetSettingsUseCase
@@ -42,6 +43,7 @@ class PrayerNotificationSchedulerTest {
     private val getPrayerTimesUseCase = mockk<GetPrayerTimesUseCase>(relaxed = true)
     private val locationsCoordinator = mockk<LocationsCoordinator>(relaxed = true)
     private val getSettingsUseCase = mockk<GetSettingsUseCase>(relaxed = true)
+    private val notificationManager = mockk<PrayerNotificationManager>(relaxed = true)
 
     private fun scheduler(scope: CoroutineScope) = PrayerNotificationScheduler(
         context = context,
@@ -50,6 +52,7 @@ class PrayerNotificationSchedulerTest {
         getPrayerTimesUseCase = getPrayerTimesUseCase,
         locationsCoordinator = locationsCoordinator,
         getSettingsUseCase = getSettingsUseCase,
+        notificationManager = notificationManager,
         scope = scope
     )
 
