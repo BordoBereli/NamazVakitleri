@@ -4,8 +4,10 @@ import android.Manifest
 import android.app.AlarmManager
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.provider.Settings
+import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -38,6 +40,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -48,7 +51,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.kutluoglu.core.designsystem.components.LoadingIndicator
 import com.kutluoglu.prayer_feature.settings.R
 import com.kutluoglu.prayer_notifications.domain.NotificationSettings
@@ -116,29 +123,51 @@ private fun NotificationsContent(
 ) {
     var showTimePicker by remember { mutableStateOf(false) }
     var showNotificationRationale by remember { mutableStateOf(false) }
+    var notificationPermanentlyDenied by remember { mutableStateOf(false) }
     val context = LocalContext.current
+    val activity = LocalActivity.current
 
-    val notificationPermissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { granted ->
-        if (granted) {
-            onEvent(NotificationsEvent.SetEnabled(true))
-        } else {
-            showNotificationRationale = true
-        }
-    }
-
-    val hasNotificationPermission =
+    fun checkNotificationPermission(): Boolean =
         Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
             ContextCompat.checkSelfPermission(
                 context,
                 Manifest.permission.POST_NOTIFICATIONS
             ) == PackageManager.PERMISSION_GRANTED
 
-    val alarmManager = context.getSystemService(AlarmManager::class.java)
-    val canScheduleExactAlarms =
+    fun checkExactAlarmPermission(): Boolean =
         Build.VERSION.SDK_INT < Build.VERSION_CODES.S ||
-            alarmManager?.canScheduleExactAlarms() == true
+            context.getSystemService(AlarmManager::class.java)?.canScheduleExactAlarms() == true
+
+    var hasNotificationPermission by remember { mutableStateOf(checkNotificationPermission()) }
+    var canScheduleExactAlarms by remember { mutableStateOf(checkExactAlarmPermission()) }
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                hasNotificationPermission = checkNotificationPermission()
+                canScheduleExactAlarms = checkExactAlarmPermission()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+
+    val notificationPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (granted) {
+            onEvent(NotificationsEvent.SetEnabled(true))
+            showNotificationRationale = false
+        } else {
+            notificationPermanentlyDenied = activity == null ||
+                !ActivityCompat.shouldShowRequestPermissionRationale(
+                    activity,
+                    Manifest.permission.POST_NOTIFICATIONS
+                )
+            showNotificationRationale = true
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -159,24 +188,43 @@ private fun NotificationsContent(
                 }
             }
         )
-        if (showNotificationRationale) {
-            PermissionHintRow(
-                text = stringResource(R.string.notification_permission_rationale),
-                actionText = stringResource(R.string.grant_permission),
-                onAction = {
-                    showNotificationRationale = false
-                    notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-                }
-            )
+        if (showNotificationRationale && !hasNotificationPermission && settings.enabled) {
+            if (notificationPermanentlyDenied) {
+                PermissionHintRow(
+                    text = stringResource(R.string.notification_permission_rationale),
+                    actionText = stringResource(R.string.open_settings),
+                    onAction = {
+                        showNotificationRationale = false
+                        context.startActivity(
+                            Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                                data = Uri.parse("package:${context.packageName}")
+                            }
+                        )
+                    }
+                )
+            } else {
+                PermissionHintRow(
+                    text = stringResource(R.string.notification_permission_rationale),
+                    actionText = stringResource(R.string.grant_permission),
+                    onAction = {
+                        showNotificationRationale = false
+                        notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                    }
+                )
+            }
         }
         if (!canScheduleExactAlarms) {
             PermissionHintRow(
                 text = stringResource(R.string.exact_alarm_hint),
                 actionText = stringResource(R.string.open_settings),
                 onAction = {
-                    context.startActivity(
-                        Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
-                    )
+                    runCatching {
+                        context.startActivity(
+                            Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
+                                data = Uri.parse("package:${context.packageName}")
+                            }
+                        )
+                    }
                 }
             )
         }
