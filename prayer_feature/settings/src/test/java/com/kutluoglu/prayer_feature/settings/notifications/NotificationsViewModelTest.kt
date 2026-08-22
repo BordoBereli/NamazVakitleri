@@ -33,12 +33,41 @@ class NotificationsViewModelTest {
     }
 
     @Test
+    fun `load failure surfaces error state`() = runTest {
+        coEvery { getUseCase() } throws RuntimeException("boom")
+
+        val viewModel = NotificationsViewModel(getUseCase, updateUseCase)
+
+        assertThat(viewModel.uiState.value).isInstanceOf(NotificationsUiState.Error::class.java)
+    }
+
+    @Test
     fun `toggling master enabled persists`() = runTest {
         coEvery { getUseCase() } returns NotificationSettings()
 
         val viewModel = NotificationsViewModel(getUseCase, updateUseCase)
         viewModel.onEvent(NotificationsEvent.SetEnabled(true))
 
-        coVerify { updateUseCase(any()) }
+        coVerify { updateUseCase(match { it.enabled }) }
+    }
+
+    @Test
+    fun `toggling a prayer persists the updated settings`() = runTest {
+        coEvery { getUseCase() } returns NotificationSettings()
+
+        val viewModel = NotificationsViewModel(getUseCase, updateUseCase)
+        viewModel.onEvent(NotificationsEvent.SetPrayerToggle("Fajr", false))
+
+        coVerify { updateUseCase(match { it.prayerToggles["Fajr"] == false }) }
+    }
+
+    @Test
+    fun `toggling adhan persists`() = runTest {
+        coEvery { getUseCase() } returns NotificationSettings()
+
+        val viewModel = NotificationsViewModel(getUseCase, updateUseCase)
+        viewModel.onEvent(NotificationsEvent.SetAdhanEnabled(false))
+
+        coVerify { updateUseCase(match { it.adhanEnabled == false }) }
     }
 }
