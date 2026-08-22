@@ -3,7 +3,7 @@
 Persistent task list for the NamazVakitleri Android project.
 Status: `[ ]` = pending, `[x]` = done, `[~]` = in progress.
 
-Last updated: 2026-08-14
+Last updated: 2026-08-22
 
 ---
 
@@ -79,9 +79,10 @@ Last updated: 2026-08-14
   - No month navigation.
   - Status: DONE 2026-08-11 (TDD) — `PrayerTimesViewModel` now tracks `selectedMonth` (kotlinx-datetime `YearMonth`), caches loaded months in `monthCache`, and exposes `onEvent(PrayerTimesEvent)` (OnPreviousMonth/OnNextMonth/OnToday). `PrayerTimesUiState.Success` gains `selectedMonth` + `isCurrentMonth`; header arrows are clickable, a "Today" button appears when not on the current month, and today-highlight/auto-scroll are gated to the current month. Added `PrayerTimesViewModelTest` (6 tests, RED→GREEN). Full suite green.
 
-- [ ] **11. Duplicated `getCountryCode` mapping**
+- [x] **11. Duplicated `getCountryCode` mapping**
   - Files: `prayer_feature/home/.../HomeViewModel.kt:135`, `prayer_settings/.../SettingsRepositoryImpl.kt:39`
   - Extract to shared util.
+  - Status: DONE 2026-08-22 — extracted to `CountryCodeUtils` in `core:common`; `HomeViewModel` and `SettingsRepositoryImpl` no longer hold their own copies.
 
 - [ ] **12. Legacy duplicate DataStores**
   - `prayer_cache/SettingsDataStoreImp.kt` + `LocationDataStoreImp.kt` (JSON-string based) vs `prayer_settings/data/local/SettingsDataStore.kt` (typed).
@@ -92,8 +93,9 @@ Last updated: 2026-08-14
 - [ ] **13. Uncommitted changes**
   - `AGENTS.md` (gitnexus block) modified; `.claude/` + `CLAUDE.md` untracked. Commit or clean up.
 
-- [ ] **14. `NamazVakitleriTechnicalAnalysis` is aspirational**
+- [x] **14. `NamazVakitleriTechnicalAnalysis` is aspirational**
   - Describes Room, WorkManager, notifications, widgets — none implemented. Update or remove.
+  - Status: DONE 2026-08-22 — rewritten to describe the actual architecture: DataStore-backed prayer-times cache (no Room), no WorkManager/notifications/widgets yet (notifications being added in the current plan), real module list from `settings.gradle.kts`, and the actual tech stack (Koin, adhan2, osmdroid, coil, Firebase).
 
 ## 🔴 Found while verifying item 1
 

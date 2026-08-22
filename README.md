@@ -2,19 +2,18 @@
 
 Namaz Vakitleri, kullanıcıların bulundukları konuma göre günlük namaz vakitlerini takip etmelerini sağlayan modern ve sezgisel bir Android uygulamasıdır. Temiz bir mimari ve Jetpack Compose kullanılarak geliştirilen bu uygulama, güvenilir ve zengin bir kullanıcı deneyimi sunar.
 
-![Uygulama Ekran Görüntüsü](https://via.placeholder.com/800x450.png?text=Namaz+Vakitleri+Uygulama+Arayüzü)
-
-*(Not: Bu görsel bir yer tutucudur. Projenizin gerçek ekran görüntüleriyle değiştirebilirsiniz.)*
-
 ## ✨ Özellikler
 
 -   **Konum Tabanlı Vakitler**: Bulunduğunuz konuma göre en doğru namaz vakitlerini otomatik olarak hesaplar.
+-   **Çoklu Konum Desteği**: Sınırsız konum ekleyebilir; her konum için ayrı bir ana ekran sayfası (kaydırılabilir `HorizontalPager` + konum çipleri) kullanabilirsiniz.
+-   **Otomatik GPS Konumu**: İsteğe bağlı otomatik GPS konumu, manuel konumlardan görsel olarak ayırt edilir (GPS rozeti).
 -   **Dinamik Geri Sayım**: Bir sonraki namaz vaktine ne kadar kaldığını gösteren canlı bir geri sayım sayacı içerir.
+-   **Aylık Vakitler**: Ay navigasyonu ile geçmiş ve gelecek ayların namaz vakitlerini görüntüleyebilirsiniz.
+-   **Kıble Pusulası**: Aktif konuma göre kıble yönünü gösteren pusula ekranı.
 -   **Kuran Ayetleri**: Her gün rastgele bir Kuran ayeti göstererek manevi bir dokunuş sağlar. Ayetler, detaylarını görmek ve paylaşmak için interaktif bir modal ekranda açılabilir.
 -   **Modern Arayüz**: Tamamen Jetpack Compose ile oluşturulmuş, açık ve koyu tema desteği sunan şık ve kullanıcı dostu bir arayüz.
 -   **Çok Dilli Destek**: Namaz isimleri gibi metinler, cihazın diline göre yerelleştirilmiştir.
 -   **Pull-to-Refresh**: Vakitleri manuel olarak yenilemek için aşağı çekme özelliği.
--   **Konum Değişikliği Uyarısı**: Kullanıcının konumunda önemli bir değişiklik tespit edildiğinde, vakitlerin güncellenmesi için bir uyarı gösterir.
 
 ## 🛠️ Teknik Yapı ve Mimari
 
@@ -22,11 +21,16 @@ Bu proje, ölçeklenebilir, test edilebilir ve bakımı kolay bir uygulama oluş
 
 -   **%100 Kotlin & Jetpack Compose**: Tüm kullanıcı arayüzü, reaktif ve deklaratif bir yaklaşımla Jetpack Compose kullanılarak oluşturulmuştur.
 -   **Temiz Mimari (Clean Architecture)**: Proje, sorumlulukları ayıran katmanlı bir yapıya sahiptir:
-    -   `:app`: Ana uygulama modülü ve bağımlılıkların (Koin) başlatılması.
-    -   `:core:ui`, `:core:common`: Tema, renkler, paylaşılan bileşenler ve yardımcı fonksiyonlar.
-    -   `:prayer_feature:*`: Her bir özelliğe (`home`, `prayertimes`) adanmış modüller.
-    -   `:prayer:domain`, `:prayer:data`, `:prayer:model`: İş mantığı, veri kaynakları ve veri modelleri.
+    -   `:app`: Ana uygulama modülü, bağımlılıkların (Koin) başlatılması ve Firebase kurulumu.
+    -   `:core:designsystem`, `:core:common`: Tema, renkler, paylaşılan bileşenler ve yardımcı fonksiyonlar.
+    -   `:prayer_navigation:core`: Navigasyon hedefleri ve iç içe graflar.
+    -   `:prayer:domain`, `:prayer:model`, `:prayer:data`: İş mantığı, veri modelleri ve veri kaynakları (DataStore tabanlı önbellek).
+    -   `:prayer_cache`: Eski (legacy) JSON-tabanlı DataStore uygulamaları.
+    -   `:prayer_remote`: Uzak veri kaynakları (Kuran API, şehir arama).
     -   `:prayer_location`: Konum servisleri ile ilgili mantığı soyutlayan modül.
+    -   `:prayer_settings`: Ayarlar veri modelleri, depo ve use case'ler.
+    -   `:prayer_qibla`: Sensör/yönelim mantığı ve kıble veri deposu.
+    -   `:prayer_feature:*`: Her bir özelliğe (`home`, `prayertimes`, `qibla`, `settings`, `common`) adanmış modüller.
 -   **MVVM Mimarisi**: Her özellik ekranı, durumu yöneten ve iş mantığını yürüten bir `ViewModel` tarafından desteklenmektedir.
 -   **Coroutines & Flow**: Asenkron işlemler ve reaktif durum yönetimi için kullanılır. `StateFlow`, UI durumunu `ViewModel`'den `Composable`'lara güvenli bir şekilde iletmek için kullanılır.
 -   **Koin**: Bağımlılıkların yönetimi (Dependency Injection) için kullanılır.
@@ -58,8 +62,8 @@ Proje, iş mantığının doğruluğunu sağlamak için birim testleri (unit tes
     -   Sınıf adının yanındaki yeşil "play" ikonuna tıklayarak tüm testleri çalıştırın.
 
 -   **Gradle ile Komut Satırından**:
-- shell
-  ./gradlew testDebugUnitTest
+    ```shell
+    ./gradlew testDebugUnitTest
     ```
 
 ---
