@@ -3,7 +3,7 @@
 Persistent task list for the NamazVakitleri Android project.
 Status: `[ ]` = pending, `[x]` = done, `[~]` = in progress.
 
-Last updated: 2026-08-22
+Last updated: 2026-08-24
 
 ---
 
@@ -24,6 +24,11 @@ Last updated: 2026-08-22
   - Note: `adhan.mp3` is a silent placeholder — the real adhan audio must be provided before release.
   - Delivery wiring complete (2026-08-24): AlarmReceiver dispatches real prayer notifications + per-prayer adhan, daily reminder (with prayer-times summary), Jumu'ah, special days + one-day-ahead pre-special-day alerts, and a self-re-arming per-minute countdown.
   - Spec: `docs/superpowers/specs/2026-08-22-notifications-calc-method-techdebt-design.md`; Plan: `docs/superpowers/plans/2026-08-22-notifications-calc-method-techdebt.md`.
+
+- [x] **Persistent countdown notification improvement** (2026-08-24, TDD)
+  - Countdown notification now shows the next prayer name + clock time in the title (e.g. `Maghrib · 18:45`), a clear `Xh Ym remaining` body, and a progress bar spanning the previous→next prayer gap.
+  - Countdown stays alive overnight after Isha, targeting tomorrow's Fajr.
+  - Spec: `docs/superpowers/specs/2026-08-24-countdown-notification-improvement-design.md`; Plan: `docs/superpowers/plans/2026-08-24-countdown-notification-improvement.md`.
 
 - [x] **Calculation-method name fix** (2026-08-22)
   - Unified the duplicate `CalculationMethod` definitions into the `prayer/model` enum; localized display names for all 6 methods across 13 locales; enum-driven lookup in `SettingsScreen`; localized language display names.
