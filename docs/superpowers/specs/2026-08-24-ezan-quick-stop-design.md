@@ -15,7 +15,7 @@ The feature is implemented by moving Ezan playback from the `BroadcastReceiver` 
 ## Problem
 
 - The Ezan sound is played by `AdhanPlayer` directly from `AlarmReceiver` (a `BroadcastReceiver`). The prayer notification has no action buttons, and swiping it away does not stop the sound.
-- A `BroadcastReceiver` cannot receive key events, so the volume-down button cannot be intercepted without a foreground service.
+- A `BroadcastReceiver` cannot receive key events, and `android.app.Service` has no `onKeyDown` either (only `Activity`/`View` receive key events). The volume-down button is therefore detected by observing the alarm-stream volume via a `ContentObserver` on `Settings.System.VOLUME_ALARM` — the standard non-intrusive technique used by alarm apps. The Ezan plays on `AudioAttributes.USAGE_ALARM`, so pressing volume-down while it plays decreases the alarm volume and fires the observer.
 - The Ezan plays to completion (~minutes) with no way to interrupt it.
 
 ## Goal
@@ -32,7 +32,7 @@ Introduce a foreground service `AdhanService` that owns Ezan playback while it i
 
 - Plays the Ezan via the existing `AdhanPlayer`.
 - Shows a foreground notification (prayer name + "Ezan çalıyor" + Stop action) on the existing `adhan` channel.
-- Overrides `onKeyDown` to stop on `KEYCODE_VOLUME_DOWN`.
+- Registers a `ContentObserver` on `Settings.System.VOLUME_ALARM`; when the alarm volume decreases (volume-down pressed while the Ezan plays), it stops the service.
 - Uses `setDeleteIntent` so swiping the notification stops the service.
 - Auto-stops when the audio completes (via a new completion callback on `AdhanPlayer`).
 
@@ -49,14 +49,17 @@ Location: `prayer_notifications/src/main/java/com/kutluoglu/prayer_notifications
   - Reads `EXTRA_PRAYER_KEY` from the intent.
   - Calls `adhanPlayer.play(prayerKey)` (which internally stops any current playback first).
   - Calls `startForeground(NOTIFICATION_ID_ADHAN, notification)` with the notification built by `PrayerNotificationManager.buildAdhanNotification(prayerKey)`.
+  - Registers the volume `ContentObserver` (if not already registered) and records the current alarm-stream volume as the baseline.
   - Returns `START_NOT_STICKY`.
-- `onKeyDown(keyCode, event)`:
-  - If `keyCode == KeyEvent.KEYCODE_VOLUME_DOWN` → `stopSelf()` and return `true` (consume the event so volume does not decrease).
-  - Otherwise return `super.onKeyDown(keyCode, event)`.
+- Volume-down detection via `ContentObserver`:
+  - A `ContentObserver` on `Settings.System.getUriFor(Settings.System.VOLUME_ALARM)` (main-thread `Handler`).
+  - On change: if the current `AudioManager.getStreamVolume(STREAM_ALARM)` is lower than the last recorded value, call `stopSelf()`; always update the recorded value.
+  - Registered in `onStartCommand`, unregistered in `onDestroy`.
 - `onDestroy()`:
+  - Unregisters the volume observer.
   - Calls `adhanPlayer.stop()`.
   - Calls `stopForeground(STOP_FOREGROUND_REMOVE)`.
-- Auto-stop on completion: `AdhanPlayer` exposes a completion callback; the service registers it and calls `stopSelf()` when the audio finishes.
+- Auto-stop on completion: `AdhanPlayer` exposes a completion callback; the service registers it in `onCreate` and calls `stopSelf()` when the audio finishes.
 
 ### 2. Modified `AlarmReceiver`
 
@@ -107,7 +110,7 @@ In `prayer_notifications/src/main/AndroidManifest.xml`:
 - **Process death while playing:** `START_NOT_STICKY` — the service is not restarted; the Ezan stops (acceptable; the notification is gone too).
 - **Jumuah with adhan enabled:** the Ezan notification replaces the Jumuah notification (consistent with "replace prayer notification").
 - **Countdown transition:** unchanged — the PRAYER alarm still transitions the countdown to the next prayer regardless of the service.
-- **Volume-down consumed:** the event is consumed so the device volume does not decrease while the Ezan is playing.
+- **Volume-down:** pressing volume-down decreases the alarm-stream volume, which fires the `ContentObserver` and stops the Ezan. The volume is not consumed (it decreases) — this is the standard trade-off of the observer approach and matches user expectation ("volume down stops the Ezan").
 
 ## Testing
 
@@ -115,7 +118,7 @@ In `prayer_notifications/src/main/AndroidManifest.xml`:
 
 - **New `AdhanServiceTest`**:
   - `onStartCommand` plays the Ezan and shows a foreground notification.
-  - `onKeyDown` with `KEYCODE_VOLUME_DOWN` stops the service and returns `true`.
+  - Volume decrease (observer fires) stops the service.
   - Completion callback stops the service.
   - Delete intent (swipe) broadcasts `ACTION_STOP_ADHAN` which stops the service.
 - **Update `AlarmReceiverTest`**:
