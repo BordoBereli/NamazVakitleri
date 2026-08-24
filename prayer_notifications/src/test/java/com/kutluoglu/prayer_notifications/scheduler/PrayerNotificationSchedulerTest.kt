@@ -331,4 +331,45 @@ class PrayerNotificationSchedulerTest {
         assertThat(intent.getLongExtra(AlarmReceiver.EXTRA_COUNTDOWN_PREVIOUS_TIME, 0L))
             .isEqualTo(previous)
     }
+
+    @Test
+    fun `scheduleAll after last prayer starts countdown to tomorrow's Fajr`() = runTest {
+        coEvery { dataStore.getSettings() } returns NotificationSettings(
+            enabled = true,
+            countdownEnabled = true
+        )
+        coEvery { locationsCoordinator.resolveSelected() } returns LocationData(
+            latitude = 41.0082,
+            longitude = 28.9784,
+            country = "Turkey",
+            countryCode = "TR",
+            city = "Istanbul",
+            county = null
+        )
+        coEvery { getSettingsUseCase() } returns Settings(
+            location = LocationSettings(timeZone = "Europe/Istanbul"),
+            calculationMethod = "TURKEY_DIYANET"
+        )
+        coEvery { getPrayerTimesUseCase(any(), any(), any(), any(), any(), any()) } returns Result.success(
+            listOf(
+                Prayer(
+                    name = "Fajr",
+                    arabicName = "الفجر",
+                    time = LocalTime(0, 1),
+                    date = LocalDate(2026, 8, 22)
+                ),
+                Prayer(
+                    name = "Isha",
+                    arabicName = "العشاء",
+                    time = LocalTime(0, 2),
+                    date = LocalDate(2026, 8, 22)
+                )
+            )
+        )
+
+        val scheduler = scheduler(CoroutineScope(UnconfinedTestDispatcher(testScheduler)))
+        scheduler.scheduleAll()
+
+        coVerify { notificationManager.showCountdownNotification("Fajr", any(), any(), any()) }
+    }
 }

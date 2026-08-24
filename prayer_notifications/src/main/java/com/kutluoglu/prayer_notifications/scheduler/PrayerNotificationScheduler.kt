@@ -93,6 +93,28 @@ class PrayerNotificationScheduler(
             return
         }
 
+        val nextDayFajrTimeMillis = if (settings.countdownEnabled) {
+            val tomorrow = today.plusDays(1)
+            getPrayerTimesUseCase(
+                date = LocalDateTime(tomorrow.year, tomorrow.monthValue, tomorrow.dayOfMonth, 0, 0),
+                latitude = location.latitude,
+                longitude = location.longitude,
+                zoneId = zoneId,
+                calculationMethod = method,
+                persistDailyCache = false
+            ).getOrNull()
+                ?.firstOrNull { it.name == "Fajr" }
+                ?.let {
+                    LocalTime.of(it.time.hour, it.time.minute)
+                        .atDate(tomorrow)
+                        .atZone(zoneId)
+                        .toInstant()
+                        .toEpochMilli()
+                }
+        } else {
+            null
+        }
+
         val enabled = settings.prayerToggles.filterValues { it }.keys
         val summary = buildDailySummary(prayers)
         val specialDayToday = if (settings.specialDaysEnabled) {
@@ -118,14 +140,31 @@ class PrayerNotificationScheduler(
             dailySummary = summary,
             specialDayToday = specialDayToday,
             specialDayTomorrow = specialDayTomorrow,
-            jumuahEnabled = settings.jumuahEnabled
+            jumuahEnabled = settings.jumuahEnabled,
+            nextDayFajrTimeMillis = nextDayFajrTimeMillis
         )
         cancelAll()
         alarms.forEach { scheduleAlarm(it) }
         if (settings.countdownEnabled) {
             val nextPrayer = alarms.firstOrNull { it.type == AlarmType.PRAYER }
             if (nextPrayer != null) {
-                updateCountdown(nextPrayer.triggerAtMillis, nextPrayer.prayerKey)
+                updateCountdown(
+                    nextPrayer.triggerAtMillis,
+                    nextPrayer.prayerKey,
+                    nextPrayer.previousPrayerTimeMillis
+                )
+            } else if (nextDayFajrTimeMillis != null) {
+                val lastEnabledTrigger = prayers
+                    .filter { it.name in enabled }
+                    .lastOrNull()
+                    ?.let {
+                        LocalTime.of(it.time.hour, it.time.minute)
+                            .atDate(today)
+                            .atZone(zoneId)
+                            .toInstant()
+                            .toEpochMilli()
+                    }
+                updateCountdown(nextDayFajrTimeMillis, "Fajr", lastEnabledTrigger)
             }
         }
         if (WorkManager.isInitialized()) {
