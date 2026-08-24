@@ -10,7 +10,7 @@ data class ScheduledAlarm(
     val prayerKey: String,
     val triggerAtMillis: Long,
     val requestCode: Int,
-    val isPrePrayer: Boolean = false
+    val type: AlarmType = AlarmType.PRAYER
 )
 
 @Factory
@@ -38,7 +38,8 @@ class SchedulePlan {
                 result += ScheduledAlarm(
                     prayerKey = prayer.name,
                     triggerAtMillis = trigger.toEpochMilli(),
-                    requestCode = requestCode++
+                    requestCode = requestCode++,
+                    type = AlarmType.PRAYER
                 )
             }
             if (prePrayerEnabled) {
@@ -48,7 +49,7 @@ class SchedulePlan {
                         prayerKey = "${prayer.name}_pre",
                         triggerAtMillis = preTrigger.toEpochMilli(),
                         requestCode = requestCode++,
-                        isPrePrayer = true
+                        type = AlarmType.PRE_PRAYER
                     )
                 }
             }
