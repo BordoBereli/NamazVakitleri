@@ -43,12 +43,19 @@ Maghrib · 18:45          ← title: localized prayer name + clock time (derived
 
 ### Data flow changes
 
-1. **`ScheduledAlarm`** — add `previousPrayerTimeMillis: Long?` (start of the gap used by the progress bar).
-2. **`SchedulePlan.buildDailyAlarms(...)`** — for each enabled prayer, set `previousPrayerTimeMillis` to the previous enabled prayer's trigger time. For the **last** enabled prayer, set `nextPrayerTimeMillis` / `nextPrayerName` to **tomorrow's Fajr** (passed in as a new parameter, e.g. `nextDayFajrTimeMillis: Long?`, computed by the scheduler).
-3. **`PrayerNotificationScheduler.scheduleAlarm`** — put `previousPrayerTimeMillis` in the intent extras (`EXTRA_PREVIOUS_PRAYER_TIME`).
-4. **`AlarmReceiver`** — read `EXTRA_PREVIOUS_PRAYER_TIME`, pass it to `updateCountdown`.
+The progress bar gap starts at the *previous* prayer relative to the countdown target. This differs by start path:
+
+- **At schedule time** the countdown targets the first upcoming prayer X; the gap starts at the prayer before X (X-1).
+- **At fire time** prayer P fires and the countdown transitions to P's next prayer N; the gap starts at P itself (the prayer that just fired).
+
+1. **`ScheduledAlarm`** — add `previousPrayerTimeMillis: Long?` = the trigger time of the prayer immediately before this one (P-1). Null for the first enabled prayer. Used at schedule time to start the progress bar from the last prayer that already happened.
+2. **`SchedulePlan.buildDailyAlarms(...)`** — new parameter `nextDayFajrTimeMillis: Long?`. For each enabled prayer, set `previousPrayerTimeMillis` to the previous enabled prayer's trigger. For the **last** enabled prayer, set `nextPrayerTimeMillis` / `nextPrayerName` to **tomorrow's Fajr** (when `nextDayFajrTimeMillis` is provided).
+3. **`PrayerNotificationScheduler.scheduleAlarm`** — put `triggerAtMillis` in the intent extras as `EXTRA_ALARM_TRIGGER_TIME` (the firing prayer's trigger = the start of the next countdown gap).
+4. **`AlarmReceiver`** — on PRAYER, read `EXTRA_ALARM_TRIGGER_TIME` as the previous time and pass it to `updateCountdown(nextTime, nextName, previous)`.
 5. **`PrayerNotificationScheduler.updateCountdown(targetMillis, prayerName, previousTimeMillis)`** — carry `previousTimeMillis` through the 60s countdown tick intent (`EXTRA_COUNTDOWN_PREVIOUS_TIME`) so the progress bar keeps advancing on each tick.
 6. **`PrayerNotificationManager.showCountdownNotification(nextPrayerName, nextPrayerTimeMillis, previousPrayerTimeMillis, remainingMillis)`** — build title, body, and progress bar.
+
+**Schedule-time countdown start** (`scheduleAllSuspending`): if the first upcoming prayer X exists, call `updateCountdown(X.triggerAtMillis, X.prayerKey, X.previousPrayerTimeMillis)`. If no prayer is upcoming today (all passed) and `nextDayFajrTimeMillis` is available, call `updateCountdown(nextDayFajrTimeMillis, "Fajr", lastEnabledPrayerTrigger)` so the countdown stays alive overnight.
 
 ### Progress bar
 
@@ -60,7 +67,9 @@ Maghrib · 18:45          ← title: localized prayer name + clock time (derived
 ### Strings (all 15 locales: values, ar, ta, fa, es, ur, th, tr, fr, de, ru, bn, hi, id, ms)
 
 - `notification_countdown_title` = `%1$s · %2$s` (prayer name · clock time).
-- `notification_remaining` = `%1$s remaining` (replaces the bare `notification_remaining_hours_minutes` / `notification_remaining_minutes` usage in this notification; those two strings can be removed if unused elsewhere).
+- `notification_remaining` = `%1$s remaining` (wraps the existing `formatRemaining` output, e.g. `1h 30m remaining`).
+- Remove `notification_next_prayer` (no longer used).
+- Keep `notification_remaining_hours_minutes` / `notification_remaining_minutes` — still used by `formatRemaining`.
 
 ### Edge cases
 
