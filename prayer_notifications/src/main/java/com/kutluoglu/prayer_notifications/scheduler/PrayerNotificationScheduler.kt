@@ -211,7 +211,7 @@ class PrayerNotificationScheduler(
             notificationManager.cancelCountdown()
             return
         }
-        notificationManager.showCountdownNotification(prayerName, remaining)
+        notificationManager.showCountdownNotification(prayerName, targetMillis, null, remaining)
         scheduleCountdownTick(targetMillis, prayerName)
     }
 

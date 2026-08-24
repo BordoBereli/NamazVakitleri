@@ -13,6 +13,8 @@ import com.kutluoglu.prayer_notifications.domain.NotificationSettings
 import com.kutluoglu.prayer_notifications.domain.SpecialDay
 import com.kutluoglu.prayer_notifications.scheduler.AlarmReceiver
 import org.koin.core.annotation.Single
+import java.time.Instant
+import java.time.ZoneId
 import java.util.Locale
 
 @Single
@@ -95,7 +97,12 @@ class PrayerNotificationManager(
         notificationManager.notify(NOTIFICATION_ID_PRAYER, builder.build())
     }
 
-    fun showCountdownNotification(nextPrayerName: String, remainingMillis: Long) {
+    fun showCountdownNotification(
+        nextPrayerName: String,
+        nextPrayerTimeMillis: Long,
+        previousPrayerTimeMillis: Long?,
+        remainingMillis: Long
+    ) {
         val contentIntent = PendingIntent.getActivity(
             context, 0,
             context.packageManager.getLaunchIntentForPackage(context.packageName),
@@ -107,17 +114,30 @@ class PrayerNotificationManager(
                 .setAction(AlarmReceiver.ACTION_STOP_COUNTDOWN),
             PendingIntent.FLAG_IMMUTABLE
         )
-        val notification = NotificationCompat.Builder(context, CHANNEL_COUNTDOWN)
+        val builder = NotificationCompat.Builder(context, CHANNEL_COUNTDOWN)
             .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(
-                localizedString(R.string.notification_next_prayer, localizedPrayerName(nextPrayerName))
+                localizedString(
+                    R.string.notification_countdown_title,
+                    localizedPrayerName(nextPrayerName),
+                    formatClockTime(nextPrayerTimeMillis)
+                )
             )
-            .setContentText(formatRemaining(remainingMillis))
+            .setContentText(
+                localizedString(R.string.notification_remaining, formatRemaining(remainingMillis))
+            )
             .setOngoing(true)
             .setContentIntent(contentIntent)
             .addAction(0, localizedString(R.string.notification_stop), stopIntent)
-            .build()
-        notificationManager.notify(NOTIFICATION_ID_COUNTDOWN, notification)
+        previousPrayerTimeMillis?.let { previous ->
+            if (previous < nextPrayerTimeMillis) {
+                val now = nextPrayerTimeMillis - remainingMillis
+                val max = (nextPrayerTimeMillis - previous).toInt()
+                val progress = (now - previous).coerceIn(0, max.toLong()).toInt()
+                builder.setProgress(max, progress, false)
+            }
+        }
+        notificationManager.notify(NOTIFICATION_ID_COUNTDOWN, builder.build())
     }
 
     fun cancelCountdown() {
@@ -198,6 +218,11 @@ class PrayerNotificationManager(
         } else {
             localizedString(R.string.notification_remaining_minutes, minutes)
         }
+    }
+
+    private fun formatClockTime(epochMillis: Long): String {
+        val time = Instant.ofEpochMilli(epochMillis).atZone(ZoneId.systemDefault()).toLocalTime()
+        return "${time.hour.toString().padStart(2, '0')}:${time.minute.toString().padStart(2, '0')}"
     }
 
     private fun localizedPrayerName(key: String): String = when (key) {

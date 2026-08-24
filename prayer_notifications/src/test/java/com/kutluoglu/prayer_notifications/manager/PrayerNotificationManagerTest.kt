@@ -1,5 +1,6 @@
 package com.kutluoglu.prayer_notifications.manager
 
+import android.app.Notification
 import android.app.NotificationManager
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
@@ -11,6 +12,9 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.ZoneId
 import java.util.Locale
 
 @RunWith(RobolectricTestRunner::class)
@@ -138,5 +142,55 @@ class PrayerNotificationManagerTest {
         manager.showPreSpecialDayNotification(SpecialDay.EID_AL_ADHA)
         val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         assertThat(shadowOf(nm).allNotifications.single().channelId).isEqualTo("reminders")
+    }
+
+    @Test
+    fun `showCountdownNotification shows prayer name and clock time in title`() {
+        manager.createChannels()
+        val target = LocalTime.of(18, 45).atDate(LocalDate.of(2026, 8, 22))
+            .atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        manager.showCountdownNotification("Maghrib", target, null, 90 * 60_000L)
+        val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notification = shadowOf(nm).allNotifications.single()
+        assertThat(notification.extras.getString("android.title")).isEqualTo("Maghrib · 18:45")
+    }
+
+    @Test
+    fun `showCountdownNotification shows remaining time in body`() {
+        manager.createChannels()
+        val target = LocalTime.of(18, 45).atDate(LocalDate.of(2026, 8, 22))
+            .atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        manager.showCountdownNotification("Maghrib", target, null, 90 * 60_000L)
+        val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notification = shadowOf(nm).allNotifications.single()
+        assertThat(notification.extras.getString("android.text")).isEqualTo("1h 30m remaining")
+    }
+
+    @Test
+    fun `showCountdownNotification sets progress bar between previous and next`() {
+        manager.createChannels()
+        val previous = LocalTime.of(16, 45).atDate(LocalDate.of(2026, 8, 22))
+            .atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        val target = LocalTime.of(19, 55).atDate(LocalDate.of(2026, 8, 22))
+            .atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        val gap = target - previous
+        val now = previous + gap / 2
+        manager.showCountdownNotification("Maghrib", target, previous, target - now)
+        val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notification = shadowOf(nm).allNotifications.single()
+        assertThat(notification.extras.getInt(Notification.EXTRA_PROGRESS_MAX)).isEqualTo(gap.toInt())
+        assertThat(notification.extras.getInt(Notification.EXTRA_PROGRESS)).isEqualTo((gap / 2).toInt())
+    }
+
+    @Test
+    fun `showCountdownNotification omits progress bar when previous is null`() {
+        manager.createChannels()
+        val target = LocalTime.of(18, 45).atDate(LocalDate.of(2026, 8, 22))
+            .atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        manager.showCountdownNotification("Maghrib", target, null, 90 * 60_000L)
+        val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notification = shadowOf(nm).allNotifications.single()
+        assertThat(notification.extras.getInt(Notification.EXTRA_PROGRESS_MAX)).isEqualTo(0)
+        assertThat(notification.extras.getInt(Notification.EXTRA_PROGRESS)).isEqualTo(0)
     }
 }
