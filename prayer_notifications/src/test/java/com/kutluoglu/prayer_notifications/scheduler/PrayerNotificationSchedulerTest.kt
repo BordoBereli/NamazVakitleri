@@ -11,6 +11,7 @@ import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer.usecases.prayer.GetPrayerTimesUseCase
 import com.kutluoglu.prayer_location.LocationsCoordinator
 import com.kutluoglu.prayer_notifications.data.NotificationSettingsDataStore
+import com.kutluoglu.prayer_notifications.domain.AlarmType
 import com.kutluoglu.prayer_notifications.domain.NotificationSettings
 import com.kutluoglu.prayer_notifications.domain.SchedulePlan
 import com.kutluoglu.prayer_notifications.manager.PrayerNotificationManager
@@ -18,6 +19,7 @@ import com.kutluoglu.prayer_settings.domain.model.LocationSettings
 import com.kutluoglu.prayer_settings.domain.model.Settings
 import com.kutluoglu.prayer_settings.domain.usecase.GetSettingsUseCase
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -161,5 +163,62 @@ class PrayerNotificationSchedulerTest {
         scheduler.scheduleAll()
 
         assertThat(exceptions).isEmpty()
+    }
+
+    @Test
+    fun `cancelAll cancels countdown tick and reminder alarms`() = runTest {
+        val scheduler = scheduler(CoroutineScope(UnconfinedTestDispatcher(testScheduler)))
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(context, AlarmReceiver::class.java)
+            .putExtra(AlarmReceiver.EXTRA_ALARM_TYPE, AlarmType.DAILY_REMINDER.name)
+        val pendingIntent = PendingIntent.getBroadcast(
+            context, SchedulePlan.REQUEST_CODE_DAILY_REMINDER, intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        alarmManager.setExactAndAllowWhileIdle(
+            AlarmManager.RTC_WAKEUP,
+            System.currentTimeMillis() + 60_000,
+            pendingIntent
+        )
+        assertThat(shadowOf(alarmManager).scheduledAlarms).hasSize(1)
+
+        scheduler.cancelAll()
+
+        assertThat(shadowOf(alarmManager).scheduledAlarms).isEmpty()
+    }
+
+    @Test
+    fun `scheduleAll starts countdown when enabled`() = runTest {
+        coEvery { dataStore.getSettings() } returns NotificationSettings(
+            enabled = true,
+            countdownEnabled = true
+        )
+        coEvery { locationsCoordinator.resolveSelected() } returns LocationData(
+            latitude = 41.0082,
+            longitude = 28.9784,
+            country = "Turkey",
+            countryCode = "TR",
+            city = "Istanbul",
+            county = null
+        )
+        coEvery { getSettingsUseCase() } returns Settings(
+            location = LocationSettings(timeZone = "Europe/Istanbul"),
+            calculationMethod = "TURKEY_DIYANET"
+        )
+        coEvery { getPrayerTimesUseCase(any(), any(), any(), any(), any(), any()) } returns Result.success(
+            listOf(
+                Prayer(
+                    name = "Fajr",
+                    arabicName = "الفجر",
+                    time = LocalTime(23, 59),
+                    date = LocalDate(2026, 8, 22)
+                )
+            )
+        )
+
+        val scheduler = scheduler(CoroutineScope(UnconfinedTestDispatcher(testScheduler)))
+        scheduler.scheduleAll()
+
+        coVerify { notificationManager.showCountdownNotification("Fajr", any()) }
     }
 }

@@ -11,10 +11,14 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.kutluoglu.core.common.now
 import com.kutluoglu.prayer.model.prayer.CalculationMethod
+import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer.usecases.prayer.GetPrayerTimesUseCase
 import com.kutluoglu.prayer_location.LocationsCoordinator
 import com.kutluoglu.prayer_notifications.data.NotificationSettingsDataStore
+import com.kutluoglu.prayer_notifications.domain.AlarmType
 import com.kutluoglu.prayer_notifications.domain.SchedulePlan
+import com.kutluoglu.prayer_notifications.domain.ScheduledAlarm
+import com.kutluoglu.prayer_notifications.domain.SpecialDaysCalculator
 import com.kutluoglu.prayer_notifications.manager.PrayerNotificationManager
 import com.kutluoglu.prayer_settings.domain.usecase.GetSettingsUseCase
 import kotlinx.coroutines.CoroutineScope
@@ -23,6 +27,8 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDateTime
 import org.koin.core.annotation.Single
 import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalTime
 import java.time.ZoneId
 import java.util.concurrent.TimeUnit
 
@@ -35,6 +41,7 @@ class PrayerNotificationScheduler(
     private val locationsCoordinator: LocationsCoordinator,
     private val getSettingsUseCase: GetSettingsUseCase,
     private val notificationManager: PrayerNotificationManager,
+    private val specialDaysCalculator: SpecialDaysCalculator = SpecialDaysCalculator(),
     private val scope: CoroutineScope = CoroutineScope(Dispatchers.IO)
 ) {
     companion object {
@@ -65,35 +72,54 @@ class PrayerNotificationScheduler(
             return
         }
         notificationManager.createChannels(settings)
-        val alarms = runCatching {
-            val appSettings = getSettingsUseCase()
-            val zoneId = runCatching { ZoneId.of(appSettings.location.timeZone) }
-                .getOrDefault(ZoneId.systemDefault())
-            val today = LocalDateTime.now(zoneId)
-            val method = CalculationMethod.fromSettingsId(appSettings.calculationMethod)
-            val prayers = getPrayerTimesUseCase(
-                date = today,
-                latitude = location.latitude,
-                longitude = location.longitude,
-                zoneId = zoneId,
-                calculationMethod = method
-            ).getOrNull() ?: emptyList()
-
-            val enabled = settings.prayerToggles.filterValues { it }.keys
-            schedulePlan.buildDailyAlarms(
-                prayers = prayers,
-                zoneId = zoneId,
-                now = Instant.now(),
-                enabledPrayers = enabled,
-                prePrayerMinutes = settings.prePrayerMinutes,
-                prePrayerEnabled = settings.prePrayerReminderEnabled
-            )
-        }.getOrElse {
+        val appSettings = runCatching { getSettingsUseCase() }.getOrElse {
             cancelAll()
+            cancelDailyReschedule()
             return
         }
+        val zoneId = runCatching { ZoneId.of(appSettings.location.timeZone) }
+            .getOrDefault(ZoneId.systemDefault())
+        val today = LocalDate.now(zoneId)
+        val method = CalculationMethod.fromSettingsId(appSettings.calculationMethod)
+        val prayers = getPrayerTimesUseCase(
+            date = LocalDateTime.now(zoneId),
+            latitude = location.latitude,
+            longitude = location.longitude,
+            zoneId = zoneId,
+            calculationMethod = method
+        ).getOrNull() ?: run {
+            cancelAll()
+            cancelDailyReschedule()
+            return
+        }
+
+        val enabled = settings.prayerToggles.filterValues { it }.keys
+        val summary = buildDailySummary(prayers)
+        val specialDayToday = specialDaysCalculator.specialDayFor(today, appSettings.hijriAdjustment)
+        val specialDayTomorrow = specialDaysCalculator.specialDayFor(today.plusDays(1), appSettings.hijriAdjustment)
+        val alarms = schedulePlan.buildDailyAlarms(
+            prayers = prayers,
+            zoneId = zoneId,
+            now = Instant.now(),
+            enabledPrayers = enabled,
+            prePrayerMinutes = settings.prePrayerMinutes,
+            prePrayerEnabled = settings.prePrayerReminderEnabled,
+            dailyReminderEnabled = settings.dailyReminderEnabled,
+            dailyReminderHour = settings.dailyReminderHour,
+            dailyReminderMinute = settings.dailyReminderMinute,
+            dailySummary = summary,
+            specialDayToday = specialDayToday,
+            specialDayTomorrow = specialDayTomorrow,
+            jumuahEnabled = settings.jumuahEnabled
+        )
         cancelAll()
-        alarms.forEach { scheduleAlarm(it.triggerAtMillis, it.requestCode, it.prayerKey) }
+        alarms.forEach { scheduleAlarm(it) }
+        if (settings.countdownEnabled) {
+            val nextPrayer = alarms.firstOrNull { it.type == AlarmType.PRAYER }
+            if (nextPrayer != null) {
+                updateCountdown(nextPrayer.triggerAtMillis, nextPrayer.prayerKey)
+            }
+        }
         if (WorkManager.isInitialized()) {
             val request = PeriodicWorkRequestBuilder<DailyRescheduleWorker>(1, TimeUnit.DAYS).build()
             WorkManager.getInstance(context).enqueueUniquePeriodicWork(
@@ -122,15 +148,39 @@ class PrayerNotificationScheduler(
             )
             pendingIntent?.let { alarmManager.cancel(it) }
         }
+        listOf(
+            SchedulePlan.REQUEST_CODE_COUNTDOWN_TICK,
+            SchedulePlan.REQUEST_CODE_DAILY_REMINDER,
+            SchedulePlan.REQUEST_CODE_SPECIAL_DAY,
+            SchedulePlan.REQUEST_CODE_PRE_SPECIAL_DAY
+        ).forEach { code ->
+            val intent = Intent(context, AlarmReceiver::class.java)
+            val pendingIntent = PendingIntent.getBroadcast(
+                context, code, intent,
+                PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
+            )
+            pendingIntent?.let { alarmManager.cancel(it) }
+        }
     }
 
-    private fun scheduleAlarm(triggerAtMillis: Long, requestCode: Int, prayerKey: String) {
+    private fun scheduleAlarm(alarm: ScheduledAlarm) {
         val intent = Intent(context, AlarmReceiver::class.java)
-            .putExtra(AlarmReceiver.EXTRA_PRAYER_KEY, prayerKey)
+            .putExtra(AlarmReceiver.EXTRA_ALARM_TYPE, alarm.type.name)
+            .putExtra(AlarmReceiver.EXTRA_PRAYER_KEY, alarm.prayerKey)
+            .putExtra(AlarmReceiver.EXTRA_IS_JUMUAH, alarm.isJumuah)
+            .putExtra(AlarmReceiver.EXTRA_NEXT_PRAYER_TIME, alarm.nextPrayerTimeMillis ?: 0L)
+            .putExtra(AlarmReceiver.EXTRA_NEXT_PRAYER_NAME, alarm.nextPrayerName ?: "")
+            .putExtra(AlarmReceiver.EXTRA_PRE_PRAYER_MINUTES, alarm.prePrayerMinutes ?: 0)
+            .putExtra(AlarmReceiver.EXTRA_DAILY_SUMMARY, alarm.dailySummary ?: "")
+            .putExtra(AlarmReceiver.EXTRA_SPECIAL_DAY, alarm.specialDay?.name ?: "")
         val pendingIntent = PendingIntent.getBroadcast(
-            context, requestCode, intent,
+            context, alarm.requestCode, intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
+        setExactAlarm(alarm.triggerAtMillis, pendingIntent)
+    }
+
+    private fun setExactAlarm(triggerAtMillis: Long, pendingIntent: PendingIntent) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
             !alarmManager.canScheduleExactAlarms()
         ) {
@@ -139,4 +189,74 @@ class PrayerNotificationScheduler(
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent)
         }
     }
+
+    fun updateCountdown(targetMillis: Long, prayerName: String) {
+        val remaining = targetMillis - System.currentTimeMillis()
+        if (remaining <= 0) {
+            notificationManager.cancelCountdown()
+            return
+        }
+        notificationManager.showCountdownNotification(prayerName, remaining)
+        scheduleCountdownTick(targetMillis, prayerName)
+    }
+
+    fun cancelCountdown() {
+        notificationManager.cancelCountdown()
+        val intent = Intent(context, AlarmReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(
+            context, SchedulePlan.REQUEST_CODE_COUNTDOWN_TICK, intent,
+            PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
+        )
+        pendingIntent?.let { alarmManager.cancel(it) }
+    }
+
+    private fun scheduleCountdownTick(targetMillis: Long, prayerName: String) {
+        val intent = Intent(context, AlarmReceiver::class.java)
+            .setAction(AlarmReceiver.ACTION_COUNTDOWN_TICK)
+            .putExtra(AlarmReceiver.EXTRA_COUNTDOWN_TARGET, targetMillis)
+            .putExtra(AlarmReceiver.EXTRA_COUNTDOWN_PRAYER_NAME, prayerName)
+        val pendingIntent = PendingIntent.getBroadcast(
+            context, SchedulePlan.REQUEST_CODE_COUNTDOWN_TICK, intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        setExactAlarm(System.currentTimeMillis() + 60_000, pendingIntent)
+    }
+
+    suspend fun scheduleDailyReminder() {
+        val settings = dataStore.getSettings()
+        if (!settings.dailyReminderEnabled) return
+        val location = locationsCoordinator.resolveSelected() ?: return
+        val appSettings = runCatching { getSettingsUseCase() }.getOrNull() ?: return
+        val zoneId = runCatching { ZoneId.of(appSettings.location.timeZone) }
+            .getOrDefault(ZoneId.systemDefault())
+        val tomorrow = LocalDate.now(zoneId).plusDays(1)
+        val method = CalculationMethod.fromSettingsId(appSettings.calculationMethod)
+        val prayers = getPrayerTimesUseCase(
+            date = LocalDateTime(tomorrow.year, tomorrow.monthValue, tomorrow.dayOfMonth, 0, 0),
+            latitude = location.latitude,
+            longitude = location.longitude,
+            zoneId = zoneId,
+            calculationMethod = method
+        ).getOrNull() ?: return
+        val trigger = LocalTime.of(settings.dailyReminderHour, settings.dailyReminderMinute)
+            .atDate(tomorrow)
+            .atZone(zoneId)
+            .toInstant()
+        scheduleAlarm(
+            ScheduledAlarm(
+                prayerKey = "daily_reminder",
+                triggerAtMillis = trigger.toEpochMilli(),
+                requestCode = SchedulePlan.REQUEST_CODE_DAILY_REMINDER,
+                type = AlarmType.DAILY_REMINDER,
+                dailySummary = buildDailySummary(prayers)
+            )
+        )
+    }
+
+    private fun buildDailySummary(prayers: List<Prayer>): String =
+        prayers.joinToString(" · ") { prayer ->
+            val time = "${prayer.time.hour.toString().padStart(2, '0')}:" +
+                prayer.time.minute.toString().padStart(2, '0')
+            "${prayer.name} $time"
+        }
 }

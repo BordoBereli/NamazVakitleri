@@ -12,7 +12,17 @@ class AlarmReceiver : BroadcastReceiver(), KoinComponent {
 
     companion object {
         const val EXTRA_PRAYER_KEY = "extra_prayer_key"
+        const val EXTRA_ALARM_TYPE = "extra_alarm_type"
+        const val EXTRA_IS_JUMUAH = "extra_is_jumuah"
+        const val EXTRA_NEXT_PRAYER_TIME = "extra_next_prayer_time"
+        const val EXTRA_NEXT_PRAYER_NAME = "extra_next_prayer_name"
+        const val EXTRA_PRE_PRAYER_MINUTES = "extra_pre_prayer_minutes"
+        const val EXTRA_DAILY_SUMMARY = "extra_daily_summary"
+        const val EXTRA_SPECIAL_DAY = "extra_special_day"
+        const val EXTRA_COUNTDOWN_TARGET = "extra_countdown_target"
+        const val EXTRA_COUNTDOWN_PRAYER_NAME = "extra_countdown_prayer_name"
         const val ACTION_STOP_COUNTDOWN = "STOP_COUNTDOWN"
+        const val ACTION_COUNTDOWN_TICK = "COUNTDOWN_TICK"
     }
 
     private val notificationManager: PrayerNotificationManager by inject()
