@@ -370,6 +370,15 @@ class PrayerNotificationSchedulerTest {
         val scheduler = scheduler(CoroutineScope(UnconfinedTestDispatcher(testScheduler)))
         scheduler.scheduleAll()
 
-        coVerify { notificationManager.showCountdownNotification("Fajr", any(), any(), any()) }
+        val zoneId = java.time.ZoneId.of("Europe/Istanbul")
+        val today = java.time.LocalDate.now(zoneId)
+        val tomorrow = today.plusDays(1)
+        val expectedFajr = java.time.LocalTime.of(0, 1)
+            .atDate(tomorrow).atZone(zoneId).toInstant().toEpochMilli()
+        val expectedLastTrigger = java.time.LocalTime.of(0, 2)
+            .atDate(today).atZone(zoneId).toInstant().toEpochMilli()
+        coVerify {
+            notificationManager.showCountdownNotification("Fajr", expectedFajr, expectedLastTrigger, any())
+        }
     }
 }
