@@ -217,4 +217,55 @@ class SchedulePlanTest {
         assertThat(fajr.nextPrayerName).isEqualTo("Dhuhr")
         assertThat(fajr.nextPrayerTimeMillis).isNotNull()
     }
+
+    @Test
+    fun `carries previous prayer time on prayer alarms`() {
+        val plan = SchedulePlan()
+        val alarms = plan.buildDailyAlarms(
+            prayers = prayers,
+            zoneId = zone,
+            now = Instant.parse("2026-08-22T00:00:00Z"),
+            enabledPrayers = setOf("Fajr", "Dhuhr"),
+            prePrayerMinutes = 15,
+            prePrayerEnabled = false
+        )
+        val fajr = alarms.first { it.prayerKey == "Fajr" }
+        val dhuhr = alarms.first { it.prayerKey == "Dhuhr" }
+        assertThat(fajr.previousPrayerTimeMillis).isNull()
+        assertThat(dhuhr.previousPrayerTimeMillis).isEqualTo(fajr.triggerAtMillis)
+    }
+
+    @Test
+    fun `last enabled prayer points to tomorrow's Fajr when provided`() {
+        val plan = SchedulePlan()
+        val nextDayFajr = Instant.parse("2026-08-23T01:30:00Z").toEpochMilli()
+        val alarms = plan.buildDailyAlarms(
+            prayers = prayers,
+            zoneId = zone,
+            now = Instant.parse("2026-08-22T00:00:00Z"),
+            enabledPrayers = setOf("Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"),
+            prePrayerMinutes = 15,
+            prePrayerEnabled = false,
+            nextDayFajrTimeMillis = nextDayFajr
+        )
+        val isha = alarms.first { it.prayerKey == "Isha" }
+        assertThat(isha.nextPrayerName).isEqualTo("Fajr")
+        assertThat(isha.nextPrayerTimeMillis).isEqualTo(nextDayFajr)
+    }
+
+    @Test
+    fun `last enabled prayer has no next when nextDayFajr not provided`() {
+        val plan = SchedulePlan()
+        val alarms = plan.buildDailyAlarms(
+            prayers = prayers,
+            zoneId = zone,
+            now = Instant.parse("2026-08-22T00:00:00Z"),
+            enabledPrayers = setOf("Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"),
+            prePrayerMinutes = 15,
+            prePrayerEnabled = false
+        )
+        val isha = alarms.first { it.prayerKey == "Isha" }
+        assertThat(isha.nextPrayerName).isNull()
+        assertThat(isha.nextPrayerTimeMillis).isNull()
+    }
 }

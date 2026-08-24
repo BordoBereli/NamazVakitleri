@@ -15,6 +15,7 @@ data class ScheduledAlarm(
     val isJumuah: Boolean = false,
     val nextPrayerTimeMillis: Long? = null,
     val nextPrayerName: String? = null,
+    val previousPrayerTimeMillis: Long? = null,
     val prePrayerMinutes: Int? = null,
     val dailySummary: String? = null,
     val specialDay: SpecialDay? = null
@@ -43,7 +44,8 @@ class SchedulePlan {
         dailySummary: String = "",
         specialDayToday: SpecialDay? = null,
         specialDayTomorrow: SpecialDay? = null,
-        jumuahEnabled: Boolean = true
+        jumuahEnabled: Boolean = true,
+        nextDayFajrTimeMillis: Long? = null
     ): List<ScheduledAlarm> {
         val nowZoned = now.atZone(zoneId)
         val result = mutableListOf<ScheduledAlarm>()
@@ -63,6 +65,16 @@ class SchedulePlan {
                     .toInstant()
                     .toEpochMilli()
             }
+            val isLast = index == enabled.lastIndex
+            val effectiveNextTime = if (isLast) nextDayFajrTimeMillis else nextTime
+            val effectiveNextName = if (isLast && nextDayFajrTimeMillis != null) "Fajr" else next?.name
+            val previous = enabled.getOrNull(index - 1)?.let {
+                LocalTime.of(it.time.hour, it.time.minute)
+                    .atDate(nowZoned.toLocalDate())
+                    .atZone(zoneId)
+                    .toInstant()
+                    .toEpochMilli()
+            }
             if (trigger.isAfter(now)) {
                 result += ScheduledAlarm(
                     prayerKey = prayer.name,
@@ -72,8 +84,9 @@ class SchedulePlan {
                     isJumuah = jumuahEnabled &&
                         prayer.name == "Dhuhr" &&
                         nowZoned.dayOfWeek == DayOfWeek.FRIDAY,
-                    nextPrayerTimeMillis = nextTime,
-                    nextPrayerName = next?.name
+                    nextPrayerTimeMillis = effectiveNextTime,
+                    nextPrayerName = effectiveNextName,
+                    previousPrayerTimeMillis = previous
                 )
             }
             if (prePrayerEnabled) {
