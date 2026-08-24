@@ -9,6 +9,7 @@
     <string name="notification_countdown_title">%1$s · %2$s</string>
     <string name="notification_remaining">เหลือ %1$s</string>
     <string name="notification_stop">หยุด</string>
+    <string name="notification_adhan_playing">กำลังเล่นอาซาน</string>
     <string name="notification_test_title">การแจ้งเตือนทดสอบ</string>
     <string name="notification_test_body">การแจ้งเตือนทำงานได้</string>
 

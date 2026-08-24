@@ -9,6 +9,7 @@
     <string name="notification_countdown_title">%1$s · %2$s</string>
     <string name="notification_remaining">%1$s शेष</string>
     <string name="notification_stop">रोकें</string>
+    <string name="notification_adhan_playing">अज़ान बज रही है</string>
     <string name="notification_test_title">परीक्षण सूचना</string>
     <string name="notification_test_body">सूचनाएं काम कर रही हैं</string>
 

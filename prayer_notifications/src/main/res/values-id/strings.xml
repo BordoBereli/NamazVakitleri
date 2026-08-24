@@ -9,6 +9,7 @@
     <string name="notification_countdown_title">%1$s · %2$s</string>
     <string name="notification_remaining">%1$s tersisa</string>
     <string name="notification_stop">Berhenti</string>
+    <string name="notification_adhan_playing">Adzan diputar</string>
     <string name="notification_test_title">Notifikasi uji</string>
     <string name="notification_test_body">Notifikasi berfungsi</string>
 

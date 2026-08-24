@@ -9,6 +9,7 @@
     <string name="notification_countdown_title">%1$s · %2$s</string>
     <string name="notification_remaining">%1$s باقی مانده</string>
     <string name="notification_stop">توقف</string>
+    <string name="notification_adhan_playing">اذان در حال پخش است</string>
     <string name="notification_test_title">اعلان آزمایشی</string>
     <string name="notification_test_body">اعلان‌ها کار می‌کنند</string>
 

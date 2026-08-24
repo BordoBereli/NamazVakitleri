@@ -9,6 +9,7 @@
     <string name="notification_countdown_title">%1$s · %2$s</string>
     <string name="notification_remaining">%1$s kaldı</string>
     <string name="notification_stop">Durdur</string>
+    <string name="notification_adhan_playing">Ezan çalıyor</string>
     <string name="notification_test_title">Test bildirimi</string>
     <string name="notification_test_body">Bildirimler çalışıyor</string>
 

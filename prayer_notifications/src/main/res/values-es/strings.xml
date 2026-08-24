@@ -9,6 +9,7 @@
     <string name="notification_countdown_title">%1$s · %2$s</string>
     <string name="notification_remaining">Quedan %1$s</string>
     <string name="notification_stop">Detener</string>
+    <string name="notification_adhan_playing">Reproduciendo adhan</string>
     <string name="notification_test_title">Notificación de prueba</string>
     <string name="notification_test_body">Las notificaciones funcionan</string>
 
