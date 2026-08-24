@@ -82,6 +82,7 @@ class AdhanServiceTest {
         audioManager.setStreamVolume(AudioManager.STREAM_ALARM, 4, 0)
         val uri = Settings.System.getUriFor("volume_alarm_sound")
         shadowOf(context.contentResolver).getContentObservers(uri).forEach { it.onChange(false) }
+        assertThat(shadowOf(controller.get()).isStoppedBySelf()).isTrue()
         controller.destroy()
         verify { adhanPlayer.stop() }
     }
@@ -92,6 +93,7 @@ class AdhanServiceTest {
         every { adhanPlayer.setOnCompletionListener(capture(completionSlot)) } answers { }
         val controller = startService("Fajr")
         completionSlot.captured.invoke()
+        assertThat(shadowOf(controller.get()).isStoppedBySelf()).isTrue()
         controller.destroy()
         verify { adhanPlayer.stop() }
     }
