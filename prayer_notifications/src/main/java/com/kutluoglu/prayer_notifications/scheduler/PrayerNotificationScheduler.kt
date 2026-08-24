@@ -205,14 +205,14 @@ class PrayerNotificationScheduler(
         }
     }
 
-    fun updateCountdown(targetMillis: Long, prayerName: String) {
+    fun updateCountdown(targetMillis: Long, prayerName: String, previousTimeMillis: Long? = null) {
         val remaining = targetMillis - System.currentTimeMillis()
         if (remaining <= 0) {
             notificationManager.cancelCountdown()
             return
         }
-        notificationManager.showCountdownNotification(prayerName, targetMillis, null, remaining)
-        scheduleCountdownTick(targetMillis, prayerName)
+        notificationManager.showCountdownNotification(prayerName, targetMillis, previousTimeMillis, remaining)
+        scheduleCountdownTick(targetMillis, prayerName, previousTimeMillis)
     }
 
     fun cancelCountdown() {
@@ -226,11 +226,14 @@ class PrayerNotificationScheduler(
         pendingIntent?.let { alarmManager.cancel(it) }
     }
 
-    private fun scheduleCountdownTick(targetMillis: Long, prayerName: String) {
+    private fun scheduleCountdownTick(targetMillis: Long, prayerName: String, previousTimeMillis: Long?) {
         val intent = Intent(context, AlarmReceiver::class.java)
             .setAction(AlarmReceiver.ACTION_COUNTDOWN_TICK)
             .putExtra(AlarmReceiver.EXTRA_COUNTDOWN_TARGET, targetMillis)
             .putExtra(AlarmReceiver.EXTRA_COUNTDOWN_PRAYER_NAME, prayerName)
+        if (previousTimeMillis != null) {
+            intent.putExtra(AlarmReceiver.EXTRA_COUNTDOWN_PREVIOUS_TIME, previousTimeMillis)
+        }
         val pendingIntent = PendingIntent.getBroadcast(
             context, SchedulePlan.REQUEST_CODE_COUNTDOWN_TICK, intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE

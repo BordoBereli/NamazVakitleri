@@ -314,6 +314,21 @@ class PrayerNotificationSchedulerTest {
         val scheduler = scheduler(CoroutineScope(UnconfinedTestDispatcher(testScheduler)))
         scheduler.scheduleAll()
 
-        coVerify { notificationManager.showCountdownNotification("Fajr", any()) }
+        coVerify { notificationManager.showCountdownNotification("Fajr", any(), any(), any()) }
+    }
+
+    @Test
+    fun `updateCountdown schedules tick carrying previous time`() = runTest {
+        val scheduler = scheduler(CoroutineScope(UnconfinedTestDispatcher(testScheduler)))
+        val target = System.currentTimeMillis() + 3_600_000
+        val previous = System.currentTimeMillis() - 60_000
+        scheduler.updateCountdown(target, "Maghrib", previous)
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val tickAlarm = shadowOf(alarmManager).scheduledAlarms.first { alarm ->
+            shadowOf(alarm.operation).requestCode == SchedulePlan.REQUEST_CODE_COUNTDOWN_TICK
+        }
+        val intent = shadowOf(tickAlarm.operation).savedIntent
+        assertThat(intent.getLongExtra(AlarmReceiver.EXTRA_COUNTDOWN_PREVIOUS_TIME, 0L))
+            .isEqualTo(previous)
     }
 }

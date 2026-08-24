@@ -27,6 +27,7 @@ class AlarmReceiver : BroadcastReceiver(), KoinComponent {
         const val EXTRA_SPECIAL_DAY = "extra_special_day"
         const val EXTRA_COUNTDOWN_TARGET = "extra_countdown_target"
         const val EXTRA_COUNTDOWN_PRAYER_NAME = "extra_countdown_prayer_name"
+        const val EXTRA_COUNTDOWN_PREVIOUS_TIME = "extra_countdown_previous_time"
         const val ACTION_STOP_COUNTDOWN = "STOP_COUNTDOWN"
         const val ACTION_COUNTDOWN_TICK = "COUNTDOWN_TICK"
     }
