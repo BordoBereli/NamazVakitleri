@@ -8,9 +8,9 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.os.Build
 import androidx.core.app.NotificationCompat
-import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer_notifications.R
 import com.kutluoglu.prayer_notifications.domain.NotificationSettings
+import com.kutluoglu.prayer_notifications.domain.SpecialDay
 import com.kutluoglu.prayer_notifications.scheduler.AlarmReceiver
 import org.koin.core.annotation.Single
 import java.util.Locale
@@ -27,6 +27,11 @@ class PrayerNotificationManager(
         const val NOTIFICATION_ID_PRAYER = 1001
         const val NOTIFICATION_ID_COUNTDOWN = 1002
         const val NOTIFICATION_ID_TEST = 1003
+        const val NOTIFICATION_ID_JUMUAH = 1004
+        const val NOTIFICATION_ID_PRE_PRAYER = 1005
+        const val NOTIFICATION_ID_DAILY_REMINDER = 1006
+        const val NOTIFICATION_ID_SPECIAL_DAY = 1007
+        const val NOTIFICATION_ID_PRE_SPECIAL_DAY = 1008
     }
 
     private val notificationManager: NotificationManager =
@@ -76,19 +81,19 @@ class PrayerNotificationManager(
         }
     }
 
-    fun showPrayerNotification(prayer: Prayer, settings: NotificationSettings) {
+    fun showPrayerNotification(prayerName: String, settings: NotificationSettings) {
         val channel = if (settings.adhanEnabled) CHANNEL_ADHAN else CHANNEL_PRAYER_ALERTS
-        val prayerName = localizedPrayerName(prayer.name)
+        val localizedName = localizedPrayerName(prayerName)
         val builder = NotificationCompat.Builder(context, channel)
             .setSmallIcon(R.drawable.ic_notification)
-            .setContentTitle(prayerName)
-            .setContentText(localizedString(R.string.notification_prayer_time, prayerName))
+            .setContentTitle(localizedName)
+            .setContentText(localizedString(R.string.notification_prayer_time, localizedName))
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
         notificationManager.notify(NOTIFICATION_ID_PRAYER, builder.build())
     }
 
-    fun showCountdownNotification(nextPrayer: Prayer, remainingMillis: Long) {
+    fun showCountdownNotification(nextPrayerName: String, remainingMillis: Long) {
         val contentIntent = PendingIntent.getActivity(
             context, 0,
             context.packageManager.getLaunchIntentForPackage(context.packageName),
@@ -103,7 +108,7 @@ class PrayerNotificationManager(
         val notification = NotificationCompat.Builder(context, CHANNEL_COUNTDOWN)
             .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(
-                localizedString(R.string.notification_next_prayer, localizedPrayerName(nextPrayer.name))
+                localizedString(R.string.notification_next_prayer, localizedPrayerName(nextPrayerName))
             )
             .setContentText(formatRemaining(remainingMillis))
             .setOngoing(true)
@@ -127,6 +132,61 @@ class PrayerNotificationManager(
         notificationManager.notify(NOTIFICATION_ID_TEST, notification)
     }
 
+    fun showJumuahNotification() {
+        val notification = NotificationCompat.Builder(context, CHANNEL_REMINDERS)
+            .setSmallIcon(R.drawable.ic_notification)
+            .setContentTitle(localizedString(R.string.notification_jumuah_title))
+            .setContentText(localizedString(R.string.notification_jumuah_body))
+            .setAutoCancel(true)
+            .build()
+        notificationManager.notify(NOTIFICATION_ID_JUMUAH, notification)
+    }
+
+    fun showPrePrayerNotification(prayerName: String, minutes: Int) {
+        val localizedName = localizedPrayerName(prayerName)
+        val notification = NotificationCompat.Builder(context, CHANNEL_REMINDERS)
+            .setSmallIcon(R.drawable.ic_notification)
+            .setContentTitle(localizedName)
+            .setContentText(localizedString(R.string.notification_pre_prayer, minutes))
+            .setAutoCancel(true)
+            .build()
+        notificationManager.notify(NOTIFICATION_ID_PRE_PRAYER, notification)
+    }
+
+    fun showDailyReminderNotification(summary: String) {
+        val notification = NotificationCompat.Builder(context, CHANNEL_REMINDERS)
+            .setSmallIcon(R.drawable.ic_notification)
+            .setContentTitle(localizedString(R.string.notification_daily_reminder_title))
+            .setContentText(summary)
+            .setAutoCancel(true)
+            .build()
+        notificationManager.notify(NOTIFICATION_ID_DAILY_REMINDER, notification)
+    }
+
+    fun showSpecialDayNotification(day: SpecialDay) {
+        val notification = NotificationCompat.Builder(context, CHANNEL_REMINDERS)
+            .setSmallIcon(R.drawable.ic_notification)
+            .setContentTitle(localizedString(R.string.notification_special_day_title))
+            .setContentText(
+                localizedString(R.string.notification_special_day_body, localizedSpecialDay(day))
+            )
+            .setAutoCancel(true)
+            .build()
+        notificationManager.notify(NOTIFICATION_ID_SPECIAL_DAY, notification)
+    }
+
+    fun showPreSpecialDayNotification(day: SpecialDay) {
+        val notification = NotificationCompat.Builder(context, CHANNEL_REMINDERS)
+            .setSmallIcon(R.drawable.ic_notification)
+            .setContentTitle(localizedString(R.string.notification_pre_special_day_title))
+            .setContentText(
+                localizedString(R.string.notification_pre_special_day_body, localizedSpecialDay(day))
+            )
+            .setAutoCancel(true)
+            .build()
+        notificationManager.notify(NOTIFICATION_ID_PRE_SPECIAL_DAY, notification)
+    }
+
     private fun formatRemaining(millis: Long): String {
         val totalMinutes = millis / 60_000
         val hours = totalMinutes / 60
@@ -145,6 +205,13 @@ class PrayerNotificationManager(
         "Maghrib" -> localizedString(R.string.prayer_maghrib)
         "Isha" -> localizedString(R.string.prayer_isha)
         else -> key
+    }
+
+    private fun localizedSpecialDay(day: SpecialDay): String = when (day) {
+        SpecialDay.RAMADAN_START -> localizedString(R.string.special_day_ramadan_start)
+        SpecialDay.EID_AL_FITR -> localizedString(R.string.special_day_eid_al_fitr)
+        SpecialDay.EID_AL_ADHA -> localizedString(R.string.special_day_eid_al_adha)
+        SpecialDay.LAYLAT_AL_QADIR -> localizedString(R.string.special_day_laylat_al_qadr)
     }
 
     private fun localizedString(resId: Int, vararg args: Any): String {

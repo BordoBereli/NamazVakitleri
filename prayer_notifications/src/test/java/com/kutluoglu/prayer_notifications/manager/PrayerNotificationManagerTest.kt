@@ -4,10 +4,8 @@ import android.app.NotificationManager
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
-import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer_notifications.domain.NotificationSettings
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.LocalTime
+import com.kutluoglu.prayer_notifications.domain.SpecialDay
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -53,13 +51,7 @@ class PrayerNotificationManagerTest {
         try {
             Locale.setDefault(Locale("tr"))
             manager.createChannels()
-            val prayer = Prayer(
-                name = "Fajr",
-                arabicName = "الفجر",
-                time = LocalTime(4, 30),
-                date = LocalDate(2026, 8, 22)
-            )
-            manager.showPrayerNotification(prayer, NotificationSettings())
+            manager.showPrayerNotification("Fajr", NotificationSettings())
             val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             val notification = shadowOf(nm).allNotifications.single()
             assertThat(notification.extras.getString("android.title")).isEqualTo("İmsak")
@@ -80,18 +72,62 @@ class PrayerNotificationManagerTest {
     @Test
     fun `showPrayerNotification picks channel based on adhanEnabled`() {
         manager.createChannels()
-        val prayer = Prayer(
-            name = "Fajr",
-            arabicName = "الفجر",
-            time = LocalTime(4, 30),
-            date = LocalDate(2026, 8, 22)
-        )
         val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        manager.showPrayerNotification(prayer, NotificationSettings(adhanEnabled = true))
+        manager.showPrayerNotification("Fajr", NotificationSettings(adhanEnabled = true))
         assertThat(shadowOf(nm).allNotifications.single().channelId).isEqualTo("adhan")
 
-        manager.showPrayerNotification(prayer, NotificationSettings(adhanEnabled = false))
+        manager.showPrayerNotification("Fajr", NotificationSettings(adhanEnabled = false))
         assertThat(shadowOf(nm).allNotifications.single().channelId).isEqualTo("prayer_alerts")
+    }
+
+    @Test
+    fun `showPrayerNotification takes a prayer name`() {
+        manager.createChannels()
+        manager.showPrayerNotification("Fajr", NotificationSettings(adhanEnabled = false))
+        val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        assertThat(shadowOf(nm).allNotifications.single().channelId).isEqualTo("prayer_alerts")
+    }
+
+    @Test
+    fun `showJumuahNotification posts on reminders channel`() {
+        manager.createChannels()
+        manager.showJumuahNotification()
+        val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        assertThat(shadowOf(nm).allNotifications.single().channelId).isEqualTo("reminders")
+    }
+
+    @Test
+    fun `showPrePrayerNotification posts on reminders channel`() {
+        manager.createChannels()
+        manager.showPrePrayerNotification("Fajr", 15)
+        val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        assertThat(shadowOf(nm).allNotifications.single().channelId).isEqualTo("reminders")
+    }
+
+    @Test
+    fun `showDailyReminderNotification posts summary on reminders channel`() {
+        manager.createChannels()
+        manager.showDailyReminderNotification("Fajr 04:30 · Dhuhr 12:30")
+        val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notification = shadowOf(nm).allNotifications.single()
+        assertThat(notification.channelId).isEqualTo("reminders")
+        assertThat(notification.extras.getString("android.text")).isEqualTo("Fajr 04:30 · Dhuhr 12:30")
+    }
+
+    @Test
+    fun `showSpecialDayNotification posts on reminders channel`() {
+        manager.createChannels()
+        manager.showSpecialDayNotification(SpecialDay.EID_AL_FITR)
+        val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        assertThat(shadowOf(nm).allNotifications.single().channelId).isEqualTo("reminders")
+    }
+
+    @Test
+    fun `showPreSpecialDayNotification posts on reminders channel`() {
+        manager.createChannels()
+        manager.showPreSpecialDayNotification(SpecialDay.EID_AL_ADHA)
+        val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        assertThat(shadowOf(nm).allNotifications.single().channelId).isEqualTo("reminders")
     }
 }
