@@ -6,7 +6,8 @@
     <string name="channel_reminders">Hatırlatmalar</string>
 
     <string name="notification_prayer_time">%1$s vakti geldi</string>
-    <string name="notification_next_prayer">Sonraki namaz: %1$s</string>
+    <string name="notification_countdown_title">%1$s · %2$s</string>
+    <string name="notification_remaining">%1$s kaldı</string>
     <string name="notification_stop">Durdur</string>
     <string name="notification_test_title">Test bildirimi</string>
     <string name="notification_test_body">Bildirimler çalışıyor</string>

@@ -6,7 +6,8 @@
     <string name="channel_reminders">یاد دہانیاں</string>
 
     <string name="notification_prayer_time">%1$s کا وقت ہو گیا ہے</string>
-    <string name="notification_next_prayer">اگلی نماز: %1$s</string>
+    <string name="notification_countdown_title">%1$s · %2$s</string>
+    <string name="notification_remaining">%1$s باقی ہے</string>
     <string name="notification_stop">روکیں</string>
     <string name="notification_test_title">ٹیسٹ اطلاع</string>
     <string name="notification_test_body">اطلاعات کام کر رہی ہیں</string>

@@ -6,7 +6,8 @@
     <string name="channel_reminders">Peringatan</string>
 
     <string name="notification_prayer_time">Waktu %1$s kini tiba</string>
-    <string name="notification_next_prayer">Solat seterusnya: %1$s</string>
+    <string name="notification_countdown_title">%1$s · %2$s</string>
+    <string name="notification_remaining">%1$s lagi</string>
     <string name="notification_stop">Henti</string>
     <string name="notification_test_title">Notifikasi ujian</string>
     <string name="notification_test_body">Notifikasi berfungsi</string>

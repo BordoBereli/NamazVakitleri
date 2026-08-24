@@ -6,7 +6,8 @@
     <string name="channel_reminders">การแจ้งเตือน</string>
 
     <string name="notification_prayer_time">ถึงเวลาละหมาด %1$s</string>
-    <string name="notification_next_prayer">ละหมาดถัดไป: %1$s</string>
+    <string name="notification_countdown_title">%1$s · %2$s</string>
+    <string name="notification_remaining">เหลือ %1$s</string>
     <string name="notification_stop">หยุด</string>
     <string name="notification_test_title">การแจ้งเตือนทดสอบ</string>
     <string name="notification_test_body">การแจ้งเตือนทำงานได้</string>

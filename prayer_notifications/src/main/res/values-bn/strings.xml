@@ -6,7 +6,8 @@
     <string name="channel_reminders">অনুস্মারক</string>
 
     <string name="notification_prayer_time">%1$s এর সময় এখন</string>
-    <string name="notification_next_prayer">পরবর্তী নামাজ: %1$s</string>
+    <string name="notification_countdown_title">%1$s · %2$s</string>
+    <string name="notification_remaining">%1$s বাকি</string>
     <string name="notification_stop">বন্ধ করুন</string>
     <string name="notification_test_title">পরীক্ষামূলক বিজ্ঞপ্তি</string>
     <string name="notification_test_body">বিজ্ঞপ্তি কাজ করছে</string>

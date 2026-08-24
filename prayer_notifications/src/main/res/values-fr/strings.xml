@@ -6,7 +6,8 @@
     <string name="channel_reminders">Rappels</string>
 
     <string name="notification_prayer_time">C\'est l\'heure de %1$s</string>
-    <string name="notification_next_prayer">Prochaine prière : %1$s</string>
+    <string name="notification_countdown_title">%1$s · %2$s</string>
+    <string name="notification_remaining">Encore %1$s</string>
     <string name="notification_stop">Arrêter</string>
     <string name="notification_test_title">Notification de test</string>
     <string name="notification_test_body">Les notifications fonctionnent</string>

@@ -6,7 +6,8 @@
     <string name="channel_reminders">Reminders</string>
 
     <string name="notification_prayer_time">%1$s time is now</string>
-    <string name="notification_next_prayer">Next prayer: %1$s</string>
+    <string name="notification_countdown_title">%1$s · %2$s</string>
+    <string name="notification_remaining">%1$s remaining</string>
     <string name="notification_stop">Stop</string>
     <string name="notification_test_title">Test notification</string>
     <string name="notification_test_body">Notifications are working</string>
