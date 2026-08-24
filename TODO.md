@@ -22,6 +22,7 @@ Last updated: 2026-08-22
   - New `prayer_notifications` module: `NotificationSettings` model + Preferences DataStore, pure `SchedulePlan` calculator, `PrayerNotificationManager` (4 channels), `AdhanPlayer`, `PrayerNotificationScheduler` (AlarmManager exact + WorkManager daily reschedule), `AlarmReceiver`/`BootReceiver`, and 4 use cases.
   - Settings sub-screen with per-prayer toggles, adhan/countdown/pre-prayer reminder/daily reminder/jumu'ah/special-days/sound/vibration, test notification, and POST_NOTIFICATIONS + exact-alarm permission handling.
   - Note: `adhan.mp3` is a silent placeholder — the real adhan audio must be provided before release.
+  - Delivery wiring complete (2026-08-24): AlarmReceiver dispatches real prayer notifications + per-prayer adhan, daily reminder (with prayer-times summary), Jumu'ah, special days + one-day-ahead pre-special-day alerts, and a self-re-arming per-minute countdown.
   - Spec: `docs/superpowers/specs/2026-08-22-notifications-calc-method-techdebt-design.md`; Plan: `docs/superpowers/plans/2026-08-22-notifications-calc-method-techdebt.md`.
 
 - [x] **Calculation-method name fix** (2026-08-22)
