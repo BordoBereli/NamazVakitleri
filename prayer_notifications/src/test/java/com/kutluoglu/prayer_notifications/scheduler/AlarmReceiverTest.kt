@@ -3,8 +3,17 @@ package com.kutluoglu.prayer_notifications.scheduler
 import android.content.Context
 import android.content.Intent
 import androidx.test.core.app.ApplicationProvider
+import com.kutluoglu.prayer_notifications.data.NotificationSettingsDataStore
+import com.kutluoglu.prayer_notifications.domain.AlarmType
+import com.kutluoglu.prayer_notifications.domain.NotificationSettings
+import com.kutluoglu.prayer_notifications.domain.SpecialDay
 import com.kutluoglu.prayer_notifications.manager.AdhanPlayer
 import com.kutluoglu.prayer_notifications.manager.PrayerNotificationManager
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.mockk
+import io.mockk.verify
+import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -23,14 +32,21 @@ class AlarmReceiverTest {
 
     private val context: Context = ApplicationProvider.getApplicationContext()
 
+    private val notificationManager = mockk<PrayerNotificationManager>(relaxed = true)
+    private val adhanPlayer = mockk<AdhanPlayer>(relaxed = true)
+    private val scheduler = mockk<PrayerNotificationScheduler>(relaxed = true)
+    private val dataStore = mockk<NotificationSettingsDataStore>(relaxed = true)
+
     @Before
     fun setUp() {
         if (GlobalContext.getOrNull() == null) {
             startKoin {
                 androidContext(context)
                 modules(module {
-                    single { PrayerNotificationManager(get()) }
-                    single { AdhanPlayer(get()) }
+                    single { notificationManager }
+                    single { adhanPlayer }
+                    single { scheduler }
+                    single { dataStore }
                 })
             }
         }
@@ -42,17 +58,93 @@ class AlarmReceiverTest {
     }
 
     @Test
-    fun `onReceive with prayer key does not throw`() {
+    fun `prayer alarm posts prayer notification and plays adhan`() = runTest {
+        coEvery { dataStore.getSettings() } returns NotificationSettings(adhanEnabled = true)
         val receiver = AlarmReceiver()
         val intent = Intent(context, AlarmReceiver::class.java)
+            .putExtra(AlarmReceiver.EXTRA_ALARM_TYPE, AlarmType.PRAYER.name)
             .putExtra(AlarmReceiver.EXTRA_PRAYER_KEY, "Fajr")
-        receiver.onReceive(context, intent)
+        receiver.handleAlarm(intent)
+        verify { notificationManager.showPrayerNotification("Fajr", any()) }
+        verify { adhanPlayer.play("Fajr") }
     }
 
     @Test
-    fun `onReceive with STOP_COUNTDOWN action does not throw`() {
+    fun `jumuah prayer alarm posts jumuah notification`() = runTest {
+        coEvery { dataStore.getSettings() } returns NotificationSettings(jumuahEnabled = true)
         val receiver = AlarmReceiver()
-        val intent = Intent(context, AlarmReceiver::class.java).setAction("STOP_COUNTDOWN")
+        val intent = Intent(context, AlarmReceiver::class.java)
+            .putExtra(AlarmReceiver.EXTRA_ALARM_TYPE, AlarmType.PRAYER.name)
+            .putExtra(AlarmReceiver.EXTRA_PRAYER_KEY, "Dhuhr")
+            .putExtra(AlarmReceiver.EXTRA_IS_JUMUAH, true)
+        receiver.handleAlarm(intent)
+        verify { notificationManager.showJumuahNotification() }
+        verify(exactly = 0) { notificationManager.showPrayerNotification(any(), any()) }
+    }
+
+    @Test
+    fun `pre-prayer alarm posts pre-prayer notification`() = runTest {
+        coEvery { dataStore.getSettings() } returns NotificationSettings()
+        val receiver = AlarmReceiver()
+        val intent = Intent(context, AlarmReceiver::class.java)
+            .putExtra(AlarmReceiver.EXTRA_ALARM_TYPE, AlarmType.PRE_PRAYER.name)
+            .putExtra(AlarmReceiver.EXTRA_PRAYER_KEY, "Fajr_pre")
+            .putExtra(AlarmReceiver.EXTRA_PRE_PRAYER_MINUTES, 15)
+        receiver.handleAlarm(intent)
+        verify { notificationManager.showPrePrayerNotification("Fajr", 15) }
+    }
+
+    @Test
+    fun `daily reminder alarm posts summary and re-arms`() = runTest {
+        coEvery { dataStore.getSettings() } returns NotificationSettings()
+        coEvery { scheduler.scheduleDailyReminder() } returns Unit
+        val receiver = AlarmReceiver()
+        val intent = Intent(context, AlarmReceiver::class.java)
+            .putExtra(AlarmReceiver.EXTRA_ALARM_TYPE, AlarmType.DAILY_REMINDER.name)
+            .putExtra(AlarmReceiver.EXTRA_DAILY_SUMMARY, "Fajr 04:30")
+        receiver.handleAlarm(intent)
+        verify { notificationManager.showDailyReminderNotification("Fajr 04:30") }
+        coVerify { scheduler.scheduleDailyReminder() }
+    }
+
+    @Test
+    fun `special day alarm posts special day notification`() = runTest {
+        coEvery { dataStore.getSettings() } returns NotificationSettings()
+        val receiver = AlarmReceiver()
+        val intent = Intent(context, AlarmReceiver::class.java)
+            .putExtra(AlarmReceiver.EXTRA_ALARM_TYPE, AlarmType.SPECIAL_DAY.name)
+            .putExtra(AlarmReceiver.EXTRA_SPECIAL_DAY, SpecialDay.EID_AL_FITR.name)
+        receiver.handleAlarm(intent)
+        verify { notificationManager.showSpecialDayNotification(SpecialDay.EID_AL_FITR) }
+    }
+
+    @Test
+    fun `pre-special day alarm posts pre-special day notification`() = runTest {
+        coEvery { dataStore.getSettings() } returns NotificationSettings()
+        val receiver = AlarmReceiver()
+        val intent = Intent(context, AlarmReceiver::class.java)
+            .putExtra(AlarmReceiver.EXTRA_ALARM_TYPE, AlarmType.PRE_SPECIAL_DAY.name)
+            .putExtra(AlarmReceiver.EXTRA_SPECIAL_DAY, SpecialDay.RAMADAN_START.name)
+        receiver.handleAlarm(intent)
+        verify { notificationManager.showPreSpecialDayNotification(SpecialDay.RAMADAN_START) }
+    }
+
+    @Test
+    fun `countdown tick updates countdown`() {
+        val receiver = AlarmReceiver()
+        val intent = Intent(context, AlarmReceiver::class.java)
+            .setAction(AlarmReceiver.ACTION_COUNTDOWN_TICK)
+            .putExtra(AlarmReceiver.EXTRA_COUNTDOWN_TARGET, System.currentTimeMillis() + 60_000)
+            .putExtra(AlarmReceiver.EXTRA_COUNTDOWN_PRAYER_NAME, "Dhuhr")
         receiver.onReceive(context, intent)
+        verify { scheduler.updateCountdown(any(), "Dhuhr") }
+    }
+
+    @Test
+    fun `STOP_COUNTDOWN cancels countdown`() {
+        val receiver = AlarmReceiver()
+        val intent = Intent(context, AlarmReceiver::class.java).setAction(AlarmReceiver.ACTION_STOP_COUNTDOWN)
+        receiver.onReceive(context, intent)
+        verify { scheduler.cancelCountdown() }
     }
 }
