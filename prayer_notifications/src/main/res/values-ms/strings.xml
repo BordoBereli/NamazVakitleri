@@ -19,4 +19,17 @@
     <string name="prayer_asr">Asar</string>
     <string name="prayer_maghrib">Maghrib</string>
     <string name="prayer_isha">Isyak</string>
+
+    <string name="notification_jumuah_title">Jumaat</string>
+    <string name="notification_jumuah_body">Waktu solat Jumaat</string>
+    <string name="notification_pre_prayer">dalam %1$d minit</string>
+    <string name="notification_daily_reminder_title">Waktu solat hari ini</string>
+    <string name="notification_special_day_title">Hari istimewa</string>
+    <string name="notification_special_day_body">Hari ini %1$s</string>
+    <string name="notification_pre_special_day_title">Esok</string>
+    <string name="notification_pre_special_day_body">Esok %1$s</string>
+    <string name="special_day_ramadan_start">Permulaan Ramadan</string>
+    <string name="special_day_eid_al_fitr">Aidilfitri</string>
+    <string name="special_day_eid_al_adha">Aidiladha</string>
+    <string name="special_day_laylat_al_qadr">Lailatulqadar</string>
 </resources>

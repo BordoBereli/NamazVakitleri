@@ -19,4 +19,17 @@
     <string name="prayer_asr">Аср</string>
     <string name="prayer_maghrib">Магриб</string>
     <string name="prayer_isha">Иша</string>
+
+    <string name="notification_jumuah_title">Джума</string>
+    <string name="notification_jumuah_body">Время пятничной молитвы</string>
+    <string name="notification_pre_prayer">через %1$d мин</string>
+    <string name="notification_daily_reminder_title">Время намаза на сегодня</string>
+    <string name="notification_special_day_title">Особый день</string>
+    <string name="notification_special_day_body">Сегодня %1$s</string>
+    <string name="notification_pre_special_day_title">Завтра</string>
+    <string name="notification_pre_special_day_body">Завтра %1$s</string>
+    <string name="special_day_ramadan_start">Начало Рамадана</string>
+    <string name="special_day_eid_al_fitr">Ид аль-Фитр</string>
+    <string name="special_day_eid_al_adha">Ид аль-Адха</string>
+    <string name="special_day_laylat_al_qadr">Ночь Предопределения</string>
 </resources>

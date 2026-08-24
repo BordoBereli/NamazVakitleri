@@ -19,4 +19,17 @@
     <string name="prayer_asr">อัสร์</string>
     <string name="prayer_maghrib">มักริบ</string>
     <string name="prayer_isha">อิชาอ์</string>
+
+    <string name="notification_jumuah_title">ญุมุอะฮ์</string>
+    <string name="notification_jumuah_body">เวลาละหมาดวันศุกร์</string>
+    <string name="notification_pre_prayer">ใน %1$d นาที</string>
+    <string name="notification_daily_reminder_title">เวลาละหมาดวันนี้</string>
+    <string name="notification_special_day_title">วันพิเศษ</string>
+    <string name="notification_special_day_body">วันนี้คือ %1$s</string>
+    <string name="notification_pre_special_day_title">พรุ่งนี้</string>
+    <string name="notification_pre_special_day_body">พรุ่งนี้คือ %1$s</string>
+    <string name="special_day_ramadan_start">เริ่มต้นเดือนรอมฎอน</string>
+    <string name="special_day_eid_al_fitr">อีดิลฟิฏรี</string>
+    <string name="special_day_eid_al_adha">อีดิลอัฎฮา</string>
+    <string name="special_day_laylat_al_qadr">ลัยละตุลก็อดร์</string>
 </resources>

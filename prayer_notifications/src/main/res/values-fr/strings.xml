@@ -19,4 +19,17 @@
     <string name="prayer_asr">Asr</string>
     <string name="prayer_maghrib">Maghrib</string>
     <string name="prayer_isha">Icha</string>
+
+    <string name="notification_jumuah_title">Jumu\'ah</string>
+    <string name="notification_jumuah_body">Heure de la prière du vendredi</string>
+    <string name="notification_pre_prayer">dans %1$d minutes</string>
+    <string name="notification_daily_reminder_title">Heures de prière d\'aujourd\'hui</string>
+    <string name="notification_special_day_title">Jour spécial</string>
+    <string name="notification_special_day_body">Aujourd\'hui c\'est %1$s</string>
+    <string name="notification_pre_special_day_title">Demain</string>
+    <string name="notification_pre_special_day_body">Demain c\'est %1$s</string>
+    <string name="special_day_ramadan_start">Début du Ramadan</string>
+    <string name="special_day_eid_al_fitr">Aïd al-Fitr</string>
+    <string name="special_day_eid_al_adha">Aïd al-Adha</string>
+    <string name="special_day_laylat_al_qadr">Laylat al-Qadr</string>
 </resources>

@@ -19,4 +19,17 @@
     <string name="prayer_asr">अस्र</string>
     <string name="prayer_maghrib">मग़रिब</string>
     <string name="prayer_isha">ईशा</string>
+
+    <string name="notification_jumuah_title">जुमुआ</string>
+    <string name="notification_jumuah_body">जुम्मा की नमाज़ का समय</string>
+    <string name="notification_pre_prayer">%1$d मिनट में</string>
+    <string name="notification_daily_reminder_title">आज के नमाज़ के समय</string>
+    <string name="notification_special_day_title">विशेष दिन</string>
+    <string name="notification_special_day_body">आज %1$s है</string>
+    <string name="notification_pre_special_day_title">कल</string>
+    <string name="notification_pre_special_day_body">कल %1$s है</string>
+    <string name="special_day_ramadan_start">रमज़ान की शुरुआत</string>
+    <string name="special_day_eid_al_fitr">ईद-उल-फितर</string>
+    <string name="special_day_eid_al_adha">ईद-उल-अज़हा</string>
+    <string name="special_day_laylat_al_qadr">शब-ए-क़द्र</string>
 </resources>

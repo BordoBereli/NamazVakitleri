@@ -19,4 +19,17 @@
     <string name="prayer_asr">İkindi</string>
     <string name="prayer_maghrib">Akşam</string>
     <string name="prayer_isha">Yatsı</string>
+
+    <string name="notification_jumuah_title">Cuma</string>
+    <string name="notification_jumuah_body">Cuma namazı vakti</string>
+    <string name="notification_pre_prayer">%1$d dakika sonra</string>
+    <string name="notification_daily_reminder_title">Bugünün namaz vakitleri</string>
+    <string name="notification_special_day_title">Özel gün</string>
+    <string name="notification_special_day_body">Bugün %1$s</string>
+    <string name="notification_pre_special_day_title">Yarın</string>
+    <string name="notification_pre_special_day_body">Yarın %1$s</string>
+    <string name="special_day_ramadan_start">Ramazan başlangıcı</string>
+    <string name="special_day_eid_al_fitr">Ramazan Bayramı</string>
+    <string name="special_day_eid_al_adha">Kurban Bayramı</string>
+    <string name="special_day_laylat_al_qadr">Kadir Gecesi</string>
 </resources>

@@ -19,4 +19,17 @@
     <string name="prayer_asr">அஸ்ர்</string>
     <string name="prayer_maghrib">மக்ரிப்</string>
     <string name="prayer_isha">இஷா</string>
+
+    <string name="notification_jumuah_title">ஜுமுஆ</string>
+    <string name="notification_jumuah_body">வெள்ளிக்கிழமை தொழுகை நேரம்</string>
+    <string name="notification_pre_prayer">%1$d நிமிடத்தில்</string>
+    <string name="notification_daily_reminder_title">இன்றைய தொழுகை நேரங்கள்</string>
+    <string name="notification_special_day_title">சிறப்பு நாள்</string>
+    <string name="notification_special_day_body">இன்று %1$s</string>
+    <string name="notification_pre_special_day_title">நாளை</string>
+    <string name="notification_pre_special_day_body">நாளை %1$s</string>
+    <string name="special_day_ramadan_start">ரமலான் தொடக்கம்</string>
+    <string name="special_day_eid_al_fitr">ஈத் அல்-பித்ர்</string>
+    <string name="special_day_eid_al_adha">ஈத் அல்-அத்ஹா</string>
+    <string name="special_day_laylat_al_qadr">லைலத்துல் கத்ர்</string>
 </resources>

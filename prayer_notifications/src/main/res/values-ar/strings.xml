@@ -19,4 +19,17 @@
     <string name="prayer_asr">العصر</string>
     <string name="prayer_maghrib">المغرب</string>
     <string name="prayer_isha">العشاء</string>
+
+    <string name="notification_jumuah_title">جمعة</string>
+    <string name="notification_jumuah_body">وقت صلاة الجمعة</string>
+    <string name="notification_pre_prayer">بعد %1$d دقيقة</string>
+    <string name="notification_daily_reminder_title">أوقات صلاة اليوم</string>
+    <string name="notification_special_day_title">يوم خاص</string>
+    <string name="notification_special_day_body">اليوم هو %1$s</string>
+    <string name="notification_pre_special_day_title">غدًا</string>
+    <string name="notification_pre_special_day_body">غدًا هو %1$s</string>
+    <string name="special_day_ramadan_start">بداية رمضان</string>
+    <string name="special_day_eid_al_fitr">عيد الفطر</string>
+    <string name="special_day_eid_al_adha">عيد الأضحى</string>
+    <string name="special_day_laylat_al_qadr">ليلة القدر</string>
 </resources>
