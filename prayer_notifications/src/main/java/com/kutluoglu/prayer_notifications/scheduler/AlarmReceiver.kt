@@ -84,7 +84,11 @@ class AlarmReceiver : BroadcastReceiver(), KoinComponent {
                 if (settings.countdownEnabled) {
                     val nextTime = intent.getLongExtra(EXTRA_NEXT_PRAYER_TIME, 0L)
                     val nextName = intent.getStringExtra(EXTRA_NEXT_PRAYER_NAME)
-                    val previous = intent.getLongExtra(EXTRA_ALARM_TRIGGER_TIME, 0L)
+                    val previous = if (intent.hasExtra(EXTRA_ALARM_TRIGGER_TIME)) {
+                        intent.getLongExtra(EXTRA_ALARM_TRIGGER_TIME, 0L)
+                    } else {
+                        null
+                    }
                     if (nextTime > 0L && nextName != null) {
                         scheduler.updateCountdown(nextTime, nextName, previous)
                     }

@@ -142,6 +142,17 @@ class AlarmReceiverTest {
     }
 
     @Test
+    fun `countdown tick without previous time passes null`() {
+        val receiver = AlarmReceiver()
+        val intent = Intent(context, AlarmReceiver::class.java)
+            .setAction(AlarmReceiver.ACTION_COUNTDOWN_TICK)
+            .putExtra(AlarmReceiver.EXTRA_COUNTDOWN_TARGET, System.currentTimeMillis() + 60_000)
+            .putExtra(AlarmReceiver.EXTRA_COUNTDOWN_PRAYER_NAME, "Dhuhr")
+        receiver.onReceive(context, intent)
+        verify { scheduler.updateCountdown(any(), "Dhuhr", null) }
+    }
+
+    @Test
     fun `prayer alarm transitions countdown with firing prayer trigger as previous`() = runTest {
         coEvery { dataStore.getSettings() } returns NotificationSettings(countdownEnabled = true)
         val receiver = AlarmReceiver()
@@ -155,6 +166,20 @@ class AlarmReceiverTest {
             .putExtra(AlarmReceiver.EXTRA_ALARM_TRIGGER_TIME, trigger)
         receiver.handleAlarm(intent)
         verify { scheduler.updateCountdown(nextTime, "Maghrib", trigger) }
+    }
+
+    @Test
+    fun `prayer alarm without trigger time passes null previous`() = runTest {
+        coEvery { dataStore.getSettings() } returns NotificationSettings(countdownEnabled = true)
+        val receiver = AlarmReceiver()
+        val nextTime = System.currentTimeMillis() + 3_600_000
+        val intent = Intent(context, AlarmReceiver::class.java)
+            .putExtra(AlarmReceiver.EXTRA_ALARM_TYPE, AlarmType.PRAYER.name)
+            .putExtra(AlarmReceiver.EXTRA_PRAYER_KEY, "Asr")
+            .putExtra(AlarmReceiver.EXTRA_NEXT_PRAYER_TIME, nextTime)
+            .putExtra(AlarmReceiver.EXTRA_NEXT_PRAYER_NAME, "Maghrib")
+        receiver.handleAlarm(intent)
+        verify { scheduler.updateCountdown(nextTime, "Maghrib", null) }
     }
 
     @Test
