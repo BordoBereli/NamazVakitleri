@@ -193,4 +193,27 @@ class PrayerNotificationManagerTest {
         assertThat(notification.extras.getInt(Notification.EXTRA_PROGRESS_MAX)).isEqualTo(0)
         assertThat(notification.extras.getInt(Notification.EXTRA_PROGRESS)).isEqualTo(0)
     }
+
+    @Test
+    fun `buildAdhanNotification shows prayer name and playing text`() {
+        val original = Locale.getDefault()
+        try {
+            Locale.setDefault(Locale("tr"))
+            manager.createChannels()
+            val notification = manager.buildAdhanNotification("Fajr")
+            assertThat(notification.extras.getString("android.title")).isEqualTo("İmsak")
+            assertThat(notification.extras.getString("android.text")).isEqualTo("Ezan çalıyor")
+        } finally {
+            Locale.setDefault(original)
+        }
+    }
+
+    @Test
+    fun `buildAdhanNotification includes stop action and delete intent`() {
+        manager.createChannels()
+        val notification = manager.buildAdhanNotification("Fajr")
+        assertThat(notification.actions).hasLength(1)
+        assertThat(notification.actions!![0].title.toString()).isEqualTo("Stop")
+        assertThat(notification.deleteIntent).isNotNull()
+    }
 }

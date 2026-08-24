@@ -1,5 +1,6 @@
 package com.kutluoglu.prayer_notifications.manager
 
+import android.app.Notification
 import android.app.NotificationManager
 import android.app.NotificationChannel
 import android.app.PendingIntent
@@ -34,6 +35,7 @@ class PrayerNotificationManager(
         const val NOTIFICATION_ID_DAILY_REMINDER = 1006
         const val NOTIFICATION_ID_SPECIAL_DAY = 1007
         const val NOTIFICATION_ID_PRE_SPECIAL_DAY = 1008
+        const val NOTIFICATION_ID_ADHAN = 1009
     }
 
     private val notificationManager: NotificationManager =
@@ -95,6 +97,26 @@ class PrayerNotificationManager(
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
         notificationManager.notify(NOTIFICATION_ID_PRAYER, builder.build())
+    }
+
+    fun buildAdhanNotification(prayerName: String): Notification {
+        val localizedName = localizedPrayerName(prayerName)
+        val stopIntent = PendingIntent.getBroadcast(
+            context, 0,
+            Intent(context, AlarmReceiver::class.java)
+                .setAction(AlarmReceiver.ACTION_STOP_ADHAN),
+            PendingIntent.FLAG_IMMUTABLE
+        )
+        return NotificationCompat.Builder(context, CHANNEL_ADHAN)
+            .setSmallIcon(R.drawable.ic_notification)
+            .setContentTitle(localizedName)
+            .setContentText(localizedString(R.string.notification_adhan_playing))
+            .setOngoing(false)
+            .setAutoCancel(true)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setDeleteIntent(stopIntent)
+            .addAction(0, localizedString(R.string.notification_stop), stopIntent)
+            .build()
     }
 
     fun showCountdownNotification(

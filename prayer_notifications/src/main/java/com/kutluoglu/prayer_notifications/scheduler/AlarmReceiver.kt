@@ -31,6 +31,7 @@ class AlarmReceiver : BroadcastReceiver(), KoinComponent {
         const val EXTRA_ALARM_TRIGGER_TIME = "extra_alarm_trigger_time"
         const val ACTION_STOP_COUNTDOWN = "STOP_COUNTDOWN"
         const val ACTION_COUNTDOWN_TICK = "COUNTDOWN_TICK"
+        const val ACTION_STOP_ADHAN = "STOP_ADHAN"
     }
 
     private val notificationManager: PrayerNotificationManager by inject()
