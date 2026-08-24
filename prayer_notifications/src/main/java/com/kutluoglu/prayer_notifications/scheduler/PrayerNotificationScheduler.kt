@@ -224,6 +224,7 @@ class PrayerNotificationScheduler(
             .putExtra(AlarmReceiver.EXTRA_IS_JUMUAH, alarm.isJumuah)
             .putExtra(AlarmReceiver.EXTRA_NEXT_PRAYER_TIME, alarm.nextPrayerTimeMillis ?: 0L)
             .putExtra(AlarmReceiver.EXTRA_NEXT_PRAYER_NAME, alarm.nextPrayerName ?: "")
+            .putExtra(AlarmReceiver.EXTRA_ALARM_TRIGGER_TIME, alarm.triggerAtMillis)
             .putExtra(AlarmReceiver.EXTRA_PRE_PRAYER_MINUTES, alarm.prePrayerMinutes ?: 0)
             .putExtra(AlarmReceiver.EXTRA_DAILY_SUMMARY, alarm.dailySummary ?: "")
             .putExtra(AlarmReceiver.EXTRA_SPECIAL_DAY, alarm.specialDay?.name ?: "")

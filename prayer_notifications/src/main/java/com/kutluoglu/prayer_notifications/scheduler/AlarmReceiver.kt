@@ -28,6 +28,7 @@ class AlarmReceiver : BroadcastReceiver(), KoinComponent {
         const val EXTRA_COUNTDOWN_TARGET = "extra_countdown_target"
         const val EXTRA_COUNTDOWN_PRAYER_NAME = "extra_countdown_prayer_name"
         const val EXTRA_COUNTDOWN_PREVIOUS_TIME = "extra_countdown_previous_time"
+        const val EXTRA_ALARM_TRIGGER_TIME = "extra_alarm_trigger_time"
         const val ACTION_STOP_COUNTDOWN = "STOP_COUNTDOWN"
         const val ACTION_COUNTDOWN_TICK = "COUNTDOWN_TICK"
     }
@@ -44,7 +45,12 @@ class AlarmReceiver : BroadcastReceiver(), KoinComponent {
             ACTION_COUNTDOWN_TICK -> {
                 val target = intent.getLongExtra(EXTRA_COUNTDOWN_TARGET, 0L)
                 val name = intent.getStringExtra(EXTRA_COUNTDOWN_PRAYER_NAME) ?: return
-                scheduler.updateCountdown(target, name)
+                val previous = if (intent.hasExtra(EXTRA_COUNTDOWN_PREVIOUS_TIME)) {
+                    intent.getLongExtra(EXTRA_COUNTDOWN_PREVIOUS_TIME, 0L)
+                } else {
+                    null
+                }
+                scheduler.updateCountdown(target, name, previous)
             }
             else -> {
                 val pendingResult = goAsync()
@@ -78,8 +84,9 @@ class AlarmReceiver : BroadcastReceiver(), KoinComponent {
                 if (settings.countdownEnabled) {
                     val nextTime = intent.getLongExtra(EXTRA_NEXT_PRAYER_TIME, 0L)
                     val nextName = intent.getStringExtra(EXTRA_NEXT_PRAYER_NAME)
+                    val previous = intent.getLongExtra(EXTRA_ALARM_TRIGGER_TIME, 0L)
                     if (nextTime > 0L && nextName != null) {
-                        scheduler.updateCountdown(nextTime, nextName)
+                        scheduler.updateCountdown(nextTime, nextName, previous)
                     }
                 }
             }
