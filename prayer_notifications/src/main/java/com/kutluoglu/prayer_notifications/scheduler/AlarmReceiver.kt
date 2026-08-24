@@ -6,7 +6,6 @@ import android.content.Intent
 import com.kutluoglu.prayer_notifications.data.NotificationSettingsDataStore
 import com.kutluoglu.prayer_notifications.domain.AlarmType
 import com.kutluoglu.prayer_notifications.domain.SpecialDay
-import com.kutluoglu.prayer_notifications.manager.AdhanPlayer
 import com.kutluoglu.prayer_notifications.manager.PrayerNotificationManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -30,12 +29,11 @@ class AlarmReceiver : BroadcastReceiver(), KoinComponent {
         const val EXTRA_COUNTDOWN_PREVIOUS_TIME = "extra_countdown_previous_time"
         const val EXTRA_ALARM_TRIGGER_TIME = "extra_alarm_trigger_time"
         const val ACTION_STOP_COUNTDOWN = "STOP_COUNTDOWN"
-        const val ACTION_COUNTDOWN_TICK = "COUNTDOWN_TICK"
         const val ACTION_STOP_ADHAN = "STOP_ADHAN"
+        const val ACTION_COUNTDOWN_TICK = "COUNTDOWN_TICK"
     }
 
     private val notificationManager: PrayerNotificationManager by inject()
-    private val adhanPlayer: AdhanPlayer by inject()
     private val scheduler: PrayerNotificationScheduler by inject()
     private val dataStore: NotificationSettingsDataStore by inject()
     private val scope = CoroutineScope(Dispatchers.IO)
@@ -43,6 +41,7 @@ class AlarmReceiver : BroadcastReceiver(), KoinComponent {
     override fun onReceive(context: Context, intent: Intent) {
         when (intent.action) {
             ACTION_STOP_COUNTDOWN -> scheduler.cancelCountdown()
+            ACTION_STOP_ADHAN -> context.stopService(Intent(context, AdhanService::class.java))
             ACTION_COUNTDOWN_TICK -> {
                 val target = intent.getLongExtra(EXTRA_COUNTDOWN_TARGET, 0L)
                 val name = intent.getStringExtra(EXTRA_COUNTDOWN_PRAYER_NAME) ?: return
@@ -57,7 +56,7 @@ class AlarmReceiver : BroadcastReceiver(), KoinComponent {
                 val pendingResult = goAsync()
                 scope.launch {
                     try {
-                        handleAlarm(intent)
+                        handleAlarm(context, intent)
                     } finally {
                         pendingResult.finish()
                     }
@@ -66,7 +65,7 @@ class AlarmReceiver : BroadcastReceiver(), KoinComponent {
         }
     }
 
-    internal suspend fun handleAlarm(intent: Intent) {
+    internal suspend fun handleAlarm(context: Context, intent: Intent) {
         val type = intent.getStringExtra(EXTRA_ALARM_TYPE)
             ?.let { runCatching { AlarmType.valueOf(it) }.getOrNull() }
             ?: return
@@ -74,13 +73,15 @@ class AlarmReceiver : BroadcastReceiver(), KoinComponent {
         when (type) {
             AlarmType.PRAYER -> {
                 val prayerKey = intent.getStringExtra(EXTRA_PRAYER_KEY) ?: return
-                if (intent.getBooleanExtra(EXTRA_IS_JUMUAH, false) && settings.jumuahEnabled) {
+                if (settings.adhanEnabled) {
+                    context.startService(
+                        Intent(context, AdhanService::class.java)
+                            .putExtra(EXTRA_PRAYER_KEY, prayerKey)
+                    )
+                } else if (intent.getBooleanExtra(EXTRA_IS_JUMUAH, false) && settings.jumuahEnabled) {
                     notificationManager.showJumuahNotification()
                 } else {
                     notificationManager.showPrayerNotification(prayerKey, settings)
-                }
-                if (settings.adhanEnabled) {
-                    adhanPlayer.play(prayerKey)
                 }
                 if (settings.countdownEnabled) {
                     val nextTime = intent.getLongExtra(EXTRA_NEXT_PRAYER_TIME, 0L)
