@@ -12,6 +12,11 @@ class AdhanPlayer(
     private val context: Context
 ) {
     private var mediaPlayer: MediaPlayer? = null
+    private var onCompletion: (() -> Unit)? = null
+
+    fun setOnCompletionListener(listener: () -> Unit) {
+        onCompletion = listener
+    }
 
     fun play(prayerKey: String) {
         stop()
@@ -33,6 +38,7 @@ class AdhanPlayer(
                         .build()
                 )
                 setDataSource(context, android.net.Uri.parse("android.resource://${context.packageName}/$resId"))
+                setOnCompletionListener { onCompletion?.invoke() }
                 prepare()
                 start()
             }
