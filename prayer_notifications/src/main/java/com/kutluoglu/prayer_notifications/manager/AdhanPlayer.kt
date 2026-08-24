@@ -13,8 +13,16 @@ class AdhanPlayer(
 ) {
     private var mediaPlayer: MediaPlayer? = null
 
-    fun play() {
+    fun play(prayerKey: String) {
         stop()
+        val resId = when (prayerKey) {
+            "Fajr" -> R.raw.adhan_fajr
+            "Dhuhr" -> R.raw.adhan_dhuhr
+            "Asr" -> R.raw.adhan_asr
+            "Maghrib" -> R.raw.adhan_maghrib
+            "Isha" -> R.raw.adhan_isha
+            else -> R.raw.adhan_fajr
+        }
         val player = MediaPlayer()
         try {
             player.apply {
@@ -24,7 +32,7 @@ class AdhanPlayer(
                         .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
                         .build()
                 )
-                setDataSource(context, android.net.Uri.parse("android.resource://${context.packageName}/${R.raw.adhan}"))
+                setDataSource(context, android.net.Uri.parse("android.resource://${context.packageName}/$resId"))
                 prepare()
                 start()
             }

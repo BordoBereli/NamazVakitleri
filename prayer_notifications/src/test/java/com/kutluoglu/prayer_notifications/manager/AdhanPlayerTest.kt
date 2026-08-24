@@ -21,23 +21,23 @@ class AdhanPlayerTest {
     @Test
     fun `play and stop do not throw`() {
         val player = AdhanPlayer(context)
-        player.play()
+        player.play("Fajr")
         player.stop()
     }
 
     @Test
     fun `play does not throw when playback fails`() {
-        val uri = Uri.parse("android.resource://${context.packageName}/${R.raw.adhan}")
+        val uri = Uri.parse("android.resource://${context.packageName}/${R.raw.adhan_fajr}")
         ShadowMediaPlayer.addException(DataSource.toDataSource(context, uri), IOException("boom"))
         val player = AdhanPlayer(context)
-        player.play()
+        player.play("Fajr")
         player.stop()
     }
 
     @Test
     fun `stop is idempotent`() {
         val player = AdhanPlayer(context)
-        player.play()
+        player.play("Dhuhr")
         player.stop()
         player.stop()
     }
@@ -45,8 +45,8 @@ class AdhanPlayerTest {
     @Test
     fun `repeated play calls do not throw`() {
         val player = AdhanPlayer(context)
-        player.play()
-        player.play()
+        player.play("Fajr")
+        player.play("Isha")
         player.stop()
     }
 }
