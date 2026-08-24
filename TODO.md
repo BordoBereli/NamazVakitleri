@@ -30,6 +30,10 @@ Last updated: 2026-08-24
   - Countdown stays alive overnight after Isha, targeting tomorrow's Fajr.
   - Spec: `docs/superpowers/specs/2026-08-24-countdown-notification-improvement-design.md`; Plan: `docs/superpowers/plans/2026-08-24-countdown-notification-improvement.md`.
 
+- [x] **Ezan quick-stop** (2026-08-24, TDD)
+  - Ezan playback moved into a foreground `AdhanService` that shows a notification with a Stop button, stops on swipe-to-dismiss, stops when the alarm volume is lowered (volume-down), and auto-stops when the audio completes.
+  - Spec: `docs/superpowers/specs/2026-08-24-ezan-quick-stop-design.md`; Plan: `docs/superpowers/plans/2026-08-24-ezan-quick-stop.md`.
+
 - [x] **Calculation-method name fix** (2026-08-22)
   - Unified the duplicate `CalculationMethod` definitions into the `prayer/model` enum; localized display names for all 6 methods across 13 locales; enum-driven lookup in `SettingsScreen`; localized language display names.
 
