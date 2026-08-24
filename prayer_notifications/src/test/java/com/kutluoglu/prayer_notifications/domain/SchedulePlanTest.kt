@@ -114,4 +114,107 @@ class SchedulePlanTest {
         )
         assertThat(alarms.map { it.prayerKey }).containsExactly("Maghrib")
     }
+
+    @Test
+    fun `adds daily reminder alarm when enabled`() {
+        val plan = SchedulePlan()
+        val alarms = plan.buildDailyAlarms(
+            prayers = prayers,
+            zoneId = zone,
+            now = Instant.parse("2026-08-22T00:00:00Z"),
+            enabledPrayers = setOf("Fajr"),
+            prePrayerMinutes = 15,
+            prePrayerEnabled = false,
+            dailyReminderEnabled = true,
+            dailyReminderHour = 8,
+            dailyReminderMinute = 0,
+            dailySummary = "Fajr 04:30"
+        )
+        val reminder = alarms.first { it.type == AlarmType.DAILY_REMINDER }
+        assertThat(reminder.dailySummary).isEqualTo("Fajr 04:30")
+        assertThat(reminder.requestCode).isEqualTo(SchedulePlan.REQUEST_CODE_DAILY_REMINDER)
+    }
+
+    @Test
+    fun `skips daily reminder when time already passed`() {
+        val plan = SchedulePlan()
+        val alarms = plan.buildDailyAlarms(
+            prayers = prayers,
+            zoneId = zone,
+            now = Instant.parse("2026-08-22T15:00:00Z"), // 18:00 Istanbul
+            enabledPrayers = setOf("Fajr"),
+            prePrayerMinutes = 15,
+            prePrayerEnabled = false,
+            dailyReminderEnabled = true,
+            dailyReminderHour = 8,
+            dailyReminderMinute = 0
+        )
+        assertThat(alarms.none { it.type == AlarmType.DAILY_REMINDER }).isTrue()
+    }
+
+    @Test
+    fun `adds special day and pre-special day alarms`() {
+        val plan = SchedulePlan()
+        val alarms = plan.buildDailyAlarms(
+            prayers = prayers,
+            zoneId = zone,
+            now = Instant.parse("2026-08-22T00:00:00Z"),
+            enabledPrayers = setOf("Fajr"),
+            prePrayerMinutes = 15,
+            prePrayerEnabled = false,
+            specialDayToday = SpecialDay.EID_AL_FITR,
+            specialDayTomorrow = SpecialDay.EID_AL_ADHA
+        )
+        assertThat(alarms.first { it.type == AlarmType.SPECIAL_DAY }.specialDay)
+            .isEqualTo(SpecialDay.EID_AL_FITR)
+        assertThat(alarms.first { it.type == AlarmType.PRE_SPECIAL_DAY }.specialDay)
+            .isEqualTo(SpecialDay.EID_AL_ADHA)
+    }
+
+    @Test
+    fun `marks Friday Dhuhr alarm as jumuah`() {
+        // 2026-08-22 is a Saturday; use a Friday: 2026-08-21.
+        val plan = SchedulePlan()
+        val alarms = plan.buildDailyAlarms(
+            prayers = prayers,
+            zoneId = zone,
+            now = Instant.parse("2026-08-21T00:00:00Z"),
+            enabledPrayers = setOf("Dhuhr"),
+            prePrayerMinutes = 15,
+            prePrayerEnabled = false,
+            jumuahEnabled = true
+        )
+        assertThat(alarms.single().isJumuah).isTrue()
+    }
+
+    @Test
+    fun `does not mark non-Friday Dhuhr as jumuah`() {
+        val plan = SchedulePlan()
+        val alarms = plan.buildDailyAlarms(
+            prayers = prayers,
+            zoneId = zone,
+            now = Instant.parse("2026-08-22T00:00:00Z"), // Saturday
+            enabledPrayers = setOf("Dhuhr"),
+            prePrayerMinutes = 15,
+            prePrayerEnabled = false,
+            jumuahEnabled = true
+        )
+        assertThat(alarms.single().isJumuah).isFalse()
+    }
+
+    @Test
+    fun `carries next prayer time and name on prayer alarms`() {
+        val plan = SchedulePlan()
+        val alarms = plan.buildDailyAlarms(
+            prayers = prayers,
+            zoneId = zone,
+            now = Instant.parse("2026-08-22T00:00:00Z"),
+            enabledPrayers = setOf("Fajr", "Dhuhr"),
+            prePrayerMinutes = 15,
+            prePrayerEnabled = false
+        )
+        val fajr = alarms.first { it.prayerKey == "Fajr" }
+        assertThat(fajr.nextPrayerName).isEqualTo("Dhuhr")
+        assertThat(fajr.nextPrayerTimeMillis).isNotNull()
+    }
 }
