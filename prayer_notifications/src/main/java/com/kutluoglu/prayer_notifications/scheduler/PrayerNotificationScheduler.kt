@@ -147,6 +147,7 @@ class PrayerNotificationScheduler(
     }
 
     fun cancelAll() {
+        notificationManager.cancelCountdown()
         // Cancel all pending alarms by re-issuing the same PendingIntents with FLAG_NO_CREATE.
         for (code in REQUEST_CODE_START until REQUEST_CODE_END) {
             val intent = Intent(context, AlarmReceiver::class.java)

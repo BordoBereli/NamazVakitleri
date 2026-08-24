@@ -207,6 +207,13 @@ class PrayerNotificationSchedulerTest {
     }
 
     @Test
+    fun `cancelAll cancels countdown notification`() = runTest {
+        val scheduler = scheduler(CoroutineScope(UnconfinedTestDispatcher(testScheduler)))
+        scheduler.cancelAll()
+        verify { notificationManager.cancelCountdown() }
+    }
+
+    @Test
     fun `cancelCountdown cancels scheduled countdown tick alarm`() = runTest {
         val scheduler = scheduler(CoroutineScope(UnconfinedTestDispatcher(testScheduler)))
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager

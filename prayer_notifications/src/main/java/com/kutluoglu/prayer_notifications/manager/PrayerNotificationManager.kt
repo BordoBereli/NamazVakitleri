@@ -48,7 +48,8 @@ class PrayerNotificationManager(
             CHANNEL_ADHAN,
             localizedString(R.string.channel_adhan),
             NotificationManager.IMPORTANCE_HIGH,
-            settings
+            settings,
+            forceSilent = true
         )
         createChannel(
             CHANNEL_COUNTDOWN,
@@ -68,12 +69,13 @@ class PrayerNotificationManager(
         id: String,
         name: String,
         importance: Int,
-        settings: NotificationSettings
+        settings: NotificationSettings,
+        forceSilent: Boolean = false
     ) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(id, name, importance).apply {
                 enableVibration(settings.vibrationEnabled)
-                if (!settings.soundEnabled) {
+                if (!settings.soundEnabled || forceSilent) {
                     setSound(null, null)
                 }
             }

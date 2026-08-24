@@ -46,6 +46,15 @@ class PrayerNotificationManagerTest {
     }
 
     @Test
+    fun `createChannels makes adhan channel silent when sound enabled`() {
+        manager.createChannels(NotificationSettings(soundEnabled = true))
+        val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val channels = shadowOf(nm).notificationChannels
+        assertThat(channels.first { it.id == "adhan" }.sound).isNull()
+        assertThat(channels.first { it.id == "prayer_alerts" }.sound).isNotNull()
+    }
+
+    @Test
     fun `showPrayerNotification localizes prayer name and content`() {
         val original = Locale.getDefault()
         try {
