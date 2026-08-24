@@ -95,8 +95,16 @@ class PrayerNotificationScheduler(
 
         val enabled = settings.prayerToggles.filterValues { it }.keys
         val summary = buildDailySummary(prayers)
-        val specialDayToday = specialDaysCalculator.specialDayFor(today, appSettings.hijriAdjustment)
-        val specialDayTomorrow = specialDaysCalculator.specialDayFor(today.plusDays(1), appSettings.hijriAdjustment)
+        val specialDayToday = if (settings.specialDaysEnabled) {
+            specialDaysCalculator.specialDayFor(today, appSettings.hijriAdjustment)
+        } else {
+            null
+        }
+        val specialDayTomorrow = if (settings.specialDaysEnabled) {
+            specialDaysCalculator.specialDayFor(today.plusDays(1), appSettings.hijriAdjustment)
+        } else {
+            null
+        }
         val alarms = schedulePlan.buildDailyAlarms(
             prayers = prayers,
             zoneId = zoneId,
@@ -148,8 +156,14 @@ class PrayerNotificationScheduler(
             )
             pendingIntent?.let { alarmManager.cancel(it) }
         }
+        val countdownIntent = Intent(context, AlarmReceiver::class.java)
+            .setAction(AlarmReceiver.ACTION_COUNTDOWN_TICK)
+        val countdownPendingIntent = PendingIntent.getBroadcast(
+            context, SchedulePlan.REQUEST_CODE_COUNTDOWN_TICK, countdownIntent,
+            PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
+        )
+        countdownPendingIntent?.let { alarmManager.cancel(it) }
         listOf(
-            SchedulePlan.REQUEST_CODE_COUNTDOWN_TICK,
             SchedulePlan.REQUEST_CODE_DAILY_REMINDER,
             SchedulePlan.REQUEST_CODE_SPECIAL_DAY,
             SchedulePlan.REQUEST_CODE_PRE_SPECIAL_DAY
@@ -203,6 +217,7 @@ class PrayerNotificationScheduler(
     fun cancelCountdown() {
         notificationManager.cancelCountdown()
         val intent = Intent(context, AlarmReceiver::class.java)
+            .setAction(AlarmReceiver.ACTION_COUNTDOWN_TICK)
         val pendingIntent = PendingIntent.getBroadcast(
             context, SchedulePlan.REQUEST_CODE_COUNTDOWN_TICK, intent,
             PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE

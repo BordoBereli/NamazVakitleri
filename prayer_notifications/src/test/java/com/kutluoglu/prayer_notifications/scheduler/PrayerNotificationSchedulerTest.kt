@@ -14,13 +14,17 @@ import com.kutluoglu.prayer_notifications.data.NotificationSettingsDataStore
 import com.kutluoglu.prayer_notifications.domain.AlarmType
 import com.kutluoglu.prayer_notifications.domain.NotificationSettings
 import com.kutluoglu.prayer_notifications.domain.SchedulePlan
+import com.kutluoglu.prayer_notifications.domain.SpecialDay
+import com.kutluoglu.prayer_notifications.domain.SpecialDaysCalculator
 import com.kutluoglu.prayer_notifications.manager.PrayerNotificationManager
 import com.kutluoglu.prayer_settings.domain.model.LocationSettings
 import com.kutluoglu.prayer_settings.domain.model.Settings
 import com.kutluoglu.prayer_settings.domain.usecase.GetSettingsUseCase
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -47,7 +51,10 @@ class PrayerNotificationSchedulerTest {
     private val getSettingsUseCase = mockk<GetSettingsUseCase>(relaxed = true)
     private val notificationManager = mockk<PrayerNotificationManager>(relaxed = true)
 
-    private fun scheduler(scope: CoroutineScope) = PrayerNotificationScheduler(
+    private fun scheduler(
+        scope: CoroutineScope,
+        specialDaysCalculator: SpecialDaysCalculator = SpecialDaysCalculator()
+    ) = PrayerNotificationScheduler(
         context = context,
         dataStore = dataStore,
         schedulePlan = schedulePlan,
@@ -55,6 +62,7 @@ class PrayerNotificationSchedulerTest {
         locationsCoordinator = locationsCoordinator,
         getSettingsUseCase = getSettingsUseCase,
         notificationManager = notificationManager,
+        specialDaysCalculator = specialDaysCalculator,
         scope = scope
     )
 
@@ -169,22 +177,102 @@ class PrayerNotificationSchedulerTest {
     fun `cancelAll cancels countdown tick and reminder alarms`() = runTest {
         val scheduler = scheduler(CoroutineScope(UnconfinedTestDispatcher(testScheduler)))
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(context, AlarmReceiver::class.java)
+        val reminderIntent = Intent(context, AlarmReceiver::class.java)
             .putExtra(AlarmReceiver.EXTRA_ALARM_TYPE, AlarmType.DAILY_REMINDER.name)
-        val pendingIntent = PendingIntent.getBroadcast(
-            context, SchedulePlan.REQUEST_CODE_DAILY_REMINDER, intent,
+        val reminderPendingIntent = PendingIntent.getBroadcast(
+            context, SchedulePlan.REQUEST_CODE_DAILY_REMINDER, reminderIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
         alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
             System.currentTimeMillis() + 60_000,
-            pendingIntent
+            reminderPendingIntent
         )
-        assertThat(shadowOf(alarmManager).scheduledAlarms).hasSize(1)
+        val tickIntent = Intent(context, AlarmReceiver::class.java)
+            .setAction(AlarmReceiver.ACTION_COUNTDOWN_TICK)
+        val tickPendingIntent = PendingIntent.getBroadcast(
+            context, SchedulePlan.REQUEST_CODE_COUNTDOWN_TICK, tickIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        alarmManager.setExactAndAllowWhileIdle(
+            AlarmManager.RTC_WAKEUP,
+            System.currentTimeMillis() + 60_000,
+            tickPendingIntent
+        )
+        assertThat(shadowOf(alarmManager).scheduledAlarms).hasSize(2)
 
         scheduler.cancelAll()
 
         assertThat(shadowOf(alarmManager).scheduledAlarms).isEmpty()
+    }
+
+    @Test
+    fun `cancelCountdown cancels scheduled countdown tick alarm`() = runTest {
+        val scheduler = scheduler(CoroutineScope(UnconfinedTestDispatcher(testScheduler)))
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val tickIntent = Intent(context, AlarmReceiver::class.java)
+            .setAction(AlarmReceiver.ACTION_COUNTDOWN_TICK)
+        val tickPendingIntent = PendingIntent.getBroadcast(
+            context, SchedulePlan.REQUEST_CODE_COUNTDOWN_TICK, tickIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        alarmManager.setExactAndAllowWhileIdle(
+            AlarmManager.RTC_WAKEUP,
+            System.currentTimeMillis() + 60_000,
+            tickPendingIntent
+        )
+        assertThat(shadowOf(alarmManager).scheduledAlarms).hasSize(1)
+
+        scheduler.cancelCountdown()
+
+        assertThat(shadowOf(alarmManager).scheduledAlarms).isEmpty()
+    }
+
+    @Test
+    fun `scheduleAll with specialDaysEnabled false does not schedule special day alarms`() = runTest {
+        val specialDaysCalculator = mockk<SpecialDaysCalculator>(relaxed = true)
+        every { specialDaysCalculator.specialDayFor(any(), any()) } returns SpecialDay.EID_AL_FITR
+        coEvery { dataStore.getSettings() } returns NotificationSettings(
+            enabled = true,
+            specialDaysEnabled = false
+        )
+        coEvery { locationsCoordinator.resolveSelected() } returns LocationData(
+            latitude = 41.0082,
+            longitude = 28.9784,
+            country = "Turkey",
+            countryCode = "TR",
+            city = "Istanbul",
+            county = null
+        )
+        coEvery { getSettingsUseCase() } returns Settings(
+            location = LocationSettings(timeZone = "Europe/Istanbul"),
+            calculationMethod = "TURKEY_DIYANET"
+        )
+        coEvery { getPrayerTimesUseCase(any(), any(), any(), any(), any(), any()) } returns Result.success(
+            listOf(
+                Prayer(
+                    name = "Fajr",
+                    arabicName = "الفجر",
+                    time = LocalTime(23, 59),
+                    date = LocalDate(2026, 8, 22)
+                )
+            )
+        )
+
+        val scheduler = scheduler(
+            CoroutineScope(UnconfinedTestDispatcher(testScheduler)),
+            specialDaysCalculator
+        )
+        scheduler.scheduleAll()
+
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val specialDayAlarms = shadowOf(alarmManager).scheduledAlarms.filter { alarm ->
+            val requestCode = shadowOf(alarm.operation).requestCode
+            requestCode == SchedulePlan.REQUEST_CODE_SPECIAL_DAY ||
+                requestCode == SchedulePlan.REQUEST_CODE_PRE_SPECIAL_DAY
+        }
+        assertThat(specialDayAlarms).isEmpty()
+        verify(exactly = 0) { specialDaysCalculator.specialDayFor(any(), any()) }
     }
 
     @Test
