@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="channel_prayer_alerts">Waktu solat</string>
+    <string name="channel_adhan">Azan</string>
+    <string name="channel_countdown">Kiraan detik solat seterusnya</string>
+    <string name="channel_reminders">Peringatan</string>
+
+    <string name="notification_prayer_time">Waktu %1$s kini tiba</string>
+    <string name="notification_next_prayer">Solat seterusnya: %1$s</string>
+    <string name="notification_stop">Henti</string>
+    <string name="notification_test_title">Notifikasi ujian</string>
+    <string name="notification_test_body">Notifikasi berfungsi</string>
+
+    <string name="notification_remaining_hours_minutes">%1$d jam %2$d min</string>
+    <string name="notification_remaining_minutes">%1$d min</string>
+
+    <string name="prayer_fajr">Subuh</string>
+    <string name="prayer_dhuhr">Zuhur</string>
+    <string name="prayer_asr">Asar</string>
+    <string name="prayer_maghrib">Maghrib</string>
+    <string name="prayer_isha">Isyak</string>
+</resources>

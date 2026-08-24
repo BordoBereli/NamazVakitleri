@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="channel_prayer_alerts">Prayer times</string>
+    <string name="channel_adhan">Adhan</string>
+    <string name="channel_countdown">Next prayer countdown</string>
+    <string name="channel_reminders">Reminders</string>
+
+    <string name="notification_prayer_time">%1$s time is now</string>
+    <string name="notification_next_prayer">Next prayer: %1$s</string>
+    <string name="notification_stop">Stop</string>
+    <string name="notification_test_title">Test notification</string>
+    <string name="notification_test_body">Notifications are working</string>
+
+    <string name="notification_remaining_hours_minutes">%1$dh %2$dm</string>
+    <string name="notification_remaining_minutes">%1$dm</string>
+
+    <string name="prayer_fajr">Fajr</string>
+    <string name="prayer_dhuhr">Dhuhr</string>
+    <string name="prayer_asr">Asr</string>
+    <string name="prayer_maghrib">Maghrib</string>
+    <string name="prayer_isha">Isha</string>
+</resources>

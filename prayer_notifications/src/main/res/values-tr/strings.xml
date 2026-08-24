@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="channel_prayer_alerts">Namaz vakitleri</string>
+    <string name="channel_adhan">Ezan</string>
+    <string name="channel_countdown">Sonraki namaz geri sayımı</string>
+    <string name="channel_reminders">Hatırlatmalar</string>
+
+    <string name="notification_prayer_time">%1$s vakti geldi</string>
+    <string name="notification_next_prayer">Sonraki namaz: %1$s</string>
+    <string name="notification_stop">Durdur</string>
+    <string name="notification_test_title">Test bildirimi</string>
+    <string name="notification_test_body">Bildirimler çalışıyor</string>
+
+    <string name="notification_remaining_hours_minutes">%1$d sa %2$d dk</string>
+    <string name="notification_remaining_minutes">%1$d dk</string>
+
+    <string name="prayer_fajr">İmsak</string>
+    <string name="prayer_dhuhr">Öğle</string>
+    <string name="prayer_asr">İkindi</string>
+    <string name="prayer_maghrib">Akşam</string>
+    <string name="prayer_isha">Yatsı</string>
+</resources>

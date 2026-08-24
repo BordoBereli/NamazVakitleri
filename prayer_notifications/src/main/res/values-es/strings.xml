@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="channel_prayer_alerts">Horarios de oración</string>
+    <string name="channel_adhan">Adhan</string>
+    <string name="channel_countdown">Cuenta atrás para la próxima oración</string>
+    <string name="channel_reminders">Recordatorios</string>
+
+    <string name="notification_prayer_time">Es hora de %1$s</string>
+    <string name="notification_next_prayer">Próxima oración: %1$s</string>
+    <string name="notification_stop">Detener</string>
+    <string name="notification_test_title">Notificación de prueba</string>
+    <string name="notification_test_body">Las notificaciones funcionan</string>
+
+    <string name="notification_remaining_hours_minutes">%1$d h %2$d min</string>
+    <string name="notification_remaining_minutes">%1$d min</string>
+
+    <string name="prayer_fajr">Fajr</string>
+    <string name="prayer_dhuhr">Dhuhr</string>
+    <string name="prayer_asr">Asr</string>
+    <string name="prayer_maghrib">Magreb</string>
+    <string name="prayer_isha">Isha</string>
+</resources>

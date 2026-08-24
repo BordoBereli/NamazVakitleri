@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="channel_prayer_alerts">نماز کے اوقات</string>
+    <string name="channel_adhan">اذان</string>
+    <string name="channel_countdown">اگلی نماز کی الٹی گنتی</string>
+    <string name="channel_reminders">یاد دہانیاں</string>
+
+    <string name="notification_prayer_time">%1$s کا وقت ہو گیا ہے</string>
+    <string name="notification_next_prayer">اگلی نماز: %1$s</string>
+    <string name="notification_stop">روکیں</string>
+    <string name="notification_test_title">ٹیسٹ اطلاع</string>
+    <string name="notification_test_body">اطلاعات کام کر رہی ہیں</string>
+
+    <string name="notification_remaining_hours_minutes">%1$d گھنٹے %2$d منٹ</string>
+    <string name="notification_remaining_minutes">%1$d منٹ</string>
+
+    <string name="prayer_fajr">فجر</string>
+    <string name="prayer_dhuhr">ظہر</string>
+    <string name="prayer_asr">عصر</string>
+    <string name="prayer_maghrib">مغرب</string>
+    <string name="prayer_isha">عشاء</string>
+</resources>

@@ -5,6 +5,7 @@ import android.app.NotificationChannel
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.kutluoglu.prayer.model.prayer.Prayer
@@ -12,6 +13,7 @@ import com.kutluoglu.prayer_notifications.R
 import com.kutluoglu.prayer_notifications.domain.NotificationSettings
 import com.kutluoglu.prayer_notifications.scheduler.AlarmReceiver
 import org.koin.core.annotation.Single
+import java.util.Locale
 
 @Single
 class PrayerNotificationManager(
@@ -33,18 +35,28 @@ class PrayerNotificationManager(
     fun createChannels(settings: NotificationSettings = NotificationSettings()) {
         createChannel(
             CHANNEL_PRAYER_ALERTS,
-            "Prayer times",
+            localizedString(R.string.channel_prayer_alerts),
             NotificationManager.IMPORTANCE_HIGH,
             settings
         )
-        createChannel(CHANNEL_ADHAN, "Adhan", NotificationManager.IMPORTANCE_HIGH, settings)
+        createChannel(
+            CHANNEL_ADHAN,
+            localizedString(R.string.channel_adhan),
+            NotificationManager.IMPORTANCE_HIGH,
+            settings
+        )
         createChannel(
             CHANNEL_COUNTDOWN,
-            "Next prayer countdown",
+            localizedString(R.string.channel_countdown),
             NotificationManager.IMPORTANCE_LOW,
             settings
         )
-        createChannel(CHANNEL_REMINDERS, "Reminders", NotificationManager.IMPORTANCE_DEFAULT, settings)
+        createChannel(
+            CHANNEL_REMINDERS,
+            localizedString(R.string.channel_reminders),
+            NotificationManager.IMPORTANCE_DEFAULT,
+            settings
+        )
     }
 
     private fun createChannel(
@@ -66,10 +78,11 @@ class PrayerNotificationManager(
 
     fun showPrayerNotification(prayer: Prayer, settings: NotificationSettings) {
         val channel = if (settings.adhanEnabled) CHANNEL_ADHAN else CHANNEL_PRAYER_ALERTS
+        val prayerName = localizedPrayerName(prayer.name)
         val builder = NotificationCompat.Builder(context, channel)
             .setSmallIcon(R.drawable.ic_notification)
-            .setContentTitle(prayer.name)
-            .setContentText("${prayer.name} time is now")
+            .setContentTitle(prayerName)
+            .setContentText(localizedString(R.string.notification_prayer_time, prayerName))
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
         notificationManager.notify(NOTIFICATION_ID_PRAYER, builder.build())
@@ -89,11 +102,13 @@ class PrayerNotificationManager(
         )
         val notification = NotificationCompat.Builder(context, CHANNEL_COUNTDOWN)
             .setSmallIcon(R.drawable.ic_notification)
-            .setContentTitle("Next prayer: ${nextPrayer.name}")
+            .setContentTitle(
+                localizedString(R.string.notification_next_prayer, localizedPrayerName(nextPrayer.name))
+            )
             .setContentText(formatRemaining(remainingMillis))
             .setOngoing(true)
             .setContentIntent(contentIntent)
-            .addAction(0, "Stop", stopIntent)
+            .addAction(0, localizedString(R.string.notification_stop), stopIntent)
             .build()
         notificationManager.notify(NOTIFICATION_ID_COUNTDOWN, notification)
     }
@@ -105,8 +120,8 @@ class PrayerNotificationManager(
     fun showTestNotification() {
         val notification = NotificationCompat.Builder(context, CHANNEL_PRAYER_ALERTS)
             .setSmallIcon(R.drawable.ic_notification)
-            .setContentTitle("Test notification")
-            .setContentText("Notifications are working")
+            .setContentTitle(localizedString(R.string.notification_test_title))
+            .setContentText(localizedString(R.string.notification_test_body))
             .setAutoCancel(true)
             .build()
         notificationManager.notify(NOTIFICATION_ID_TEST, notification)
@@ -116,6 +131,25 @@ class PrayerNotificationManager(
         val totalMinutes = millis / 60_000
         val hours = totalMinutes / 60
         val minutes = totalMinutes % 60
-        return if (hours > 0) "${hours}h ${minutes}m" else "${minutes}m"
+        return if (hours > 0) {
+            localizedString(R.string.notification_remaining_hours_minutes, hours, minutes)
+        } else {
+            localizedString(R.string.notification_remaining_minutes, minutes)
+        }
+    }
+
+    private fun localizedPrayerName(key: String): String = when (key) {
+        "Fajr" -> localizedString(R.string.prayer_fajr)
+        "Dhuhr" -> localizedString(R.string.prayer_dhuhr)
+        "Asr" -> localizedString(R.string.prayer_asr)
+        "Maghrib" -> localizedString(R.string.prayer_maghrib)
+        "Isha" -> localizedString(R.string.prayer_isha)
+        else -> key
+    }
+
+    private fun localizedString(resId: Int, vararg args: Any): String {
+        val config = Configuration(context.resources.configuration)
+        config.setLocale(Locale.getDefault())
+        return context.createConfigurationContext(config).getString(resId, *args)
     }
 }

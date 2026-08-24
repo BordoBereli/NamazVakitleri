@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="channel_prayer_alerts">เวลาละหมาด</string>
+    <string name="channel_adhan">อาซาน</string>
+    <string name="channel_countdown">การนับถอยหลังละหมาดถัดไป</string>
+    <string name="channel_reminders">การแจ้งเตือน</string>
+
+    <string name="notification_prayer_time">ถึงเวลาละหมาด %1$s</string>
+    <string name="notification_next_prayer">ละหมาดถัดไป: %1$s</string>
+    <string name="notification_stop">หยุด</string>
+    <string name="notification_test_title">การแจ้งเตือนทดสอบ</string>
+    <string name="notification_test_body">การแจ้งเตือนทำงานได้</string>
+
+    <string name="notification_remaining_hours_minutes">%1$d ชม. %2$d นาที</string>
+    <string name="notification_remaining_minutes">%1$d นาที</string>
+
+    <string name="prayer_fajr">ฟัจญร์</string>
+    <string name="prayer_dhuhr">ดุฮ์รี</string>
+    <string name="prayer_asr">อัสร์</string>
+    <string name="prayer_maghrib">มักริบ</string>
+    <string name="prayer_isha">อิชาอ์</string>
+</resources>

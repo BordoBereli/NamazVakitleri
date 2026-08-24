@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="channel_prayer_alerts">Время намаза</string>
+    <string name="channel_adhan">Азан</string>
+    <string name="channel_countdown">Обратный отсчёт до следующего намаза</string>
+    <string name="channel_reminders">Напоминания</string>
+
+    <string name="notification_prayer_time">Время %1$s настало</string>
+    <string name="notification_next_prayer">Следующий намаз: %1$s</string>
+    <string name="notification_stop">Стоп</string>
+    <string name="notification_test_title">Тестовое уведомление</string>
+    <string name="notification_test_body">Уведомления работают</string>
+
+    <string name="notification_remaining_hours_minutes">%1$d ч %2$d мин</string>
+    <string name="notification_remaining_minutes">%1$d мин</string>
+
+    <string name="prayer_fajr">Фаджр</string>
+    <string name="prayer_dhuhr">Зухр</string>
+    <string name="prayer_asr">Аср</string>
+    <string name="prayer_maghrib">Магриб</string>
+    <string name="prayer_isha">Иша</string>
+</resources>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="channel_prayer_alerts">নামাজের সময়</string>
+    <string name="channel_adhan">আজান</string>
+    <string name="channel_countdown">পরবর্তী নামাজের কাউন্টডাউন</string>
+    <string name="channel_reminders">অনুস্মারক</string>
+
+    <string name="notification_prayer_time">%1$s এর সময় এখন</string>
+    <string name="notification_next_prayer">পরবর্তী নামাজ: %1$s</string>
+    <string name="notification_stop">বন্ধ করুন</string>
+    <string name="notification_test_title">পরীক্ষামূলক বিজ্ঞপ্তি</string>
+    <string name="notification_test_body">বিজ্ঞপ্তি কাজ করছে</string>
+
+    <string name="notification_remaining_hours_minutes">%1$d ঘ %2$d মি</string>
+    <string name="notification_remaining_minutes">%1$d মি</string>
+
+    <string name="prayer_fajr">ফজর</string>
+    <string name="prayer_dhuhr">যোহর</string>
+    <string name="prayer_asr">আসর</string>
+    <string name="prayer_maghrib">মাগরিব</string>
+    <string name="prayer_isha">ইশা</string>
+</resources>
