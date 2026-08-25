@@ -2,11 +2,15 @@ package com.kutluoglu.prayer_feature.settings.notifications
 
 import android.Manifest
 import androidx.activity.ComponentActivity
+import androidx.compose.ui.semantics.ProgressBarRangeInfo
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasProgressBarRangeInfo
 import androidx.compose.ui.test.isToggleable
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performSemanticsAction
 import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.prayer_feature.settings.R
 import com.kutluoglu.prayer_notifications.domain.NotificationSettings
@@ -184,5 +188,39 @@ class NotificationsScreenTest {
     @Test
     fun `shouldShowNotificationRationale returns false when no rationale`() {
         assertThat(shouldShowNotificationRationale(showRationale = false, hasPermission = false)).isFalse()
+    }
+
+    @Test
+    fun `shows adhan volume slider when adhan enabled`() {
+        launchScreen(
+            NotificationSettings(enabled = true, adhanEnabled = true, adhanVolume = 30)
+        )
+
+        composeTestRule.onNodeWithText(
+            composeTestRule.activity.getString(R.string.adhan_volume)
+        ).assertIsDisplayed()
+        composeTestRule.onNodeWithText("30%").assertIsDisplayed()
+    }
+
+    @Test
+    fun `hides adhan volume slider when adhan disabled`() {
+        launchScreen(NotificationSettings(enabled = true, adhanEnabled = false))
+
+        composeTestRule.onNodeWithText(
+            composeTestRule.activity.getString(R.string.adhan_volume)
+        ).assertDoesNotExist()
+    }
+
+    @Test
+    fun `adjusting adhan volume slider emits SetAdhanVolume`() {
+        launchScreen(
+            NotificationSettings(enabled = true, adhanEnabled = true, adhanVolume = 30)
+        )
+
+        composeTestRule.onNode(hasProgressBarRangeInfo(ProgressBarRangeInfo(30f, 0f..100f)))
+            .performSemanticsAction(SemanticsActions.SetProgress) { it(50f) }
+        composeTestRule.waitForIdle()
+
+        coVerify { updateUseCase(match { it.adhanVolume == 50 }) }
     }
 }

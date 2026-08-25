@@ -32,6 +32,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -247,6 +248,12 @@ private fun NotificationsContent(
                 }
             }
         )
+        if (settings.adhanEnabled) {
+            AdhanVolumeSlider(
+                volume = settings.adhanVolume,
+                onVolumeChange = { onEvent(NotificationsEvent.SetAdhanVolume(it)) }
+            )
+        }
         ToggleRow(
             title = stringResource(R.string.countdown),
             checked = settings.countdownEnabled,
@@ -348,6 +355,39 @@ private fun ToggleRow(
             modifier = Modifier.weight(1f)
         )
         Switch(checked = checked, onCheckedChange = onCheckedChange)
+    }
+}
+
+@Composable
+private fun AdhanVolumeSlider(
+    volume: Int,
+    onVolumeChange: (Int) -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = stringResource(R.string.adhan_volume),
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Text(
+                text = "$volume%",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+        Slider(
+            value = volume.toFloat(),
+            onValueChange = { onVolumeChange(it.toInt()) },
+            valueRange = 0f..100f
+        )
     }
 }
 
