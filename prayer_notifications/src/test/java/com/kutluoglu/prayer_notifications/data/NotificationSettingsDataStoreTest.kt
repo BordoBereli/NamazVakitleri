@@ -31,6 +31,7 @@ class NotificationSettingsDataStoreTest {
         assertThat(settings.enabled).isFalse()
         assertThat(settings.prayerToggles["Fajr"]).isTrue()
         assertThat(settings.prePrayerMinutes).isEqualTo(15)
+        assertThat(settings.adhanEnabled).isFalse()
     }
 
     @Test

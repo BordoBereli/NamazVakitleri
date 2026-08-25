@@ -124,6 +124,7 @@ private fun NotificationsContent(
     var showTimePicker by remember { mutableStateOf(false) }
     var showNotificationRationale by remember { mutableStateOf(false) }
     var notificationPermanentlyDenied by remember { mutableStateOf(false) }
+    var pendingPermissionAction by remember { mutableStateOf<(() -> Unit)?>(null) }
     val context = LocalContext.current
     val activity = LocalActivity.current
 
@@ -157,7 +158,8 @@ private fun NotificationsContent(
         contract = ActivityResultContracts.RequestPermission()
     ) { granted ->
         if (granted) {
-            onEvent(NotificationsEvent.SetEnabled(true))
+            pendingPermissionAction?.invoke()
+            pendingPermissionAction = null
             showNotificationRationale = false
         } else {
             notificationPermanentlyDenied = activity == null ||
@@ -181,6 +183,7 @@ private fun NotificationsContent(
             checked = settings.enabled,
             onCheckedChange = { enabled ->
                 if (enabled && !hasNotificationPermission) {
+                    pendingPermissionAction = { onEvent(NotificationsEvent.SetEnabled(true)) }
                     showNotificationRationale = false
                     notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                 } else {
@@ -234,7 +237,15 @@ private fun NotificationsContent(
         ToggleRow(
             title = stringResource(R.string.adhan),
             checked = settings.adhanEnabled,
-            onCheckedChange = { onEvent(NotificationsEvent.SetAdhanEnabled(it)) }
+            onCheckedChange = { enabled ->
+                if (enabled && !hasNotificationPermission) {
+                    pendingPermissionAction = { onEvent(NotificationsEvent.SetAdhanEnabled(true)) }
+                    showNotificationRationale = false
+                    notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                } else {
+                    onEvent(NotificationsEvent.SetAdhanEnabled(enabled))
+                }
+            }
         )
         ToggleRow(
             title = stringResource(R.string.countdown),

@@ -28,7 +28,7 @@ class NotificationUseCasesTest {
     fun `UpdateNotificationSettingsUseCase persists and reschedules`() = runTest {
         val scheduler = mockk<PrayerNotificationScheduler>(relaxed = true)
         val useCase = UpdateNotificationSettingsUseCase(dataStore, scheduler, notificationManager)
-        useCase(NotificationSettings(enabled = true))
+        useCase(NotificationSettings(enabled = true, adhanEnabled = true))
         coVerify { dataStore.updateEnabled(true) }
         coVerify { dataStore.updateAdhanEnabled(true) }
         coVerify { dataStore.updateCountdownEnabled(true) }

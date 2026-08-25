@@ -107,6 +107,20 @@ class NotificationsScreenTest {
     }
 
     @Test
+    fun `toggling adhan on without permission requests notification permission`() {
+        shadowOf(composeTestRule.activity).denyPermissions(Manifest.permission.POST_NOTIFICATIONS)
+        launchScreen(NotificationSettings(enabled = true, adhanEnabled = false))
+
+        composeTestRule.onAllNodes(isToggleable())[6].performClick()
+        composeTestRule.waitForIdle()
+
+        assertThat(shadowOf(composeTestRule.activity).lastRequestedPermission.requestedPermissions)
+            .asList()
+            .contains(Manifest.permission.POST_NOTIFICATIONS)
+        coVerify(exactly = 0) { updateUseCase(any()) }
+    }
+
+    @Test
     fun `shows grant permission action when rationale shown and permission missing`() {
         composeTestRule.setContent {
             NotificationPermissionRationale(

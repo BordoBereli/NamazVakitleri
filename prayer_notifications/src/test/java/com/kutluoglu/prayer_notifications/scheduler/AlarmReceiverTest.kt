@@ -14,6 +14,7 @@ import com.kutluoglu.prayer_notifications.manager.PrayerNotificationManager
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import io.mockk.spyk
 import io.mockk.verify
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -72,6 +73,18 @@ class AlarmReceiverTest {
         assertThat(started?.component?.className).isEqualTo(AdhanService::class.java.name)
         verify(exactly = 0) { notificationManager.showPrayerNotification(any(), any()) }
         verify(exactly = 0) { adhanPlayer.play(any()) }
+    }
+
+    @Test
+    fun `prayer alarm with adhan enabled starts adhan service as foreground`() = runTest {
+        coEvery { dataStore.getSettings() } returns NotificationSettings(adhanEnabled = true)
+        val receiver = AlarmReceiver()
+        val spyContext = spyk(context)
+        val intent = Intent(context, AlarmReceiver::class.java)
+            .putExtra(AlarmReceiver.EXTRA_ALARM_TYPE, AlarmType.PRAYER.name)
+            .putExtra(AlarmReceiver.EXTRA_PRAYER_KEY, "Fajr")
+        receiver.handleAlarm(spyContext, intent)
+        verify { spyContext.startForegroundService(any()) }
     }
 
     @Test

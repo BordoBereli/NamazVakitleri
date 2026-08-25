@@ -74,7 +74,7 @@ class AlarmReceiver : BroadcastReceiver(), KoinComponent {
             AlarmType.PRAYER -> {
                 val prayerKey = intent.getStringExtra(EXTRA_PRAYER_KEY) ?: return
                 if (settings.adhanEnabled) {
-                    context.startService(
+                    context.startForegroundService(
                         Intent(context, AdhanService::class.java)
                             .putExtra(EXTRA_PRAYER_KEY, prayerKey)
                     )

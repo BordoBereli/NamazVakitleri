@@ -3,7 +3,7 @@ package com.kutluoglu.prayer_notifications.domain
 data class NotificationSettings(
     val enabled: Boolean = false,
     val prayerToggles: Map<String, Boolean> = defaultPrayerToggles(),
-    val adhanEnabled: Boolean = true,
+    val adhanEnabled: Boolean = false,
     val countdownEnabled: Boolean = true,
     val dailyReminderEnabled: Boolean = false,
     val dailyReminderHour: Int = 8,
