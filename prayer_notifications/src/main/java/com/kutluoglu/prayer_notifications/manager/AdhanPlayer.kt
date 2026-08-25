@@ -18,8 +18,9 @@ class AdhanPlayer(
         onCompletion = listener
     }
 
-    fun play(prayerKey: String) {
+    fun play(prayerKey: String, volumePercent: Int) {
         stop()
+        val volume = volumePercent.coerceIn(0, 100) / 100f
         val resId = when (prayerKey) {
             "Fajr" -> R.raw.adhan_fajr
             "Dhuhr" -> R.raw.adhan_dhuhr
@@ -41,6 +42,7 @@ class AdhanPlayer(
                 setOnCompletionListener { onCompletion?.invoke() }
                 prepare()
                 start()
+                setVolume(volume, volume)
             }
             mediaPlayer = player
         } catch (e: Exception) {

@@ -72,7 +72,7 @@ class AlarmReceiverTest {
         val started = shadowOf(context as Application).getNextStartedService()
         assertThat(started?.component?.className).isEqualTo(AdhanService::class.java.name)
         verify(exactly = 0) { notificationManager.showPrayerNotification(any(), any()) }
-        verify(exactly = 0) { adhanPlayer.play(any()) }
+        verify(exactly = 0) { adhanPlayer.play(any(), any()) }
     }
 
     @Test
@@ -96,7 +96,7 @@ class AlarmReceiverTest {
             .putExtra(AlarmReceiver.EXTRA_PRAYER_KEY, "Fajr")
         receiver.handleAlarm(context, intent)
         verify { notificationManager.showPrayerNotification("Fajr", any()) }
-        verify(exactly = 0) { adhanPlayer.play(any()) }
+        verify(exactly = 0) { adhanPlayer.play(any(), any()) }
     }
 
     @Test

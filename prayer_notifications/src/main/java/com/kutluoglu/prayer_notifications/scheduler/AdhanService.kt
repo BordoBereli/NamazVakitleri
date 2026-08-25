@@ -50,7 +50,7 @@ class AdhanService : Service(), KoinComponent {
             stopSelf()
             return START_NOT_STICKY
         }
-        adhanPlayer.play(prayerKey)
+        adhanPlayer.play(prayerKey, 30)
         startForeground(
             PrayerNotificationManager.NOTIFICATION_ID_ADHAN,
             notificationManager.buildAdhanNotification(prayerKey)

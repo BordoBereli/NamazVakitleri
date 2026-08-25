@@ -69,7 +69,7 @@ class AdhanServiceTest {
     @Test
     fun `onStartCommand plays adhan and shows foreground notification`() {
         startService("Fajr")
-        verify { adhanPlayer.play("Fajr") }
+        verify { adhanPlayer.play("Fajr", 30) }
         val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         assertThat(shadowOf(nm).allNotifications).isNotEmpty()
     }
