@@ -8,8 +8,14 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import android.provider.Settings
+import com.kutluoglu.prayer_notifications.data.NotificationSettingsDataStore
 import com.kutluoglu.prayer_notifications.manager.AdhanPlayer
 import com.kutluoglu.prayer_notifications.manager.PrayerNotificationManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -21,6 +27,9 @@ class AdhanService : Service(), KoinComponent {
 
     private val adhanPlayer: AdhanPlayer by inject()
     private val notificationManager: PrayerNotificationManager by inject()
+    private val dataStore: NotificationSettingsDataStore by inject()
+
+    private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
     private val audioManager: AudioManager by lazy {
         getSystemService(AUDIO_SERVICE) as AudioManager
@@ -50,11 +59,14 @@ class AdhanService : Service(), KoinComponent {
             stopSelf()
             return START_NOT_STICKY
         }
-        adhanPlayer.play(prayerKey, 30)
         startForeground(
             PrayerNotificationManager.NOTIFICATION_ID_ADHAN,
             notificationManager.buildAdhanNotification(prayerKey)
         )
+        serviceScope.launch {
+            val volume = dataStore.getSettings().adhanVolume
+            adhanPlayer.play(prayerKey, volume)
+        }
         lastAlarmVolume = audioManager.getStreamVolume(AudioManager.STREAM_ALARM)
         registerVolumeObserver()
         return START_NOT_STICKY
@@ -77,6 +89,7 @@ class AdhanService : Service(), KoinComponent {
     }
 
     override fun onDestroy() {
+        serviceScope.cancel()
         unregisterVolumeObserver()
         adhanPlayer.stop()
         stopForeground(STOP_FOREGROUND_REMOVE)

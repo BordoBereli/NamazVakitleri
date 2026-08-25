@@ -8,8 +8,11 @@ import android.provider.Settings
 import androidx.core.app.NotificationCompat
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
+import com.kutluoglu.prayer_notifications.data.NotificationSettingsDataStore
+import com.kutluoglu.prayer_notifications.domain.NotificationSettings
 import com.kutluoglu.prayer_notifications.manager.AdhanPlayer
 import com.kutluoglu.prayer_notifications.manager.PrayerNotificationManager
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
@@ -37,6 +40,7 @@ class AdhanServiceTest {
 
     private val adhanPlayer = mockk<AdhanPlayer>(relaxed = true)
     private val notificationManager = mockk<PrayerNotificationManager>(relaxed = true)
+    private val dataStore = mockk<NotificationSettingsDataStore>(relaxed = true)
 
     @Before
     fun setUp() {
@@ -46,11 +50,13 @@ class AdhanServiceTest {
                 modules(module {
                     single { adhanPlayer }
                     single { notificationManager }
+                    single { dataStore }
                 })
             }
         }
         every { notificationManager.buildAdhanNotification(any()) } returns
             NotificationCompat.Builder(context, "adhan").build()
+        coEvery { dataStore.getSettings() } returns NotificationSettings(adhanVolume = 50)
     }
 
     @After
@@ -69,7 +75,7 @@ class AdhanServiceTest {
     @Test
     fun `onStartCommand plays adhan and shows foreground notification`() {
         startService("Fajr")
-        verify { adhanPlayer.play("Fajr", 30) }
+        verify { adhanPlayer.play("Fajr", 50) }
         val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         assertThat(shadowOf(nm).allNotifications).isNotEmpty()
     }
