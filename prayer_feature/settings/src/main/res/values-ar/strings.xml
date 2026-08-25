@@ -74,6 +74,7 @@
     <string name="prayer_maghrib">المغرب</string>
     <string name="prayer_isha">العشاء</string>
     <string name="adhan">الأذان</string>
+    <string name="adhan_volume">حجم الأذان</string>
     <string name="countdown">العد التنازلي</string>
     <string name="pre_prayer_reminder">تذكير قبل الصلاة</string>
     <string name="daily_reminder">تذكير يومي</string>

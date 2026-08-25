@@ -74,6 +74,7 @@
     <string name="prayer_maghrib">Maghrib</string>
     <string name="prayer_isha">Isyak</string>
     <string name="adhan">Azan</string>
+    <string name="adhan_volume">Kelantangan Azan</string>
     <string name="countdown">Kiraan detik</string>
     <string name="pre_prayer_reminder">Peringatan sebelum solat</string>
     <string name="daily_reminder">Peringatan harian</string>

@@ -74,6 +74,7 @@
     <string name="prayer_maghrib">Магриб</string>
     <string name="prayer_isha">Иша</string>
     <string name="adhan">Азан</string>
+    <string name="adhan_volume">Громкость азана</string>
     <string name="countdown">Обратный отсчёт</string>
     <string name="pre_prayer_reminder">Напоминание перед намазом</string>
     <string name="daily_reminder">Ежедневное напоминание</string>

@@ -74,6 +74,7 @@
     <string name="prayer_maghrib">Magreb</string>
     <string name="prayer_isha">Isha</string>
     <string name="adhan">Adhan</string>
+    <string name="adhan_volume">Volumen del Adhan</string>
     <string name="countdown">Cuenta atrás</string>
     <string name="pre_prayer_reminder">Recordatorio antes de la oración</string>
     <string name="daily_reminder">Recordatorio diario</string>

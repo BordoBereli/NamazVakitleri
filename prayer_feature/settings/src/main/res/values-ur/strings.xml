@@ -74,6 +74,7 @@
     <string name="prayer_maghrib">مغرب</string>
     <string name="prayer_isha">عشاء</string>
     <string name="adhan">اذان</string>
+    <string name="adhan_volume">اذان کی آواز</string>
     <string name="countdown">الٹی گنتی</string>
     <string name="pre_prayer_reminder">نماز سے پہلے یاد دہانی</string>
     <string name="daily_reminder">روزانہ یاد دہانی</string>

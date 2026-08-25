@@ -74,6 +74,7 @@
     <string name="prayer_maghrib">Maghrib</string>
     <string name="prayer_isha">Isha</string>
     <string name="adhan">Adhan</string>
+    <string name="adhan_volume">Adhan-Lautstärke</string>
     <string name="countdown">Countdown</string>
     <string name="pre_prayer_reminder">Erinnerung vor dem Gebet</string>
     <string name="daily_reminder">Tägliche Erinnerung</string>

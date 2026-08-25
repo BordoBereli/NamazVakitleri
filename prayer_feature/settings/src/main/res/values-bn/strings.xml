@@ -74,6 +74,7 @@
     <string name="prayer_maghrib">মাগরিব</string>
     <string name="prayer_isha">ইশা</string>
     <string name="adhan">আজান</string>
+    <string name="adhan_volume">আজানের ভলিউম</string>
     <string name="countdown">কাউন্টডাউন</string>
     <string name="pre_prayer_reminder">নামাজের আগে অনুস্মারক</string>
     <string name="daily_reminder">দৈনিক অনুস্মারক</string>

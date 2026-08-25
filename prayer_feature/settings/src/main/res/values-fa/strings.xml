@@ -74,6 +74,7 @@
     <string name="prayer_maghrib">مغرب</string>
     <string name="prayer_isha">عشاء</string>
     <string name="adhan">اذان</string>
+    <string name="adhan_volume">صدای اذان</string>
     <string name="countdown">شمارش معکوس</string>
     <string name="pre_prayer_reminder">یادآوری قبل از نماز</string>
     <string name="daily_reminder">یادآوری روزانه</string>

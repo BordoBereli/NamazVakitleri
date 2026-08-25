@@ -74,6 +74,7 @@
     <string name="prayer_maghrib">มักริบ</string>
     <string name="prayer_isha">อิชาอ์</string>
     <string name="adhan">อาซาน</string>
+    <string name="adhan_volume">ระดับเสียงอาซาน</string>
     <string name="countdown">การนับถอยหลัง</string>
     <string name="pre_prayer_reminder">การเตือนก่อนละหมาด</string>
     <string name="daily_reminder">การเตือนรายวัน</string>

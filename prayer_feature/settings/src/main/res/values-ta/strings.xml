@@ -74,6 +74,7 @@
     <string name="prayer_maghrib">மக்ரிப்</string>
     <string name="prayer_isha">இஷா</string>
     <string name="adhan">அதான்</string>
+    <string name="adhan_volume">அதான் ஒலி அளவு</string>
     <string name="countdown">கவுண்டவுன்</string>
     <string name="pre_prayer_reminder">தொழுகைக்கு முன் நினைவூட்டல்</string>
     <string name="daily_reminder">தினசரி நினைவூட்டல்</string>

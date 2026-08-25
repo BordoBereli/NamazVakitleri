@@ -74,6 +74,7 @@
     <string name="prayer_maghrib">Maghrib</string>
     <string name="prayer_isha">Icha</string>
     <string name="adhan">Adhan</string>
+    <string name="adhan_volume">Volume de l\'Adhan</string>
     <string name="countdown">Compte à rebours</string>
     <string name="pre_prayer_reminder">Rappel avant la prière</string>
     <string name="daily_reminder">Rappel quotidien</string>

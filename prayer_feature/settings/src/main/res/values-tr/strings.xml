@@ -76,6 +76,7 @@
     <string name="prayer_maghrib">Akşam</string>
     <string name="prayer_isha">Yatsı</string>
     <string name="adhan">Ezan</string>
+    <string name="adhan_volume">Ezan sesi</string>
     <string name="countdown">Geri sayım</string>
     <string name="pre_prayer_reminder">Namaz öncesi hatırlatma</string>
     <string name="daily_reminder">Günlük hatırlatma</string>
