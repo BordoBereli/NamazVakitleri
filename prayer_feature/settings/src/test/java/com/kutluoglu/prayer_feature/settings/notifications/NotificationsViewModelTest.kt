@@ -75,6 +75,16 @@ class NotificationsViewModelTest {
     }
 
     @Test
+    fun `setting adhan volume persists`() = runTest {
+        coEvery { getUseCase() } returns NotificationSettings()
+
+        val viewModel = NotificationsViewModel(getUseCase, updateUseCase, notificationManager)
+        viewModel.onEvent(NotificationsEvent.SetAdhanVolume(50))
+
+        coVerify { updateUseCase(match { it.adhanVolume == 50 }) }
+    }
+
+    @Test
     fun `setting pre-prayer reminder persists minutes`() = runTest {
         coEvery { getUseCase() } returns NotificationSettings()
 
