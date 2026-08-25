@@ -34,6 +34,7 @@ class NotificationSettingsDataStore(
         val ENABLED = booleanPreferencesKey("enabled")
         val PRAYER_TOGGLES = stringPreferencesKey("prayer_toggles")
         val ADHAN_ENABLED = booleanPreferencesKey("adhan_enabled")
+        val ADHAN_VOLUME = intPreferencesKey("adhan_volume")
         val COUNTDOWN_ENABLED = booleanPreferencesKey("countdown_enabled")
         val DAILY_REMINDER_ENABLED = booleanPreferencesKey("daily_reminder_enabled")
         val DAILY_REMINDER_HOUR = intPreferencesKey("daily_reminder_hour")
@@ -62,6 +63,7 @@ class NotificationSettingsDataStore(
     }
 
     suspend fun updateAdhanEnabled(enabled: Boolean) = dataStore.edit { it[Keys.ADHAN_ENABLED] = enabled }
+    suspend fun updateAdhanVolume(volume: Int) = dataStore.edit { it[Keys.ADHAN_VOLUME] = volume }
     suspend fun updateCountdownEnabled(enabled: Boolean) = dataStore.edit { it[Keys.COUNTDOWN_ENABLED] = enabled }
     suspend fun updateDailyReminder(enabled: Boolean, hour: Int, minute: Int) = dataStore.edit {
         it[Keys.DAILY_REMINDER_ENABLED] = enabled
@@ -85,6 +87,7 @@ class NotificationSettingsDataStore(
             enabled = this[Keys.ENABLED] ?: false,
             prayerToggles = toggles,
             adhanEnabled = this[Keys.ADHAN_ENABLED] ?: false,
+            adhanVolume = this[Keys.ADHAN_VOLUME] ?: 30,
             countdownEnabled = this[Keys.COUNTDOWN_ENABLED] ?: true,
             dailyReminderEnabled = this[Keys.DAILY_REMINDER_ENABLED] ?: false,
             dailyReminderHour = this[Keys.DAILY_REMINDER_HOUR] ?: 8,

@@ -84,4 +84,17 @@ class NotificationSettingsDataStoreTest {
         assertThat(settings.prePrayerReminderEnabled).isTrue()
         assertThat(settings.prePrayerMinutes).isEqualTo(30)
     }
+
+    @Test
+    fun `adhan volume defaults to 30`() = runTest {
+        val store = freshStore()
+        assertThat(store.getSettings().adhanVolume).isEqualTo(30)
+    }
+
+    @Test
+    fun `updateAdhanVolume persists`() = runTest {
+        val store = freshStore()
+        store.updateAdhanVolume(50)
+        assertThat(store.getSettings().adhanVolume).isEqualTo(50)
+    }
 }
