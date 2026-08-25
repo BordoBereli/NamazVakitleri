@@ -15,6 +15,7 @@ class UpdateNotificationSettingsUseCase(
     suspend operator fun invoke(settings: NotificationSettings) {
         dataStore.updateEnabled(settings.enabled)
         dataStore.updateAdhanEnabled(settings.adhanEnabled)
+        dataStore.updateAdhanVolume(settings.adhanVolume)
         dataStore.updateCountdownEnabled(settings.countdownEnabled)
         dataStore.updateDailyReminder(
             settings.dailyReminderEnabled,

@@ -40,6 +40,14 @@ class NotificationUseCasesTest {
     }
 
     @Test
+    fun `UpdateNotificationSettingsUseCase persists adhan volume`() = runTest {
+        val scheduler = mockk<PrayerNotificationScheduler>(relaxed = true)
+        val useCase = UpdateNotificationSettingsUseCase(dataStore, scheduler, notificationManager)
+        useCase(NotificationSettings(enabled = true, adhanVolume = 50))
+        coVerify { dataStore.updateAdhanVolume(50) }
+    }
+
+    @Test
     fun `UpdateNotificationSettingsUseCase creates channels when enabled`() = runTest {
         val scheduler = mockk<PrayerNotificationScheduler>(relaxed = true)
         val useCase = UpdateNotificationSettingsUseCase(dataStore, scheduler, notificationManager)
