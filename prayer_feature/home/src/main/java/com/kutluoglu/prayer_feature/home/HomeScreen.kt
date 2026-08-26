@@ -52,10 +52,8 @@ fun HomeScreen(
         PermissionHandler(
             onPermissionsGranted = { onEvent(HomeEvent.OnPermissionsGranted) },
             onChooseLocation = onChooseLocation,
-            // If the user already has a manually selected location, don't block the UI
-            // behind the location permission.
-            canProceedWithoutPermission = locationsState.entries.isNotEmpty()
-        ) {
+            canProceedWithoutPermission = true
+        ) { permissionActions ->
             LocationPager(
                 entries = locationsState.entries,
                 selectedId = locationsState.selectedId,
@@ -66,6 +64,10 @@ fun HomeScreen(
                 onPrayerTimesClick = onPrayerTimesClick,
                 onAddLocation = onAddLocation,
                 onChooseLocation = onChooseLocation,
+                onUseMyLocation = {
+                    if (permissionActions.allPermissionsGranted) onEvent(HomeEvent.OnUseMyLocation)
+                    else permissionActions.requestPermission()
+                },
                 onEvent = onEvent
             )
         }

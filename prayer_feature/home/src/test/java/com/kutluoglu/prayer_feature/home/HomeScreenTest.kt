@@ -47,4 +47,22 @@ class HomeScreenTest {
         composeTestRule.onNodeWithText("Something went wrong").assertIsDisplayed()
         composeTestRule.onNodeWithText("Retry").assertIsDisplayed()
     }
+
+    @Test
+    fun `renders empty state with add location and use my location`() {
+        composeTestRule.setContent {
+            HomeScreen(
+                navController = mockk<NavController>(relaxed = true),
+                uiState = HomeUiState.Empty,
+                locationsState = LocationsState(),
+                prayerDataByLocation = emptyMap(),
+                activeLocationId = null,
+                quranVerseFormatter = mockk<QuranVerseFormatter>(relaxed = true),
+                onEvent = {}
+            )
+        }
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText("Add location").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Use My Location").assertIsDisplayed()
+    }
 }

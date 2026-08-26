@@ -26,6 +26,7 @@ import com.kutluoglu.prayer_feature.home.R
 import com.kutluoglu.prayer_feature.home.common.QuranVerseFormatter
 import com.kutluoglu.prayer_feature.home.components.BottomContainer
 import com.kutluoglu.prayer_feature.home.components.DailyPrayers
+import com.kutluoglu.prayer_feature.home.components.HomeEmptyContent
 import com.kutluoglu.prayer_feature.home.components.HomeErrorContent
 import com.kutluoglu.prayer_feature.home.components.HomeTopContainer
 import com.kutluoglu.prayer_feature.home.components.LocationChipsRow
@@ -50,8 +51,17 @@ fun LocationPager(
     onPrayerTimesClick: () -> Unit,
     onAddLocation: () -> Unit,
     onChooseLocation: () -> Unit,
+    onUseMyLocation: () -> Unit,
     onEvent: (HomeEvent) -> Unit
 ) {
+    if (entries.isEmpty()) {
+        HomeEmptyContent(
+            onAddLocation = onAddLocation,
+            onUseMyLocation = onUseMyLocation
+        )
+        return
+    }
+
     val selectedIndex = entries.indexOfFirst { it.id == selectedId }
         .coerceAtLeast(0)
     val pagerState = rememberPagerState(

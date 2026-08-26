@@ -37,6 +37,11 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.kutluoglu.core.designsystem.extensions.REQUIRED_LOCATION_PERMISSIONS
 import com.kutluoglu.core.designsystem.R
 
+data class PermissionActions(
+    val allPermissionsGranted: Boolean,
+    val requestPermission: () -> Unit
+)
+
 /**
  * A container composable that handles permission logic.
  * It shows the content only when all permissions are granted.
@@ -56,7 +61,7 @@ fun PermissionHandler(
     onPermissionsGranted: () -> Unit,
     onChooseLocation: (() -> Unit)? = null,
     canProceedWithoutPermission: Boolean = false,
-    content: @Composable () -> Unit
+    content: @Composable (PermissionActions) -> Unit
 ) {
     // --- START OF THE FIX ---
     // A simple counter state that we will increment to force recomposition.
@@ -113,13 +118,18 @@ private fun ShowOf(
         onChooseLocation: (() -> Unit)?,
         canProceedWithoutPermission: Boolean,
         permissionResultReceived: Boolean,
-        content: @Composable (() -> Unit)
+        content: @Composable (PermissionActions) -> Unit
 ) {
     when {
         // If all permissions are granted, or the user can proceed without them
         // (e.g. already has a manually selected location), display the main content.
         permissionState.allPermissionsGranted || canProceedWithoutPermission -> {
-            content()
+            content(
+                PermissionActions(
+                    allPermissionsGranted = permissionState.allPermissionsGranted,
+                    requestPermission = { permissionState.launchMultiplePermissionRequest() }
+                )
+            )
         }
 
         // If rationale should be shown, display the rationale UI.
