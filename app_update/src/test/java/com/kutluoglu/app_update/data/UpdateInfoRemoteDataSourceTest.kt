@@ -59,6 +59,25 @@ class UpdateInfoRemoteDataSourceTest {
     }
 
     @Test
+    fun `uses language specific release notes key for non default language`() = runTest {
+        coEvery { configSource.fetchAndActivate() } returns true
+        every { languageProvider.getLanguageCode() } returns "ar"
+        every { configSource.getLong("update_latest_version_code") } returns 200L
+        every { configSource.getLong("update_min_version_code") } returns 100L
+        every { configSource.getString("update_latest_version_name") } returns "2.0"
+        every { configSource.getString("update_release_notes_ar") } returns "إصلاحات وتحسينات"
+        every { configSource.getString("update_release_notes") } returns "New features"
+        every { configSource.getString("update_direct_download_url") } returns "https://example.com/app.apk"
+        every { configSource.getString("update_force_version_codes") } returns ""
+        every { configSource.getString("update_optional_version_codes") } returns ""
+
+        val info = dataSource.fetchUpdateInfo()
+
+        assertThat(info).isNotNull()
+        assertThat(info!!.releaseNotes).isEqualTo("إصلاحات وتحسينات")
+    }
+
+    @Test
     fun `returns null when latest version code is missing`() = runTest {
         coEvery { configSource.fetchAndActivate() } returns true
         every { configSource.getLong("update_latest_version_code") } returns 0L

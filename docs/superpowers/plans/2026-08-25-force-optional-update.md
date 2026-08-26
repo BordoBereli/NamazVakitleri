@@ -1894,10 +1894,23 @@ After the code lands, the following Remote Config parameters must be created in 
 | `update_latest_version_code` | Long | `2` |
 | `update_min_version_code` | Long | `2` |
 | `update_latest_version_name` | String | `1.1.0` |
-| `update_release_notes` | String | `Bug fixes and improvements` |
+| `update_release_notes` | String | `Bug fixes and improvements` (default/English fallback) |
+| `update_release_notes_tr` | String | `Hata düzeltmeleri ve iyileştirmeler` |
+| `update_release_notes_en` | String | `Bug fixes and improvements` |
+| `update_release_notes_ar` | String | `إصلاحات وتحسينات` |
 | `update_direct_download_url` | String | `https://example.com/namazvakitleri.apk` |
 | `update_force_version_codes` | String | `2,3` (comma-separated) |
 | `update_optional_version_codes` | String | `4,5` (comma-separated) |
+
+### Release notes localization
+
+Firebase Remote Config has no built-in per-locale values, so release notes are localized via per-language keys following the pattern `update_release_notes_<languageCode>` (one per supported locale, e.g. `_tr`, `_en`, `_ar`, ...). The app resolves the key at read time:
+
+1. `LanguageProvider.getLanguageCode()` returns the app's effective language — `Locale.getDefault().language`, which `LocaleManager.setLanguage()` syncs to the persisted in-app preference (falls back to the device locale when the preference is `system`).
+2. Read `update_release_notes_<languageCode>` (e.g. `update_release_notes_tr`).
+3. If blank → fall back to `update_release_notes` (set this to English in the console).
+
+Unconfigured languages therefore always see the default `update_release_notes` value.
 
 ### Targeting semantics
 
