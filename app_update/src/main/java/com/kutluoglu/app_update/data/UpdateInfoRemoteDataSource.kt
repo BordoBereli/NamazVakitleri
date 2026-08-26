@@ -20,9 +20,14 @@ class UpdateInfoRemoteDataSource(
                 latestVersionName = configSource.getString(KEY_LATEST_VERSION_NAME),
                 releaseNotes = configSource.getString(KEY_RELEASE_NOTES),
                 directDownloadUrl = configSource.getString(KEY_DIRECT_DOWNLOAD_URL),
+                forceVersionCodes = parseVersionCodes(configSource.getString(KEY_FORCE_VERSION_CODES)),
+                optionalVersionCodes = parseVersionCodes(configSource.getString(KEY_OPTIONAL_VERSION_CODES)),
             )
         }.getOrNull()
     }
+
+    private fun parseVersionCodes(raw: String?): List<Int> =
+        raw?.split(',')?.mapNotNull { it.trim().toIntOrNull() } ?: emptyList()
 
     private companion object {
         const val KEY_LATEST_VERSION_CODE = "update_latest_version_code"
@@ -30,5 +35,7 @@ class UpdateInfoRemoteDataSource(
         const val KEY_LATEST_VERSION_NAME = "update_latest_version_name"
         const val KEY_RELEASE_NOTES = "update_release_notes"
         const val KEY_DIRECT_DOWNLOAD_URL = "update_direct_download_url"
+        const val KEY_FORCE_VERSION_CODES = "update_force_version_codes"
+        const val KEY_OPTIONAL_VERSION_CODES = "update_optional_version_codes"
     }
 }

@@ -1896,8 +1896,26 @@ After the code lands, the following Remote Config parameters must be created in 
 | `update_latest_version_name` | String | `1.1.0` |
 | `update_release_notes` | String | `Bug fixes and improvements` |
 | `update_direct_download_url` | String | `https://example.com/namazvakitleri.apk` |
+| `update_force_version_codes` | String | `2,3` (comma-separated) |
+| `update_optional_version_codes` | String | `4,5` (comma-separated) |
 
-To force an update, set `update_min_version_code` above the installed `versionCode`. To offer an optional update, set `update_latest_version_code` above the installed `versionCode` while keeping `update_min_version_code` at or below it.
+### Targeting semantics
+
+The decision is evaluated in this order:
+
+1. Installed `versionCode` is in `update_force_version_codes` → **ForceUpdate**
+2. Installed `versionCode` is in `update_optional_version_codes` → **OptionalUpdate**
+3. Installed `versionCode` < `update_min_version_code` → **ForceUpdate**
+4. Installed `versionCode` < `update_latest_version_code` → **OptionalUpdate**
+5. Otherwise → **NoUpdate**
+
+This supports three targeting styles:
+
+- **Only one version**: set `update_force_version_codes = "2"` (or `update_optional_version_codes = "2"`) to target just version 2.
+- **Between versions**: set `update_force_version_codes = "2,3"` (or `update_optional_version_codes = "2,3"`) to target versions 2–3.
+- **All versions**: set `update_min_version_code` above the installed `versionCode` to force everyone below it, or keep `update_min_version_code` at/below the lowest installed version and raise `update_latest_version_code` to make all older versions optional.
+
+The version-code lists are optional; if left empty, behavior falls back to the `update_min_version_code` / `update_latest_version_code` comparison.
 
 ## Out of scope
 

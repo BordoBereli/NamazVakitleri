@@ -6,4 +6,6 @@ data class UpdateInfo(
     val latestVersionName: String,
     val releaseNotes: String,
     val directDownloadUrl: String,
+    val forceVersionCodes: List<Int> = emptyList(),
+    val optionalVersionCodes: List<Int> = emptyList(),
 )

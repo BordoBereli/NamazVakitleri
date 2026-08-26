@@ -20,6 +20,8 @@ class UpdateInfoRemoteDataSourceTest {
         every { configSource.getString("update_latest_version_name") } returns "2.0"
         every { configSource.getString("update_release_notes") } returns "New features"
         every { configSource.getString("update_direct_download_url") } returns "https://example.com/app.apk"
+        every { configSource.getString("update_force_version_codes") } returns "100, 150"
+        every { configSource.getString("update_optional_version_codes") } returns "175,180"
 
         val info = dataSource.fetchUpdateInfo()
 
@@ -29,6 +31,8 @@ class UpdateInfoRemoteDataSourceTest {
         assertThat(info.latestVersionName).isEqualTo("2.0")
         assertThat(info.releaseNotes).isEqualTo("New features")
         assertThat(info.directDownloadUrl).isEqualTo("https://example.com/app.apk")
+        assertThat(info.forceVersionCodes).containsExactly(100, 150)
+        assertThat(info.optionalVersionCodes).containsExactly(175, 180)
     }
 
     @Test
@@ -54,5 +58,41 @@ class UpdateInfoRemoteDataSourceTest {
         coEvery { configSource.fetchAndActivate() } throws RuntimeException("network error")
 
         assertThat(dataSource.fetchUpdateInfo()).isNull()
+    }
+
+    @Test
+    fun `parses force and optional version code lists`() = runTest {
+        coEvery { configSource.fetchAndActivate() } returns true
+        every { configSource.getLong("update_latest_version_code") } returns 200L
+        every { configSource.getLong("update_min_version_code") } returns 100L
+        every { configSource.getString("update_latest_version_name") } returns "2.0"
+        every { configSource.getString("update_release_notes") } returns "New features"
+        every { configSource.getString("update_direct_download_url") } returns "https://example.com/app.apk"
+        every { configSource.getString("update_force_version_codes") } returns "100, 150"
+        every { configSource.getString("update_optional_version_codes") } returns "175,180"
+
+        val info = dataSource.fetchUpdateInfo()
+
+        assertThat(info).isNotNull()
+        assertThat(info!!.forceVersionCodes).containsExactly(100, 150)
+        assertThat(info.optionalVersionCodes).containsExactly(175, 180)
+    }
+
+    @Test
+    fun `parses empty version code lists when keys are missing`() = runTest {
+        coEvery { configSource.fetchAndActivate() } returns true
+        every { configSource.getLong("update_latest_version_code") } returns 200L
+        every { configSource.getLong("update_min_version_code") } returns 100L
+        every { configSource.getString("update_latest_version_name") } returns ""
+        every { configSource.getString("update_release_notes") } returns ""
+        every { configSource.getString("update_direct_download_url") } returns ""
+        every { configSource.getString("update_force_version_codes") } returns ""
+        every { configSource.getString("update_optional_version_codes") } returns ""
+
+        val info = dataSource.fetchUpdateInfo()
+
+        assertThat(info).isNotNull()
+        assertThat(info!!.forceVersionCodes).isEmpty()
+        assertThat(info.optionalVersionCodes).isEmpty()
     }
 }
