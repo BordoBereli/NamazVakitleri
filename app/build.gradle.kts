@@ -70,6 +70,7 @@ dependencies {
     implementation(project(":prayer_qibla"))
     implementation(project(":prayer_notifications"))
     implementation(project(":prayer_remote"))
+    implementation(project(":app_update"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.core.splashscreen)
