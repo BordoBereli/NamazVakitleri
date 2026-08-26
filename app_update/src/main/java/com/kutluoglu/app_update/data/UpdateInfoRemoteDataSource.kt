@@ -1,11 +1,13 @@
 package com.kutluoglu.app_update.data
 
 import com.kutluoglu.app_update.domain.model.UpdateInfo
+import com.kutluoglu.core.designsystem.utils.LanguageProvider
 import org.koin.core.annotation.Single
 
 @Single
 class UpdateInfoRemoteDataSource(
     private val configSource: UpdateConfigSource,
+    private val languageProvider: LanguageProvider,
 ) {
 
     suspend fun fetchUpdateInfo(): UpdateInfo? {
@@ -18,12 +20,18 @@ class UpdateInfoRemoteDataSource(
                 latestVersionCode = latest.toInt(),
                 minVersionCode = min.toInt(),
                 latestVersionName = configSource.getString(KEY_LATEST_VERSION_NAME),
-                releaseNotes = configSource.getString(KEY_RELEASE_NOTES),
+                releaseNotes = resolveReleaseNotes(),
                 directDownloadUrl = configSource.getString(KEY_DIRECT_DOWNLOAD_URL),
                 forceVersionCodes = parseVersionCodes(configSource.getString(KEY_FORCE_VERSION_CODES)),
                 optionalVersionCodes = parseVersionCodes(configSource.getString(KEY_OPTIONAL_VERSION_CODES)),
             )
         }.getOrNull()
+    }
+
+    private fun resolveReleaseNotes(): String {
+        val language = languageProvider.getLanguageCode()
+        val localized = configSource.getString("${KEY_RELEASE_NOTES}_$language")
+        return localized.ifBlank { configSource.getString(KEY_RELEASE_NOTES) }
     }
 
     private fun parseVersionCodes(raw: String?): List<Int> =

@@ -1,17 +1,15 @@
 package com.kutluoglu.core.designsystem.utils
 
-import android.content.Context
-import androidx.core.os.LocaleListCompat
 import org.koin.core.annotation.Single
 import java.util.Locale
 
-// Bu sınıf, mevcut cihaz dilini sağlamaktan sorumludur.
+// Bu sınıf, uygulama içi dil tercihini yansıtan dili sağlamaktan sorumludur.
 @Single
-class LanguageProvider(private val context: Context) {
+class LanguageProvider {
     /**
-     * Cihazın geçerli dil kodunu (örn: "en", "tr") döndürür.
+     * Uygulamanın geçerli dil kodunu (örn: "en", "tr") döndürür.
+     * LocaleManager, kalıcı Settings.language tercihini Locale.setDefault ile senkronize ettiği
+     * için bu değer cihaz dilini değil uygulama içi dil tercihini yansıtır.
      */
-    fun getLanguageCode(): String {
-        return LocaleListCompat.getAdjustedDefault()[0]?.language ?: Locale.getDefault().language
-    }
+    fun getLanguageCode(): String = Locale.getDefault().language
 }
