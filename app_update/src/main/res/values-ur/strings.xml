@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="update_required_title">اپ ڈیٹ درکار ہے</string>
+    <string name="update_required_message">جاری رکھنے کے لیے نیا ورژن درکار ہے۔</string>
+    <string name="update_available_title">اپ ڈیٹ دستیاب ہے</string>
+    <string name="update_available_message">نیا ورژن دستیاب ہے۔</string>
+    <string name="update_now">اپ ڈیٹ کریں</string>
+    <string name="later">بعد میں</string>
+    <string name="update_open_failed">اپ ڈیٹ صفحہ نہیں کھل سکا۔ براہ کرم دوبارہ کوشش کریں۔</string>
+</resources>

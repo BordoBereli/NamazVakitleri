@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="update_required_title">Güncelleme Gerekli</string>
+    <string name="update_required_message">Devam etmek için yeni bir sürüm gerekiyor.</string>
+    <string name="update_available_title">Güncelleme Mevcut</string>
+    <string name="update_available_message">Yeni bir sürüm mevcut.</string>
+    <string name="update_now">Güncelle</string>
+    <string name="later">Sonra</string>
+    <string name="update_open_failed">Güncelleme sayfası açılamadı. Lütfen tekrar deneyin.</string>
+</resources>

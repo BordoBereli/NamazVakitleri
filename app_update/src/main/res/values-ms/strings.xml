@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="update_required_title">Kemas Kini Diperlukan</string>
+    <string name="update_required_message">Versi baharu diperlukan untuk meneruskan.</string>
+    <string name="update_available_title">Kemas Kini Tersedia</string>
+    <string name="update_available_message">Versi baharu tersedia.</string>
+    <string name="update_now">Kemas Kini</string>
+    <string name="later">Nanti</string>
+    <string name="update_open_failed">Tidak dapat membuka halaman kemas kini. Sila cuba lagi.</string>
+</resources>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="update_required_title">புதுப்பிப்பு தேவை</string>
+    <string name="update_required_message">தொடர ஒரு புதிய பதிப்பு தேவை.</string>
+    <string name="update_available_title">புதுப்பிப்பு கிடைக்கிறது</string>
+    <string name="update_available_message">புதிய பதிப்பு கிடைக்கிறது.</string>
+    <string name="update_now">புதுப்பி</string>
+    <string name="later">பின்னர்</string>
+    <string name="update_open_failed">புதுப்பிப்பு பக்கத்தைத் திறக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்.</string>
+</resources>

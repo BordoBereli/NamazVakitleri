@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="update_required_title">التحديث مطلوب</string>
+    <string name="update_required_message">مطلوب إصدار جديد للمتابعة.</string>
+    <string name="update_available_title">يتوفر تحديث</string>
+    <string name="update_available_message">يتوفر إصدار جديد.</string>
+    <string name="update_now">تحديث</string>
+    <string name="later">لاحقًا</string>
+    <string name="update_open_failed">تعذر فتح صفحة التحديث. يرجى المحاولة مرة أخرى.</string>
+</resources>

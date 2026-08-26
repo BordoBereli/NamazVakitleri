@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="update_required_title">Pembaruan Diperlukan</string>
+    <string name="update_required_message">Versi baru diperlukan untuk melanjutkan.</string>
+    <string name="update_available_title">Pembaruan Tersedia</string>
+    <string name="update_available_message">Versi baru tersedia.</string>
+    <string name="update_now">Perbarui</string>
+    <string name="later">Nanti</string>
+    <string name="update_open_failed">Tidak dapat membuka halaman pembaruan. Silakan coba lagi.</string>
+</resources>

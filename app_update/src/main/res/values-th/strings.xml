@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="update_required_title">ต้องอัปเดต</string>
+    <string name="update_required_message">ต้องใช้เวอร์ชันใหม่เพื่อดำเนินการต่อ</string>
+    <string name="update_available_title">มีอัปเดต</string>
+    <string name="update_available_message">มีเวอร์ชันใหม่ให้ใช้งาน</string>
+    <string name="update_now">อัปเดต</string>
+    <string name="later">ทีหลัง</string>
+    <string name="update_open_failed">ไม่สามารถเปิดหน้าอัปเดตได้ โปรดลองอีกครั้ง</string>
+</resources>

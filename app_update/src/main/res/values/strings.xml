@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="update_required_title">Update Required</string>
+    <string name="update_required_message">A new version is required to continue.</string>
+    <string name="update_available_title">Update Available</string>
+    <string name="update_available_message">A new version is available.</string>
+    <string name="update_now">Update</string>
+    <string name="later">Later</string>
+    <string name="update_open_failed">Couldn\'t open the update page. Please try again.</string>
+</resources>

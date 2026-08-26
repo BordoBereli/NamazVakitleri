@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="update_required_title">به‌روزرسانی الزامی است</string>
+    <string name="update_required_message">برای ادامه، نسخه جدیدی لازم است.</string>
+    <string name="update_available_title">به‌روزرسانی موجود است</string>
+    <string name="update_available_message">نسخه جدید موجود است.</string>
+    <string name="update_now">به‌روزرسانی</string>
+    <string name="later">بعداً</string>
+    <string name="update_open_failed">صفحه به‌روزرسانی باز نشد. لطفاً دوباره تلاش کنید.</string>
+</resources>

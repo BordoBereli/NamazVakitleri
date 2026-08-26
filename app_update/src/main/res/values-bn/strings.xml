@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="update_required_title">আপডেট প্রয়োজন</string>
+    <string name="update_required_message">চালিয়ে যেতে একটি নতুন সংস্করণ প্রয়োজন।</string>
+    <string name="update_available_title">আপডেট উপলব্ধ</string>
+    <string name="update_available_message">একটি নতুন সংস্করণ উপলব্ধ।</string>
+    <string name="update_now">আপডেট</string>
+    <string name="later">পরে</string>
+    <string name="update_open_failed">আপডেট পৃষ্ঠা খোলা যায়নি। আবার চেষ্টা করুন।</string>
+</resources>

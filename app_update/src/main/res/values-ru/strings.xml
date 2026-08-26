@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="update_required_title">Требуется обновление</string>
+    <string name="update_required_message">Для продолжения требуется новая версия.</string>
+    <string name="update_available_title">Доступно обновление</string>
+    <string name="update_available_message">Доступна новая версия.</string>
+    <string name="update_now">Обновить</string>
+    <string name="later">Позже</string>
+    <string name="update_open_failed">Не удалось открыть страницу обновления. Пожалуйста, попробуйте ещё раз.</string>
+</resources>
