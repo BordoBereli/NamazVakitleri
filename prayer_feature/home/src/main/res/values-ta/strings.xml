@@ -14,4 +14,6 @@
     <string name="retry">மீண்டும் முயற்சி</string>
     <string name="choose_location">இருப்பிடத்தைத் தேர்ந்தெடுக்கவும்</string>
     <string name="no_location_selected">எந்த இடமும் தேர்ந்தெடுக்கப்படவில்லை. தொழுகை நேரங்களைக் காண ஒரு இடத்தைத் தேர்ந்தெடுக்கவும்.</string>
+    <string name="add_location">இருப்பிடம் சேர்</string>
+    <string name="use_my_location">என் இருப்பிடத்தைப் பயன்படுத்து</string>
 </resources>

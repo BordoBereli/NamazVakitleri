@@ -132,4 +132,6 @@
     <string name="choose_location">Konum Seç</string>
     <string name="no_location_selected">Konum seçilmedi. Namaz vakitlerini görmek için lütfen bir konum seçin.</string>
 
+    <string name="add_location">Konum ekle</string>
+    <string name="use_my_location">Konumumu Kullan</string>
 </resources>

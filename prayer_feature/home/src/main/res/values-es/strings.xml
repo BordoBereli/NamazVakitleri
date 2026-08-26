@@ -14,4 +14,6 @@
     <string name="retry">Reintentar</string>
     <string name="choose_location">Elegir ubicación</string>
     <string name="no_location_selected">No se ha seleccionado ninguna ubicación. Elija una ubicación para ver los horarios de oración.</string>
+    <string name="add_location">Añadir ubicación</string>
+    <string name="use_my_location">Usar mi ubicación</string>
 </resources>

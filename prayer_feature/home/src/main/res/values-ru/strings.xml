@@ -14,4 +14,6 @@
     <string name="retry">Повторить</string>
     <string name="choose_location">Выбрать местоположение</string>
     <string name="no_location_selected">Местоположение не выбрано. Выберите местоположение, чтобы увидеть время намаза.</string>
+    <string name="add_location">Добавить местоположение</string>
+    <string name="use_my_location">Использовать моё местоположение</string>
 </resources>

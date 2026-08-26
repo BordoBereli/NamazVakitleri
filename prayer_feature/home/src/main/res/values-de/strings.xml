@@ -14,4 +14,6 @@
     <string name="retry">Wiederholen</string>
     <string name="choose_location">Standort wählen</string>
     <string name="no_location_selected">Kein Standort ausgewählt. Bitte wählen Sie einen Standort, um Gebetszeiten zu sehen.</string>
+    <string name="add_location">Standort hinzufügen</string>
+    <string name="use_my_location">Meinen Standort verwenden</string>
 </resources>

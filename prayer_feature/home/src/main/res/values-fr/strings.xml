@@ -14,4 +14,6 @@
     <string name="retry">Réessayer</string>
     <string name="choose_location">Choisir un lieu</string>
     <string name="no_location_selected">Aucun lieu sélectionné. Veuillez choisir un lieu pour voir les heures de prière.</string>
+    <string name="add_location">Ajouter une localisation</string>
+    <string name="use_my_location">Utiliser ma localisation</string>
 </resources>

@@ -14,4 +14,6 @@
     <string name="retry">دوبارہ کوشش کریں</string>
     <string name="choose_location">مقام منتخب کریں</string>
     <string name="no_location_selected">کوئی مقام منتخب نہیں کیا گیا۔ نماز کے اوقات دیکھنے کے لیے براہ کرم مقام منتخب کریں۔</string>
+    <string name="add_location">مقام شامل کریں</string>
+    <string name="use_my_location">میرا مقام استعمال کریں</string>
 </resources>

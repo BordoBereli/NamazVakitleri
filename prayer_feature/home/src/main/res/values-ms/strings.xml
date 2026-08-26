@@ -14,4 +14,6 @@
     <string name="retry">Cuba Lagi</string>
     <string name="choose_location">Pilih Lokasi</string>
     <string name="no_location_selected">Tiada lokasi dipilih. Sila pilih lokasi untuk melihat waktu solat.</string>
+    <string name="add_location">Tambah lokasi</string>
+    <string name="use_my_location">Gunakan Lokasi Saya</string>
 </resources>
