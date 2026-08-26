@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.kutluoglu.core.designsystem.components.LoadingIndicator
 import com.kutluoglu.prayer.model.location.LocationEntry
 import com.kutluoglu.prayer_feature.home.R
 import com.kutluoglu.prayer_feature.home.common.QuranVerseFormatter
@@ -55,10 +56,14 @@ fun LocationPager(
     onEvent: (HomeEvent) -> Unit
 ) {
     if (entries.isEmpty()) {
-        HomeEmptyContent(
-            onAddLocation = onAddLocation,
-            onUseMyLocation = onUseMyLocation
-        )
+        if (uiState is HomeUiState.Loading) {
+            LoadingIndicator()
+        } else {
+            HomeEmptyContent(
+                onAddLocation = onAddLocation,
+                onUseMyLocation = onUseMyLocation
+            )
+        }
         return
     }
 

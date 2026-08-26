@@ -65,4 +65,22 @@ class HomeScreenTest {
         composeTestRule.onNodeWithText("Add location").assertIsDisplayed()
         composeTestRule.onNodeWithText("Use My Location").assertIsDisplayed()
     }
+
+    @Test
+    fun `renders loading indicator when entries empty and state is loading`() {
+        composeTestRule.setContent {
+            HomeScreen(
+                navController = mockk<NavController>(relaxed = true),
+                uiState = HomeUiState.Loading,
+                locationsState = LocationsState(),
+                prayerDataByLocation = emptyMap(),
+                activeLocationId = null,
+                quranVerseFormatter = mockk<QuranVerseFormatter>(relaxed = true),
+                onEvent = {}
+            )
+        }
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText("Add location").assertDoesNotExist()
+        composeTestRule.onNodeWithText("Use My Location").assertDoesNotExist()
+    }
 }
