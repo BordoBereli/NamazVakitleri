@@ -23,7 +23,8 @@ import com.kutluoglu.prayer_feature.home.R
 @Composable
 fun HomeEmptyContent(
     onAddLocation: () -> Unit,
-    onUseMyLocation: () -> Unit
+    onUseMyLocation: () -> Unit,
+    permissionDenied: Boolean = false
 ) {
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -50,6 +51,14 @@ fun HomeEmptyContent(
             }
             OutlinedButton(onClick = onUseMyLocation) {
                 Text(stringResource(R.string.use_my_location))
+            }
+            if (permissionDenied) {
+                Text(
+                    text = stringResource(R.string.permission_denied_hint),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center
+                )
             }
         }
     }

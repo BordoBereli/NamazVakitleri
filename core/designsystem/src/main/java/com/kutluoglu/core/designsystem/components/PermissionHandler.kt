@@ -39,6 +39,7 @@ import com.kutluoglu.core.designsystem.R
 
 data class PermissionActions(
     val allPermissionsGranted: Boolean,
+    val permanentlyDenied: Boolean,
     val requestPermission: () -> Unit
 )
 
@@ -127,6 +128,9 @@ private fun ShowOf(
             content(
                 PermissionActions(
                     allPermissionsGranted = permissionState.allPermissionsGranted,
+                    permanentlyDenied = !permissionState.allPermissionsGranted &&
+                        !permissionState.shouldShowRationale &&
+                        permissionResultReceived,
                     requestPermission = { permissionState.launchMultiplePermissionRequest() }
                 )
             )

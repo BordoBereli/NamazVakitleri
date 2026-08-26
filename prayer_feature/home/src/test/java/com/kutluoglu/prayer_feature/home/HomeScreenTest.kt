@@ -8,6 +8,7 @@ import androidx.navigation.NavController
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.location.LocationEntry
 import com.kutluoglu.prayer_feature.home.common.QuranVerseFormatter
+import com.kutluoglu.prayer_feature.home.components.HomeEmptyContent
 import com.kutluoglu.prayer_feature.home.state.HomeUiState
 import com.kutluoglu.prayer_location.data.LocationsState
 import io.mockk.mockk
@@ -82,5 +83,18 @@ class HomeScreenTest {
         composeTestRule.waitForIdle()
         composeTestRule.onNodeWithText("Add location").assertDoesNotExist()
         composeTestRule.onNodeWithText("Use My Location").assertDoesNotExist()
+    }
+
+    @Test
+    fun `renders permission denied hint when permissionDenied is true`() {
+        composeTestRule.setContent {
+            HomeEmptyContent(
+                onAddLocation = {},
+                onUseMyLocation = {},
+                permissionDenied = true
+            )
+        }
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText("Location permission is off. Use My Location will open settings.").assertIsDisplayed()
     }
 }

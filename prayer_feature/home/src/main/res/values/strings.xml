@@ -133,5 +133,6 @@
     <string name="no_location_selected">No location selected. Please choose a location to see prayer times.</string>
     <string name="add_location">Add location</string>
     <string name="use_my_location">Use My Location</string>
+    <string name="permission_denied_hint">Location permission is off. Use My Location will open settings.</string>
 
 </resources>
