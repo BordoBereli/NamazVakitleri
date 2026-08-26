@@ -27,13 +27,16 @@ class UpdateViewModel(
         if (checkInFlight) return
         checkInFlight = true
         viewModelScope.launch {
-            val decision = checkForUpdateUseCase()
-            _uiState.value = when (decision) {
-                is UpdateDecision.ForceUpdate -> UpdateUiState.ForceUpdate(decision.info)
-                is UpdateDecision.OptionalUpdate -> UpdateUiState.OptionalUpdate(decision.info)
-                UpdateDecision.NoUpdate -> UpdateUiState.NoUpdate
+            try {
+                val decision = checkForUpdateUseCase()
+                _uiState.value = when (decision) {
+                    is UpdateDecision.ForceUpdate -> UpdateUiState.ForceUpdate(decision.info)
+                    is UpdateDecision.OptionalUpdate -> UpdateUiState.OptionalUpdate(decision.info)
+                    UpdateDecision.NoUpdate -> UpdateUiState.NoUpdate
+                }
+            } finally {
+                checkInFlight = false
             }
-            checkInFlight = false
         }
     }
 

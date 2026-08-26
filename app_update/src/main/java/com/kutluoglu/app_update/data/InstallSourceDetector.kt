@@ -10,8 +10,10 @@ class InstallSourceDetector(
 ) {
 
     fun isPlayStoreInstall(): Boolean {
-        val installer = context.packageManager.getInstallerPackageName(context.packageName)
-        return installer == PLAY_STORE_INSTALLER
+        return runCatching {
+            val installer = context.packageManager.getInstallerPackageName(context.packageName)
+            installer == PLAY_STORE_INSTALLER
+        }.getOrDefault(false)
     }
 
     fun getPlayStoreUrl(): String = "market://details?id=${context.packageName}"
