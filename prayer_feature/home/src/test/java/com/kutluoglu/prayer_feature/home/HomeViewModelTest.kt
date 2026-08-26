@@ -240,7 +240,7 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `empty locations state after initial emission shows error`() = runTest {
+    fun `empty locations state after initial emission shows empty state`() = runTest {
         val stateFlow = MutableStateFlow(
             LocationsState(entries = listOf(entry), selectedId = "loc-1")
         )
@@ -251,7 +251,45 @@ class HomeViewModelTest {
         val vm = viewModel()
         stateFlow.value = LocationsState()
 
-        assertThat(vm.screenGate.value is HomeScreenGate.Error).isTrue()
+        assertThat(vm.screenGate.value).isEqualTo(HomeScreenGate.Empty)
+    }
+
+    @Test
+    fun `resolveInitial returns null sets Empty`() = runTest {
+        coEvery { locationsCoordinator.observeState() } returns flowOf(LocationsState())
+        coEvery { locationsCoordinator.resolveInitial() } returns null
+
+        val vm = viewModel()
+
+        assertThat(vm.screenGate.value).isEqualTo(HomeScreenGate.Empty)
+    }
+
+    @Test
+    fun `loadPrayerTimesForCurrentLocation with no location sets Empty`() = runTest {
+        coEvery { locationsCoordinator.observeState() } returns flowOf(LocationsState())
+        coEvery { locationsCoordinator.resolveInitial() } returns location
+        coEvery { locationsCoordinator.resolveSelected() } returns null
+        coEvery { prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET, any()) } returns success(loadedData())
+
+        val vm = viewModel()
+        vm.loadPrayerTimesForCurrentLocation()
+
+        assertThat(vm.screenGate.value).isEqualTo(HomeScreenGate.Empty)
+    }
+
+    @Test
+    fun `OnUseMyLocation triggers loadPrayerTimesForCurrentLocation`() = runTest {
+        coEvery { locationsCoordinator.observeState() } returns flowOf(
+            LocationsState(entries = listOf(entry), selectedId = "loc-1")
+        )
+        coEvery { locationsCoordinator.resolveInitial() } returns location
+        coEvery { locationsCoordinator.resolveSelected() } returns location
+        coEvery { prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET, any()) } returns success(loadedData())
+
+        val vm = viewModel()
+        vm.onEvent(HomeEvent.OnUseMyLocation)
+
+        coVerify { locationsCoordinator.resolveSelected() }
     }
 
     @Test

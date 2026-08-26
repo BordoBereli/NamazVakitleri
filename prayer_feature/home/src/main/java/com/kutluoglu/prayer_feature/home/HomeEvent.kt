@@ -7,6 +7,7 @@ package com.kutluoglu.prayer_feature.home
 sealed interface HomeEvent {
     object OnRefresh : HomeEvent
     object OnPermissionsGranted : HomeEvent
+    object OnUseMyLocation : HomeEvent
     object OnLoadQuranVerse : HomeEvent
     object OnVerseClicked : HomeEvent
     object OnVerseDetailDismissed : HomeEvent

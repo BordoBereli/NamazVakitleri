@@ -147,6 +147,7 @@ class HomeViewModel(
                 loadPrayerTimesForCurrentLocation()
             }
             HomeEvent.OnPermissionsGranted -> loadPrayerTimesForCurrentLocation()
+            HomeEvent.OnUseMyLocation -> loadPrayerTimesForCurrentLocation()
             HomeEvent.OnLoadQuranVerse -> loadRandomVerse()
             HomeEvent.OnVerseClicked -> {
                 analyticsTracker.logEvent(AnalyticsEvents.QURAN_VERSE_OPENED)
@@ -174,7 +175,7 @@ class HomeViewModel(
                 _locationsState.value = state
                 handleState(state)
             } else {
-                fail(HomeErrorMapper.getUserFriendlyErrorMessage(null))
+                noLocation()
             }
         }
     }
@@ -205,10 +206,10 @@ class HomeViewModel(
                         )
                     }
                 } else {
-                    fail(HomeErrorMapper.getUserFriendlyErrorMessage(null))
+                    noLocation()
                 }
             } else {
-                fail(HomeErrorMapper.getUserFriendlyErrorMessage(null))
+                noLocation()
             }
         }
     }
@@ -222,7 +223,7 @@ class HomeViewModel(
     private suspend fun handleState(state: LocationsState) {
         val activeId = state.selectedId ?: state.entries.firstOrNull()?.id
         if (activeId == null) {
-            fail(HomeErrorMapper.getUserFriendlyErrorMessage(null))
+            noLocation()
             return
         }
         val loaded = stateMutex.withLock {
@@ -324,6 +325,10 @@ class HomeViewModel(
 
     private fun fail(message: String) {
         _screenGate.value = HomeScreenGate.Error(message)
+    }
+
+    private fun noLocation() {
+        _screenGate.value = HomeScreenGate.Empty
     }
 
     override fun onCleared() {
