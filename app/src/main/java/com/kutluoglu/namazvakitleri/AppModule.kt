@@ -8,6 +8,7 @@ import com.kutluoglu.prayer_feature.settings.location.LocationSelectionViewModel
 import com.kutluoglu.prayer_feature.settings.location.MyLocationsViewModel
 import com.kutluoglu.prayer_feature.settings.notifications.NotificationsViewModel
 import com.kutluoglu.namazvakitleri.locale.LocaleManager
+import com.kutluoglu.namazvakitleri.notifications.NotificationRescheduler
 import com.kutluoglu.prayer_settings.data.local.SettingsDataStore
 import com.kutluoglu.prayer_settings.data.repository.SettingsRepositoryImpl
 import com.kutluoglu.prayer_settings.domain.repository.LocationRepository
@@ -26,6 +27,9 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 val appModule: Module = module {
     // LocaleManager (singleton to apply the selected language)
     single { LocaleManager() }
+
+    // NotificationRescheduler (reschedules notification alarms when prayer times change)
+    single { NotificationRescheduler(get(), get(), get()) }
 
     // Settings DataStore (singleton to share data)
     single { SettingsDataStore.create(get()) }

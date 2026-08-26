@@ -9,6 +9,7 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.kutluoglu.core.designsystem.utils.DisplayProvider
 import com.kutluoglu.namazvakitleri.analytics.AnalyticsUserPropertiesManager
 import com.kutluoglu.namazvakitleri.locale.LocaleManager
+import com.kutluoglu.namazvakitleri.notifications.NotificationRescheduler
 import com.kutluoglu.prayer_settings.data.local.SettingsDataStore
 import com.kutluoglu.prayer_settings.domain.repository.SettingsRepository
 import kotlinx.coroutines.CoroutineScope
@@ -42,6 +43,7 @@ class NamazVakitleriApplication : Application() {
         applyCrashlyticsConsent()
         setupActivityLifecycleCallbacks()
         startAnalyticsUserProperties()
+        startNotificationRescheduler()
     }
 
     private fun applyCrashlyticsConsent() {
@@ -62,6 +64,17 @@ class NamazVakitleriApplication : Application() {
             }.onFailure {
                 // Analytics must never crash the app.
                 android.util.Log.e("NamazVakitleriApp", "Failed to start analytics user properties -> ${it.message}")
+            }
+        }
+    }
+
+    private fun startNotificationRescheduler() {
+        applicationScope.launch {
+            runCatching {
+                get<NotificationRescheduler>().start(applicationScope)
+            }.onFailure {
+                // Rescheduling must never crash the app.
+                android.util.Log.e("NamazVakitleriApp", "Failed to start notification rescheduler -> ${it.message}")
             }
         }
     }
