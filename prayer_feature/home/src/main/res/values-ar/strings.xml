@@ -16,4 +16,5 @@
     <string name="no_location_selected">لم يتم تحديد موقع. يرجى اختيار موقع لعرض أوقات الصلاة.</string>
     <string name="add_location">إضافة موقع</string>
     <string name="use_my_location">استخدم موقعي</string>
+    <string name="permission_denied_hint">إذن الموقع مغلق. سيؤدي استخدام موقعي إلى فتح الإعدادات.</string>
 </resources>

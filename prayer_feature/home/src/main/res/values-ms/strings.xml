@@ -16,4 +16,5 @@
     <string name="no_location_selected">Tiada lokasi dipilih. Sila pilih lokasi untuk melihat waktu solat.</string>
     <string name="add_location">Tambah lokasi</string>
     <string name="use_my_location">Gunakan Lokasi Saya</string>
+    <string name="permission_denied_hint">Kebenaran lokasi dimatikan. Gunakan Lokasi Saya akan membuka tetapan.</string>
 </resources>

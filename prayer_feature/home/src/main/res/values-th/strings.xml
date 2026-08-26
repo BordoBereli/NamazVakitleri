@@ -16,4 +16,5 @@
     <string name="no_location_selected">ยังไม่ได้เลือกสถานที่ กรุณาเลือกสถานที่เพื่อดูเวลาละหมาด</string>
     <string name="add_location">เพิ่มตำแหน่ง</string>
     <string name="use_my_location">ใช้ตำแหน่งของฉัน</string>
+    <string name="permission_denied_hint">ปิดสิทธิ์ตำแหน่งแล้ว การใช้ตำแหน่งของฉันจะเปิดการตั้งค่า</string>
 </resources>

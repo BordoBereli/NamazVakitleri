@@ -16,4 +16,5 @@
     <string name="no_location_selected">कोई स्थान चयनित नहीं है। नमाज़ का समय देखने के लिए कृपया स्थान चुनें।</string>
     <string name="add_location">स्थान जोड़ें</string>
     <string name="use_my_location">मेरा स्थान उपयोग करें</string>
+    <string name="permission_denied_hint">स्थान अनुमति बंद है। मेरा स्थान उपयोग करें से सेटिंग्स खुलेंगी।</string>
 </resources>

@@ -16,4 +16,5 @@
     <string name="no_location_selected">هیچ مکانی انتخاب نشده است. لطفاً برای مشاهده اوقات نماز مکانی را انتخاب کنید.</string>
     <string name="add_location">افزودن موقعیت</string>
     <string name="use_my_location">استفاده از موقعیت من</string>
+    <string name="permission_denied_hint">مجوز موقعیت غیرفعال است. استفاده از موقعیت من تنظیمات را باز میکند.</string>
 </resources>

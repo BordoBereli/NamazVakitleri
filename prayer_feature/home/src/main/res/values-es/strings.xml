@@ -16,4 +16,5 @@
     <string name="no_location_selected">No se ha seleccionado ninguna ubicación. Elija una ubicación para ver los horarios de oración.</string>
     <string name="add_location">Añadir ubicación</string>
     <string name="use_my_location">Usar mi ubicación</string>
+    <string name="permission_denied_hint">El permiso de ubicación está desactivado. Usar mi ubicación abrirá la configuración.</string>
 </resources>

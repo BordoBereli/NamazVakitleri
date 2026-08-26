@@ -16,4 +16,5 @@
     <string name="no_location_selected">Местоположение не выбрано. Выберите местоположение, чтобы увидеть время намаза.</string>
     <string name="add_location">Добавить местоположение</string>
     <string name="use_my_location">Использовать моё местоположение</string>
+    <string name="permission_denied_hint">Разрешение на местоположение отключено. Использовать моё местоположение откроет настройки.</string>
 </resources>

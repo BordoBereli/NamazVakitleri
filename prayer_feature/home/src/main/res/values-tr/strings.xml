@@ -134,4 +134,5 @@
 
     <string name="add_location">Konum ekle</string>
     <string name="use_my_location">Konumumu Kullan</string>
+    <string name="permission_denied_hint">Konum izni kapalı. Konumumu Kullan ayarları açacak.</string>
 </resources>

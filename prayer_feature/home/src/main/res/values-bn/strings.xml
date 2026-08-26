@@ -16,4 +16,5 @@
     <string name="no_location_selected">কোনো অবস্থান নির্বাচন করা হয়নি। নামাজের সময় দেখতে একটি অবস্থান চয়ন করুন।</string>
     <string name="add_location">অবস্থান যোগ করুন</string>
     <string name="use_my_location">আমার অবস্থান ব্যবহার করুন</string>
+    <string name="permission_denied_hint">অবস্থানের অনুমতি বন্ধ। আমার অবস্থান ব্যবহার করলে সেটিংস খুলবে।</string>
 </resources>
