@@ -1,10 +1,13 @@
 package com.kutluoglu.prayer_feature.home
 
+import android.Manifest
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.navigation.NavController
+import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.location.LocationEntry
 import com.kutluoglu.prayer_feature.home.common.QuranVerseFormatter
@@ -16,6 +19,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
@@ -96,5 +100,56 @@ class HomeScreenTest {
         }
         composeTestRule.waitForIdle()
         composeTestRule.onNodeWithText("Location permission is off. Use My Location will open settings.").assertIsDisplayed()
+    }
+
+    @Test
+    fun `use my location with permission granted fires OnUseMyLocation`() {
+        shadowOf(composeTestRule.activity).grantPermissions(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        )
+        val events = mutableListOf<HomeEvent>()
+        composeTestRule.setContent {
+            HomeScreen(
+                navController = mockk<NavController>(relaxed = true),
+                uiState = HomeUiState.Empty,
+                locationsState = LocationsState(),
+                prayerDataByLocation = emptyMap(),
+                activeLocationId = null,
+                quranVerseFormatter = mockk<QuranVerseFormatter>(relaxed = true),
+                onEvent = { events.add(it) }
+            )
+        }
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText("Use My Location").performClick()
+        composeTestRule.waitForIdle()
+        assertThat(events).contains(HomeEvent.OnUseMyLocation)
+    }
+
+    @Test
+    fun `use my location without permission requests permission and does not fire OnUseMyLocation`() {
+        shadowOf(composeTestRule.activity).denyPermissions(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        )
+        val events = mutableListOf<HomeEvent>()
+        composeTestRule.setContent {
+            HomeScreen(
+                navController = mockk<NavController>(relaxed = true),
+                uiState = HomeUiState.Empty,
+                locationsState = LocationsState(),
+                prayerDataByLocation = emptyMap(),
+                activeLocationId = null,
+                quranVerseFormatter = mockk<QuranVerseFormatter>(relaxed = true),
+                onEvent = { events.add(it) }
+            )
+        }
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText("Use My Location").performClick()
+        composeTestRule.waitForIdle()
+        assertThat(events).doesNotContain(HomeEvent.OnUseMyLocation)
+        assertThat(shadowOf(composeTestRule.activity).lastRequestedPermission.requestedPermissions)
+            .asList()
+            .contains(Manifest.permission.ACCESS_FINE_LOCATION)
     }
 }

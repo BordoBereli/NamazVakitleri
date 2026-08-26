@@ -53,6 +53,7 @@ fun LocationPager(
     onAddLocation: () -> Unit,
     onChooseLocation: () -> Unit,
     onUseMyLocation: () -> Unit,
+    permissionDenied: Boolean,
     onEvent: (HomeEvent) -> Unit
 ) {
     if (entries.isEmpty()) {
@@ -61,7 +62,8 @@ fun LocationPager(
         } else {
             HomeEmptyContent(
                 onAddLocation = onAddLocation,
-                onUseMyLocation = onUseMyLocation
+                onUseMyLocation = onUseMyLocation,
+                permissionDenied = permissionDenied
             )
         }
         return

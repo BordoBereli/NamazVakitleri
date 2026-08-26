@@ -1,9 +1,13 @@
 package com.kutluoglu.prayer_feature.home
 
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -47,6 +51,7 @@ fun HomeScreen(
             restoreState = true
         }
     }
+    val context = LocalContext.current
 
     Box(modifier = Modifier.fillMaxSize()) {
         PermissionHandler(
@@ -54,6 +59,12 @@ fun HomeScreen(
             onChooseLocation = onChooseLocation,
             canProceedWithoutPermission = true
         ) { permissionActions ->
+            val openAppSettings = {
+                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                    this.data = Uri.fromParts("package", context.packageName, null)
+                }
+                context.startActivity(intent)
+            }
             LocationPager(
                 entries = locationsState.entries,
                 selectedId = locationsState.selectedId,
@@ -65,11 +76,31 @@ fun HomeScreen(
                 onAddLocation = onAddLocation,
                 onChooseLocation = onChooseLocation,
                 onUseMyLocation = {
-                    if (permissionActions.allPermissionsGranted) onEvent(HomeEvent.OnUseMyLocation)
-                    else permissionActions.requestPermission()
+                    resolveUseMyLocationAction(
+                        allPermissionsGranted = permissionActions.allPermissionsGranted,
+                        permanentlyDenied = permissionActions.permanentlyDenied,
+                        onUseMyLocation = { onEvent(HomeEvent.OnUseMyLocation) },
+                        openSettings = openAppSettings,
+                        requestPermission = permissionActions.requestPermission
+                    )
                 },
+                permissionDenied = permissionActions.permanentlyDenied,
                 onEvent = onEvent
             )
         }
+    }
+}
+
+internal fun resolveUseMyLocationAction(
+    allPermissionsGranted: Boolean,
+    permanentlyDenied: Boolean,
+    onUseMyLocation: () -> Unit,
+    openSettings: () -> Unit,
+    requestPermission: () -> Unit
+) {
+    when {
+        allPermissionsGranted -> onUseMyLocation()
+        permanentlyDenied -> openSettings()
+        else -> requestPermission()
     }
 }
