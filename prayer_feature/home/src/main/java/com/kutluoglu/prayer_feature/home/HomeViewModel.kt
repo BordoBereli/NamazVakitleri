@@ -147,7 +147,10 @@ class HomeViewModel(
                 loadPrayerTimesForCurrentLocation()
             }
             HomeEvent.OnPermissionsGranted -> loadPrayerTimesForCurrentLocation()
-            HomeEvent.OnUseMyLocation -> loadPrayerTimesForCurrentLocation()
+            HomeEvent.OnUseMyLocation -> {
+                analyticsTracker.logEvent(AnalyticsEvents.USE_MY_LOCATION)
+                loadPrayerTimesForCurrentLocation()
+            }
             HomeEvent.OnLoadQuranVerse -> loadRandomVerse()
             HomeEvent.OnVerseClicked -> {
                 analyticsTracker.logEvent(AnalyticsEvents.QURAN_VERSE_OPENED)

@@ -2,6 +2,7 @@ package com.kutluoglu.prayer_feature.home
 
 import android.util.Log
 import com.google.common.truth.Truth.assertThat
+import com.kutluoglu.core.common.analytics.AnalyticsEvents
 import com.kutluoglu.core.common.analytics.AnalyticsTracker
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.location.LocationEntry
@@ -290,6 +291,21 @@ class HomeViewModelTest {
         vm.onEvent(HomeEvent.OnUseMyLocation)
 
         coVerify { locationsCoordinator.resolveSelected() }
+    }
+
+    @Test
+    fun `OnUseMyLocation logs use my location analytics event`() = runTest {
+        coEvery { locationsCoordinator.observeState() } returns flowOf(
+            LocationsState(entries = listOf(entry), selectedId = "loc-1")
+        )
+        coEvery { locationsCoordinator.resolveInitial() } returns location
+        coEvery { locationsCoordinator.resolveSelected() } returns location
+        coEvery { prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET, any()) } returns success(loadedData())
+
+        val vm = viewModel()
+        vm.onEvent(HomeEvent.OnUseMyLocation)
+
+        verify { analyticsTracker.logEvent(AnalyticsEvents.USE_MY_LOCATION) }
     }
 
     @Test
