@@ -1,4 +1,9 @@
 [versions]
+appVersionCode = "1"
+appVersionName = "1.0"
+minSdk = "26"
+targetSdk = "36"
+compileSdk = "36"
 accompanistPermissions = "0.34.0"
 agp = "8.10.1"
 adhan2 = "0.0.6"
