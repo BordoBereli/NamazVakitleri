@@ -12,6 +12,7 @@ import com.kutluoglu.prayer_feature.common.states.TimeUiState
 
 sealed class HomeUiState {
     data object Loading : HomeUiState()
+    data object Empty : HomeUiState()
     data class Error(val message: String) : HomeUiState()
     data class Success(
         val timeState: TimeUiState = TimeUiState(),

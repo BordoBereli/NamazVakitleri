@@ -37,6 +37,7 @@ fun mergeToHomeUiState(
 ): HomeUiState {
     return when (gate) {
         HomeScreenGate.Loading -> HomeUiState.Loading
+        HomeScreenGate.Empty -> HomeUiState.Empty
         is HomeScreenGate.Error -> HomeUiState.Error(gate.message)
         HomeScreenGate.Ready -> {
             if (time == null || prayer == null || location == null) {

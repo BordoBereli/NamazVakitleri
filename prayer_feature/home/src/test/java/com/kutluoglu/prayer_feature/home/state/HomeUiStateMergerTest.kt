@@ -59,6 +59,19 @@ class HomeUiStateMergerTest {
     }
 
     @Test
+    fun `merge with Empty gate returns HomeUiState Empty`() {
+        val result = mergeToHomeUiState(
+            gate = HomeScreenGate.Empty,
+            location = null,
+            time = null,
+            prayer = null,
+            countdown = countdown,
+            quran = quran
+        )
+        assertThat(result).isEqualTo(HomeUiState.Empty)
+    }
+
+    @Test
     fun `merge with Ready gate returns Success carrying all sub states`() {
         val result = mergeToHomeUiState(
             gate = HomeScreenGate.Ready,
