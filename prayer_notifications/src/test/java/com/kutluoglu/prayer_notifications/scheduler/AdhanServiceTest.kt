@@ -81,11 +81,24 @@ class AdhanServiceTest {
     }
 
     @Test
-    fun `volume decrease stops the service`() {
+    fun `volume decrease to non-zero does not stop the service`() {
         val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         audioManager.setStreamVolume(AudioManager.STREAM_ALARM, 5, 0)
         val controller = startService("Fajr")
         audioManager.setStreamVolume(AudioManager.STREAM_ALARM, 4, 0)
+        val uri = Settings.System.getUriFor("volume_alarm_sound")
+        shadowOf(context.contentResolver).getContentObservers(uri).forEach { it.onChange(false) }
+        assertThat(shadowOf(controller.get()).isStoppedBySelf()).isFalse()
+        verify(exactly = 0) { adhanPlayer.stop() }
+        controller.destroy()
+    }
+
+    @Test
+    fun `volume to zero stops the service`() {
+        val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        audioManager.setStreamVolume(AudioManager.STREAM_ALARM, 5, 0)
+        val controller = startService("Fajr")
+        audioManager.setStreamVolume(AudioManager.STREAM_ALARM, 0, 0)
         val uri = Settings.System.getUriFor("volume_alarm_sound")
         shadowOf(context.contentResolver).getContentObservers(uri).forEach { it.onChange(false) }
         assertThat(shadowOf(controller.get()).isStoppedBySelf()).isTrue()

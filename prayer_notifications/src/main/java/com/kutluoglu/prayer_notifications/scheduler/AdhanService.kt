@@ -35,16 +35,14 @@ class AdhanService : Service(), KoinComponent {
         getSystemService(AUDIO_SERVICE) as AudioManager
     }
 
-    private var lastAlarmVolume: Int = 0
     private var volumeObserverRegistered: Boolean = false
 
     private val volumeObserver = object : ContentObserver(Handler(Looper.getMainLooper())) {
         override fun onChange(selfChange: Boolean) {
             val current = audioManager.getStreamVolume(AudioManager.STREAM_ALARM)
-            if (current < lastAlarmVolume) {
+            if (current <= 0) {
                 stopSelf()
             }
-            lastAlarmVolume = current
         }
     }
 
@@ -67,7 +65,6 @@ class AdhanService : Service(), KoinComponent {
             val volume = dataStore.getSettings().adhanVolume
             adhanPlayer.play(prayerKey, volume)
         }
-        lastAlarmVolume = audioManager.getStreamVolume(AudioManager.STREAM_ALARM)
         registerVolumeObserver()
         return START_NOT_STICKY
     }
