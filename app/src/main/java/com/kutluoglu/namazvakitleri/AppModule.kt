@@ -1,5 +1,6 @@
 package com.kutluoglu.namazvakitleri
 
+import com.kutluoglu.core.common.AppVersion
 import com.kutluoglu.prayer_feature.settings.SettingsViewModel
 import com.kutluoglu.prayer_feature.settings.calculation.CalculationMethodViewModel
 import com.kutluoglu.prayer_feature.settings.hijri.HijriAdjustmentViewModel
@@ -27,6 +28,14 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 val appModule: Module = module {
     // LocaleManager (singleton to apply the selected language)
     single { LocaleManager() }
+
+    // App version info (from BuildConfig)
+    single {
+        AppVersion(
+            name = BuildConfig.VERSION_NAME,
+            code = BuildConfig.VERSION_CODE
+        )
+    }
 
     // NotificationRescheduler (reschedules notification alarms when prayer times change)
     single { NotificationRescheduler(get(), get(), get()) }
