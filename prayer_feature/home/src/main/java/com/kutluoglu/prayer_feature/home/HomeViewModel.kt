@@ -149,7 +149,7 @@ class HomeViewModel(
             HomeEvent.OnPermissionsGranted -> loadPrayerTimesForCurrentLocation()
             HomeEvent.OnUseMyLocation -> {
                 analyticsTracker.logEvent(AnalyticsEvents.USE_MY_LOCATION)
-                loadPrayerTimesForCurrentLocation()
+                useMyLocation()
             }
             HomeEvent.OnLoadQuranVerse -> loadRandomVerse()
             HomeEvent.OnVerseClicked -> {
@@ -213,6 +213,20 @@ class HomeViewModel(
                 }
             } else {
                 noLocation()
+            }
+        }
+    }
+
+    private fun useMyLocation() {
+        viewModelScope.launch {
+            _screenGate.value = HomeScreenGate.Loading
+            locationsCoordinator.setGpsEnabled(true)
+            val location = locationsCoordinator.refreshGps()
+            if (location != null) {
+                locationsCoordinator.selectLocation(LocationsCoordinator.GPS_LOCATION_ID)
+                loadPrayerTimesForCurrentLocation()
+            } else {
+                fail(HomeErrorMapper.getUserFriendlyErrorMessage(null))
             }
         }
     }

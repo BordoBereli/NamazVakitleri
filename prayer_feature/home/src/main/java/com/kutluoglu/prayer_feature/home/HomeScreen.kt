@@ -6,6 +6,11 @@ import android.provider.Settings
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
@@ -53,12 +58,24 @@ fun HomeScreen(
     }
     val context = LocalContext.current
 
+    var pendingUseMyLocation by remember { mutableStateOf(false) }
+
     Box(modifier = Modifier.fillMaxSize()) {
         PermissionHandler(
-            onPermissionsGranted = { onEvent(HomeEvent.OnPermissionsGranted) },
+            onPermissionsGranted = {
+                if (pendingUseMyLocation) {
+                    pendingUseMyLocation = false
+                    onEvent(HomeEvent.OnUseMyLocation)
+                } else {
+                    onEvent(HomeEvent.OnPermissionsGranted)
+                }
+            },
             onChooseLocation = onChooseLocation,
             canProceedWithoutPermission = true
         ) { permissionActions ->
+            LaunchedEffect(permissionActions.permanentlyDenied) {
+                if (permissionActions.permanentlyDenied) pendingUseMyLocation = false
+            }
             val openAppSettings = {
                 val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
                     this.data = Uri.fromParts("package", context.packageName, null)
@@ -81,7 +98,10 @@ fun HomeScreen(
                         permanentlyDenied = permissionActions.permanentlyDenied,
                         onUseMyLocation = { onEvent(HomeEvent.OnUseMyLocation) },
                         openSettings = openAppSettings,
-                        requestPermission = permissionActions.requestPermission
+                        requestPermission = {
+                            pendingUseMyLocation = true
+                            permissionActions.requestPermission()
+                        }
                     )
                 },
                 permissionDenied = permissionActions.permanentlyDenied,

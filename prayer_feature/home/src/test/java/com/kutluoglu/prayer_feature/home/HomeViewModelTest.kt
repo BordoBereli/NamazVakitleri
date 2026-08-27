@@ -279,11 +279,53 @@ class HomeViewModelTest {
     }
 
     @Test
+    fun `OnUseMyLocation with no location enables gps and resolves current location`() = runTest {
+        val gpsEntry = LocationEntry(
+            id = LocationsCoordinator.GPS_LOCATION_ID,
+            location = location,
+            displayName = "Istanbul, Turkey",
+            isAutoGps = true
+        )
+        coEvery { locationsCoordinator.observeState() } returns flowOf(
+            LocationsState(
+                entries = listOf(gpsEntry),
+                selectedId = LocationsCoordinator.GPS_LOCATION_ID,
+                gpsEnabled = true
+            )
+        )
+        coEvery { locationsCoordinator.resolveInitial() } returns null
+        coEvery { locationsCoordinator.refreshGps() } returns location
+        coEvery { locationsCoordinator.resolveSelected() } returns location
+        coEvery { prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET, any()) } returns success(loadedData())
+
+        val vm = viewModel()
+        vm.onEvent(HomeEvent.OnUseMyLocation)
+
+        coVerify { locationsCoordinator.setGpsEnabled(true) }
+        coVerify { locationsCoordinator.refreshGps() }
+        coVerify { locationsCoordinator.selectLocation(LocationsCoordinator.GPS_LOCATION_ID) }
+        assertThat(vm.screenGate.value).isEqualTo(HomeScreenGate.Ready)
+    }
+
+    @Test
+    fun `OnUseMyLocation when gps resolution fails shows error`() = runTest {
+        coEvery { locationsCoordinator.observeState() } returns flowOf(LocationsState())
+        coEvery { locationsCoordinator.resolveInitial() } returns null
+        coEvery { locationsCoordinator.refreshGps() } returns null
+
+        val vm = viewModel()
+        vm.onEvent(HomeEvent.OnUseMyLocation)
+
+        assertThat(vm.screenGate.value is HomeScreenGate.Error).isTrue()
+    }
+
+    @Test
     fun `OnUseMyLocation triggers loadPrayerTimesForCurrentLocation`() = runTest {
         coEvery { locationsCoordinator.observeState() } returns flowOf(
             LocationsState(entries = listOf(entry), selectedId = "loc-1")
         )
         coEvery { locationsCoordinator.resolveInitial() } returns location
+        coEvery { locationsCoordinator.refreshGps() } returns location
         coEvery { locationsCoordinator.resolveSelected() } returns location
         coEvery { prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET, any()) } returns success(loadedData())
 
@@ -299,6 +341,7 @@ class HomeViewModelTest {
             LocationsState(entries = listOf(entry), selectedId = "loc-1")
         )
         coEvery { locationsCoordinator.resolveInitial() } returns location
+        coEvery { locationsCoordinator.refreshGps() } returns location
         coEvery { locationsCoordinator.resolveSelected() } returns location
         coEvery { prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET, any()) } returns success(loadedData())
 

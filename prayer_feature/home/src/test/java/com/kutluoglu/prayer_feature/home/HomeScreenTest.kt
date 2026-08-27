@@ -6,6 +6,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavController
 import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.prayer.model.location.LocationData
@@ -151,5 +152,38 @@ class HomeScreenTest {
         assertThat(shadowOf(composeTestRule.activity).lastRequestedPermission.requestedPermissions)
             .asList()
             .contains(Manifest.permission.ACCESS_FINE_LOCATION)
+    }
+
+    @Test
+    fun `use my location without permission then granting permission fires OnUseMyLocation`() {
+        shadowOf(composeTestRule.activity).denyPermissions(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        )
+        val events = mutableListOf<HomeEvent>()
+        composeTestRule.setContent {
+            HomeScreen(
+                navController = mockk<NavController>(relaxed = true),
+                uiState = HomeUiState.Empty,
+                locationsState = LocationsState(),
+                prayerDataByLocation = emptyMap(),
+                activeLocationId = null,
+                quranVerseFormatter = mockk<QuranVerseFormatter>(relaxed = true),
+                onEvent = { events.add(it) }
+            )
+        }
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText("Use My Location").performClick()
+        composeTestRule.waitForIdle()
+
+        shadowOf(composeTestRule.activity).grantPermissions(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        )
+        composeTestRule.activityRule.scenario.moveToState(Lifecycle.State.CREATED)
+        composeTestRule.activityRule.scenario.moveToState(Lifecycle.State.RESUMED)
+        composeTestRule.waitForIdle()
+
+        assertThat(events).contains(HomeEvent.OnUseMyLocation)
     }
 }
