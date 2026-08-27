@@ -42,6 +42,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -126,6 +127,9 @@ private fun NotificationsContent(
     var showNotificationRationale by remember { mutableStateOf(false) }
     var notificationPermanentlyDenied by remember { mutableStateOf(false) }
     var pendingPermissionAction by remember { mutableStateOf<(() -> Unit)?>(null) }
+    var showExactAlarmDialog by remember { mutableStateOf(false) }
+    var exactAlarmDialogDismissed by remember { mutableStateOf(false) }
+    var pendingExactAlarmAction by remember { mutableStateOf<(() -> Unit)?>(null) }
     val context = LocalContext.current
     val activity = LocalActivity.current
 
@@ -149,10 +153,20 @@ private fun NotificationsContent(
             if (event == Lifecycle.Event.ON_RESUME) {
                 hasNotificationPermission = checkNotificationPermission()
                 canScheduleExactAlarms = checkExactAlarmPermission()
+                if (canScheduleExactAlarms) {
+                    pendingExactAlarmAction?.invoke()
+                }
+                pendingExactAlarmAction = null
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+
+    LaunchedEffect(settings.enabled, canScheduleExactAlarms, exactAlarmDialogDismissed) {
+        if (settings.enabled && !canScheduleExactAlarms && !exactAlarmDialogDismissed) {
+            showExactAlarmDialog = true
+        }
     }
 
     val notificationPermissionLauncher = rememberLauncherForActivityResult(
@@ -187,6 +201,9 @@ private fun NotificationsContent(
                     pendingPermissionAction = { onEvent(NotificationsEvent.SetEnabled(true)) }
                     showNotificationRationale = false
                     notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                } else if (enabled && !canScheduleExactAlarms) {
+                    pendingExactAlarmAction = { onEvent(NotificationsEvent.SetEnabled(true)) }
+                    showExactAlarmDialog = true
                 } else {
                     onEvent(NotificationsEvent.SetEnabled(enabled))
                 }
@@ -243,6 +260,9 @@ private fun NotificationsContent(
                     pendingPermissionAction = { onEvent(NotificationsEvent.SetAdhanEnabled(true)) }
                     showNotificationRationale = false
                     notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                } else if (enabled && !canScheduleExactAlarms) {
+                    pendingExactAlarmAction = { onEvent(NotificationsEvent.SetAdhanEnabled(true)) }
+                    showExactAlarmDialog = true
                 } else {
                     onEvent(NotificationsEvent.SetAdhanEnabled(enabled))
                 }
@@ -332,6 +352,42 @@ private fun NotificationsContent(
             onConfirm = { hour, minute ->
                 onEvent(NotificationsEvent.SetDailyReminder(true, hour, minute))
                 showTimePicker = false
+            }
+        )
+    }
+
+    if (showExactAlarmDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                showExactAlarmDialog = false
+                exactAlarmDialogDismissed = true
+                pendingExactAlarmAction = null
+            },
+            title = { Text(stringResource(R.string.exact_alarm_dialog_title)) },
+            text = { Text(stringResource(R.string.exact_alarm_dialog_body)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    showExactAlarmDialog = false
+                    exactAlarmDialogDismissed = true
+                    runCatching {
+                        context.startActivity(
+                            Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
+                                data = Uri.parse("package:${context.packageName}")
+                            }
+                        )
+                    }
+                }) {
+                    Text(stringResource(R.string.exact_alarm_grant))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    showExactAlarmDialog = false
+                    exactAlarmDialogDismissed = true
+                    pendingExactAlarmAction = null
+                }) {
+                    Text(stringResource(R.string.exact_alarm_not_now))
+                }
             }
         )
     }

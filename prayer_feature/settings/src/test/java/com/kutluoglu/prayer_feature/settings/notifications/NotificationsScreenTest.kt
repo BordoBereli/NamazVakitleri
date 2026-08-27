@@ -1,6 +1,7 @@
 package com.kutluoglu.prayer_feature.settings.notifications
 
 import android.Manifest
+import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.SemanticsActions
@@ -11,6 +12,7 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performSemanticsAction
+import androidx.lifecycle.Lifecycle
 import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.prayer_feature.settings.R
 import com.kutluoglu.prayer_notifications.domain.NotificationSettings
@@ -20,12 +22,14 @@ import com.kutluoglu.prayer_notifications.manager.PrayerNotificationManager
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
+import org.robolectric.shadows.ShadowAlarmManager
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [35], qualifiers = "w400dp-h1400dp")
@@ -48,6 +52,11 @@ class NotificationsScreenTest {
             )
         }
         composeTestRule.waitForIdle()
+    }
+
+    @Before
+    fun grantExactAlarmPermission() {
+        ShadowAlarmManager.setCanScheduleExactAlarms(true)
     }
 
     @Test
@@ -222,5 +231,87 @@ class NotificationsScreenTest {
         composeTestRule.waitForIdle()
 
         coVerify { updateUseCase(match { it.adhanVolume == 50 }) }
+    }
+
+    @Test
+    fun `enabling notifications without exact alarm permission shows dialog`() {
+        ShadowAlarmManager.setCanScheduleExactAlarms(false)
+        shadowOf(composeTestRule.activity).grantPermissions(Manifest.permission.POST_NOTIFICATIONS)
+        launchScreen(NotificationSettings(enabled = false))
+
+        composeTestRule.onAllNodes(isToggleable())[0].performClick()
+        composeTestRule.waitForIdle()
+
+        composeTestRule.onNodeWithText(
+            composeTestRule.activity.getString(R.string.exact_alarm_dialog_title)
+        ).assertIsDisplayed()
+        coVerify(exactly = 0) { updateUseCase(any()) }
+    }
+
+    @Test
+    fun `granting exact alarm permission opens settings intent`() {
+        ShadowAlarmManager.setCanScheduleExactAlarms(false)
+        shadowOf(composeTestRule.activity).grantPermissions(Manifest.permission.POST_NOTIFICATIONS)
+        launchScreen(NotificationSettings(enabled = false))
+
+        composeTestRule.onAllNodes(isToggleable())[0].performClick()
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText(
+            composeTestRule.activity.getString(R.string.exact_alarm_grant)
+        ).performClick()
+        composeTestRule.waitForIdle()
+
+        val startedIntent = shadowOf(composeTestRule.activity).nextStartedActivity
+        assertThat(startedIntent?.action).isEqualTo(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
+    }
+
+    @Test
+    fun `not now dismisses exact alarm dialog`() {
+        ShadowAlarmManager.setCanScheduleExactAlarms(false)
+        shadowOf(composeTestRule.activity).grantPermissions(Manifest.permission.POST_NOTIFICATIONS)
+        launchScreen(NotificationSettings(enabled = false))
+
+        composeTestRule.onAllNodes(isToggleable())[0].performClick()
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText(
+            composeTestRule.activity.getString(R.string.exact_alarm_not_now)
+        ).performClick()
+        composeTestRule.waitForIdle()
+
+        composeTestRule.onNodeWithText(
+            composeTestRule.activity.getString(R.string.exact_alarm_dialog_title)
+        ).assertDoesNotExist()
+    }
+
+    @Test
+    fun `shows exact alarm dialog on entry when enabled without permission`() {
+        ShadowAlarmManager.setCanScheduleExactAlarms(false)
+        shadowOf(composeTestRule.activity).grantPermissions(Manifest.permission.POST_NOTIFICATIONS)
+        launchScreen(NotificationSettings(enabled = true))
+
+        composeTestRule.onNodeWithText(
+            composeTestRule.activity.getString(R.string.exact_alarm_dialog_title)
+        ).assertIsDisplayed()
+    }
+
+    @Test
+    fun `granting permission on return applies pending enable action`() {
+        ShadowAlarmManager.setCanScheduleExactAlarms(false)
+        shadowOf(composeTestRule.activity).grantPermissions(Manifest.permission.POST_NOTIFICATIONS)
+        launchScreen(NotificationSettings(enabled = false))
+
+        composeTestRule.onAllNodes(isToggleable())[0].performClick()
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText(
+            composeTestRule.activity.getString(R.string.exact_alarm_grant)
+        ).performClick()
+        composeTestRule.waitForIdle()
+
+        ShadowAlarmManager.setCanScheduleExactAlarms(true)
+        composeTestRule.activityRule.scenario.moveToState(Lifecycle.State.STARTED)
+        composeTestRule.activityRule.scenario.moveToState(Lifecycle.State.RESUMED)
+        composeTestRule.waitForIdle()
+
+        coVerify { updateUseCase(match { it.enabled }) }
     }
 }
