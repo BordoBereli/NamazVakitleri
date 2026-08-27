@@ -3,6 +3,7 @@
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel target="11">
       <module name="NamazVakitleri.feature.home" target="21" />
+      <module name="NamazVakitleri.prayer_cache" target="21" />
     </bytecodeTargetLevel>
   </component>
 </project>

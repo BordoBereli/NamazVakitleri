@@ -11,6 +11,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/app_update" />
             <option value="$PROJECT_DIR$/core" />
             <option value="$PROJECT_DIR$/core/common" />
             <option value="$PROJECT_DIR$/core/designsystem" />
@@ -27,6 +28,7 @@
             <option value="$PROJECT_DIR$/prayer_location" />
             <option value="$PROJECT_DIR$/prayer_navigation" />
             <option value="$PROJECT_DIR$/prayer_navigation/core" />
+            <option value="$PROJECT_DIR$/prayer_notifications" />
             <option value="$PROJECT_DIR$/prayer_qibla" />
             <option value="$PROJECT_DIR$/prayer_remote" />
             <option value="$PROJECT_DIR$/prayer_settings" />
