@@ -2,6 +2,7 @@ package com.kutluoglu.prayer_feature.settings
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
+import com.kutluoglu.core.common.AppVersion
 import com.kutluoglu.core.common.analytics.AnalyticsTracker
 import com.kutluoglu.prayer.usecases.prayer.ClearPrayerTimesCacheUseCase
 import com.kutluoglu.prayer_settings.domain.model.LocationSettings
@@ -36,6 +37,7 @@ class SettingsViewModelTest {
     private lateinit var clearLocationCacheUseCase: ClearLocationCacheUseCase
     private lateinit var clearPrayerTimesCacheUseCase: ClearPrayerTimesCacheUseCase
     private val analyticsTracker = mockk<AnalyticsTracker>(relaxed = true)
+    private val appVersion = AppVersion(name = "2.0.0", code = 200)
     private lateinit var viewModel: SettingsViewModel
 
     @BeforeEach
@@ -58,7 +60,8 @@ class SettingsViewModelTest {
             updateHijriAdjustmentUseCase,
             clearLocationCacheUseCase,
             clearPrayerTimesCacheUseCase,
-            analyticsTracker
+            analyticsTracker,
+            appVersion
         )
     }
 
@@ -153,5 +156,20 @@ class SettingsViewModelTest {
 
         // Assert
         coVerify { updateHijriAdjustmentUseCase(-2) }
+    }
+
+    @Test
+    fun `Success state should expose app version`() = runTest {
+        // Act
+        viewModel.uiState.test {
+            val state = awaitItem()
+
+            // Assert
+            assertThat(state).isInstanceOf(SettingsUiState.Success::class.java)
+            val successState = state as SettingsUiState.Success
+            assertThat(successState.version.name).isEqualTo("2.0.0")
+            assertThat(successState.version.code).isEqualTo(200)
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 }

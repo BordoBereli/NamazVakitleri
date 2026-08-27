@@ -2,6 +2,7 @@ package com.kutluoglu.prayer_feature.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kutluoglu.core.common.AppVersion
 import com.kutluoglu.core.common.analytics.AnalyticsEvents
 import com.kutluoglu.core.common.analytics.AnalyticsTracker
 import com.kutluoglu.prayer.usecases.prayer.ClearPrayerTimesCacheUseCase
@@ -26,7 +27,8 @@ class SettingsViewModel(
     private val updateHijriAdjustmentUseCase: UpdateHijriAdjustmentUseCase,
     private val clearLocationCacheUseCase: ClearLocationCacheUseCase,
     private val clearPrayerTimesCacheUseCase: ClearPrayerTimesCacheUseCase,
-    private val analyticsTracker: AnalyticsTracker
+    private val analyticsTracker: AnalyticsTracker,
+    private val appVersion: AppVersion
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<SettingsUiState>(SettingsUiState.Loading)
@@ -57,7 +59,7 @@ class SettingsViewModel(
             _uiState.value = SettingsUiState.Loading
             try {
                 val settings = getSettingsUseCase()
-                _uiState.value = SettingsUiState.Success(settings)
+                _uiState.value = SettingsUiState.Success(settings, appVersion)
             } catch (e: Exception) {
                 _uiState.value = SettingsUiState.Error(e.message ?: "Unknown error")
             }

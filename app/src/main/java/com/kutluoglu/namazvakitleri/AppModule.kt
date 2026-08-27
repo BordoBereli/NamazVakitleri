@@ -59,7 +59,7 @@ val appModule: Module = module {
     factory { SearchLocationUseCase(get()) }
     
     // Settings ViewModels
-    viewModel { SettingsViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
+    viewModel { SettingsViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get()) }
     factory { LocationSelectionViewModel(get(), get(), get(), get(), get()) }
     viewModel { MyLocationsViewModel(get(), get()) }
     factory { CalculationMethodViewModel(get(), get(), get()) }
