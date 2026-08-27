@@ -75,4 +75,11 @@ class SettingsScreenTest {
         composeTestRule.onNodeWithText("Language").assertIsDisplayed()
         composeTestRule.onNodeWithText("Notifications").assertIsDisplayed()
     }
+
+    @Test
+    fun `renders version footer with name and code`() {
+        launchScreen()
+
+        composeTestRule.onNodeWithText("Version 2.0.0 (200)").assertIsDisplayed()
+    }
 }

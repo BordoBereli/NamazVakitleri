@@ -13,11 +13,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Public
@@ -32,6 +34,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -49,6 +52,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.kutluoglu.core.common.AppVersion
 import com.kutluoglu.core.designsystem.R
 import com.kutluoglu.core.designsystem.components.LoadingIndicator
 import com.kutluoglu.prayer.model.prayer.CalculationMethod
@@ -103,6 +107,7 @@ fun SettingsScreen(
                 is SettingsUiState.Success -> {
                     SettingsContent(
                         settings = state.settings,
+                        version = state.version,
                         onClearCacheClick = { showClearCacheDialog = true },
                         onNavigateToMyLocations = onNavigateToMyLocations,
                         onNavigateToCalculationMethod = onNavigateToCalculationMethod,
@@ -129,6 +134,7 @@ fun SettingsScreen(
 @Composable
 private fun SettingsContent(
     settings: Settings,
+    version: AppVersion,
     onClearCacheClick: () -> Unit,
     onNavigateToMyLocations: () -> Unit,
     onNavigateToCalculationMethod: () -> Unit,
@@ -238,6 +244,8 @@ private fun SettingsContent(
                 )
             }
         }
+
+        VersionFooter(version = version)
     }
 }
 
@@ -354,5 +362,40 @@ private fun getLanguageName(language: String): String {
         "th" -> stringResource(SettingsR.string.language_th)
         "ur" -> stringResource(SettingsR.string.language_ur)
         else -> language
+    }
+}
+
+@Composable
+private fun VersionFooter(version: AppVersion) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 8.dp, bottom = 16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Surface(
+            shape = CircleShape,
+            color = MaterialTheme.colorScheme.surfaceVariant
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Info,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier
+                    .padding(12.dp)
+                    .size(24.dp)
+            )
+        }
+        Text(
+            text = stringResource(SettingsR.string.app_name),
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Medium
+        )
+        Text(
+            text = stringResource(SettingsR.string.version_format, version.name, version.code),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }
