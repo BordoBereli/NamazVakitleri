@@ -46,9 +46,9 @@ class PrayerNotificationScheduler(
 ) {
     companion object {
         // Request codes come from SchedulePlan.buildDailyAlarms (starts at 1000).
-        // 5 prayers + 5 pre-prayers max = 10 codes; the range must cover it.
+        // 24h coverage: 10 prayers + 10 pre-prayers max = 20 codes; the range must cover it.
         const val REQUEST_CODE_START = 1000
-        const val REQUEST_CODE_END = 1010
+        const val REQUEST_CODE_END = 1020
         const val DAILY_RESCHEDULE_WORK_NAME = "daily_prayer_reschedule"
     }
 
@@ -101,27 +101,15 @@ class PrayerNotificationScheduler(
             return
         }
 
-        val nextDayFajrTimeMillis = if (settings.countdownEnabled) {
-            val tomorrow = today.plusDays(1)
-            getPrayerTimesUseCase(
-                date = LocalDateTime(tomorrow.year, tomorrow.monthValue, tomorrow.dayOfMonth, 0, 0),
-                latitude = location.latitude,
-                longitude = location.longitude,
-                zoneId = zoneId,
-                calculationMethod = method,
-                persistDailyCache = false
-            ).getOrNull()
-                ?.firstOrNull { it.name == "Fajr" }
-                ?.let {
-                    LocalTime.of(it.time.hour, it.time.minute)
-                        .atDate(tomorrow)
-                        .atZone(zoneId)
-                        .toInstant()
-                        .toEpochMilli()
-                }
-        } else {
-            null
-        }
+        val tomorrow = today.plusDays(1)
+        val tomorrowPrayers = getPrayerTimesUseCase(
+            date = LocalDateTime(tomorrow.year, tomorrow.monthValue, tomorrow.dayOfMonth, 0, 0),
+            latitude = location.latitude,
+            longitude = location.longitude,
+            zoneId = zoneId,
+            calculationMethod = method,
+            persistDailyCache = false
+        ).getOrNull() ?: emptyList()
 
         val enabled = settings.prayerToggles.filterValues { it }.keys
         val summary = buildDailySummary(prayers)
@@ -137,6 +125,7 @@ class PrayerNotificationScheduler(
         }
         val alarms = schedulePlan.buildDailyAlarms(
             prayers = prayers,
+            tomorrowPrayers = tomorrowPrayers,
             zoneId = zoneId,
             now = Instant.now(),
             enabledPrayers = enabled,
@@ -148,8 +137,7 @@ class PrayerNotificationScheduler(
             dailySummary = summary,
             specialDayToday = specialDayToday,
             specialDayTomorrow = specialDayTomorrow,
-            jumuahEnabled = settings.jumuahEnabled,
-            nextDayFajrTimeMillis = nextDayFajrTimeMillis
+            jumuahEnabled = settings.jumuahEnabled
         )
         cancelAll()
         alarms.forEach { scheduleAlarm(it) }
@@ -161,18 +149,6 @@ class PrayerNotificationScheduler(
                     nextPrayer.prayerKey,
                     nextPrayer.previousPrayerTimeMillis
                 )
-            } else if (nextDayFajrTimeMillis != null) {
-                val lastEnabledTrigger = prayers
-                    .filter { it.name in enabled }
-                    .lastOrNull()
-                    ?.let {
-                        LocalTime.of(it.time.hour, it.time.minute)
-                            .atDate(today)
-                            .atZone(zoneId)
-                            .toInstant()
-                            .toEpochMilli()
-                    }
-                updateCountdown(nextDayFajrTimeMillis, "Fajr", lastEnabledTrigger)
             }
         }
         if (WorkManager.isInitialized()) {

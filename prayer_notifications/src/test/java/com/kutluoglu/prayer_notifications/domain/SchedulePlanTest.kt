@@ -2,16 +2,16 @@ package com.kutluoglu.prayer_notifications.domain
 
 import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.prayer.model.prayer.Prayer
-import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import org.junit.jupiter.api.Test
 import java.time.Instant
+import java.time.LocalDate
 import java.time.ZoneId
 
 class SchedulePlanTest {
 
     private val zone = ZoneId.of("Europe/Istanbul")
-    private val date = LocalDate(2026, 8, 22)
+    private val date = kotlinx.datetime.LocalDate(2026, 8, 22)
 
     private fun prayer(name: String, time: LocalTime) = Prayer(
         name = name,
@@ -238,23 +238,27 @@ class SchedulePlanTest {
     @Test
     fun `last enabled prayer points to tomorrow's Fajr when provided`() {
         val plan = SchedulePlan()
-        val nextDayFajr = Instant.parse("2026-08-23T01:30:00Z").toEpochMilli()
         val alarms = plan.buildDailyAlarms(
             prayers = prayers,
+            tomorrowPrayers = listOf(prayer("Fajr", LocalTime(4, 30))),
             zoneId = zone,
             now = Instant.parse("2026-08-22T00:00:00Z"),
             enabledPrayers = setOf("Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"),
             prePrayerMinutes = 15,
-            prePrayerEnabled = false,
-            nextDayFajrTimeMillis = nextDayFajr
+            prePrayerEnabled = false
         )
         val isha = alarms.first { it.prayerKey == "Isha" }
+        val tomorrowFajr = java.time.LocalTime.of(4, 30)
+            .atDate(LocalDate.of(2026, 8, 23))
+            .atZone(zone)
+            .toInstant()
+            .toEpochMilli()
         assertThat(isha.nextPrayerName).isEqualTo("Fajr")
-        assertThat(isha.nextPrayerTimeMillis).isEqualTo(nextDayFajr)
+        assertThat(isha.nextPrayerTimeMillis).isEqualTo(tomorrowFajr)
     }
 
     @Test
-    fun `last enabled prayer has no next when nextDayFajr not provided`() {
+    fun `last enabled prayer has no next when no tomorrow prayers`() {
         val plan = SchedulePlan()
         val alarms = plan.buildDailyAlarms(
             prayers = prayers,
@@ -267,5 +271,77 @@ class SchedulePlanTest {
         val isha = alarms.first { it.prayerKey == "Isha" }
         assertThat(isha.nextPrayerName).isNull()
         assertThat(isha.nextPrayerTimeMillis).isNull()
+    }
+
+    @Test
+    fun `schedules today's remaining and tomorrow's full day`() {
+        val plan = SchedulePlan()
+        val alarms = plan.buildDailyAlarms(
+            prayers = prayers,
+            tomorrowPrayers = prayers,
+            zoneId = zone,
+            now = Instant.parse("2026-08-22T15:00:00Z"), // 18:00 Istanbul
+            enabledPrayers = setOf("Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"),
+            prePrayerMinutes = 15,
+            prePrayerEnabled = false
+        )
+        assertThat(alarms.map { it.prayerKey })
+            .containsExactly("Maghrib", "Isha", "Fajr", "Dhuhr", "Asr", "Maghrib", "Isha")
+    }
+
+    @Test
+    fun `marks tomorrow's Friday Dhuhr as jumuah`() {
+        // 2026-08-21 is a Friday. now = 2026-08-20 15:00 UTC (18:00 Istanbul), after today's Dhuhr.
+        val plan = SchedulePlan()
+        val alarms = plan.buildDailyAlarms(
+            prayers = prayers,
+            tomorrowPrayers = prayers,
+            zoneId = zone,
+            now = Instant.parse("2026-08-20T15:00:00Z"),
+            enabledPrayers = setOf("Dhuhr"),
+            prePrayerMinutes = 15,
+            prePrayerEnabled = false,
+            jumuahEnabled = true
+        )
+        assertThat(alarms.single().prayerKey).isEqualTo("Dhuhr")
+        assertThat(alarms.single().isJumuah).isTrue()
+    }
+
+    @Test
+    fun `tomorrow's Fajr carries today's last prayer as previous`() {
+        val plan = SchedulePlan()
+        val alarms = plan.buildDailyAlarms(
+            prayers = prayers,
+            tomorrowPrayers = prayers,
+            zoneId = zone,
+            now = Instant.parse("2026-08-22T20:00:00Z"), // 23:00 Istanbul, after Isha
+            enabledPrayers = setOf("Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"),
+            prePrayerMinutes = 15,
+            prePrayerEnabled = false
+        )
+        val tomorrowFajr = alarms.first { it.prayerKey == "Fajr" }
+        val todayIshaTrigger = java.time.LocalTime.of(21, 15)
+            .atDate(LocalDate.of(2026, 8, 22))
+            .atZone(zone)
+            .toInstant()
+            .toEpochMilli()
+        assertThat(tomorrowFajr.previousPrayerTimeMillis).isEqualTo(todayIshaTrigger)
+    }
+
+    @Test
+    fun `request codes stay within the cancel range for two days`() {
+        val plan = SchedulePlan()
+        val alarms = plan.buildDailyAlarms(
+            prayers = prayers,
+            tomorrowPrayers = prayers,
+            zoneId = zone,
+            now = Instant.parse("2026-08-22T00:00:00Z"),
+            enabledPrayers = setOf("Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"),
+            prePrayerMinutes = 15,
+            prePrayerEnabled = true
+        )
+        val codes = alarms.map { it.requestCode }
+        assertThat(codes.min()!!).isAtLeast(1000)
+        assertThat(codes.max()!!).isLessThan(1020)
     }
 }

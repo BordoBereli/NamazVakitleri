@@ -33,6 +33,7 @@ class SchedulePlan {
 
     fun buildDailyAlarms(
         prayers: List<Prayer>,
+        tomorrowPrayers: List<Prayer> = emptyList(),
         zoneId: ZoneId,
         now: Instant,
         enabledPrayers: Set<String>,
@@ -44,38 +45,41 @@ class SchedulePlan {
         dailySummary: String = "",
         specialDayToday: SpecialDay? = null,
         specialDayTomorrow: SpecialDay? = null,
-        jumuahEnabled: Boolean = true,
-        nextDayFajrTimeMillis: Long? = null
+        jumuahEnabled: Boolean = true
     ): List<ScheduledAlarm> {
         val nowZoned = now.atZone(zoneId)
+        val today = nowZoned.toLocalDate()
+        val tomorrow = today.plusDays(1)
         val result = mutableListOf<ScheduledAlarm>()
         var requestCode = 1000
 
-        val enabled = prayers.filter { it.name in enabledPrayers }
-        enabled.forEachIndexed { index, prayer ->
-            val trigger = LocalTime.of(prayer.time.hour, prayer.time.minute)
-                .atDate(nowZoned.toLocalDate())
+        val enabledToday = prayers.filter { it.name in enabledPrayers }
+        val enabledTomorrow = tomorrowPrayers.filter { it.name in enabledPrayers }
+
+        fun triggerFor(prayer: Prayer, date: java.time.LocalDate): Instant =
+            LocalTime.of(prayer.time.hour, prayer.time.minute)
+                .atDate(date)
                 .atZone(zoneId)
                 .toInstant()
-            val next = enabled.getOrNull(index + 1)
-            val nextTime = next?.let {
-                LocalTime.of(it.time.hour, it.time.minute)
-                    .atDate(nowZoned.toLocalDate())
-                    .atZone(zoneId)
-                    .toInstant()
-                    .toEpochMilli()
-            }
-            val isLast = index == enabled.lastIndex
-            val effectiveNextTime = if (isLast) nextDayFajrTimeMillis else nextTime
-            val effectiveNextName = if (isLast && nextDayFajrTimeMillis != null) "Fajr" else next?.name
-            val previous = enabled.getOrNull(index - 1)?.let {
-                LocalTime.of(it.time.hour, it.time.minute)
-                    .atDate(nowZoned.toLocalDate())
-                    .atZone(zoneId)
-                    .toInstant()
-                    .toEpochMilli()
-            }
+
+        enabledToday.forEachIndexed { index, prayer ->
+            val trigger = triggerFor(prayer, today)
             if (trigger.isAfter(now)) {
+                val next = enabledToday.getOrNull(index + 1)
+                val isLast = index == enabledToday.lastIndex
+                val effectiveNextTime = if (isLast) {
+                    enabledTomorrow.firstOrNull()?.let { triggerFor(it, tomorrow).toEpochMilli() }
+                } else {
+                    next?.let { triggerFor(it, today).toEpochMilli() }
+                }
+                val effectiveNextName = if (isLast && enabledTomorrow.isNotEmpty()) {
+                    enabledTomorrow.first().name
+                } else {
+                    next?.name
+                }
+                val previous = enabledToday.getOrNull(index - 1)?.let {
+                    triggerFor(it, today).toEpochMilli()
+                }
                 result += ScheduledAlarm(
                     prayerKey = prayer.name,
                     triggerAtMillis = trigger.toEpochMilli(),
@@ -83,7 +87,7 @@ class SchedulePlan {
                     type = AlarmType.PRAYER,
                     isJumuah = jumuahEnabled &&
                         prayer.name == "Dhuhr" &&
-                        nowZoned.dayOfWeek == DayOfWeek.FRIDAY,
+                        today.dayOfWeek == DayOfWeek.FRIDAY,
                     nextPrayerTimeMillis = effectiveNextTime,
                     nextPrayerName = effectiveNextName,
                     previousPrayerTimeMillis = previous
@@ -103,9 +107,41 @@ class SchedulePlan {
             }
         }
 
+        enabledTomorrow.forEachIndexed { index, prayer ->
+            val trigger = triggerFor(prayer, tomorrow)
+            val next = enabledTomorrow.getOrNull(index + 1)
+            val previous = enabledTomorrow.getOrNull(index - 1)?.let {
+                triggerFor(it, tomorrow).toEpochMilli()
+            } ?: enabledToday.lastOrNull()?.let {
+                triggerFor(it, today).toEpochMilli()
+            }
+            result += ScheduledAlarm(
+                prayerKey = prayer.name,
+                triggerAtMillis = trigger.toEpochMilli(),
+                requestCode = requestCode++,
+                type = AlarmType.PRAYER,
+                isJumuah = jumuahEnabled &&
+                    prayer.name == "Dhuhr" &&
+                    tomorrow.dayOfWeek == DayOfWeek.FRIDAY,
+                nextPrayerTimeMillis = next?.let { triggerFor(it, tomorrow).toEpochMilli() },
+                nextPrayerName = next?.name,
+                previousPrayerTimeMillis = previous
+            )
+            if (prePrayerEnabled) {
+                val preTrigger = trigger.minusSeconds(prePrayerMinutes * 60L)
+                result += ScheduledAlarm(
+                    prayerKey = "${prayer.name}_pre",
+                    triggerAtMillis = preTrigger.toEpochMilli(),
+                    requestCode = requestCode++,
+                    type = AlarmType.PRE_PRAYER,
+                    prePrayerMinutes = prePrayerMinutes
+                )
+            }
+        }
+
         if (dailyReminderEnabled) {
             val reminderTrigger = LocalTime.of(dailyReminderHour, dailyReminderMinute)
-                .atDate(nowZoned.toLocalDate())
+                .atDate(today)
                 .atZone(zoneId)
                 .toInstant()
             if (reminderTrigger.isAfter(now)) {
@@ -121,7 +157,7 @@ class SchedulePlan {
 
         specialDayToday?.let { day ->
             val specialTrigger = LocalTime.of(8, 0)
-                .atDate(nowZoned.toLocalDate())
+                .atDate(today)
                 .atZone(zoneId)
                 .toInstant()
             if (specialTrigger.isAfter(now)) {
@@ -137,18 +173,16 @@ class SchedulePlan {
 
         specialDayTomorrow?.let { day ->
             val specialTrigger = LocalTime.of(8, 0)
-                .atDate(nowZoned.toLocalDate())
+                .atDate(tomorrow)
                 .atZone(zoneId)
                 .toInstant()
-            if (specialTrigger.isAfter(now)) {
-                result += ScheduledAlarm(
-                    prayerKey = "pre_special_day",
-                    triggerAtMillis = specialTrigger.toEpochMilli(),
-                    requestCode = REQUEST_CODE_PRE_SPECIAL_DAY,
-                    type = AlarmType.PRE_SPECIAL_DAY,
-                    specialDay = day
-                )
-            }
+            result += ScheduledAlarm(
+                prayerKey = "pre_special_day",
+                triggerAtMillis = specialTrigger.toEpochMilli(),
+                requestCode = REQUEST_CODE_PRE_SPECIAL_DAY,
+                type = AlarmType.PRE_SPECIAL_DAY,
+                specialDay = day
+            )
         }
 
         return result
