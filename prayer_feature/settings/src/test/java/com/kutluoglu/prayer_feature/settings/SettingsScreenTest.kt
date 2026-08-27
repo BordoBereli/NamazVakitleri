@@ -4,6 +4,7 @@ import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import com.kutluoglu.core.common.AppVersion
 import com.kutluoglu.core.common.analytics.AnalyticsTracker
 import com.kutluoglu.prayer.usecases.prayer.ClearPrayerTimesCacheUseCase
 import com.kutluoglu.prayer_settings.domain.model.Settings
@@ -36,6 +37,7 @@ class SettingsScreenTest {
     private val clearLocationCacheUseCase = mockk<ClearLocationCacheUseCase>(relaxed = true)
     private val clearPrayerTimesCacheUseCase = mockk<ClearPrayerTimesCacheUseCase>(relaxed = true)
     private val analyticsTracker = mockk<AnalyticsTracker>(relaxed = true)
+    private val appVersion = AppVersion(name = "2.0.0", code = 200)
 
     private fun launchScreen(settings: Settings = Settings()) {
         coEvery { getSettingsUseCase() } returns settings
@@ -47,7 +49,8 @@ class SettingsScreenTest {
             updateHijriAdjustmentUseCase,
             clearLocationCacheUseCase,
             clearPrayerTimesCacheUseCase,
-            analyticsTracker
+            analyticsTracker,
+            appVersion
         )
         composeTestRule.setContent {
             SettingsScreen(
