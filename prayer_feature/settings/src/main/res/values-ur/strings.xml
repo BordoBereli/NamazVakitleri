@@ -95,4 +95,5 @@
     <string name="exact_alarm_grant">اجازت دیں</string>
     <string name="exact_alarm_not_now">ابھی نہیں</string>
     <string name="open_settings">ترتیبات کھولیں</string>
+    <string name="version_format">ورژن %1$s (%2$d)</string>
 </resources>

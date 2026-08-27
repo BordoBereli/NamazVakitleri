@@ -95,4 +95,5 @@
     <string name="exact_alarm_grant">Conceder</string>
     <string name="exact_alarm_not_now">Ahora no</string>
     <string name="open_settings">Abrir ajustes</string>
+    <string name="version_format">Versión %1$s (%2$d)</string>
 </resources>

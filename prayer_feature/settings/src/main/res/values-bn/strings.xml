@@ -95,4 +95,5 @@
     <string name="exact_alarm_grant">অনুমতি দিন</string>
     <string name="exact_alarm_not_now">এখন নয়</string>
     <string name="open_settings">সেটিংস খুলুন</string>
+    <string name="version_format">সংস্করণ %1$s (%2$d)</string>
 </resources>

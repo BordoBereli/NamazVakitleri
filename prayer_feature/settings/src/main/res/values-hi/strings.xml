@@ -95,4 +95,5 @@
     <string name="exact_alarm_grant">अनुमति दें</string>
     <string name="exact_alarm_not_now">अभी नहीं</string>
     <string name="open_settings">सेटिंग्स खोलें</string>
+    <string name="version_format">संस्करण %1$s (%2$d)</string>
 </resources>
