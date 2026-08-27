@@ -91,4 +91,8 @@
     <string name="notification_permission_rationale">Notification permission is required to show prayer time alerts and reminders.</string>
     <string name="grant_permission">Grant permission</string>
     <string name="exact_alarm_hint">Exact alarm permission is required to schedule prayer notifications on time.</string>
+    <string name="exact_alarm_dialog_title">Alarms &amp; reminders permission</string>
+    <string name="exact_alarm_dialog_body">To play the Ezan exactly on time, grant the "Alarms &amp; reminders" permission.</string>
+    <string name="exact_alarm_grant">Grant</string>
+    <string name="exact_alarm_not_now">Not now</string>
 </resources>

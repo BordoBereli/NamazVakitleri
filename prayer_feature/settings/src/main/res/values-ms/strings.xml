@@ -89,5 +89,9 @@
     <string name="notification_permission_rationale">Kebenaran pemberitahuan diperlukan untuk memaparkan amaran dan peringatan waktu solat.</string>
     <string name="grant_permission">Beri kebenaran</string>
     <string name="exact_alarm_hint">Kebenaran penggera tepat diperlukan untuk menjadualkan pemberitahuan solat tepat pada masanya.</string>
+    <string name="exact_alarm_dialog_title">Kebenaran penggera dan peringatan</string>
+    <string name="exact_alarm_dialog_body">Untuk memainkan azan tepat pada masanya, berikan kebenaran "Penggera dan peringatan".</string>
+    <string name="exact_alarm_grant">Benarkan</string>
+    <string name="exact_alarm_not_now">Tidak sekarang</string>
     <string name="open_settings">Buka Tetapan</string>
 </resources>

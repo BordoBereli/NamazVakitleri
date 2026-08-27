@@ -89,5 +89,9 @@
     <string name="notification_permission_rationale">Die Benachrichtigungsberechtigung ist erforderlich, um Gebetszeiten und Erinnerungen anzuzeigen.</string>
     <string name="grant_permission">Berechtigung erteilen</string>
     <string name="exact_alarm_hint">Die Berechtigung für exakte Alarme ist erforderlich, um Gebetsbenachrichtigungen rechtzeitig zu planen.</string>
+    <string name="exact_alarm_dialog_title">Berechtigung für Alarme und Erinnerungen</string>
+    <string name="exact_alarm_dialog_body">Damit der Adhan pünktlich ertönt, erteilen Sie die Berechtigung "Alarme und Erinnerungen".</string>
+    <string name="exact_alarm_grant">Erlauben</string>
+    <string name="exact_alarm_not_now">Später</string>
     <string name="open_settings">Einstellungen öffnen</string>
 </resources>

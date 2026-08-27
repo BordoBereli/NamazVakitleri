@@ -89,5 +89,9 @@
     <string name="notification_permission_rationale">Для отображения предупреждений и напоминаний о времени намаза требуется разрешение на уведомления.</string>
     <string name="grant_permission">Разрешить</string>
     <string name="exact_alarm_hint">Для своевременного планирования уведомлений о намазе требуется разрешение на точные будильники.</string>
+    <string name="exact_alarm_dialog_title">Разрешение на будильники и напоминания</string>
+    <string name="exact_alarm_dialog_body">Чтобы азан звучал точно вовремя, предоставьте разрешение «Будильники и напоминания».</string>
+    <string name="exact_alarm_grant">Разрешить</string>
+    <string name="exact_alarm_not_now">Не сейчас</string>
     <string name="open_settings">Открыть настройки</string>
 </resources>

@@ -89,5 +89,9 @@
     <string name="notification_permission_rationale">নামাজের সময় সতর্কতা এবং অনুস্মারক দেখানোর জন্য বিজ্ঞপ্তি অনুমতি প্রয়োজন।</string>
     <string name="grant_permission">অনুমতি দিন</string>
     <string name="exact_alarm_hint">সময়মতো নামাজের বিজ্ঞপ্তি নির্ধারণ করতে সঠিক অ্যালার্ম অনুমতি প্রয়োজন।</string>
+    <string name="exact_alarm_dialog_title">অ্যালার্ম ও রিমাইন্ডার অনুমতি</string>
+    <string name="exact_alarm_dialog_body">ঠিক সময়ে আজান বাজাতে "অ্যালার্ম ও রিমাইন্ডার" অনুমতি দিন।</string>
+    <string name="exact_alarm_grant">অনুমতি দিন</string>
+    <string name="exact_alarm_not_now">এখন নয়</string>
     <string name="open_settings">সেটিংস খুলুন</string>
 </resources>

@@ -89,5 +89,9 @@
     <string name="notification_permission_rationale">مطلوب إذن الإشعارات لعرض تنبيهات وتذكيرات مواقيت الصلاة.</string>
     <string name="grant_permission">منح الإذن</string>
     <string name="exact_alarm_hint">مطلوب إذن المنبه الدقيق لجدولة إشعارات الصلاة في وقتها.</string>
+    <string name="exact_alarm_dialog_title">إذن المنبهات والتذكيرات</string>
+    <string name="exact_alarm_dialog_body">لتشغيل الأذان في وقته بالضبط، امنح إذن "المنبهات والتذكيرات".</string>
+    <string name="exact_alarm_grant">منح</string>
+    <string name="exact_alarm_not_now">ليس الآن</string>
     <string name="open_settings">فتح الإعدادات</string>
 </resources>

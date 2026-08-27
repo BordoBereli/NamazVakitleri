@@ -89,5 +89,9 @@
     <string name="notification_permission_rationale">தொழுகை நேர எச்சரிக்கைகள் மற்றும் நினைவூட்டல்களைக் காட்ட தொடர்பறிவிப்பு அனுமதி தேவை.</string>
     <string name="grant_permission">அனுமதி வழங்கு</string>
     <string name="exact_alarm_hint">தொழுகை அறிவிப்புகளை சரியான நேரத்தில் திட்டமிட சரியான அலார அனுமதி தேவை.</string>
+    <string name="exact_alarm_dialog_title">அலாரம் மற்றும் நினைவூட்டல் அனுமதி</string>
+    <string name="exact_alarm_dialog_body">அதானை சரியான நேரத்தில் இயக்க "அலாரம் மற்றும் நினைவூட்டல்" அனுமதியை வழங்கவும்.</string>
+    <string name="exact_alarm_grant">அனுமதி</string>
+    <string name="exact_alarm_not_now">இப்போது இல்லை</string>
     <string name="open_settings">அமைப்புகளைத் திற</string>
 </resources>

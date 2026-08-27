@@ -89,5 +89,9 @@
     <string name="notification_permission_rationale">L\'autorisation de notification est requise pour afficher les alertes et rappels des heures de prière.</string>
     <string name="grant_permission">Accorder l\'autorisation</string>
     <string name="exact_alarm_hint">L\'autorisation d\'alarme exacte est requise pour planifier les notifications de prière à l\'heure.</string>
+    <string name="exact_alarm_dialog_title">Autorisation des alarmes et rappels</string>
+    <string name="exact_alarm_dialog_body">Pour jouer l\'adhan à l\'heure exacte, accordez l\'autorisation "Alarmes et rappels".</string>
+    <string name="exact_alarm_grant">Autoriser</string>
+    <string name="exact_alarm_not_now">Pas maintenant</string>
     <string name="open_settings">Ouvrir les paramètres</string>
 </resources>

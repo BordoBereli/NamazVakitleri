@@ -91,4 +91,8 @@
     <string name="notification_permission_rationale">Namaz vakitleri uyarılarını ve hatırlatmaları göstermek için bildirim izni gereklidir.</string>
     <string name="grant_permission">İzin ver</string>
     <string name="exact_alarm_hint">Namaz bildirimlerini zamanında planlamak için kesin alarm izni gereklidir.</string>
+    <string name="exact_alarm_dialog_title">Alarmlar ve hatırlatıcılar izni</string>
+    <string name="exact_alarm_dialog_body">Ezanın tam vaktinde çalması için "Alarmlar ve hatırlatıcılar" iznini verin.</string>
+    <string name="exact_alarm_grant">İzin Ver</string>
+    <string name="exact_alarm_not_now">Şimdi Değil</string>
 </resources>

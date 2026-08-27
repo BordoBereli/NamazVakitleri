@@ -89,5 +89,9 @@
     <string name="notification_permission_rationale">برای نمایش هشدارها و یادآوری‌های اوقات نماز، مجوز اعلان لازم است.</string>
     <string name="grant_permission">اعطای مجوز</string>
     <string name="exact_alarm_hint">برای زمان‌بندی به‌موقع اعلان‌های نماز، مجوز زنگ دقیق لازم است.</string>
+    <string name="exact_alarm_dialog_title">مجوز زنگ‌ها و یادآورها</string>
+    <string name="exact_alarm_dialog_body">برای پخش اذان دقیقاً به‌موقع، مجوز «زنگ‌ها و یادآورها» را بدهید.</string>
+    <string name="exact_alarm_grant">اعطا</string>
+    <string name="exact_alarm_not_now">اکنون نه</string>
     <string name="open_settings">باز کردن تنظیمات</string>
 </resources>

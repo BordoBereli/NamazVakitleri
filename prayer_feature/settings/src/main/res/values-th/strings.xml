@@ -89,5 +89,9 @@
     <string name="notification_permission_rationale">ต้องได้รับอนุญาตการแจ้งเตือนเพื่อแสดงการแจ้งเตือนและเตือนเวลาละหมาด</string>
     <string name="grant_permission">อนุญาต</string>
     <string name="exact_alarm_hint">ต้องได้รับอนุญาตปลุกแบบแม่นยำเพื่อกำหนดเวลาการแจ้งเตือนละหมาดให้ตรงเวลา</string>
+    <string name="exact_alarm_dialog_title">สิทธิ์ปลุกและเตือนความจำ</string>
+    <string name="exact_alarm_dialog_body">เพื่อเล่นอาซานตรงเวลา โปรดให้สิทธิ์ "ปลุกและเตือนความจำ"</string>
+    <string name="exact_alarm_grant">อนุญาต</string>
+    <string name="exact_alarm_not_now">ไม่ใช่ตอนนี้</string>
     <string name="open_settings">เปิดการตั้งค่า</string>
 </resources>

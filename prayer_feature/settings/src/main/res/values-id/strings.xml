@@ -89,5 +89,9 @@
     <string name="notification_permission_rationale">Izin notifikasi diperlukan untuk menampilkan peringatan dan pengingat waktu salat.</string>
     <string name="grant_permission">Beri izin</string>
     <string name="exact_alarm_hint">Izin alarm presisi diperlukan untuk menjadwalkan notifikasi salat tepat waktu.</string>
+    <string name="exact_alarm_dialog_title">Izin alarm dan pengingat</string>
+    <string name="exact_alarm_dialog_body">Untuk memutar azan tepat waktu, berikan izin "Alarm dan pengingat".</string>
+    <string name="exact_alarm_grant">Izinkan</string>
+    <string name="exact_alarm_not_now">Nanti saja</string>
     <string name="open_settings">Buka Pengaturan</string>
 </resources>

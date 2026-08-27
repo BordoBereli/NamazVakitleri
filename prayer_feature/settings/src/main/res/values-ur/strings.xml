@@ -89,5 +89,9 @@
     <string name="notification_permission_rationale">نماز کے اوقات کے انتباہات اور یاد دہانیاں دکھانے کے لیے اطلاع کی اجازت درکار ہے۔</string>
     <string name="grant_permission">اجازت دیں</string>
     <string name="exact_alarm_hint">نماز کی اطلاعات بروقت شیڈول کرنے کے لیے عین مطابق الارم کی اجازت درکار ہے۔</string>
+    <string name="exact_alarm_dialog_title">الارم اور یاد دہانی کی اجازت</string>
+    <string name="exact_alarm_dialog_body">اذان کو عین وقت پر چلانے کے لیے "الارم اور یاد دہانی" کی اجازت دیں۔</string>
+    <string name="exact_alarm_grant">اجازت دیں</string>
+    <string name="exact_alarm_not_now">ابھی نہیں</string>
     <string name="open_settings">ترتیبات کھولیں</string>
 </resources>
