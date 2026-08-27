@@ -66,6 +66,14 @@ class PrayerNotificationScheduler(
             cancelDailyReschedule()
             return
         }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
+            !alarmManager.canScheduleExactAlarms()
+        ) {
+            Log.w("PrayerNotificationScheduler", "Exact alarm permission missing; cancelling all")
+            cancelAll()
+            cancelDailyReschedule()
+            return
+        }
         val location = locationsCoordinator.resolveSelected() ?: run {
             cancelAll()
             cancelDailyReschedule()
@@ -239,10 +247,10 @@ class PrayerNotificationScheduler(
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
             !alarmManager.canScheduleExactAlarms()
         ) {
-            alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent)
-        } else {
-            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent)
+            Log.w("PrayerNotificationScheduler", "Exact alarm permission missing; skipping alarm")
+            return
         }
+        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent)
     }
 
     fun updateCountdown(targetMillis: Long, prayerName: String, previousTimeMillis: Long? = null) {
