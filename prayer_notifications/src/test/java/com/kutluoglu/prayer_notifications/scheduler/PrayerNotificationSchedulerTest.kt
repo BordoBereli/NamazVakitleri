@@ -1,6 +1,7 @@
 package com.kutluoglu.prayer_notifications.scheduler
 
 import android.app.AlarmManager
+import android.app.Application
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
@@ -465,5 +466,49 @@ class PrayerNotificationSchedulerTest {
                 .getLongExtra(AlarmReceiver.EXTRA_ALARM_TRIGGER_TIME, 0L) == tomorrowFajr
         }
         assertThat(tomorrowAlarms).isNotEmpty()
+    }
+
+    @Test
+    fun `cancelAll stops the adhan service`() = runTest {
+        val scheduler = scheduler(CoroutineScope(UnconfinedTestDispatcher(testScheduler)))
+        scheduler.cancelAll()
+        val stopped = shadowOf(context as Application).getNextStoppedService()
+        assertThat(stopped?.component?.className).isEqualTo(AdhanService::class.java.name)
+    }
+
+    @Test
+    fun `scheduleAll does not stop adhan service on reschedule`() = runTest {
+        coEvery { dataStore.getSettings() } returns NotificationSettings(enabled = true)
+        coEvery { locationsCoordinator.resolveSelected() } returns LocationData(
+            latitude = 41.0082,
+            longitude = 28.9784,
+            country = "Turkey",
+            countryCode = "TR",
+            city = "Istanbul",
+            county = null
+        )
+        coEvery { getSettingsUseCase() } returns Settings(
+            location = LocationSettings(timeZone = "Europe/Istanbul"),
+            calculationMethod = "TURKEY_DIYANET"
+        )
+        coEvery { getPrayerTimesUseCase(any(), any(), any(), any(), any(), any()) } returns Result.success(
+            listOf(
+                Prayer(
+                    name = "Fajr",
+                    arabicName = "الفجر",
+                    time = LocalTime(23, 59),
+                    date = LocalDate(2026, 8, 22)
+                )
+            )
+        )
+
+        val intent = Intent(context, AdhanService::class.java)
+        context.startService(intent)
+
+        val scheduler = scheduler(CoroutineScope(UnconfinedTestDispatcher(testScheduler)))
+        scheduler.scheduleAll()
+
+        val stopped = shadowOf(context as Application).getNextStoppedService()
+        assertThat(stopped).isNull()
     }
 }

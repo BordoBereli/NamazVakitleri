@@ -143,7 +143,7 @@ class PrayerNotificationScheduler(
             specialDayTomorrow = specialDayTomorrow,
             jumuahEnabled = settings.jumuahEnabled
         )
-        cancelAll()
+        cancelAll(stopAdhan = false)
         alarms.forEach { scheduleAlarm(it) }
         if (settings.countdownEnabled) {
             val nextPrayer = alarms.firstOrNull { it.type == AlarmType.PRAYER }
@@ -173,7 +173,10 @@ class PrayerNotificationScheduler(
         }
     }
 
-    fun cancelAll() {
+    fun cancelAll(stopAdhan: Boolean = true) {
+        if (stopAdhan) {
+            context.stopService(Intent(context, AdhanService::class.java))
+        }
         notificationManager.cancelCountdown()
         // Cancel all pending alarms by re-issuing the same PendingIntents with FLAG_NO_CREATE.
         for (code in REQUEST_CODE_START until REQUEST_CODE_END) {
