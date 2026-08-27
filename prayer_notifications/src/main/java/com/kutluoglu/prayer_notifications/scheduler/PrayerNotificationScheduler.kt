@@ -109,7 +109,11 @@ class PrayerNotificationScheduler(
             zoneId = zoneId,
             calculationMethod = method,
             persistDailyCache = false
-        ).getOrNull() ?: emptyList()
+        ).getOrNull() ?: run {
+            cancelAll()
+            cancelDailyReschedule()
+            return
+        }
 
         val enabled = settings.prayerToggles.filterValues { it }.keys
         val summary = buildDailySummary(prayers)

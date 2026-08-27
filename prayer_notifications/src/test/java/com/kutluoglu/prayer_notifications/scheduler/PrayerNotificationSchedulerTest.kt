@@ -422,4 +422,48 @@ class PrayerNotificationSchedulerTest {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         assertThat(shadowOf(alarmManager).scheduledAlarms).isEmpty()
     }
+
+    @Test
+    fun `scheduleAll schedules tomorrow's prayers too`() = runTest {
+        coEvery { dataStore.getSettings() } returns NotificationSettings(enabled = true)
+        coEvery { locationsCoordinator.resolveSelected() } returns LocationData(
+            latitude = 41.0082,
+            longitude = 28.9784,
+            country = "Turkey",
+            countryCode = "TR",
+            city = "Istanbul",
+            county = null
+        )
+        coEvery { getSettingsUseCase() } returns Settings(
+            location = LocationSettings(timeZone = "Europe/Istanbul"),
+            calculationMethod = "TURKEY_DIYANET"
+        )
+        coEvery { getPrayerTimesUseCase(any(), any(), any(), any(), any(), any()) } returns Result.success(
+            listOf(
+                Prayer(
+                    name = "Fajr",
+                    arabicName = "الفجر",
+                    time = LocalTime(23, 59),
+                    date = LocalDate(2026, 8, 22)
+                )
+            )
+        )
+
+        val scheduler = scheduler(CoroutineScope(UnconfinedTestDispatcher(testScheduler)))
+        scheduler.scheduleAll()
+
+        val zoneId = java.time.ZoneId.of("Europe/Istanbul")
+        val tomorrow = java.time.LocalDate.now(zoneId).plusDays(1)
+        val tomorrowFajr = java.time.LocalTime.of(23, 59)
+            .atDate(tomorrow)
+            .atZone(zoneId)
+            .toInstant()
+            .toEpochMilli()
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val tomorrowAlarms = shadowOf(alarmManager).scheduledAlarms.filter { alarm ->
+            shadowOf(alarm.operation).savedIntent
+                .getLongExtra(AlarmReceiver.EXTRA_ALARM_TRIGGER_TIME, 0L) == tomorrowFajr
+        }
+        assertThat(tomorrowAlarms).isNotEmpty()
+    }
 }
