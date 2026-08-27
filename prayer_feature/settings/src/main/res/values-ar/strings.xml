@@ -51,6 +51,7 @@
     <string name="selected">محدد</string>
     <string name="reorder">إعادة ترتيب</string>
     <string name="no_locations_yet">لا توجد مواقع بعد — أضف واحداً باستخدام زر إضافة موقع</string>
+    <string name="no_location_selected">لم يتم تحديد موقع. يرجى اختيار موقع لعرض أوقات الصلاة.</string>
     <string name="language_tr">التركية</string>
     <string name="language_en">الإنجليزية</string>
     <string name="language_ar">العربية</string>

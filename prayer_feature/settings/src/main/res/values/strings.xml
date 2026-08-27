@@ -51,6 +51,7 @@
     <string name="selected">Selected</string>
     <string name="reorder">Reorder</string>
     <string name="no_locations_yet">No locations yet — use the Add location button to add one</string>
+    <string name="no_location_selected">No location selected. Please choose a location to see prayer times.</string>
     <string name="location_permission_required">Location permission is required to use your current location.</string>
     <string name="open_settings">Open Settings</string>
     <string name="language_tr">Türkçe</string>

@@ -51,6 +51,7 @@
     <string name="selected">Seçili</string>
     <string name="reorder">Yeniden sırala</string>
     <string name="no_locations_yet">Henüz konum yok — konum ekle butonuyla bir tane ekleyebilirsiniz</string>
+    <string name="no_location_selected">Konum seçilmedi. Namaz vakitlerini görmek için lütfen bir konum seçin.</string>
     <string name="location_permission_required">Mevcut konumunuzu kullanmak için konum izni gereklidir.</string>
     <string name="open_settings">Ayarları Aç</string>
     <string name="language_tr">Türkçe</string>

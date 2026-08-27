@@ -51,6 +51,7 @@
     <string name="selected">Sélectionné</string>
     <string name="reorder">Réorganiser</string>
     <string name="no_locations_yet">Aucune localisation pour l\'instant — ajoutez-en une avec le bouton Ajouter une localisation</string>
+    <string name="no_location_selected">Aucun lieu sélectionné. Veuillez choisir un lieu pour voir les heures de prière.</string>
     <string name="language_tr">Turc</string>
     <string name="language_en">Anglais</string>
     <string name="language_ar">Arabe</string>

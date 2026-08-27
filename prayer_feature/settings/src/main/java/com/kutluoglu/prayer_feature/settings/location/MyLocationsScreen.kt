@@ -25,6 +25,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.rounded.DragHandle
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -63,6 +64,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.kutluoglu.core.designsystem.components.EmptyStateContent
 import com.kutluoglu.prayer.model.location.LocationEntry
 import com.kutluoglu.prayer_feature.settings.R
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -222,10 +224,9 @@ fun MyLocationsRoute(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = stringResource(R.string.no_locations_yet),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    EmptyStateContent(
+                        icon = Icons.Default.LocationOn,
+                        text = stringResource(R.string.no_location_selected)
                     )
                 }
             } else {

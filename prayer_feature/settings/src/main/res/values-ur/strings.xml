@@ -51,6 +51,7 @@
     <string name="selected">منتخب</string>
     <string name="reorder">دوبارہ ترتیب دیں</string>
     <string name="no_locations_yet">ابھی کوئی مقام نہیں — مقام شامل کریں کے بٹن سے ایک شامل کریں</string>
+    <string name="no_location_selected">کوئی مقام منتخب نہیں کیا گیا۔ نماز کے اوقات دیکھنے کے لیے براہ کرم مقام منتخب کریں۔</string>
     <string name="language_tr">ترکی</string>
     <string name="language_en">انگریزی</string>
     <string name="language_ar">عربی</string>

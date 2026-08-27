@@ -51,6 +51,7 @@
     <string name="selected">Выбрано</string>
     <string name="reorder">Изменить порядок</string>
     <string name="no_locations_yet">Пока нет местоположений — добавьте одно с помощью кнопки «Добавить местоположение»</string>
+    <string name="no_location_selected">Местоположение не выбрано. Выберите местоположение, чтобы увидеть время намаза.</string>
     <string name="language_tr">Турецкий</string>
     <string name="language_en">Английский</string>
     <string name="language_ar">Арабский</string>

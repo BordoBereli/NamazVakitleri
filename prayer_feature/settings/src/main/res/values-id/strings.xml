@@ -51,6 +51,7 @@
     <string name="selected">Dipilih</string>
     <string name="reorder">Urutkan ulang</string>
     <string name="no_locations_yet">Belum ada lokasi — tambahkan satu dengan tombol Tambah lokasi</string>
+    <string name="no_location_selected">Tidak ada lokasi yang dipilih. Silakan pilih lokasi untuk melihat waktu salat.</string>
     <string name="language_tr">Turki</string>
     <string name="language_en">Inggris</string>
     <string name="language_ar">Arab</string>

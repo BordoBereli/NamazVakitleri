@@ -51,6 +51,7 @@
     <string name="selected">चयनित</string>
     <string name="reorder">पुनः क्रमबद्ध करें</string>
     <string name="no_locations_yet">अभी कोई स्थान नहीं — स्थान जोड़ें बटन से एक जोड़ें</string>
+    <string name="no_location_selected">कोई स्थान चयनित नहीं है। नमाज़ का समय देखने के लिए कृपया स्थान चुनें।</string>
     <string name="language_tr">तुर्की</string>
     <string name="language_en">अंग्रेज़ी</string>
     <string name="language_ar">अरबी</string>

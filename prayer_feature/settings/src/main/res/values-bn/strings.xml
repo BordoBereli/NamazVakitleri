@@ -51,6 +51,7 @@
     <string name="selected">নির্বাচিত</string>
     <string name="reorder">পুনরায় সাজান</string>
     <string name="no_locations_yet">এখনও কোনো অবস্থান নেই — অবস্থান যোগ করুন বাটন দিয়ে একটি যোগ করুন</string>
+    <string name="no_location_selected">কোনো অবস্থান নির্বাচন করা হয়নি। নামাজের সময় দেখতে একটি অবস্থান চয়ন করুন।</string>
     <string name="language_tr">তুর্কি</string>
     <string name="language_en">ইংরেজি</string>
     <string name="language_ar">আরবি</string>

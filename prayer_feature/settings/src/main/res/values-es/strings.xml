@@ -51,6 +51,7 @@
     <string name="selected">Seleccionado</string>
     <string name="reorder">Reordenar</string>
     <string name="no_locations_yet">Aún no hay ubicaciones — añade una con el botón Añadir ubicación</string>
+    <string name="no_location_selected">No se ha seleccionado ninguna ubicación. Elija una ubicación para ver los horarios de oración.</string>
     <string name="language_tr">Turco</string>
     <string name="language_en">Inglés</string>
     <string name="language_ar">Árabe</string>

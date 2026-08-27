@@ -51,6 +51,7 @@
     <string name="selected">انتخاب شده</string>
     <string name="reorder">مرتب‌سازی مجدد</string>
     <string name="no_locations_yet">هنوز موقعیتی وجود ندارد — با دکمه افزودن موقعیت یکی اضافه کنید</string>
+    <string name="no_location_selected">هیچ مکانی انتخاب نشده است. لطفاً برای مشاهده اوقات نماز مکانی را انتخاب کنید.</string>
     <string name="language_tr">ترکی</string>
     <string name="language_en">انگلیسی</string>
     <string name="language_ar">عربی</string>

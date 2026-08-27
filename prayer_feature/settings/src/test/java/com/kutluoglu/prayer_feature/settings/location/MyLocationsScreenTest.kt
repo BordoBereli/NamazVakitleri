@@ -76,6 +76,15 @@ class MyLocationsScreenTest {
     }
 
     @Test
+    fun `renders empty state with location icon and message`() {
+        setState(emptyList())
+        launchScreen()
+
+        composeTestRule.onNodeWithText("No location selected. Please choose a location to see prayer times.")
+            .assertIsDisplayed()
+    }
+
+    @Test
     fun `renders manual locations with delete and drag handle`() {
         setState(listOf(istanbul, ankara), selectedId = "loc-1")
         launchScreen()

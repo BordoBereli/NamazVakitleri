@@ -51,6 +51,7 @@
     <string name="selected">เลือกแล้ว</string>
     <string name="reorder">จัดเรียงใหม่</string>
     <string name="no_locations_yet">ยังไม่มีตำแหน่ง — เพิ่มหนึ่งรายการด้วยปุ่มเพิ่มตำแหน่ง</string>
+    <string name="no_location_selected">ยังไม่ได้เลือกสถานที่ กรุณาเลือกสถานที่เพื่อดูเวลาละหมาด</string>
     <string name="language_tr">ตุรกี</string>
     <string name="language_en">อังกฤษ</string>
     <string name="language_ar">อาหรับ</string>

@@ -51,6 +51,7 @@
     <string name="selected">Ausgewählt</string>
     <string name="reorder">Neu anordnen</string>
     <string name="no_locations_yet">Noch keine Standorte — fügen Sie einen mit der Schaltfläche Standort hinzufügen hinzu</string>
+    <string name="no_location_selected">Kein Standort ausgewählt. Bitte wählen Sie einen Standort, um Gebetszeiten zu sehen.</string>
     <string name="language_tr">Türkisch</string>
     <string name="language_en">Englisch</string>
     <string name="language_ar">Arabisch</string>
