@@ -20,6 +20,7 @@ class AdhanPlayer(
     private var onCompletion: (() -> Unit)? = null
     private var onFocusLoss: (() -> Unit)? = null
     private var focusRequest: AudioFocusRequest? = null
+    internal val volumeController = AdhanVolumeController(context)
 
     private val focusChangeListener = AudioManager.OnAudioFocusChangeListener { change ->
         if (change == AudioManager.AUDIOFOCUS_LOSS) {
@@ -59,6 +60,7 @@ class AdhanPlayer(
                 setDataSource(context, android.net.Uri.parse("android.resource://${context.packageName}/$resId"))
                 setOnCompletionListener {
                     abandonAudioFocus()
+                    volumeController.deactivate()
                     onCompletion?.invoke()
                 }
                 prepare()
@@ -67,8 +69,10 @@ class AdhanPlayer(
             }
             mediaPlayer = player
             requestAudioFocus()
+            volumeController.activate()
         } catch (e: Exception) {
             runCatching { player.release() }
+            volumeController.deactivate()
             Log.e("AdhanPlayer", "Failed to play adhan -> ${e.message}")
         }
     }
@@ -79,6 +83,7 @@ class AdhanPlayer(
             it.release()
         }
         mediaPlayer = null
+        volumeController.deactivate()
         abandonAudioFocus()
     }
 

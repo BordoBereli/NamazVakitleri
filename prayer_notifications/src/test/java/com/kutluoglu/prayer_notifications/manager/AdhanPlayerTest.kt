@@ -140,4 +140,37 @@ class AdhanPlayerTest {
         assertThat(focusLost).isFalse()
         assertThat(shadowOf(mediaPlayer).isReallyPlaying()).isTrue()
     }
+
+    @Test
+    fun `play activates media session for volume keys`() {
+        val uri = Uri.parse("android.resource://${context.packageName}/${R.raw.adhan_fajr}")
+        ShadowMediaPlayer.addMediaInfo(DataSource.toDataSource(context, uri), ShadowMediaPlayer.MediaInfo())
+        val player = AdhanPlayer(context)
+        player.play("Fajr", 30)
+        assertThat(player.volumeController.mediaSession?.isActive).isTrue()
+        player.stop()
+    }
+
+    @Test
+    fun `stop deactivates the media session`() {
+        val uri = Uri.parse("android.resource://${context.packageName}/${R.raw.adhan_fajr}")
+        ShadowMediaPlayer.addMediaInfo(DataSource.toDataSource(context, uri), ShadowMediaPlayer.MediaInfo())
+        val player = AdhanPlayer(context)
+        player.play("Fajr", 30)
+        player.stop()
+        assertThat(player.volumeController.mediaSession).isNull()
+    }
+
+    @Test
+    fun `completion deactivates the media session`() {
+        val uri = Uri.parse("android.resource://${context.packageName}/${R.raw.adhan_fajr}")
+        ShadowMediaPlayer.addMediaInfo(DataSource.toDataSource(context, uri), ShadowMediaPlayer.MediaInfo())
+        var createdPlayer: MediaPlayer? = null
+        ShadowMediaPlayer.setCreateListener { player, _ -> createdPlayer = player }
+        val player = AdhanPlayer(context)
+        player.play("Fajr", 30)
+        val mediaPlayer = createdPlayer ?: error("no player created")
+        shadowOf(mediaPlayer).invokeCompletionListener()
+        assertThat(player.volumeController.mediaSession).isNull()
+    }
 }
