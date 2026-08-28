@@ -1,6 +1,8 @@
 package com.kutluoglu.prayer_feature.settings.notifications
 
 import android.Manifest
+import android.content.Context
+import android.os.PowerManager
 import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
@@ -13,6 +15,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performSemanticsAction
 import androidx.lifecycle.Lifecycle
+import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.prayer_feature.settings.R
 import com.kutluoglu.prayer_notifications.domain.NotificationSettings
@@ -55,8 +58,11 @@ class NotificationsScreenTest {
     }
 
     @Before
-    fun grantExactAlarmPermission() {
+    fun grantPermissions() {
         ShadowAlarmManager.setCanScheduleExactAlarms(true)
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
+        shadowOf(powerManager).setIgnoringBatteryOptimizations(context.packageName, true)
     }
 
     @Test
@@ -295,6 +301,25 @@ class NotificationsScreenTest {
     }
 
     @Test
+    fun `enabling notifications via viewmodel shows exact alarm dialog`() {
+        ShadowAlarmManager.setCanScheduleExactAlarms(false)
+        shadowOf(composeTestRule.activity).grantPermissions(Manifest.permission.POST_NOTIFICATIONS)
+        coEvery { getUseCase() } returns NotificationSettings(enabled = false)
+        val viewModel = NotificationsViewModel(getUseCase, updateUseCase, notificationManager)
+        composeTestRule.setContent {
+            NotificationsRoute(onNavigateBack = {}, viewModel = viewModel)
+        }
+        composeTestRule.waitForIdle()
+
+        viewModel.onEvent(NotificationsEvent.SetEnabled(true))
+        composeTestRule.waitForIdle()
+
+        composeTestRule.onNodeWithText(
+            composeTestRule.activity.getString(R.string.exact_alarm_dialog_title)
+        ).assertIsDisplayed()
+    }
+
+    @Test
     fun `granting permission on return applies pending enable action`() {
         ShadowAlarmManager.setCanScheduleExactAlarms(false)
         shadowOf(composeTestRule.activity).grantPermissions(Manifest.permission.POST_NOTIFICATIONS)
@@ -313,5 +338,86 @@ class NotificationsScreenTest {
         composeTestRule.waitForIdle()
 
         coVerify { updateUseCase(match { it.enabled }) }
+    }
+
+    @Test
+    fun `shows battery optimization banner when not ignoring battery optimization`() {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
+        shadowOf(powerManager).setIgnoringBatteryOptimizations(context.packageName, false)
+        launchScreen(NotificationSettings(enabled = true))
+
+        composeTestRule.onNodeWithText(
+            composeTestRule.activity.getString(R.string.battery_optimization_hint)
+        ).assertIsDisplayed()
+    }
+
+    @Test
+    fun `enabling notifications without battery optimization shows dialog`() {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
+        shadowOf(powerManager).setIgnoringBatteryOptimizations(context.packageName, false)
+        shadowOf(composeTestRule.activity).grantPermissions(Manifest.permission.POST_NOTIFICATIONS)
+        launchScreen(NotificationSettings(enabled = false))
+
+        composeTestRule.onAllNodes(isToggleable())[0].performClick()
+        composeTestRule.waitForIdle()
+
+        composeTestRule.onNodeWithText(
+            composeTestRule.activity.getString(R.string.battery_optimization_dialog_title)
+        ).assertIsDisplayed()
+        coVerify(exactly = 0) { updateUseCase(any()) }
+    }
+
+    @Test
+    fun `open battery settings launches ignore battery optimization settings`() {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
+        shadowOf(powerManager).setIgnoringBatteryOptimizations(context.packageName, false)
+        shadowOf(composeTestRule.activity).grantPermissions(Manifest.permission.POST_NOTIFICATIONS)
+        launchScreen(NotificationSettings(enabled = false))
+
+        composeTestRule.onAllNodes(isToggleable())[0].performClick()
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText(
+            composeTestRule.activity.getString(R.string.battery_optimization_open_settings)
+        ).performClick()
+        composeTestRule.waitForIdle()
+
+        val startedIntent = shadowOf(composeTestRule.activity).nextStartedActivity
+        assertThat(startedIntent?.action).isEqualTo(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
+    }
+
+    @Test
+    fun `not now dismisses battery optimization dialog`() {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
+        shadowOf(powerManager).setIgnoringBatteryOptimizations(context.packageName, false)
+        shadowOf(composeTestRule.activity).grantPermissions(Manifest.permission.POST_NOTIFICATIONS)
+        launchScreen(NotificationSettings(enabled = false))
+
+        composeTestRule.onAllNodes(isToggleable())[0].performClick()
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText(
+            composeTestRule.activity.getString(R.string.battery_optimization_not_now)
+        ).performClick()
+        composeTestRule.waitForIdle()
+
+        composeTestRule.onNodeWithText(
+            composeTestRule.activity.getString(R.string.battery_optimization_dialog_title)
+        ).assertDoesNotExist()
+    }
+
+    @Test
+    fun `shows battery optimization dialog on entry when enabled without exemption`() {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
+        shadowOf(powerManager).setIgnoringBatteryOptimizations(context.packageName, false)
+        shadowOf(composeTestRule.activity).grantPermissions(Manifest.permission.POST_NOTIFICATIONS)
+        launchScreen(NotificationSettings(enabled = true))
+
+        composeTestRule.onNodeWithText(
+            composeTestRule.activity.getString(R.string.battery_optimization_dialog_title)
+        ).assertIsDisplayed()
     }
 }

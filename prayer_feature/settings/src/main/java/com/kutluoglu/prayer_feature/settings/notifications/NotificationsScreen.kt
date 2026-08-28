@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
+import android.os.PowerManager
 import android.provider.Settings
 import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -130,6 +131,9 @@ private fun NotificationsContent(
     var showExactAlarmDialog by remember { mutableStateOf(false) }
     var exactAlarmDialogDismissed by remember { mutableStateOf(false) }
     var pendingExactAlarmAction by remember { mutableStateOf<(() -> Unit)?>(null) }
+    var showBatteryDialog by remember { mutableStateOf(false) }
+    var batteryDialogDismissed by remember { mutableStateOf(false) }
+    var pendingBatteryAction by remember { mutableStateOf<(() -> Unit)?>(null) }
     val context = LocalContext.current
     val activity = LocalActivity.current
 
@@ -144,6 +148,11 @@ private fun NotificationsContent(
         Build.VERSION.SDK_INT < Build.VERSION_CODES.S ||
             context.getSystemService(AlarmManager::class.java)?.canScheduleExactAlarms() == true
 
+    fun checkBatteryOptimization(): Boolean =
+        context.getSystemService(PowerManager::class.java)
+            ?.isIgnoringBatteryOptimizations(context.packageName) == true
+
+    var ignoresBatteryOptimization by remember { mutableStateOf(checkBatteryOptimization()) }
     var hasNotificationPermission by remember { mutableStateOf(checkNotificationPermission()) }
     var canScheduleExactAlarms by remember { mutableStateOf(checkExactAlarmPermission()) }
 
@@ -153,10 +162,15 @@ private fun NotificationsContent(
             if (event == Lifecycle.Event.ON_RESUME) {
                 hasNotificationPermission = checkNotificationPermission()
                 canScheduleExactAlarms = checkExactAlarmPermission()
+                ignoresBatteryOptimization = checkBatteryOptimization()
                 if (canScheduleExactAlarms) {
                     pendingExactAlarmAction?.invoke()
                 }
                 pendingExactAlarmAction = null
+                if (ignoresBatteryOptimization) {
+                    pendingBatteryAction?.invoke()
+                }
+                pendingBatteryAction = null
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
@@ -166,6 +180,19 @@ private fun NotificationsContent(
     LaunchedEffect(settings.enabled, canScheduleExactAlarms, exactAlarmDialogDismissed) {
         if (settings.enabled && !canScheduleExactAlarms && !exactAlarmDialogDismissed) {
             showExactAlarmDialog = true
+        }
+    }
+
+    LaunchedEffect(
+        settings.enabled,
+        canScheduleExactAlarms,
+        ignoresBatteryOptimization,
+        batteryDialogDismissed
+    ) {
+        if (settings.enabled && canScheduleExactAlarms &&
+            !ignoresBatteryOptimization && !batteryDialogDismissed
+        ) {
+            showBatteryDialog = true
         }
     }
 
@@ -204,6 +231,9 @@ private fun NotificationsContent(
                 } else if (enabled && !canScheduleExactAlarms) {
                     pendingExactAlarmAction = { onEvent(NotificationsEvent.SetEnabled(true)) }
                     showExactAlarmDialog = true
+                } else if (enabled && !ignoresBatteryOptimization) {
+                    pendingBatteryAction = { onEvent(NotificationsEvent.SetEnabled(true)) }
+                    showBatteryDialog = true
                 } else {
                     onEvent(NotificationsEvent.SetEnabled(enabled))
                 }
@@ -241,6 +271,19 @@ private fun NotificationsContent(
                 }
             )
         }
+        if (!ignoresBatteryOptimization) {
+            PermissionHintRow(
+                text = stringResource(R.string.battery_optimization_hint),
+                actionText = stringResource(R.string.open_settings),
+                onAction = {
+                    runCatching {
+                        context.startActivity(
+                            Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
+                        )
+                    }
+                }
+            )
+        }
         HorizontalDivider()
         NotificationSettings.PRAYER_KEYS.forEach { key ->
             ToggleRow(
@@ -263,6 +306,9 @@ private fun NotificationsContent(
                 } else if (enabled && !canScheduleExactAlarms) {
                     pendingExactAlarmAction = { onEvent(NotificationsEvent.SetAdhanEnabled(true)) }
                     showExactAlarmDialog = true
+                } else if (enabled && !ignoresBatteryOptimization) {
+                    pendingBatteryAction = { onEvent(NotificationsEvent.SetAdhanEnabled(true)) }
+                    showBatteryDialog = true
                 } else {
                     onEvent(NotificationsEvent.SetAdhanEnabled(enabled))
                 }
@@ -387,6 +433,40 @@ private fun NotificationsContent(
                     pendingExactAlarmAction = null
                 }) {
                     Text(stringResource(R.string.exact_alarm_not_now))
+                }
+            }
+        )
+    }
+
+    if (showBatteryDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                showBatteryDialog = false
+                batteryDialogDismissed = true
+                pendingBatteryAction = null
+            },
+            title = { Text(stringResource(R.string.battery_optimization_dialog_title)) },
+            text = { Text(stringResource(R.string.battery_optimization_dialog_body)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    showBatteryDialog = false
+                    batteryDialogDismissed = true
+                    runCatching {
+                        context.startActivity(
+                            Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
+                        )
+                    }
+                }) {
+                    Text(stringResource(R.string.battery_optimization_open_settings))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    showBatteryDialog = false
+                    batteryDialogDismissed = true
+                    pendingBatteryAction = null
+                }) {
+                    Text(stringResource(R.string.battery_optimization_not_now))
                 }
             }
         )
