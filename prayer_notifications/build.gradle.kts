@@ -55,6 +55,7 @@ dependencies {
     implementation(libs.kotlinx.datetime)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.media)
 
     api(platform(libs.koin.bom))
     api(libs.koin.core)

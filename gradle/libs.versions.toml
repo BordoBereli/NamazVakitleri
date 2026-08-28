@@ -32,6 +32,7 @@ coil = "3.3.0"
 okhttp = "4.12.0"
 osmdroid = "6.1.20"
 reorderable = "3.1.0"
+androidxMedia = "1.8.0"
 googleServices = "4.3.10"
 firebaseCrashlyticsGradle = "3.0.7"
 firebaseAnalytics = "23.2.0"
@@ -82,6 +83,7 @@ kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
 androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntime" }
+androidx-media = { group = "androidx.media", name = "media", version.ref = "androidxMedia" }
 
 adhan = { module = "com.batoulapps.adhan:adhan2", version.ref = "adhan2" }
 coil = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
