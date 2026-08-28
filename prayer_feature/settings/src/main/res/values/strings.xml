@@ -77,7 +77,7 @@
     <string name="prayer_maghrib">Maghrib</string>
     <string name="prayer_isha">Isha</string>
     <string name="adhan">Adhan</string>
-    <string name="adhan_volume">Adhan volume</string>
+    <string name="adhan_volume">Ezan loudness</string>
     <string name="countdown">Countdown</string>
     <string name="pre_prayer_reminder">Pre-prayer reminder</string>
     <string name="daily_reminder">Daily reminder</string>

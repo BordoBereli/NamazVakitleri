@@ -11,7 +11,7 @@ class NotificationSettingsTest {
     }
 
     @Test
-    fun `adhan volume defaults to 30`() {
-        assertThat(NotificationSettings().adhanVolume).isEqualTo(30)
+    fun `adhan volume defaults to 100`() {
+        assertThat(NotificationSettings().adhanVolume).isEqualTo(100)
     }
 }

@@ -86,9 +86,9 @@ class NotificationSettingsDataStoreTest {
     }
 
     @Test
-    fun `adhan volume defaults to 30`() = runTest {
+    fun `adhan volume defaults to 100`() = runTest {
         val store = freshStore()
-        assertThat(store.getSettings().adhanVolume).isEqualTo(30)
+        assertThat(store.getSettings().adhanVolume).isEqualTo(100)
     }
 
     @Test

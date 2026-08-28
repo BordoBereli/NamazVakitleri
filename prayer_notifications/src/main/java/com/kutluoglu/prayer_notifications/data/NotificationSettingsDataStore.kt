@@ -87,7 +87,7 @@ class NotificationSettingsDataStore(
             enabled = this[Keys.ENABLED] ?: false,
             prayerToggles = toggles,
             adhanEnabled = this[Keys.ADHAN_ENABLED] ?: false,
-            adhanVolume = this[Keys.ADHAN_VOLUME] ?: 30,
+            adhanVolume = this[Keys.ADHAN_VOLUME] ?: 100,
             countdownEnabled = this[Keys.COUNTDOWN_ENABLED] ?: true,
             dailyReminderEnabled = this[Keys.DAILY_REMINDER_ENABLED] ?: false,
             dailyReminderHour = this[Keys.DAILY_REMINDER_HOUR] ?: 8,
