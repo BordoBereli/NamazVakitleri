@@ -4,6 +4,9 @@ import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer.model.quran.AyahData
 import com.kutluoglu.prayer_feature.common.states.LocationUiState
 import com.kutluoglu.prayer_feature.common.states.TimeUiState
+import kotlinx.datetime.DayOfWeek
+
+private const val DHUHR_ARABIC_NAME = "الظهر"
 
 /**
  * Created by F.K. on 28.10.2025.
@@ -29,5 +32,8 @@ data class PrayerUiState(
         val prayers: List<Prayer> = emptyList(),
         val currentPrayer: Prayer? = null,
         val nextPrayer: Prayer? = null
-)
+) {
+    fun isJumuahCountdown(): Boolean =
+        nextPrayer?.let { it.arabicName == DHUHR_ARABIC_NAME && it.date.dayOfWeek == DayOfWeek.FRIDAY } ?: false
+}
 
