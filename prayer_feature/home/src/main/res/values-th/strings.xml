@@ -7,6 +7,7 @@
     <string name="time_until_message">เวลาจนถึงละหมาดถัดไป</string>
     <string name="time_until_prayer_format">เวลาจนถึง %1$s</string>
     <string name="time_until_sunrise">เวลาจนถึงพระอาทิตย์ขึ้น</string>
+    <string name="prayer_jumuah">ญุมุอะฮ์</string>
     <string name="unknown_error_message">ข้อผิดพลาดที่ไม่รู้จัก</string>
     <string name="share_verse">แชร์โองการ</string>
     <string name="no_verse_available">(ไม่มีโองการ)</string>

@@ -7,6 +7,7 @@
     <string name="time_until_message">পরবর্তী নামাজ পর্যন্ত সময়</string>
     <string name="time_until_prayer_format">%1$s পর্যন্ত সময়</string>
     <string name="time_until_sunrise">সূর্যোদয় পর্যন্ত সময়</string>
+    <string name="prayer_jumuah">জুমু\'আহ</string>
     <string name="unknown_error_message">অজানা ত্রুটি</string>
     <string name="share_verse">আয়াত শেয়ার করুন</string>
     <string name="no_verse_available">(কোনো আয়াত উপলব্ধ নেই।)</string>
