@@ -216,4 +216,55 @@ class PrayerNotificationManagerTest {
         assertThat(notification.actions!![0].title.toString()).isEqualTo("Stop")
         assertThat(notification.deleteIntent).isNotNull()
     }
+
+    @Test
+    fun `showCountdownNotification shows Cuma for Dhuhr on Friday`() {
+        val original = Locale.getDefault()
+        try {
+            Locale.setDefault(Locale("tr"))
+            manager.createChannels()
+            val target = LocalTime.of(12, 30).atDate(LocalDate.of(2026, 8, 28)) // Friday
+                .atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+            manager.showCountdownNotification("Dhuhr", target, null, 90 * 60_000L)
+            val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val notification = shadowOf(nm).allNotifications.single()
+            assertThat(notification.extras.getString("android.title")).isEqualTo("Cuma · 12:30")
+        } finally {
+            Locale.setDefault(original)
+        }
+    }
+
+    @Test
+    fun `showCountdownNotification shows Dhuhr name for Dhuhr on Monday`() {
+        val original = Locale.getDefault()
+        try {
+            Locale.setDefault(Locale("tr"))
+            manager.createChannels()
+            val target = LocalTime.of(12, 30).atDate(LocalDate.of(2026, 8, 24)) // Monday
+                .atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+            manager.showCountdownNotification("Dhuhr", target, null, 90 * 60_000L)
+            val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val notification = shadowOf(nm).allNotifications.single()
+            assertThat(notification.extras.getString("android.title")).isEqualTo("Öğle · 12:30")
+        } finally {
+            Locale.setDefault(original)
+        }
+    }
+
+    @Test
+    fun `showCountdownNotification shows Maghrib on Friday for non-Dhuhr`() {
+        val original = Locale.getDefault()
+        try {
+            Locale.setDefault(Locale("tr"))
+            manager.createChannels()
+            val target = LocalTime.of(18, 45).atDate(LocalDate.of(2026, 8, 28)) // Friday
+                .atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+            manager.showCountdownNotification("Maghrib", target, null, 90 * 60_000L)
+            val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val notification = shadowOf(nm).allNotifications.single()
+            assertThat(notification.extras.getString("android.title")).isEqualTo("Akşam · 18:45")
+        } finally {
+            Locale.setDefault(original)
+        }
+    }
 }

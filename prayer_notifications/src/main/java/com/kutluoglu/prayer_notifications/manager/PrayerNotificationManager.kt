@@ -14,6 +14,7 @@ import com.kutluoglu.prayer_notifications.domain.NotificationSettings
 import com.kutluoglu.prayer_notifications.domain.SpecialDay
 import com.kutluoglu.prayer_notifications.scheduler.AlarmReceiver
 import org.koin.core.annotation.Single
+import java.time.DayOfWeek
 import java.time.Instant
 import java.time.ZoneId
 import java.util.Locale
@@ -141,7 +142,7 @@ class PrayerNotificationManager(
             .setContentTitle(
                 localizedString(
                     R.string.notification_countdown_title,
-                    localizedPrayerName(nextPrayerName),
+                    countdownDisplayName(nextPrayerName, nextPrayerTimeMillis),
                     formatClockTime(nextPrayerTimeMillis)
                 )
             )
@@ -255,6 +256,19 @@ class PrayerNotificationManager(
         "Isha" -> localizedString(R.string.prayer_isha)
         else -> key
     }
+
+    private fun countdownDisplayName(nextPrayerName: String, nextPrayerTimeMillis: Long): String =
+        if (nextPrayerName == "Dhuhr" && isFriday(nextPrayerTimeMillis)) {
+            localizedString(R.string.notification_jumuah_title)
+        } else {
+            localizedPrayerName(nextPrayerName)
+        }
+
+    private fun isFriday(epochMillis: Long): Boolean =
+        Instant.ofEpochMilli(epochMillis)
+            .atZone(ZoneId.systemDefault())
+            .toLocalDate()
+            .dayOfWeek == DayOfWeek.FRIDAY
 
     private fun localizedSpecialDay(day: SpecialDay): String = when (day) {
         SpecialDay.RAMADAN_START -> localizedString(R.string.special_day_ramadan_start)
