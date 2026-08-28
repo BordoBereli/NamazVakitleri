@@ -124,8 +124,9 @@ private fun TimeInfoSection(timeState: TimeUiState, currentTime: String) {
 private fun NextPrayerInfo(prayerState: PrayerUiState, timeRemaining: String) {
     val nextPrayerNameRaw = prayerState.nextPrayer?.name ?: "İmsak"
 
-    val nextPrayerDisplayName = when (nextPrayerNameRaw) {
-        "İmsak" -> "Sabah"
+    val nextPrayerDisplayName = when {
+        prayerState.isJumuahCountdown() -> stringResource(id = R.string.prayer_jumuah)
+        nextPrayerNameRaw == "İmsak" -> "Sabah"
         else -> nextPrayerNameRaw
     }
 
