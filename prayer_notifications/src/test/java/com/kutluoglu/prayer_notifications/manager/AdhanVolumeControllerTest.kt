@@ -110,4 +110,36 @@ class AdhanVolumeControllerTest {
         controller.volumeProvider.onAdjustVolume(AudioManager.ADJUST_RAISE)
         assertThat(controller.volumeProvider.currentVolume).isEqualTo(85)
     }
+
+    @Test
+    fun `lowering at the minimum invokes the mute listener`() {
+        audioManager().setStreamVolume(AudioManager.STREAM_ALARM, 1, 0)
+        val controller = AdhanVolumeController(context)
+        var muted = false
+        controller.setOnMuteRequestedListener { muted = true }
+        controller.volumeProvider.onAdjustVolume(AudioManager.ADJUST_LOWER)
+        assertThat(muted).isTrue()
+        assertThat(audioManager().getStreamVolume(AudioManager.STREAM_ALARM)).isEqualTo(1)
+    }
+
+    @Test
+    fun `lowering above the minimum does not invoke the mute listener`() {
+        audioManager().setStreamVolume(AudioManager.STREAM_ALARM, 5, 0)
+        val controller = AdhanVolumeController(context)
+        var muted = false
+        controller.setOnMuteRequestedListener { muted = true }
+        controller.volumeProvider.onAdjustVolume(AudioManager.ADJUST_LOWER)
+        assertThat(muted).isFalse()
+        assertThat(audioManager().getStreamVolume(AudioManager.STREAM_ALARM)).isEqualTo(4)
+    }
+
+    @Test
+    fun `raising at the minimum does not invoke the mute listener`() {
+        audioManager().setStreamVolume(AudioManager.STREAM_ALARM, 1, 0)
+        val controller = AdhanVolumeController(context)
+        var muted = false
+        controller.setOnMuteRequestedListener { muted = true }
+        controller.volumeProvider.onAdjustVolume(AudioManager.ADJUST_RAISE)
+        assertThat(muted).isFalse()
+    }
 }

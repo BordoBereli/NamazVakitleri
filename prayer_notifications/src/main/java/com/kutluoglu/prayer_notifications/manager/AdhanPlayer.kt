@@ -20,7 +20,12 @@ class AdhanPlayer(
     private var onCompletion: (() -> Unit)? = null
     private var onFocusLoss: (() -> Unit)? = null
     private var focusRequest: AudioFocusRequest? = null
-    internal val volumeController = AdhanVolumeController(context)
+    internal val volumeController = AdhanVolumeController(context).also { controller ->
+        controller.setOnMuteRequestedListener {
+            stop()
+            onFocusLoss?.invoke()
+        }
+    }
 
     private val focusChangeListener = AudioManager.OnAudioFocusChangeListener { change ->
         if (change == AudioManager.AUDIOFOCUS_LOSS) {

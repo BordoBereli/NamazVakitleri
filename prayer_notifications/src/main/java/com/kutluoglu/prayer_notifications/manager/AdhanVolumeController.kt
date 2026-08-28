@@ -20,6 +20,9 @@ class AdhanVolumeController(
             audioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM)
     ) {
         override fun onAdjustVolume(direction: Int) {
+            val lowerAtFloor = direction == AudioManager.ADJUST_LOWER &&
+                audioManager.getStreamVolume(AudioManager.STREAM_ALARM) > 0
+            val before = audioManager.getStreamVolume(AudioManager.STREAM_ALARM)
             audioManager.adjustStreamVolume(
                 AudioManager.STREAM_ALARM,
                 direction,
@@ -28,6 +31,9 @@ class AdhanVolumeController(
             val streamMax = audioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM)
             currentVolume =
                 audioManager.getStreamVolume(AudioManager.STREAM_ALARM) * MAX_VOLUME / streamMax
+            if (lowerAtFloor && audioManager.getStreamVolume(AudioManager.STREAM_ALARM) == before) {
+                onMuteRequested?.invoke()
+            }
         }
 
         override fun onSetVolumeTo(volume: Int) {
@@ -41,6 +47,12 @@ class AdhanVolumeController(
 
     internal var mediaSession: MediaSessionCompat? = null
         private set
+
+    private var onMuteRequested: (() -> Unit)? = null
+
+    fun setOnMuteRequestedListener(listener: () -> Unit) {
+        onMuteRequested = listener
+    }
 
     fun activate() {
         if (mediaSession == null) {

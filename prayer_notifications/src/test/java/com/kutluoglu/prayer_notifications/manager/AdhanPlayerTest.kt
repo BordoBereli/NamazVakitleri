@@ -173,4 +173,32 @@ class AdhanPlayerTest {
         shadowOf(mediaPlayer).invokeCompletionListener()
         assertThat(player.volumeController.mediaSession).isNull()
     }
+
+    @Test
+    fun `mute press at the minimum stops playback and notifies service`() {
+        val uri = Uri.parse("android.resource://${context.packageName}/${R.raw.adhan_fajr}")
+        ShadowMediaPlayer.addMediaInfo(DataSource.toDataSource(context, uri), ShadowMediaPlayer.MediaInfo())
+        val player = AdhanPlayer(context)
+        var focusLost = false
+        player.setOnFocusLossListener { focusLost = true }
+        player.play("Fajr", 30)
+        val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        audioManager.setStreamVolume(AudioManager.STREAM_ALARM, 1, 0)
+        player.volumeController.volumeProvider.onAdjustVolume(AudioManager.ADJUST_LOWER)
+        assertThat(player.volumeController.mediaSession).isNull()
+        assertThat(focusLost).isTrue()
+    }
+
+    @Test
+    fun `lowering above the minimum keeps playing`() {
+        val uri = Uri.parse("android.resource://${context.packageName}/${R.raw.adhan_fajr}")
+        ShadowMediaPlayer.addMediaInfo(DataSource.toDataSource(context, uri), ShadowMediaPlayer.MediaInfo())
+        val player = AdhanPlayer(context)
+        player.play("Fajr", 30)
+        val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        audioManager.setStreamVolume(AudioManager.STREAM_ALARM, 5, 0)
+        player.volumeController.volumeProvider.onAdjustVolume(AudioManager.ADJUST_LOWER)
+        assertThat(player.volumeController.mediaSession?.isActive).isTrue()
+        player.stop()
+    }
 }
