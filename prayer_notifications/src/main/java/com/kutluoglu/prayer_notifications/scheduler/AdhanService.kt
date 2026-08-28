@@ -49,6 +49,7 @@ class AdhanService : Service(), KoinComponent {
     override fun onCreate() {
         super.onCreate()
         adhanPlayer.setOnCompletionListener { stopSelf() }
+        adhanPlayer.setOnFocusLossListener { stopSelf() }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {

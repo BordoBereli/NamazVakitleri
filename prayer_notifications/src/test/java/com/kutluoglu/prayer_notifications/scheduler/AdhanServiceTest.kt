@@ -116,4 +116,15 @@ class AdhanServiceTest {
         controller.destroy()
         verify { adhanPlayer.stop() }
     }
+
+    @Test
+    fun `focus loss callback stops the service`() {
+        val focusLossSlot = slot<() -> Unit>()
+        every { adhanPlayer.setOnFocusLossListener(capture(focusLossSlot)) } answers { }
+        val controller = startService("Fajr")
+        focusLossSlot.captured.invoke()
+        assertThat(shadowOf(controller.get()).isStoppedBySelf()).isTrue()
+        controller.destroy()
+        verify { adhanPlayer.stop() }
+    }
 }
