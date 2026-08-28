@@ -13,18 +13,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Functions
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Public
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.filled.Translate
+import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -34,7 +33,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -174,7 +172,7 @@ private fun SettingsContent(
                 HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
                 
                 SettingsItem(
-                    icon = Icons.Default.Public,
+                    icon = Icons.Filled.Functions,
                     title = stringResource(R.string.calculation_method),
                     subtitle = getCalculationMethodName(settings.calculationMethod),
                     onClick = onNavigateToCalculationMethod
@@ -183,7 +181,7 @@ private fun SettingsContent(
                 HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
                 
                 SettingsItem(
-                    icon = Icons.Default.Schedule,
+                    icon = Icons.Filled.Tune,
                     title = stringResource(R.string.hijri_adjustment),
                     subtitle = if (settings.hijriAdjustment == 0) {
                         "0 ${stringResource(R.string.days)}"
@@ -196,7 +194,7 @@ private fun SettingsContent(
                 HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
                 
                 SettingsItem(
-                    icon = Icons.Default.Refresh,
+                    icon = Icons.Filled.Translate,
                     title = stringResource(R.string.language),
                     subtitle = getLanguageName(settings.language),
                     onClick = onNavigateToLanguage
@@ -276,11 +274,13 @@ private fun SettingsItem(
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Medium
             )
-            Text(
-                text = subtitle,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            if (subtitle.isNotEmpty()) {
+                Text(
+                    text = subtitle,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
         }
         Icon(
             imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
@@ -367,35 +367,42 @@ private fun getLanguageName(language: String): String {
 
 @Composable
 private fun VersionFooter(version: AppVersion) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 8.dp, bottom = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
+        ),
+        shape = RoundedCornerShape(16.dp)
     ) {
-        Surface(
-            shape = CircleShape,
-            color = MaterialTheme.colorScheme.surfaceVariant
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
                 imageVector = Icons.Filled.Info,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier
-                    .padding(12.dp)
-                    .size(24.dp)
+                modifier = Modifier.size(24.dp)
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Text(
+                text = stringResource(SettingsR.string.app_name),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                text = " • ",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                text = stringResource(SettingsR.string.version_format, version.name, version.code),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
-        Text(
-            text = stringResource(SettingsR.string.app_name),
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Medium
-        )
-        Text(
-            text = stringResource(SettingsR.string.version_format, version.name, version.code),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
     }
 }
