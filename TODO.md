@@ -3,7 +3,7 @@
 Persistent task list for the NamazVakitleri Android project.
 Status: `[ ]` = pending, `[x]` = done, `[~]` = in progress.
 
-Last updated: 2026-08-24
+Last updated: 2026-08-28
 
 ---
 
@@ -29,6 +29,10 @@ Last updated: 2026-08-24
   - Countdown notification now shows the next prayer name + clock time in the title (e.g. `Maghrib · 18:45`), a clear `Xh Ym remaining` body, and a progress bar spanning the previous→next prayer gap.
   - Countdown stays alive overnight after Isha, targeting tomorrow's Fajr.
   - Spec: `docs/superpowers/specs/2026-08-24-countdown-notification-improvement-design.md`; Plan: `docs/superpowers/plans/2026-08-24-countdown-notification-improvement.md`.
+
+- [x] **Cuma namazı countdown label** (2026-08-28, TDD)
+  - On Fridays, the home screen "`xxx namazına kalan süre`" section and the countdown notification show "Cuma" instead of "Öğle"/"Dhuhr" while counting down to the noon prayer (the countdown value is unchanged — Cuma is at Dhuhr time).
+  - Spec: `docs/superpowers/specs/2026-08-28-cuma-namazi-countdown-design.md`; Plan: `docs/superpowers/plans/2026-08-28-cuma-namazi-countdown.md`.
 
 - [x] **Ezan quick-stop** (2026-08-24, TDD)
   - Ezan playback moved into a foreground `AdhanService` that shows a notification with a Stop button, stops on swipe-to-dismiss, stops when the alarm volume is lowered (volume-down), and auto-stops when the audio completes.
