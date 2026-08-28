@@ -38,7 +38,7 @@ class AdhanVolumeControllerTest {
     fun `set volume to sets alarm stream volume`() {
         audioManager().setStreamVolume(AudioManager.STREAM_ALARM, 5, 0)
         val controller = AdhanVolumeController(context)
-        controller.volumeProvider.onSetVolumeTo(3)
+        controller.volumeProvider.onSetVolumeTo(50)
         assertThat(audioManager().getStreamVolume(AudioManager.STREAM_ALARM)).isEqualTo(3)
     }
 
@@ -58,5 +58,48 @@ class AdhanVolumeControllerTest {
         controller.deactivate()
         controller.deactivate()
         assertThat(controller.mediaSession).isNull()
+    }
+
+    @Test
+    fun `lowering volume key at minimum keeps volume unchanged`() {
+        audioManager().setStreamVolume(AudioManager.STREAM_ALARM, 1, 0)
+        val controller = AdhanVolumeController(context)
+        controller.volumeProvider.onAdjustVolume(AudioManager.ADJUST_LOWER)
+        assertThat(audioManager().getStreamVolume(AudioManager.STREAM_ALARM)).isEqualTo(1)
+    }
+
+    @Test
+    fun `raising volume key at maximum keeps volume unchanged`() {
+        audioManager().setStreamVolume(AudioManager.STREAM_ALARM, 7, 0)
+        val controller = AdhanVolumeController(context)
+        controller.volumeProvider.onAdjustVolume(AudioManager.ADJUST_RAISE)
+        assertThat(audioManager().getStreamVolume(AudioManager.STREAM_ALARM)).isEqualTo(7)
+    }
+
+    @Test
+    fun `set volume to maps percent onto stream max`() {
+        audioManager().setStreamVolume(AudioManager.STREAM_ALARM, 0, 0)
+        val controller = AdhanVolumeController(context)
+        controller.volumeProvider.onSetVolumeTo(100)
+        assertThat(audioManager().getStreamVolume(AudioManager.STREAM_ALARM)).isEqualTo(7)
+    }
+
+    @Test
+    fun `double activate keeps a single active session`() {
+        val controller = AdhanVolumeController(context)
+        controller.activate()
+        controller.activate()
+        assertThat(controller.mediaSession?.isActive).isTrue()
+        controller.deactivate()
+        assertThat(controller.mediaSession).isNull()
+    }
+
+    @Test
+    fun `deactivate before activate does not throw`() {
+        val controller = AdhanVolumeController(context)
+        controller.deactivate()
+        controller.activate()
+        assertThat(controller.mediaSession?.isActive).isTrue()
+        controller.deactivate()
     }
 }

@@ -16,7 +16,8 @@ class AdhanVolumeController(
     internal val volumeProvider: VolumeProviderCompat = object : VolumeProviderCompat(
         VolumeProviderCompat.VOLUME_CONTROL_RELATIVE,
         MAX_VOLUME,
-        audioManager.getStreamVolume(AudioManager.STREAM_ALARM)
+        audioManager.getStreamVolume(AudioManager.STREAM_ALARM) * MAX_VOLUME /
+            audioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM)
     ) {
         override fun onAdjustVolume(direction: Int) {
             audioManager.adjustStreamVolume(
@@ -28,11 +29,9 @@ class AdhanVolumeController(
         }
 
         override fun onSetVolumeTo(volume: Int) {
-            audioManager.setStreamVolume(
-                AudioManager.STREAM_ALARM,
-                volume.coerceIn(0, MAX_VOLUME),
-                0
-            )
+            val streamMax = audioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM)
+            val target = volume.coerceIn(0, MAX_VOLUME) * streamMax / MAX_VOLUME
+            audioManager.setStreamVolume(AudioManager.STREAM_ALARM, target, 0)
             currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_ALARM)
         }
     }
