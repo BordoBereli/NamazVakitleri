@@ -102,4 +102,12 @@ class AdhanVolumeControllerTest {
         assertThat(controller.mediaSession?.isActive).isTrue()
         controller.deactivate()
     }
+
+    @Test
+    fun `adjusted volume reports on the provider percent scale`() {
+        audioManager().setStreamVolume(AudioManager.STREAM_ALARM, 5, 0)
+        val controller = AdhanVolumeController(context)
+        controller.volumeProvider.onAdjustVolume(AudioManager.ADJUST_RAISE)
+        assertThat(controller.volumeProvider.currentVolume).isEqualTo(85)
+    }
 }
