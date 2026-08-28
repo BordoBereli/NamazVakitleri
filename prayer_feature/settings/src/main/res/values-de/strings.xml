@@ -94,6 +94,11 @@
     <string name="exact_alarm_dialog_body">Damit der Adhan pünktlich ertönt, erteilen Sie die Berechtigung "Alarme und Erinnerungen".</string>
     <string name="exact_alarm_grant">Erlauben</string>
     <string name="exact_alarm_not_now">Später</string>
+    <string name="battery_optimization_hint">Deaktivieren Sie die Akkuoptimierung, damit der Adhan auch bei gesperrtem Telefon pünktlich ertönt.</string>
+    <string name="battery_optimization_dialog_title">Akkuoptimierung</string>
+    <string name="battery_optimization_dialog_body">Damit der Adhan auch bei gesperrtem Telefon pünktlich ertönt, deaktivieren Sie die Akkuoptimierung für diese App. Tippen Sie auf „Einstellungen öffnen", finden Sie Namaz Vakitleri in der Liste und wählen Sie „Nicht optimieren".</string>
+    <string name="battery_optimization_open_settings">Einstellungen öffnen</string>
+    <string name="battery_optimization_not_now">Später</string>
     <string name="open_settings">Einstellungen öffnen</string>
     <string name="version_format">Version %1$s (%2$d)</string>
 </resources>

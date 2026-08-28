@@ -94,6 +94,11 @@
     <string name="exact_alarm_dialog_body">अज़ान को ठीक समय पर बजाने के लिए "अलार्म और रिमाइंडर" अनुमति दें।</string>
     <string name="exact_alarm_grant">अनुमति दें</string>
     <string name="exact_alarm_not_now">अभी नहीं</string>
+    <string name="battery_optimization_hint">फ़ोन लॉक होने पर भी अज़ान समय पर बजाने के लिए बैटरी ऑप्टिमाइज़ेशन बंद करें।</string>
+    <string name="battery_optimization_dialog_title">बैटरी ऑप्टिमाइज़ेशन</string>
+    <string name="battery_optimization_dialog_body">फ़ोन लॉक होने पर भी अज़ान ठीक समय पर बजाने के लिए इस ऐप के लिए बैटरी ऑप्टिमाइज़ेशन बंद करें। "सेटिंग्स खोलें" पर टैप करें, सूची में Namaz Vakitleri खोजें और "ऑप्टिमाइज़ न करें" चुनें।</string>
+    <string name="battery_optimization_open_settings">सेटिंग्स खोलें</string>
+    <string name="battery_optimization_not_now">अभी नहीं</string>
     <string name="open_settings">सेटिंग्स खोलें</string>
     <string name="version_format">संस्करण %1$s (%2$d)</string>
 </resources>

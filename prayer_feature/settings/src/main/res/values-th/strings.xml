@@ -94,6 +94,11 @@
     <string name="exact_alarm_dialog_body">เพื่อเล่นอาซานตรงเวลา โปรดให้สิทธิ์ "ปลุกและเตือนความจำ"</string>
     <string name="exact_alarm_grant">อนุญาต</string>
     <string name="exact_alarm_not_now">ไม่ใช่ตอนนี้</string>
+    <string name="battery_optimization_hint">ปิดการเพิ่มประสิทธิภาพแบตเตอรี่เพื่อให้อาซานเล่นตรงเวลาแม้โทรศัพท์ถูกล็อก</string>
+    <string name="battery_optimization_dialog_title">การเพิ่มประสิทธิภาพแบตเตอรี่</string>
+    <string name="battery_optimization_dialog_body">เพื่อเล่นอาซานตรงเวลาแม้โทรศัพท์ถูกล็อก ให้ปิดการเพิ่มประสิทธิภาพแบตเตอรี่สำหรับแอปนี้ แตะ "เปิดการตั้งค่า" ค้นหา Namaz Vakitleri ในรายการแล้วเลือก "ไม่เพิ่มประสิทธิภาพ"</string>
+    <string name="battery_optimization_open_settings">เปิดการตั้งค่า</string>
+    <string name="battery_optimization_not_now">ไม่ใช่ตอนนี้</string>
     <string name="open_settings">เปิดการตั้งค่า</string>
     <string name="version_format">เวอร์ชัน %1$s (%2$d)</string>
 </resources>

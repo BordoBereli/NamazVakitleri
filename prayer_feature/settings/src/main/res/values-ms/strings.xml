@@ -94,6 +94,11 @@
     <string name="exact_alarm_dialog_body">Untuk memainkan azan tepat pada masanya, berikan kebenaran "Penggera dan peringatan".</string>
     <string name="exact_alarm_grant">Benarkan</string>
     <string name="exact_alarm_not_now">Tidak sekarang</string>
+    <string name="battery_optimization_hint">Lumpuhkan pengoptimuman bateri supaya azan berbunyi tepat pada masanya walaupun telefon dikunci.</string>
+    <string name="battery_optimization_dialog_title">Pengoptimuman bateri</string>
+    <string name="battery_optimization_dialog_body">Untuk memainkan azan tepat pada masanya walaupun telefon dikunci, lumpuhkan pengoptimuman bateri untuk aplikasi ini. Ketik "Buka tetapan", cari Namaz Vakitleri dalam senarai, dan pilih "Jangan optimumkan".</string>
+    <string name="battery_optimization_open_settings">Buka tetapan</string>
+    <string name="battery_optimization_not_now">Tidak sekarang</string>
     <string name="open_settings">Buka Tetapan</string>
     <string name="version_format">Versi %1$s (%2$d)</string>
 </resources>

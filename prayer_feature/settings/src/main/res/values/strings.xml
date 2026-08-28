@@ -96,6 +96,11 @@
     <string name="exact_alarm_dialog_body">To play the Ezan exactly on time, grant the "Alarms &amp; reminders" permission.</string>
     <string name="exact_alarm_grant">Grant</string>
     <string name="exact_alarm_not_now">Not now</string>
+    <string name="battery_optimization_hint">Disable battery optimization so the Ezan plays on time even when the phone is locked.</string>
+    <string name="battery_optimization_dialog_title">Battery optimization</string>
+    <string name="battery_optimization_dialog_body">To play the Ezan exactly on time even when the phone is locked, disable battery optimization for this app. Tap "Open settings", find Namaz Vakitleri in the list, and choose "Don\'t optimize".</string>
+    <string name="battery_optimization_open_settings">Open settings</string>
+    <string name="battery_optimization_not_now">Not now</string>
     <string name="app_name">NamazVakitleri</string>
     <string name="version_format">Version %1$s (%2$d)</string>
 </resources>

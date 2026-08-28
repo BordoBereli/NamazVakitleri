@@ -94,6 +94,11 @@
     <string name="exact_alarm_dialog_body">برای پخش اذان دقیقاً به‌موقع، مجوز «زنگ‌ها و یادآورها» را بدهید.</string>
     <string name="exact_alarm_grant">اعطا</string>
     <string name="exact_alarm_not_now">اکنون نه</string>
+    <string name="battery_optimization_hint">برای اینکه اذان حتی وقتی گوشی قفل است به‌موقع پخش شود، بهینه‌سازی باتری را غیرفعال کنید.</string>
+    <string name="battery_optimization_dialog_title">بهینه‌سازی باتری</string>
+    <string name="battery_optimization_dialog_body">برای پخش دقیق اذان حتی وقتی گوشی قفل است، بهینه‌سازی باتری را برای این برنامه غیرفعال کنید. روی «باز کردن تنظیمات» بزنید، در فهرست Namaz Vakitleri را پیدا کنید و «بهینه نکن» را انتخاب کنید.</string>
+    <string name="battery_optimization_open_settings">باز کردن تنظیمات</string>
+    <string name="battery_optimization_not_now">الان نه</string>
     <string name="open_settings">باز کردن تنظیمات</string>
     <string name="version_format">نسخه %1$s (%2$d)</string>
 </resources>
