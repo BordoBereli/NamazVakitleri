@@ -12,7 +12,7 @@ class DailyRescheduleWorker(
 ) : CoroutineWorker(appContext, params), KoinComponent {
 
     override suspend fun doWork(): Result {
-        get<PrayerNotificationScheduler>().scheduleAllSuspending()
+        get<AlarmScheduler>().scheduleAllSuspending()
         return Result.success()
     }
 }

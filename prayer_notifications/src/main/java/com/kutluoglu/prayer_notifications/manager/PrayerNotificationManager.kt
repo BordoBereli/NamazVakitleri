@@ -19,10 +19,10 @@ import java.time.Instant
 import java.time.ZoneId
 import java.util.Locale
 
-@Single
+@Single(binds = [NotificationDisplayer::class])
 class PrayerNotificationManager(
     private val context: Context
-) {
+) : NotificationDisplayer {
     companion object {
         const val CHANNEL_PRAYER_ALERTS = "prayer_alerts"
         const val CHANNEL_ADHAN = "adhan"
@@ -42,7 +42,7 @@ class PrayerNotificationManager(
     private val notificationManager: NotificationManager =
         context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-    fun createChannels(settings: NotificationSettings = NotificationSettings()) {
+    override fun createChannels(settings: NotificationSettings) {
         createChannel(
             CHANNEL_PRAYER_ALERTS,
             localizedString(R.string.channel_prayer_alerts),
@@ -88,7 +88,7 @@ class PrayerNotificationManager(
         }
     }
 
-    fun showPrayerNotification(prayerName: String, settings: NotificationSettings) {
+    override fun showPrayerNotification(prayerName: String, settings: NotificationSettings) {
         val channel = if (settings.adhanEnabled) CHANNEL_ADHAN else CHANNEL_PRAYER_ALERTS
         val localizedName = localizedPrayerName(prayerName)
         val builder = NotificationCompat.Builder(context, channel)
@@ -100,7 +100,7 @@ class PrayerNotificationManager(
         notificationManager.notify(NOTIFICATION_ID_PRAYER, builder.build())
     }
 
-    fun buildAdhanNotification(prayerName: String): Notification {
+    override fun buildAdhanNotification(prayerName: String): Notification {
         val localizedName = localizedPrayerName(prayerName)
         val stopIntent = PendingIntent.getBroadcast(
             context, 0,
@@ -120,7 +120,7 @@ class PrayerNotificationManager(
             .build()
     }
 
-    fun showCountdownNotification(
+    override fun showCountdownNotification(
         nextPrayerName: String,
         nextPrayerTimeMillis: Long,
         previousPrayerTimeMillis: Long?,
@@ -163,11 +163,11 @@ class PrayerNotificationManager(
         notificationManager.notify(NOTIFICATION_ID_COUNTDOWN, builder.build())
     }
 
-    fun cancelCountdown() {
+    override fun cancelCountdown() {
         notificationManager.cancel(NOTIFICATION_ID_COUNTDOWN)
     }
 
-    fun showTestNotification() {
+    override fun showTestNotification() {
         val notification = NotificationCompat.Builder(context, CHANNEL_PRAYER_ALERTS)
             .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(localizedString(R.string.notification_test_title))
@@ -177,7 +177,7 @@ class PrayerNotificationManager(
         notificationManager.notify(NOTIFICATION_ID_TEST, notification)
     }
 
-    fun showJumuahNotification() {
+    override fun showJumuahNotification() {
         val notification = NotificationCompat.Builder(context, CHANNEL_REMINDERS)
             .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(localizedString(R.string.notification_jumuah_title))
@@ -187,7 +187,7 @@ class PrayerNotificationManager(
         notificationManager.notify(NOTIFICATION_ID_JUMUAH, notification)
     }
 
-    fun showPrePrayerNotification(prayerName: String, minutes: Int) {
+    override fun showPrePrayerNotification(prayerName: String, minutes: Int) {
         val localizedName = localizedPrayerName(prayerName)
         val notification = NotificationCompat.Builder(context, CHANNEL_REMINDERS)
             .setSmallIcon(R.drawable.ic_notification)
@@ -198,7 +198,7 @@ class PrayerNotificationManager(
         notificationManager.notify(NOTIFICATION_ID_PRE_PRAYER, notification)
     }
 
-    fun showDailyReminderNotification(summary: String) {
+    override fun showDailyReminderNotification(summary: String) {
         val notification = NotificationCompat.Builder(context, CHANNEL_REMINDERS)
             .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(localizedString(R.string.notification_daily_reminder_title))
@@ -208,7 +208,7 @@ class PrayerNotificationManager(
         notificationManager.notify(NOTIFICATION_ID_DAILY_REMINDER, notification)
     }
 
-    fun showSpecialDayNotification(day: SpecialDay) {
+    override fun showSpecialDayNotification(day: SpecialDay) {
         val notification = NotificationCompat.Builder(context, CHANNEL_REMINDERS)
             .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(localizedString(R.string.notification_special_day_title))
@@ -220,7 +220,7 @@ class PrayerNotificationManager(
         notificationManager.notify(NOTIFICATION_ID_SPECIAL_DAY, notification)
     }
 
-    fun showPreSpecialDayNotification(day: SpecialDay) {
+    override fun showPreSpecialDayNotification(day: SpecialDay) {
         val notification = NotificationCompat.Builder(context, CHANNEL_REMINDERS)
             .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(localizedString(R.string.notification_pre_special_day_title))

@@ -17,7 +17,7 @@ import com.kutluoglu.prayer_notifications.domain.NotificationSettings
 import com.kutluoglu.prayer_notifications.domain.SchedulePlan
 import com.kutluoglu.prayer_notifications.domain.SpecialDay
 import com.kutluoglu.prayer_notifications.domain.SpecialDaysCalculator
-import com.kutluoglu.prayer_notifications.manager.PrayerNotificationManager
+import com.kutluoglu.prayer_notifications.manager.NotificationDisplayer
 import com.kutluoglu.prayer_settings.domain.model.LocationSettings
 import com.kutluoglu.prayer_settings.domain.model.Settings
 import com.kutluoglu.prayer_settings.domain.usecase.GetSettingsUseCase
@@ -52,7 +52,7 @@ class PrayerNotificationSchedulerTest {
     private val getPrayerTimesUseCase = mockk<GetPrayerTimesUseCase>(relaxed = true)
     private val locationsCoordinator = mockk<LocationsCoordinator>(relaxed = true)
     private val getSettingsUseCase = mockk<GetSettingsUseCase>(relaxed = true)
-    private val notificationManager = mockk<PrayerNotificationManager>(relaxed = true)
+    private val notificationDisplayer = mockk<NotificationDisplayer>(relaxed = true)
 
     private fun scheduler(
         scope: CoroutineScope,
@@ -64,7 +64,7 @@ class PrayerNotificationSchedulerTest {
         getPrayerTimesUseCase = getPrayerTimesUseCase,
         locationsCoordinator = locationsCoordinator,
         getSettingsUseCase = getSettingsUseCase,
-        notificationManager = notificationManager,
+        notificationDisplayer = notificationDisplayer,
         specialDaysCalculator = specialDaysCalculator,
         scope = scope
     )
@@ -218,7 +218,7 @@ class PrayerNotificationSchedulerTest {
     fun `cancelAll cancels countdown notification`() = runTest {
         val scheduler = scheduler(CoroutineScope(UnconfinedTestDispatcher(testScheduler)))
         scheduler.cancelAll()
-        verify { notificationManager.cancelCountdown() }
+        verify { notificationDisplayer.cancelCountdown() }
     }
 
     @Test
@@ -322,7 +322,7 @@ class PrayerNotificationSchedulerTest {
         val scheduler = scheduler(CoroutineScope(UnconfinedTestDispatcher(testScheduler)))
         scheduler.scheduleAll()
 
-        coVerify { notificationManager.showCountdownNotification("Fajr", any(), any(), any()) }
+        coVerify { notificationDisplayer.showCountdownNotification("Fajr", any(), any(), any()) }
     }
 
     @Test
@@ -386,7 +386,7 @@ class PrayerNotificationSchedulerTest {
         val expectedLastTrigger = java.time.LocalTime.of(0, 2)
             .atDate(today).atZone(zoneId).toInstant().toEpochMilli()
         coVerify {
-            notificationManager.showCountdownNotification("Fajr", expectedFajr, expectedLastTrigger, any())
+            notificationDisplayer.showCountdownNotification("Fajr", expectedFajr, expectedLastTrigger, any())
         }
     }
 

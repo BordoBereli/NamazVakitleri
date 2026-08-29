@@ -19,7 +19,7 @@ import com.kutluoglu.prayer_notifications.domain.AlarmType
 import com.kutluoglu.prayer_notifications.domain.SchedulePlan
 import com.kutluoglu.prayer_notifications.domain.ScheduledAlarm
 import com.kutluoglu.prayer_notifications.domain.SpecialDaysCalculator
-import com.kutluoglu.prayer_notifications.manager.PrayerNotificationManager
+import com.kutluoglu.prayer_notifications.manager.NotificationDisplayer
 import com.kutluoglu.prayer_settings.domain.usecase.GetSettingsUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -32,7 +32,7 @@ import java.time.LocalTime
 import java.time.ZoneId
 import java.util.concurrent.TimeUnit
 
-@Single
+@Single(binds = [AlarmScheduler::class])
 class PrayerNotificationScheduler(
     private val context: Context,
     private val dataStore: NotificationSettingsDataStore,
@@ -40,10 +40,10 @@ class PrayerNotificationScheduler(
     private val getPrayerTimesUseCase: GetPrayerTimesUseCase,
     private val locationsCoordinator: LocationsCoordinator,
     private val getSettingsUseCase: GetSettingsUseCase,
-    private val notificationManager: PrayerNotificationManager,
+    private val notificationDisplayer: NotificationDisplayer,
     private val specialDaysCalculator: SpecialDaysCalculator = SpecialDaysCalculator(),
     private val scope: CoroutineScope = CoroutineScope(Dispatchers.IO)
-) {
+) : AlarmScheduler {
     companion object {
         // Request codes come from SchedulePlan.buildDailyAlarms (starts at 1000).
         // 24h coverage: 10 prayers + 10 pre-prayers max = 20 codes; the range must cover it.
@@ -55,11 +55,11 @@ class PrayerNotificationScheduler(
     private val alarmManager: AlarmManager =
         context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-    fun scheduleAll() {
+    override fun scheduleAll() {
         scope.launch { scheduleAllSuspending() }
     }
 
-    suspend fun scheduleAllSuspending() {
+    override suspend fun scheduleAllSuspending() {
         val settings = dataStore.getSettings()
         if (!settings.enabled) {
             cancelAll()
@@ -79,7 +79,7 @@ class PrayerNotificationScheduler(
             cancelDailyReschedule()
             return
         }
-        notificationManager.createChannels(settings)
+        notificationDisplayer.createChannels(settings)
         val appSettings = runCatching { getSettingsUseCase() }.getOrElse {
             cancelAll()
             cancelDailyReschedule()
@@ -167,17 +167,17 @@ class PrayerNotificationScheduler(
         }
     }
 
-    fun cancelDailyReschedule() {
+    override fun cancelDailyReschedule() {
         if (WorkManager.isInitialized()) {
             WorkManager.getInstance(context).cancelUniqueWork(DAILY_RESCHEDULE_WORK_NAME)
         }
     }
 
-    fun cancelAll(stopAdhan: Boolean = true) {
+    override fun cancelAll(stopAdhan: Boolean) {
         if (stopAdhan) {
             context.stopService(Intent(context, AdhanService::class.java))
         }
-        notificationManager.cancelCountdown()
+        notificationDisplayer.cancelCountdown()
         // Cancel all pending alarms by re-issuing the same PendingIntents with FLAG_NO_CREATE.
         for (code in REQUEST_CODE_START until REQUEST_CODE_END) {
             val intent = Intent(context, AlarmReceiver::class.java)
@@ -236,18 +236,22 @@ class PrayerNotificationScheduler(
         alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent)
     }
 
-    fun updateCountdown(targetMillis: Long, prayerName: String, previousTimeMillis: Long? = null) {
+    override fun updateCountdown(
+        targetMillis: Long,
+        prayerName: String,
+        previousTimeMillis: Long?
+    ) {
         val remaining = targetMillis - System.currentTimeMillis()
         if (remaining <= 0) {
-            notificationManager.cancelCountdown()
+            notificationDisplayer.cancelCountdown()
             return
         }
-        notificationManager.showCountdownNotification(prayerName, targetMillis, previousTimeMillis, remaining)
+        notificationDisplayer.showCountdownNotification(prayerName, targetMillis, previousTimeMillis, remaining)
         scheduleCountdownTick(targetMillis, prayerName, previousTimeMillis)
     }
 
-    fun cancelCountdown() {
-        notificationManager.cancelCountdown()
+    override fun cancelCountdown() {
+        notificationDisplayer.cancelCountdown()
         val intent = Intent(context, AlarmReceiver::class.java)
             .setAction(AlarmReceiver.ACTION_COUNTDOWN_TICK)
         val pendingIntent = PendingIntent.getBroadcast(
@@ -257,7 +261,7 @@ class PrayerNotificationScheduler(
         pendingIntent?.let { alarmManager.cancel(it) }
     }
 
-    private fun scheduleCountdownTick(targetMillis: Long, prayerName: String, previousTimeMillis: Long?) {
+    override fun scheduleCountdownTick(targetMillis: Long, prayerName: String, previousTimeMillis: Long?) {
         val intent = Intent(context, AlarmReceiver::class.java)
             .setAction(AlarmReceiver.ACTION_COUNTDOWN_TICK)
             .putExtra(AlarmReceiver.EXTRA_COUNTDOWN_TARGET, targetMillis)
@@ -272,7 +276,7 @@ class PrayerNotificationScheduler(
         setExactAlarm(System.currentTimeMillis() + 60_000, pendingIntent)
     }
 
-    suspend fun scheduleDailyReminder() {
+    override suspend fun scheduleDailyReminder() {
         val settings = dataStore.getSettings()
         if (!settings.dailyReminderEnabled) return
         val location = locationsCoordinator.resolveSelected() ?: return

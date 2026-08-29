@@ -11,7 +11,7 @@ import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.prayer_notifications.data.NotificationSettingsDataStore
 import com.kutluoglu.prayer_notifications.domain.NotificationSettings
 import com.kutluoglu.prayer_notifications.manager.AdhanPlayer
-import com.kutluoglu.prayer_notifications.manager.PrayerNotificationManager
+import com.kutluoglu.prayer_notifications.manager.NotificationDisplayer
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -39,7 +39,7 @@ class AdhanServiceTest {
     private val context: Context = ApplicationProvider.getApplicationContext()
 
     private val adhanPlayer = mockk<AdhanPlayer>(relaxed = true)
-    private val notificationManager = mockk<PrayerNotificationManager>(relaxed = true)
+    private val notificationDisplayer = mockk<NotificationDisplayer>(relaxed = true)
     private val dataStore = mockk<NotificationSettingsDataStore>(relaxed = true)
 
     @Before
@@ -49,12 +49,12 @@ class AdhanServiceTest {
                 androidContext(context)
                 modules(module {
                     single { adhanPlayer }
-                    single { notificationManager }
+                    single { notificationDisplayer }
                     single { dataStore }
                 })
             }
         }
-        every { notificationManager.buildAdhanNotification(any()) } returns
+        every { notificationDisplayer.buildAdhanNotification(any()) } returns
             NotificationCompat.Builder(context, "adhan").build()
         coEvery { dataStore.getSettings() } returns NotificationSettings(adhanVolume = 50)
     }

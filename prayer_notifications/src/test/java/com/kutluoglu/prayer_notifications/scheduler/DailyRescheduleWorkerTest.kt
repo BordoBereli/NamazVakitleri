@@ -24,7 +24,7 @@ class DailyRescheduleWorkerTest {
 
     @Test
     fun `doWork returns success and reschedules`() = runTest {
-        val scheduler = mockk<PrayerNotificationScheduler>(relaxed = true)
+        val scheduler = mockk<AlarmScheduler>(relaxed = true)
         startKoin { modules(module { single { scheduler } }) }
         try {
             val worker = DailyRescheduleWorker(

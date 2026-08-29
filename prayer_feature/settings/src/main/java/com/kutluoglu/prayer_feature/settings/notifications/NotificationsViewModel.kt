@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.kutluoglu.prayer_notifications.domain.NotificationSettings
 import com.kutluoglu.prayer_notifications.domain.usecases.GetNotificationSettingsUseCase
 import com.kutluoglu.prayer_notifications.domain.usecases.UpdateNotificationSettingsUseCase
-import com.kutluoglu.prayer_notifications.manager.PrayerNotificationManager
+import com.kutluoglu.prayer_notifications.manager.NotificationDisplayer
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,7 +16,7 @@ import org.koin.android.annotation.KoinViewModel
 class NotificationsViewModel(
     private val getSettingsUseCase: GetNotificationSettingsUseCase,
     private val updateSettingsUseCase: UpdateNotificationSettingsUseCase,
-    private val notificationManager: PrayerNotificationManager
+    private val notificationDisplayer: NotificationDisplayer
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<NotificationsUiState>(NotificationsUiState.Loading)
@@ -56,8 +56,8 @@ class NotificationsViewModel(
 
     private fun sendTestNotification() {
         val settings = (_uiState.value as? NotificationsUiState.Success)?.settings ?: return
-        notificationManager.createChannels(settings)
-        notificationManager.showTestNotification()
+        notificationDisplayer.createChannels(settings)
+        notificationDisplayer.showTestNotification()
     }
 
     private fun load() {

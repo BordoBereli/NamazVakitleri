@@ -1,7 +1,7 @@
 package com.kutluoglu.namazvakitleri.notifications
 
 import com.kutluoglu.prayer_location.LocationsCoordinator
-import com.kutluoglu.prayer_notifications.scheduler.PrayerNotificationScheduler
+import com.kutluoglu.prayer_notifications.scheduler.AlarmScheduler
 import com.kutluoglu.prayer_settings.domain.repository.SettingsRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.FlowPreview
@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
  */
 @OptIn(FlowPreview::class)
 class NotificationRescheduler(
-    private val scheduler: PrayerNotificationScheduler,
+    private val scheduler: AlarmScheduler,
     private val settingsRepository: SettingsRepository,
     private val locationsCoordinator: LocationsCoordinator,
     private val debounceMillis: Long = 500

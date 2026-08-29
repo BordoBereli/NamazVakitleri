@@ -21,7 +21,7 @@ import com.kutluoglu.prayer_feature.settings.R
 import com.kutluoglu.prayer_notifications.domain.NotificationSettings
 import com.kutluoglu.prayer_notifications.domain.usecases.GetNotificationSettingsUseCase
 import com.kutluoglu.prayer_notifications.domain.usecases.UpdateNotificationSettingsUseCase
-import com.kutluoglu.prayer_notifications.manager.PrayerNotificationManager
+import com.kutluoglu.prayer_notifications.manager.NotificationDisplayer
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -43,7 +43,7 @@ class NotificationsScreenTest {
 
     private val getUseCase = mockk<GetNotificationSettingsUseCase>(relaxed = true)
     private val updateUseCase = mockk<UpdateNotificationSettingsUseCase>(relaxed = true)
-    private val notificationManager = mockk<PrayerNotificationManager>(relaxed = true)
+    private val notificationManager = mockk<NotificationDisplayer>(relaxed = true)
 
     private fun launchScreen(settings: NotificationSettings) {
         coEvery { getUseCase() } returns settings

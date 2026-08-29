@@ -4,7 +4,7 @@ import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.location.LocationEntry
 import com.kutluoglu.prayer_location.LocationsCoordinator
 import com.kutluoglu.prayer_location.data.LocationsState
-import com.kutluoglu.prayer_notifications.scheduler.PrayerNotificationScheduler
+import com.kutluoglu.prayer_notifications.scheduler.AlarmScheduler
 import com.kutluoglu.prayer_settings.domain.model.Settings
 import com.kutluoglu.prayer_settings.domain.repository.SettingsRepository
 import io.mockk.every
@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 class NotificationReschedulerTest {
 
-    private val scheduler = mockk<PrayerNotificationScheduler>(relaxed = true)
+    private val scheduler = mockk<AlarmScheduler>(relaxed = true)
     private val settingsRepository = mockk<SettingsRepository>(relaxed = true)
     private val locationsCoordinator = mockk<LocationsCoordinator>(relaxed = true)
 

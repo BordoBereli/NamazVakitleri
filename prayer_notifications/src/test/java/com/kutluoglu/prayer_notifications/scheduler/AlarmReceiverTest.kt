@@ -10,7 +10,7 @@ import com.kutluoglu.prayer_notifications.domain.AlarmType
 import com.kutluoglu.prayer_notifications.domain.NotificationSettings
 import com.kutluoglu.prayer_notifications.domain.SpecialDay
 import com.kutluoglu.prayer_notifications.manager.AdhanPlayer
-import com.kutluoglu.prayer_notifications.manager.PrayerNotificationManager
+import com.kutluoglu.prayer_notifications.manager.NotificationDisplayer
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -36,9 +36,9 @@ class AlarmReceiverTest {
 
     private val context: Context = ApplicationProvider.getApplicationContext()
 
-    private val notificationManager = mockk<PrayerNotificationManager>(relaxed = true)
+    private val notificationDisplayer = mockk<NotificationDisplayer>(relaxed = true)
     private val adhanPlayer = mockk<AdhanPlayer>(relaxed = true)
-    private val scheduler = mockk<PrayerNotificationScheduler>(relaxed = true)
+    private val scheduler = mockk<AlarmScheduler>(relaxed = true)
     private val dataStore = mockk<NotificationSettingsDataStore>(relaxed = true)
 
     @Before
@@ -47,7 +47,7 @@ class AlarmReceiverTest {
             startKoin {
                 androidContext(context)
                 modules(module {
-                    single { notificationManager }
+                    single { notificationDisplayer }
                     single { adhanPlayer }
                     single { scheduler }
                     single { dataStore }
@@ -71,7 +71,7 @@ class AlarmReceiverTest {
         receiver.handleAlarm(context, intent)
         val started = shadowOf(context as Application).getNextStartedService()
         assertThat(started?.component?.className).isEqualTo(AdhanService::class.java.name)
-        verify(exactly = 0) { notificationManager.showPrayerNotification(any(), any()) }
+        verify(exactly = 0) { notificationDisplayer.showPrayerNotification(any(), any()) }
         verify(exactly = 0) { adhanPlayer.play(any(), any()) }
     }
 
@@ -95,7 +95,7 @@ class AlarmReceiverTest {
             .putExtra(AlarmReceiver.EXTRA_ALARM_TYPE, AlarmType.PRAYER.name)
             .putExtra(AlarmReceiver.EXTRA_PRAYER_KEY, "Fajr")
         receiver.handleAlarm(context, intent)
-        verify { notificationManager.showPrayerNotification("Fajr", any()) }
+        verify { notificationDisplayer.showPrayerNotification("Fajr", any()) }
         verify(exactly = 0) { adhanPlayer.play(any(), any()) }
     }
 
@@ -108,8 +108,8 @@ class AlarmReceiverTest {
             .putExtra(AlarmReceiver.EXTRA_PRAYER_KEY, "Dhuhr")
             .putExtra(AlarmReceiver.EXTRA_IS_JUMUAH, true)
         receiver.handleAlarm(context, intent)
-        verify { notificationManager.showJumuahNotification() }
-        verify(exactly = 0) { notificationManager.showPrayerNotification(any(), any()) }
+        verify { notificationDisplayer.showJumuahNotification() }
+        verify(exactly = 0) { notificationDisplayer.showPrayerNotification(any(), any()) }
     }
 
     @Test
@@ -121,7 +121,7 @@ class AlarmReceiverTest {
             .putExtra(AlarmReceiver.EXTRA_PRAYER_KEY, "Fajr_pre")
             .putExtra(AlarmReceiver.EXTRA_PRE_PRAYER_MINUTES, 15)
         receiver.handleAlarm(context, intent)
-        verify { notificationManager.showPrePrayerNotification("Fajr", 15) }
+        verify { notificationDisplayer.showPrePrayerNotification("Fajr", 15) }
     }
 
     @Test
@@ -133,7 +133,7 @@ class AlarmReceiverTest {
             .putExtra(AlarmReceiver.EXTRA_ALARM_TYPE, AlarmType.DAILY_REMINDER.name)
             .putExtra(AlarmReceiver.EXTRA_DAILY_SUMMARY, "Fajr 04:30")
         receiver.handleAlarm(context, intent)
-        verify { notificationManager.showDailyReminderNotification("Fajr 04:30") }
+        verify { notificationDisplayer.showDailyReminderNotification("Fajr 04:30") }
         coVerify { scheduler.scheduleDailyReminder() }
     }
 
@@ -145,7 +145,7 @@ class AlarmReceiverTest {
             .putExtra(AlarmReceiver.EXTRA_ALARM_TYPE, AlarmType.SPECIAL_DAY.name)
             .putExtra(AlarmReceiver.EXTRA_SPECIAL_DAY, SpecialDay.EID_AL_FITR.name)
         receiver.handleAlarm(context, intent)
-        verify { notificationManager.showSpecialDayNotification(SpecialDay.EID_AL_FITR) }
+        verify { notificationDisplayer.showSpecialDayNotification(SpecialDay.EID_AL_FITR) }
     }
 
     @Test
@@ -156,7 +156,7 @@ class AlarmReceiverTest {
             .putExtra(AlarmReceiver.EXTRA_ALARM_TYPE, AlarmType.PRE_SPECIAL_DAY.name)
             .putExtra(AlarmReceiver.EXTRA_SPECIAL_DAY, SpecialDay.RAMADAN_START.name)
         receiver.handleAlarm(context, intent)
-        verify { notificationManager.showPreSpecialDayNotification(SpecialDay.RAMADAN_START) }
+        verify { notificationDisplayer.showPreSpecialDayNotification(SpecialDay.RAMADAN_START) }
     }
 
     @Test

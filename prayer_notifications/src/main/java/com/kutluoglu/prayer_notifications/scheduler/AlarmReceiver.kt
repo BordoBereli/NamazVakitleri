@@ -6,7 +6,7 @@ import android.content.Intent
 import com.kutluoglu.prayer_notifications.data.NotificationSettingsDataStore
 import com.kutluoglu.prayer_notifications.domain.AlarmType
 import com.kutluoglu.prayer_notifications.domain.SpecialDay
-import com.kutluoglu.prayer_notifications.manager.PrayerNotificationManager
+import com.kutluoglu.prayer_notifications.manager.NotificationDisplayer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -33,8 +33,8 @@ class AlarmReceiver : BroadcastReceiver(), KoinComponent {
         const val ACTION_COUNTDOWN_TICK = "COUNTDOWN_TICK"
     }
 
-    private val notificationManager: PrayerNotificationManager by inject()
-    private val scheduler: PrayerNotificationScheduler by inject()
+    private val notificationDisplayer: NotificationDisplayer by inject()
+    private val scheduler: AlarmScheduler by inject()
     private val dataStore: NotificationSettingsDataStore by inject()
     private val scope = CoroutineScope(Dispatchers.IO)
 
@@ -79,9 +79,9 @@ class AlarmReceiver : BroadcastReceiver(), KoinComponent {
                             .putExtra(EXTRA_PRAYER_KEY, prayerKey)
                     )
                 } else if (intent.getBooleanExtra(EXTRA_IS_JUMUAH, false) && settings.jumuahEnabled) {
-                    notificationManager.showJumuahNotification()
+                    notificationDisplayer.showJumuahNotification()
                 } else {
-                    notificationManager.showPrayerNotification(prayerKey, settings)
+                    notificationDisplayer.showPrayerNotification(prayerKey, settings)
                 }
                 if (settings.countdownEnabled) {
                     val nextTime = intent.getLongExtra(EXTRA_NEXT_PRAYER_TIME, 0L)
@@ -99,24 +99,24 @@ class AlarmReceiver : BroadcastReceiver(), KoinComponent {
             AlarmType.PRE_PRAYER -> {
                 val prayerKey = intent.getStringExtra(EXTRA_PRAYER_KEY)?.removeSuffix("_pre") ?: return
                 val minutes = intent.getIntExtra(EXTRA_PRE_PRAYER_MINUTES, 15)
-                notificationManager.showPrePrayerNotification(prayerKey, minutes)
+                notificationDisplayer.showPrePrayerNotification(prayerKey, minutes)
             }
             AlarmType.DAILY_REMINDER -> {
                 val summary = intent.getStringExtra(EXTRA_DAILY_SUMMARY) ?: return
-                notificationManager.showDailyReminderNotification(summary)
+                notificationDisplayer.showDailyReminderNotification(summary)
                 scheduler.scheduleDailyReminder()
             }
             AlarmType.SPECIAL_DAY -> {
                 val day = intent.getStringExtra(EXTRA_SPECIAL_DAY)
                     ?.let { runCatching { SpecialDay.valueOf(it) }.getOrNull() }
                     ?: return
-                notificationManager.showSpecialDayNotification(day)
+                notificationDisplayer.showSpecialDayNotification(day)
             }
             AlarmType.PRE_SPECIAL_DAY -> {
                 val day = intent.getStringExtra(EXTRA_SPECIAL_DAY)
                     ?.let { runCatching { SpecialDay.valueOf(it) }.getOrNull() }
                     ?: return
-                notificationManager.showPreSpecialDayNotification(day)
+                notificationDisplayer.showPreSpecialDayNotification(day)
             }
             AlarmType.COUNTDOWN_TICK -> Unit
         }

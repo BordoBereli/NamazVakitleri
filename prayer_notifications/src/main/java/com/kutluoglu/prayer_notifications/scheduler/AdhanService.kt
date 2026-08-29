@@ -10,7 +10,7 @@ import android.os.Looper
 import android.provider.Settings
 import com.kutluoglu.prayer_notifications.data.NotificationSettingsDataStore
 import com.kutluoglu.prayer_notifications.manager.AdhanPlayer
-import com.kutluoglu.prayer_notifications.manager.PrayerNotificationManager
+import com.kutluoglu.prayer_notifications.manager.NotificationDisplayer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -26,7 +26,7 @@ class AdhanService : Service(), KoinComponent {
     }
 
     private val adhanPlayer: AdhanPlayer by inject()
-    private val notificationManager: PrayerNotificationManager by inject()
+    private val notificationDisplayer: NotificationDisplayer by inject()
     private val dataStore: NotificationSettingsDataStore by inject()
 
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
@@ -59,8 +59,8 @@ class AdhanService : Service(), KoinComponent {
             return START_NOT_STICKY
         }
         startForeground(
-            PrayerNotificationManager.NOTIFICATION_ID_ADHAN,
-            notificationManager.buildAdhanNotification(prayerKey)
+            NotificationDisplayer.NOTIFICATION_ID_ADHAN,
+            notificationDisplayer.buildAdhanNotification(prayerKey)
         )
         serviceScope.launch {
             val volume = dataStore.getSettings().adhanVolume

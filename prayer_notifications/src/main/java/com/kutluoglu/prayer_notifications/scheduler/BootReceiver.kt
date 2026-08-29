@@ -8,7 +8,7 @@ import org.koin.core.component.inject
 
 class BootReceiver : BroadcastReceiver(), KoinComponent {
 
-    private val scheduler: PrayerNotificationScheduler by inject()
+    private val scheduler: AlarmScheduler by inject()
 
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action == Intent.ACTION_BOOT_COMPLETED) {

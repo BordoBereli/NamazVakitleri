@@ -3,8 +3,8 @@ package com.kutluoglu.prayer_notifications.domain.usecases
 import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.prayer_notifications.data.NotificationSettingsDataStore
 import com.kutluoglu.prayer_notifications.domain.NotificationSettings
-import com.kutluoglu.prayer_notifications.manager.PrayerNotificationManager
-import com.kutluoglu.prayer_notifications.scheduler.PrayerNotificationScheduler
+import com.kutluoglu.prayer_notifications.manager.NotificationDisplayer
+import com.kutluoglu.prayer_notifications.scheduler.AlarmScheduler
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test
 class NotificationUseCasesTest {
 
     private val dataStore = mockk<NotificationSettingsDataStore>(relaxed = true)
-    private val notificationManager = mockk<PrayerNotificationManager>(relaxed = true)
+    private val notificationDisplayer = mockk<NotificationDisplayer>(relaxed = true)
 
     @Test
     fun `GetNotificationSettingsUseCase returns settings`() = runTest {
@@ -26,8 +26,8 @@ class NotificationUseCasesTest {
 
     @Test
     fun `UpdateNotificationSettingsUseCase persists and reschedules`() = runTest {
-        val scheduler = mockk<PrayerNotificationScheduler>(relaxed = true)
-        val useCase = UpdateNotificationSettingsUseCase(dataStore, scheduler, notificationManager)
+        val scheduler = mockk<AlarmScheduler>(relaxed = true)
+        val useCase = UpdateNotificationSettingsUseCase(dataStore, scheduler, notificationDisplayer)
         useCase(NotificationSettings(enabled = true, adhanEnabled = true))
         coVerify { dataStore.updateEnabled(true) }
         coVerify { dataStore.updateAdhanEnabled(true) }
@@ -41,26 +41,26 @@ class NotificationUseCasesTest {
 
     @Test
     fun `UpdateNotificationSettingsUseCase persists adhan volume`() = runTest {
-        val scheduler = mockk<PrayerNotificationScheduler>(relaxed = true)
-        val useCase = UpdateNotificationSettingsUseCase(dataStore, scheduler, notificationManager)
+        val scheduler = mockk<AlarmScheduler>(relaxed = true)
+        val useCase = UpdateNotificationSettingsUseCase(dataStore, scheduler, notificationDisplayer)
         useCase(NotificationSettings(enabled = true, adhanVolume = 50))
         coVerify { dataStore.updateAdhanVolume(50) }
     }
 
     @Test
     fun `UpdateNotificationSettingsUseCase creates channels when enabled`() = runTest {
-        val scheduler = mockk<PrayerNotificationScheduler>(relaxed = true)
-        val useCase = UpdateNotificationSettingsUseCase(dataStore, scheduler, notificationManager)
+        val scheduler = mockk<AlarmScheduler>(relaxed = true)
+        val useCase = UpdateNotificationSettingsUseCase(dataStore, scheduler, notificationDisplayer)
         val settings = NotificationSettings(enabled = true)
         useCase(settings)
-        verify { notificationManager.createChannels(settings) }
+        verify { notificationDisplayer.createChannels(settings) }
         verify { scheduler.scheduleAll() }
     }
 
     @Test
     fun `UpdateNotificationSettingsUseCase persists prayer toggles`() = runTest {
-        val scheduler = mockk<PrayerNotificationScheduler>(relaxed = true)
-        val useCase = UpdateNotificationSettingsUseCase(dataStore, scheduler, notificationManager)
+        val scheduler = mockk<AlarmScheduler>(relaxed = true)
+        val useCase = UpdateNotificationSettingsUseCase(dataStore, scheduler, notificationDisplayer)
         useCase(
             NotificationSettings(
                 enabled = true,
@@ -73,17 +73,17 @@ class NotificationUseCasesTest {
 
     @Test
     fun `UpdateNotificationSettingsUseCase cancels when disabled`() = runTest {
-        val scheduler = mockk<PrayerNotificationScheduler>(relaxed = true)
-        val useCase = UpdateNotificationSettingsUseCase(dataStore, scheduler, notificationManager)
+        val scheduler = mockk<AlarmScheduler>(relaxed = true)
+        val useCase = UpdateNotificationSettingsUseCase(dataStore, scheduler, notificationDisplayer)
         useCase(NotificationSettings(enabled = false))
         verify { scheduler.cancelAll() }
         verify(exactly = 0) { scheduler.scheduleAll() }
-        verify(exactly = 0) { notificationManager.createChannels(any()) }
+        verify(exactly = 0) { notificationDisplayer.createChannels(any()) }
     }
 
     @Test
     fun `ScheduleNotificationsUseCase schedules all`() = runTest {
-        val scheduler = mockk<PrayerNotificationScheduler>(relaxed = true)
+        val scheduler = mockk<AlarmScheduler>(relaxed = true)
         val useCase = ScheduleNotificationsUseCase(scheduler)
         useCase()
         verify { scheduler.scheduleAll() }
@@ -91,7 +91,7 @@ class NotificationUseCasesTest {
 
     @Test
     fun `CancelNotificationsUseCase cancels all`() = runTest {
-        val scheduler = mockk<PrayerNotificationScheduler>(relaxed = true)
+        val scheduler = mockk<AlarmScheduler>(relaxed = true)
         val useCase = CancelNotificationsUseCase(scheduler)
         useCase()
         verify { scheduler.cancelAll() }
