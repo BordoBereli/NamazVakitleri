@@ -534,24 +534,19 @@ git commit -m "feat(settings): add debug-only Test Adhan section with delay pres
 
 **Files:** none (verification only — no commit)
 
-- [ ] **Step 1: Full build + test suite**
+- [x] **Step 1: Full build + test suite**
 
 Run: `./gradlew assembleDebug testDebugUnitTest`
-Expected: BUILD SUCCESSFUL — all modules compile; all unit tests pass (scheduler 5 new tests, VM + screen new tests, plus existing suite).
+Result: BUILD SUCCESSFUL (2m 6s, 570 tasks) — all modules compile; all unit tests pass.
 
-- [ ] **Step 2: Settings module lint**
+- [x] **Step 2: Settings module lint**
 
 Run: `./gradlew :prayer_feature:settings:lintDebug`
-Expected: PASS (no new lint issues; new debug strings are not missing-translation since they exist in the default `values/`).
+Result: the 4 new debug strings were marked `translatable="false"` (commit `418e9de`) so this feature adds no lint errors. The build still fails on PRE-EXISTING `main` errors (out of scope): `location_permission_required` + `app_name` MissingTranslation, and `LocationSelectionViewModel.kt:374` NewApi `removeLast`.
 
-- [ ] **Step 3: GitNexus scope check**
+- [x] **Step 3: GitNexus scope check**
 
-Run `gitnexus_detect_changes()` (MCP) with `repo: "NamazVakitleri"`. Verify ONLY these symbols changed:
-- `AlarmScheduler.scheduleTestAdhan`, `PrayerNotificationScheduler.scheduleTestAdhan`, `PrayerNotificationScheduler.REQUEST_CODE_TEST_ADHAN`
-- `NotificationsEvent.ScheduleTestAdhan`, `NotificationsViewModel.onEvent`/constructor
-- `NotificationsContent` (debug section), `NotificationsViewModelTest`, `PrayerNotificationSchedulerTest`, `NotificationsScreenTest`
-
-Expected risk: LOW; 0 affected processes (the new alarm reuses the existing PRAYER handling path; no existing symbol behavior is altered).
+Run `gitnexus_detect_changes()` (MCP) with `repo: "NamazVakitleri"`, scope `compare`, base `main`. Changed symbols are exactly the expected feature scope: `NotificationsContent`, `NotificationsViewModel` (+ctor), `AppModule.appModule` (Koin registration), `PrayerNotificationScheduler` (new method/constant; `scheduleAlarm`/`setExactAlarm` only newly called, behavior unchanged), plus the test files. Affected processes are all within the NotificationsRoute flow and the alarm-scheduling flow — no existing behavior altered.
 
 - [ ] **Step 4: Manual on-device checklist (user)**
 
@@ -568,3 +563,10 @@ Debug build → Settings → Notifications → "Test Adhan":
 - **Spec coverage:** Decision 1 (faithful path + off-toggle warning) → Task 4 warning + Task 5 step 4.3. Decision 2 (exact alarm, 0 fires now) → Task 1 tests. Decision 3 (code 900, cancelAll isolation, replace-prior) → Task 1 tests. Decision 4 (presets 0/1/5/10/15 chips) → Task 4. Decision 5 (`buildConfig = true`, debug gate, release excluded) → Tasks 3 & 4 step 5. Decision 6 (permission dialog reuse) → Task 4 button branch. Decision 7 (`AlarmScheduler` seam) → Task 2. Acceptance criteria → Tasks 4/5. All spec items traced.
 - **Placeholder scan:** no TBD/TODO; every code step has full code.
 - **Type consistency:** `scheduleTestAdhan(Int)` on interface/impl/VM/event `ScheduleTestAdhan(delayMinutes: Int)`; `REQUEST_CODE_TEST_ADHAN` constant name matches across Task 1 test/impl; `AlarmScheduler` param name `alarmScheduler` consistent in VM, both tests; chip delay `Int` matches event/VM/scheduler args.
+
+## Execution Deviations (recorded during implementation)
+
+1. **Task 1:** test assertions use `shadowOf(alarm.operation).requestCode` (not `alarm.operation.requestCode`) — `PendingIntent.getRequestCode()` is `@hide`; matches existing file style.
+2. **Task 2:** `AppModule.kt:68` manual Koin DSL registration needed a 4th `get()` (`a406ff7`) — the plan's "no DI change" note missed the manual `viewModel { ... }` registration alongside the `@KoinViewModel` annotation.
+3. **Task 4:** `import io.mockk.any` is not importable in MockK 1.14.5 (`any()` resolves inside the `verify` lambda); only `import io.mockk.verify` was added.
+4. **Task 5:** the 4 new debug strings marked `translatable="false"` (`418e9de`) to avoid new MissingTranslation lint errors; settings-module lint was already red on `main` for unrelated pre-existing errors.
