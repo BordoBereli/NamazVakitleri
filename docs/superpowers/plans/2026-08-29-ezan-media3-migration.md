@@ -6,6 +6,15 @@
 
 **Architecture:** `AdhanPlayer` takes an injected `androidx.media3.common.Player` (a Koin-provided `ExoPlayer`); `AdhanVolumeController` owns `MediaSession` create/release plus a `Player.Listener.onDeviceVolumeChanged` mute listener. Tests inject `androidx.media3.test.utils.FakePlayer`, which faithfully fires `STATE_ENDED` and `onDeviceVolumeChanged` events, replacing Robolectric `ShadowMediaPlayer`.
 
+> **Post-migration deviation (2026-08-29):** `onDeviceVolumeChanged` does not fire on hardware
+> volume-key presses (only on audio-device routing changes), so mute-press-stops-adhan was
+> lost. The fix moved mute detection to the `AdhanService` ContentObserver, made min-aware
+> (`isStreamAtFloor`, floor = `max(min, 1)`), observing **both** `volume_alarm_sound` and
+> `volume_music_sound` — on Xiaomi/Redmi/POCO the volume key adjusts the Media/Music stream
+> (the active `MediaSession` associates playback with media), not Alarm. A 200 ms polling
+> fallback (`startVolumePolling`) covers OEMs where the ContentObserver does not fire. See the
+> spec's "Post-Migration Fix" section.
+
 **Tech Stack:** Kotlin 2.2.20, Jetpack Media3 1.11.0 (`media3-common`, `media3-exoplayer`, `media3-session`, `media3-test-utils`), Koin annotations (KSP), Robolectric 4.14, JUnit (vintage via `useJUnitPlatform()`), Truth.
 
 ---
@@ -49,6 +58,9 @@
 | `prayer_notifications/.../manager/AdhanPlayerTest.kt` | Rewrite (FakePlayer-based; drop `ShadowMediaPlayer`) |
 
 Decisions locked in the spec (`docs/superpowers/specs/2026-08-29-ezan-media3-migration-design.md`): manual audio focus retained (`handleAudioFocus = false`), mute semantics = `player.onDeviceVolumeChanged(volume, muted)` → fire when `muted || volume <= 0`, `AdhanService.kt` **untouched**.
+> **Post-migration deviation (2026-08-29):** the `onDeviceVolumeChanged` mute semantics did not
+> work on hardware volume keys and `AdhanService.kt` was subsequently modified (min-aware
+> ContentObserver) by the mute-press regression fix — see the spec's "Post-Migration Fix".
 
 ---
 
@@ -940,19 +952,26 @@ Run (per AGENTS.md):
 gitnexus_detect_changes()
 ```
 Expected: the only affected paths are the four `prayer_notifications` files/branch in this plan (`AdhanPlayer`, `AdhanVolumeController`, `PrayerNotificationsModule`) and the two rewritten test files. `AdhanService` must appear **unaffected** (its blob is unchanged).
+> **Post-migration deviation (2026-08-29):** the mute-press regression fix later modified
+> `AdhanService.kt` (min-aware ContentObserver) and `AdhanServiceTest.kt` — see the spec's
+> "Post-Migration Fix".
 
 - [ ] **Step 3: Manual device checklist (mandatory — mitigates the spec's hardware-key risk)**
 
 Install `:app` (debug) on a physical device and verify:
 1. Trigger the test adhan (settings screen "test" action) — plays on the ALARM stream, audible via the volume panel.
-2. While the adhan plays, press hardware volume up/down — volume changes and the ALARM stream is shown in the panel (Media3 maps `USAGE_ALARM` → `STREAM_ALARM`).
-3. Press volume down until the minimum, then press once more (mute press) — adhan **stops** and the foreground notification disappears (mute-press-stops-adhan).
-4. Play again; press volume down exactly to 0 — adhan stops (volume-0 backstop + mute listener).
+2. While the adhan plays, press hardware volume up/down — volume changes and the ALARM stream is shown in the panel (Media3 maps `USAGE_ALARM` → `STREAM_ALARM`). **On Xiaomi/Redmi/POCO the panel may show Media/Music instead** (the active `MediaSession` associates playback with media) — the fix observes both streams.
+3. Press volume down until the minimum (0 or 1) — adhan **stops** and the foreground notification disappears (mute-press-stops-adhan; now via the min-aware `AdhanService` ContentObserver on ALARM **and** MUSIC, floor `max(min,1)`, plus a 200 ms polling fallback).
+4. Play again; press volume down exactly to 0 — adhan stops (same min-aware ContentObserver).
 5. Raise to max — adhan keeps playing, no spurious stop.
 6. Let the raw audio file play to completion — playback stops itself, session released, notification cleared.
 7. Receive an interruption (e.g. lock screen with another alarm/focus source) exercising permanent focus loss — adhan stops + notifies.
 
-> **If hardware volume keys do NOT route to the ALARM stream via the bare `MediaSession`** (spec Risk #1 materializes): stop, and restore capture with the documented fallback — re-add an in-process `MediaController` that listens and forwards `setDeviceVolume`/`increaseDeviceVolume`/`decreaseDeviceVolume` to the player — then rely on the FakePlayer tests unchanged. File that as a follow-up task; do not change the already-green unit test contract.
+> **Risk #1 materialized (2026-08-29):** the bare `MediaSession` does not deliver volume-key
+> events and `onDeviceVolumeChanged` never fires on key presses. Resolved WITHOUT the
+> `MediaController` bridge fallback: mute detection moved to the min-aware `AdhanService`
+> ContentObserver (`isStreamAtFloor`), observing ALARM + MUSIC. See the spec's
+> "Post-Migration Fix".
 
 - [x] **Step 4: Convenience cleanup**
 

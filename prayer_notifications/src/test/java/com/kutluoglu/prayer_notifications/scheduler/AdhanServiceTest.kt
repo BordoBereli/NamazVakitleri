@@ -84,6 +84,7 @@ class AdhanServiceTest {
     fun `volume decrease to non-zero does not stop the service`() {
         val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         audioManager.setStreamVolume(AudioManager.STREAM_ALARM, 5, 0)
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 5, 0)
         val controller = startService("Fajr")
         audioManager.setStreamVolume(AudioManager.STREAM_ALARM, 4, 0)
         val uri = Settings.System.getUriFor("volume_alarm_sound")
@@ -97,9 +98,63 @@ class AdhanServiceTest {
     fun `volume to zero stops the service`() {
         val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         audioManager.setStreamVolume(AudioManager.STREAM_ALARM, 5, 0)
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 5, 0)
         val controller = startService("Fajr")
         audioManager.setStreamVolume(AudioManager.STREAM_ALARM, 0, 0)
         val uri = Settings.System.getUriFor("volume_alarm_sound")
+        shadowOf(context.contentResolver).getContentObservers(uri).forEach { it.onChange(false) }
+        assertThat(shadowOf(controller.get()).isStoppedBySelf()).isTrue()
+        controller.destroy()
+        verify { adhanPlayer.stop() }
+    }
+
+    @Test
+    fun `alarm volume at minimum is at floor`() {
+        val audioManager = mockk<AudioManager>(relaxed = true)
+        every { audioManager.getStreamMinVolume(AudioManager.STREAM_ALARM) } returns 1
+        every { audioManager.getStreamVolume(AudioManager.STREAM_ALARM) } returns 1
+        assertThat(isStreamAtFloor(audioManager, AudioManager.STREAM_ALARM)).isTrue()
+    }
+
+    @Test
+    fun `alarm volume above minimum is not at floor`() {
+        val audioManager = mockk<AudioManager>(relaxed = true)
+        every { audioManager.getStreamMinVolume(AudioManager.STREAM_ALARM) } returns 1
+        every { audioManager.getStreamVolume(AudioManager.STREAM_ALARM) } returns 2
+        assertThat(isStreamAtFloor(audioManager, AudioManager.STREAM_ALARM)).isFalse()
+    }
+
+    @Test
+    fun `alarm volume at one is at floor when reported min is zero`() {
+        val audioManager = mockk<AudioManager>(relaxed = true)
+        every { audioManager.getStreamMinVolume(AudioManager.STREAM_ALARM) } returns 0
+        every { audioManager.getStreamVolume(AudioManager.STREAM_ALARM) } returns 1
+        assertThat(isStreamAtFloor(audioManager, AudioManager.STREAM_ALARM)).isTrue()
+    }
+
+    @Test
+    fun `music volume at minimum is at floor`() {
+        val audioManager = mockk<AudioManager>(relaxed = true)
+        every { audioManager.getStreamMinVolume(AudioManager.STREAM_MUSIC) } returns 1
+        every { audioManager.getStreamVolume(AudioManager.STREAM_MUSIC) } returns 1
+        assertThat(isStreamAtFloor(audioManager, AudioManager.STREAM_MUSIC)).isTrue()
+    }
+
+    @Test
+    fun `music volume above minimum is not at floor`() {
+        val audioManager = mockk<AudioManager>(relaxed = true)
+        every { audioManager.getStreamMinVolume(AudioManager.STREAM_MUSIC) } returns 1
+        every { audioManager.getStreamVolume(AudioManager.STREAM_MUSIC) } returns 2
+        assertThat(isStreamAtFloor(audioManager, AudioManager.STREAM_MUSIC)).isFalse()
+    }
+
+    @Test
+    fun `music volume at minimum stops the service`() {
+        val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 5, 0)
+        val controller = startService("Fajr")
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0)
+        val uri = Settings.System.getUriFor("volume_music_sound")
         shadowOf(context.contentResolver).getContentObservers(uri).forEach { it.onChange(false) }
         assertThat(shadowOf(controller.get()).isStoppedBySelf()).isTrue()
         controller.destroy()

@@ -4,6 +4,7 @@ import android.app.Service
 import android.content.Intent
 import android.database.ContentObserver
 import android.media.AudioManager
+import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
@@ -13,8 +14,11 @@ import com.kutluoglu.prayer_notifications.manager.AdhanPlayer
 import com.kutluoglu.prayer_notifications.manager.NotificationDisplayer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -23,6 +27,8 @@ class AdhanService : Service(), KoinComponent {
 
     companion object {
         private const val SETTING_VOLUME_ALARM = "volume_alarm_sound"
+        private const val SETTING_VOLUME_MUSIC = "volume_music_sound"
+        private const val VOLUME_POLL_INTERVAL_MS = 200L
     }
 
     private val adhanPlayer: AdhanPlayer by inject()
@@ -36,11 +42,18 @@ class AdhanService : Service(), KoinComponent {
     }
 
     private var volumeObserverRegistered: Boolean = false
+    private var volumePollJob: Job? = null
+
+    private val volumeUris = listOf(
+        Settings.System.getUriFor(SETTING_VOLUME_ALARM),
+        Settings.System.getUriFor(SETTING_VOLUME_MUSIC),
+    )
 
     private val volumeObserver = object : ContentObserver(Handler(Looper.getMainLooper())) {
         override fun onChange(selfChange: Boolean) {
-            val current = audioManager.getStreamVolume(AudioManager.STREAM_ALARM)
-            if (current <= 0) {
+            if (isStreamAtFloor(audioManager, AudioManager.STREAM_ALARM) ||
+                isStreamAtFloor(audioManager, AudioManager.STREAM_MUSIC)
+            ) {
                 stopSelf()
             }
         }
@@ -67,16 +80,30 @@ class AdhanService : Service(), KoinComponent {
             adhanPlayer.play(prayerKey, volume)
         }
         registerVolumeObserver()
+        startVolumePolling()
         return START_NOT_STICKY
+    }
+
+    private fun startVolumePolling() {
+        volumePollJob?.cancel()
+        volumePollJob = serviceScope.launch(Dispatchers.Default) {
+            while (isActive) {
+                if (isStreamAtFloor(audioManager, AudioManager.STREAM_ALARM) ||
+                    isStreamAtFloor(audioManager, AudioManager.STREAM_MUSIC)
+                ) {
+                    stopSelf()
+                    break
+                }
+                delay(VOLUME_POLL_INTERVAL_MS)
+            }
+        }
     }
 
     private fun registerVolumeObserver() {
         if (volumeObserverRegistered) return
-        contentResolver.registerContentObserver(
-            Settings.System.getUriFor(SETTING_VOLUME_ALARM),
-            false,
-            volumeObserver
-        )
+        volumeUris.forEach { uri ->
+            contentResolver.registerContentObserver(uri, false, volumeObserver)
+        }
         volumeObserverRegistered = true
     }
 
@@ -88,6 +115,7 @@ class AdhanService : Service(), KoinComponent {
 
     override fun onDestroy() {
         serviceScope.cancel()
+        volumePollJob?.cancel()
         unregisterVolumeObserver()
         adhanPlayer.stop()
         stopForeground(STOP_FOREGROUND_REMOVE)
@@ -95,4 +123,15 @@ class AdhanService : Service(), KoinComponent {
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
+}
+
+internal fun isStreamAtFloor(audioManager: AudioManager, streamType: Int): Boolean {
+    val min = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+        runCatching { audioManager.getStreamMinVolume(streamType) }
+            .getOrDefault(0)
+    } else {
+        0
+    }
+    val floor = maxOf(min, 1)
+    return audioManager.getStreamVolume(streamType) <= floor
 }
