@@ -515,6 +515,7 @@ class PrayerNotificationSchedulerTest {
     @Test
     fun `scheduleTestAdhan schedules a single exact alarm at now plus delay`() = runTest {
         val before = System.currentTimeMillis()
+        coEvery { dataStore.getSettings() } returns NotificationSettings(enabled = true)
         val scheduler = scheduler(CoroutineScope(UnconfinedTestDispatcher(testScheduler)))
         scheduler.scheduleTestAdhan(5)
         val after = System.currentTimeMillis()
@@ -535,6 +536,7 @@ class PrayerNotificationSchedulerTest {
     @Test
     fun `scheduleTestAdhan with zero delay fires at once`() = runTest {
         val before = System.currentTimeMillis()
+        coEvery { dataStore.getSettings() } returns NotificationSettings(enabled = true)
         val scheduler = scheduler(CoroutineScope(UnconfinedTestDispatcher(testScheduler)))
         scheduler.scheduleTestAdhan(0)
         val after = System.currentTimeMillis()
@@ -548,6 +550,7 @@ class PrayerNotificationSchedulerTest {
     @Test
     fun `scheduleTestAdhan clamps delay to fifteen minutes`() = runTest {
         val before = System.currentTimeMillis()
+        coEvery { dataStore.getSettings() } returns NotificationSettings(enabled = true)
         val scheduler = scheduler(CoroutineScope(UnconfinedTestDispatcher(testScheduler)))
         scheduler.scheduleTestAdhan(20)
         val after = System.currentTimeMillis()
@@ -561,6 +564,7 @@ class PrayerNotificationSchedulerTest {
     @Test
     fun `scheduleTestAdhan replaces a previously scheduled test alarm`() = runTest {
         val before = System.currentTimeMillis()
+        coEvery { dataStore.getSettings() } returns NotificationSettings(enabled = true)
         val scheduler = scheduler(CoroutineScope(UnconfinedTestDispatcher(testScheduler)))
         scheduler.scheduleTestAdhan(15)
         scheduler.scheduleTestAdhan(0)
@@ -574,6 +578,7 @@ class PrayerNotificationSchedulerTest {
 
     @Test
     fun `cancelAll leaves the test adhan alarm scheduled`() = runTest {
+        coEvery { dataStore.getSettings() } returns NotificationSettings(enabled = true)
         val scheduler = scheduler(CoroutineScope(UnconfinedTestDispatcher(testScheduler)))
         scheduler.scheduleTestAdhan(5)
         scheduler.cancelAll()
@@ -582,5 +587,15 @@ class PrayerNotificationSchedulerTest {
         val alarm = shadowOf(alarmManager).scheduledAlarms.single()
         assertThat(shadowOf(alarm.operation).requestCode)
             .isEqualTo(PrayerNotificationScheduler.REQUEST_CODE_TEST_ADHAN)
+    }
+
+    @Test
+    fun `scheduleTestAdhan with notifications disabled schedules nothing`() = runTest {
+        coEvery { dataStore.getSettings() } returns NotificationSettings(enabled = false)
+        val scheduler = scheduler(CoroutineScope(UnconfinedTestDispatcher(testScheduler)))
+        scheduler.scheduleTestAdhan(5)
+
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        assertThat(shadowOf(alarmManager).scheduledAlarms).isEmpty()
     }
 }

@@ -44,7 +44,8 @@ interface AlarmScheduler {
      * now (clamped to 0..15). Scheduling again cancels any previously scheduled test
      * alarm. Uses the exact production PRAYER alarm path, so playback runs through
      * [com.kutluoglu.prayer_notifications.scheduler.AlarmReceiver] and respects the
-     * current adhan-enabled setting.
+     * current adhan-enabled setting. Skips scheduling (logs a warning) when the
+     * master notifications-enabled setting is off.
      */
     fun scheduleTestAdhan(delayMinutes: Int)
 }
