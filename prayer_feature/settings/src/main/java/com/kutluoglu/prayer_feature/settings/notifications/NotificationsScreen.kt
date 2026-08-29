@@ -60,6 +60,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.kutluoglu.core.designsystem.components.LoadingIndicator
+import com.kutluoglu.prayer_feature.settings.BuildConfig
 import com.kutluoglu.prayer_feature.settings.R
 import com.kutluoglu.prayer_notifications.domain.NotificationSettings
 import org.koin.androidx.compose.koinViewModel
@@ -387,6 +388,50 @@ private fun NotificationsContent(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(stringResource(R.string.send_test_notification))
+        }
+        if (BuildConfig.DEBUG) {
+            var testAdhanDelayMinutes by remember { mutableStateOf(5) }
+            HorizontalDivider()
+            Text(
+                text = stringResource(R.string.test_adhan),
+                style = MaterialTheme.typography.titleMedium
+            )
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                FilterChip(
+                    selected = testAdhanDelayMinutes == 0,
+                    onClick = { testAdhanDelayMinutes = 0 },
+                    label = { Text(stringResource(R.string.test_adhan_instant)) }
+                )
+                listOf(1, 5, 10, 15).forEach { minutes ->
+                    FilterChip(
+                        selected = testAdhanDelayMinutes == minutes,
+                        onClick = { testAdhanDelayMinutes = minutes },
+                        label = { Text("${minutes}m") }
+                    )
+                }
+            }
+            if (!settings.adhanEnabled) {
+                Text(
+                    text = stringResource(R.string.test_adhan_adhan_off_warning),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
+            Button(
+                onClick = {
+                    if (checkExactAlarmPermission()) {
+                        onEvent(NotificationsEvent.ScheduleTestAdhan(testAdhanDelayMinutes))
+                    } else {
+                        pendingExactAlarmAction = {
+                            onEvent(NotificationsEvent.ScheduleTestAdhan(testAdhanDelayMinutes))
+                        }
+                        showExactAlarmDialog = true
+                    }
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(stringResource(R.string.schedule_adhan_test))
+            }
         }
     }
 

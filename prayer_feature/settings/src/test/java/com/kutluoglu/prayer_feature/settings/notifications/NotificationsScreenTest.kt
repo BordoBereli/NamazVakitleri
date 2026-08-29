@@ -26,6 +26,7 @@ import com.kutluoglu.prayer_notifications.scheduler.AlarmScheduler
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import io.mockk.verify
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -421,5 +422,80 @@ class NotificationsScreenTest {
         composeTestRule.onNodeWithText(
             composeTestRule.activity.getString(R.string.battery_optimization_dialog_title)
         ).assertIsDisplayed()
+    }
+
+    @Test
+    fun `renders test adhan section in debug build`() {
+        launchScreen(
+            NotificationSettings(
+                enabled = true,
+                adhanEnabled = true
+            )
+        )
+
+        composeTestRule.onNodeWithText("Test Adhan").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Schedule Adhan test").assertIsDisplayed()
+    }
+
+    @Test
+    fun `shows adhan-off warning when adhan is disabled`() {
+        launchScreen(
+            NotificationSettings(
+                enabled = true,
+                adhanEnabled = false
+            )
+        )
+
+        composeTestRule
+            .onNodeWithText(
+                "Adhan toggle is OFF — the test will show a notification but will NOT play sound."
+            )
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun `hides adhan-off warning when adhan is enabled`() {
+        launchScreen(
+            NotificationSettings(
+                enabled = true,
+                adhanEnabled = true
+            )
+        )
+
+        composeTestRule
+            .onNodeWithText(
+                "Adhan toggle is OFF — the test will show a notification but will NOT play sound."
+            )
+            .assertDoesNotExist()
+    }
+
+    @Test
+    fun `scheduling a test adhan schedules an alarm with the selected delay`() {
+        launchScreen(
+            NotificationSettings(
+                enabled = true,
+                adhanEnabled = true
+            )
+        )
+
+        composeTestRule.onNodeWithText("10m").performClick()
+        composeTestRule.onNodeWithText("Schedule Adhan test").performClick()
+
+        verify { alarmScheduler.scheduleTestAdhan(10) }
+    }
+
+    @Test
+    fun `does not schedule a test adhan without exact alarm permission`() {
+        ShadowAlarmManager.setCanScheduleExactAlarms(false)
+        launchScreen(
+            NotificationSettings(
+                enabled = true,
+                adhanEnabled = true
+            )
+        )
+
+        composeTestRule.onNodeWithText("Schedule Adhan test").performClick()
+
+        verify(exactly = 0) { alarmScheduler.scheduleTestAdhan(any()) }
     }
 }
