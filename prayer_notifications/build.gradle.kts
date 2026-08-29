@@ -56,6 +56,9 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.androidx.media)
+    implementation(libs.media3.common)
+    implementation(libs.media3.exoplayer)
+    implementation(libs.media3.session)
 
     api(platform(libs.koin.bom))
     api(libs.koin.core)
@@ -79,6 +82,7 @@ dependencies {
     testImplementation(libs.junit.platform.suite)
     testRuntimeOnly(libs.platform.junit.platform.suite.engine)
     testImplementation(libs.robolectric)
+    testImplementation(libs.media3.test.utils)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }
