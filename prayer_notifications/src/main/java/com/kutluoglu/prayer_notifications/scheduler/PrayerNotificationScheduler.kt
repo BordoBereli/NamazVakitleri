@@ -213,17 +213,17 @@ class PrayerNotificationScheduler(
     override fun scheduleTestAdhan(delayMinutes: Int) {
         scope.launch {
             val settings = dataStore.getSettings()
-            if (!settings.enabled) {
-                Log.w("PrayerNotificationScheduler", "Notifications disabled; skipping debug test adhan")
-                return@launch
-            }
-            val delayMillis = delayMinutes.coerceIn(0, 15) * 60_000L
             val testIntent = Intent(context, AlarmReceiver::class.java)
             val pendingIntent = PendingIntent.getBroadcast(
                 context, REQUEST_CODE_TEST_ADHAN, testIntent,
                 PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
             )
             pendingIntent?.let { alarmManager.cancel(it) }
+            if (!settings.enabled) {
+                Log.w("PrayerNotificationScheduler", "Notifications disabled; skipping debug test adhan")
+                return@launch
+            }
+            val delayMillis = delayMinutes.coerceIn(0, 15) * 60_000L
             scheduleAlarm(
                 ScheduledAlarm(
                     prayerKey = "Fajr",

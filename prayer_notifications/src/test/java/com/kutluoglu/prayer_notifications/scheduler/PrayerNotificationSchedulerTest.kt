@@ -598,4 +598,19 @@ class PrayerNotificationSchedulerTest {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         assertThat(shadowOf(alarmManager).scheduledAlarms).isEmpty()
     }
+
+    @Test
+    fun `scheduleTestAdhan with notifications disabled cancels a previously scheduled test alarm`() = runTest {
+        coEvery { dataStore.getSettings() } returns NotificationSettings(enabled = true)
+        val scheduler = scheduler(CoroutineScope(UnconfinedTestDispatcher(testScheduler)))
+        scheduler.scheduleTestAdhan(5)
+
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        assertThat(shadowOf(alarmManager).scheduledAlarms).hasSize(1)
+
+        coEvery { dataStore.getSettings() } returns NotificationSettings(enabled = false)
+        scheduler.scheduleTestAdhan(5)
+
+        assertThat(shadowOf(alarmManager).scheduledAlarms).isEmpty()
+    }
 }
