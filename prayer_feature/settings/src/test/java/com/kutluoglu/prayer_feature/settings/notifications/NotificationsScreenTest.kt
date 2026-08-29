@@ -22,6 +22,7 @@ import com.kutluoglu.prayer_notifications.domain.NotificationSettings
 import com.kutluoglu.prayer_notifications.domain.usecases.GetNotificationSettingsUseCase
 import com.kutluoglu.prayer_notifications.domain.usecases.UpdateNotificationSettingsUseCase
 import com.kutluoglu.prayer_notifications.manager.NotificationDisplayer
+import com.kutluoglu.prayer_notifications.scheduler.AlarmScheduler
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -44,10 +45,11 @@ class NotificationsScreenTest {
     private val getUseCase = mockk<GetNotificationSettingsUseCase>(relaxed = true)
     private val updateUseCase = mockk<UpdateNotificationSettingsUseCase>(relaxed = true)
     private val notificationManager = mockk<NotificationDisplayer>(relaxed = true)
+    private val alarmScheduler = mockk<AlarmScheduler>(relaxed = true)
 
     private fun launchScreen(settings: NotificationSettings) {
         coEvery { getUseCase() } returns settings
-        val viewModel = NotificationsViewModel(getUseCase, updateUseCase, notificationManager)
+        val viewModel = NotificationsViewModel(getUseCase, updateUseCase, notificationManager, alarmScheduler)
         composeTestRule.setContent {
             NotificationsRoute(
                 onNavigateBack = {},
@@ -305,7 +307,7 @@ class NotificationsScreenTest {
         ShadowAlarmManager.setCanScheduleExactAlarms(false)
         shadowOf(composeTestRule.activity).grantPermissions(Manifest.permission.POST_NOTIFICATIONS)
         coEvery { getUseCase() } returns NotificationSettings(enabled = false)
-        val viewModel = NotificationsViewModel(getUseCase, updateUseCase, notificationManager)
+        val viewModel = NotificationsViewModel(getUseCase, updateUseCase, notificationManager, alarmScheduler)
         composeTestRule.setContent {
             NotificationsRoute(onNavigateBack = {}, viewModel = viewModel)
         }

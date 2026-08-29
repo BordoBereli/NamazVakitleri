@@ -6,6 +6,7 @@ import com.kutluoglu.prayer_notifications.domain.NotificationSettings
 import com.kutluoglu.prayer_notifications.domain.usecases.GetNotificationSettingsUseCase
 import com.kutluoglu.prayer_notifications.domain.usecases.UpdateNotificationSettingsUseCase
 import com.kutluoglu.prayer_notifications.manager.NotificationDisplayer
+import com.kutluoglu.prayer_notifications.scheduler.AlarmScheduler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,7 +17,8 @@ import org.koin.android.annotation.KoinViewModel
 class NotificationsViewModel(
     private val getSettingsUseCase: GetNotificationSettingsUseCase,
     private val updateSettingsUseCase: UpdateNotificationSettingsUseCase,
-    private val notificationDisplayer: NotificationDisplayer
+    private val notificationDisplayer: NotificationDisplayer,
+    private val alarmScheduler: AlarmScheduler
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<NotificationsUiState>(NotificationsUiState.Loading)
@@ -51,6 +53,8 @@ class NotificationsViewModel(
             is NotificationsEvent.SetSoundEnabled -> update { it.copy(soundEnabled = event.enabled) }
             is NotificationsEvent.SetVibrationEnabled -> update { it.copy(vibrationEnabled = event.enabled) }
             NotificationsEvent.SendTest -> sendTestNotification()
+            is NotificationsEvent.ScheduleTestAdhan ->
+                alarmScheduler.scheduleTestAdhan(event.delayMinutes)
         }
     }
 

@@ -6,6 +6,7 @@ import com.kutluoglu.prayer_notifications.domain.NotificationSettings
 import com.kutluoglu.prayer_notifications.domain.usecases.GetNotificationSettingsUseCase
 import com.kutluoglu.prayer_notifications.domain.usecases.UpdateNotificationSettingsUseCase
 import com.kutluoglu.prayer_notifications.manager.NotificationDisplayer
+import com.kutluoglu.prayer_notifications.scheduler.AlarmScheduler
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -25,12 +26,13 @@ class NotificationsViewModelTest {
     private val getUseCase = mockk<GetNotificationSettingsUseCase>(relaxed = true)
     private val updateUseCase = mockk<UpdateNotificationSettingsUseCase>(relaxed = true)
     private val notificationManager = mockk<NotificationDisplayer>(relaxed = true)
+    private val alarmScheduler = mockk<AlarmScheduler>(relaxed = true)
 
     @Test
     fun `loads settings on init`() = runTest {
         coEvery { getUseCase() } returns NotificationSettings(enabled = true)
 
-        val viewModel = NotificationsViewModel(getUseCase, updateUseCase, notificationManager)
+        val viewModel = NotificationsViewModel(getUseCase, updateUseCase, notificationManager, alarmScheduler)
 
         assertThat(viewModel.uiState.value).isInstanceOf(NotificationsUiState.Success::class.java)
     }
@@ -39,7 +41,7 @@ class NotificationsViewModelTest {
     fun `load failure surfaces error state`() = runTest {
         coEvery { getUseCase() } throws RuntimeException("boom")
 
-        val viewModel = NotificationsViewModel(getUseCase, updateUseCase, notificationManager)
+        val viewModel = NotificationsViewModel(getUseCase, updateUseCase, notificationManager, alarmScheduler)
 
         assertThat(viewModel.uiState.value).isInstanceOf(NotificationsUiState.Error::class.java)
     }
@@ -48,7 +50,7 @@ class NotificationsViewModelTest {
     fun `toggling master enabled persists`() = runTest {
         coEvery { getUseCase() } returns NotificationSettings()
 
-        val viewModel = NotificationsViewModel(getUseCase, updateUseCase, notificationManager)
+        val viewModel = NotificationsViewModel(getUseCase, updateUseCase, notificationManager, alarmScheduler)
         viewModel.onEvent(NotificationsEvent.SetEnabled(true))
 
         coVerify { updateUseCase(match { it.enabled }) }
@@ -58,7 +60,7 @@ class NotificationsViewModelTest {
     fun `toggling a prayer persists the updated settings`() = runTest {
         coEvery { getUseCase() } returns NotificationSettings()
 
-        val viewModel = NotificationsViewModel(getUseCase, updateUseCase, notificationManager)
+        val viewModel = NotificationsViewModel(getUseCase, updateUseCase, notificationManager, alarmScheduler)
         viewModel.onEvent(NotificationsEvent.SetPrayerToggle("Fajr", false))
 
         coVerify { updateUseCase(match { it.prayerToggles["Fajr"] == false }) }
@@ -68,7 +70,7 @@ class NotificationsViewModelTest {
     fun `toggling adhan persists`() = runTest {
         coEvery { getUseCase() } returns NotificationSettings()
 
-        val viewModel = NotificationsViewModel(getUseCase, updateUseCase, notificationManager)
+        val viewModel = NotificationsViewModel(getUseCase, updateUseCase, notificationManager, alarmScheduler)
         viewModel.onEvent(NotificationsEvent.SetAdhanEnabled(false))
 
         coVerify { updateUseCase(match { it.adhanEnabled == false }) }
@@ -78,7 +80,7 @@ class NotificationsViewModelTest {
     fun `setting adhan volume persists`() = runTest {
         coEvery { getUseCase() } returns NotificationSettings()
 
-        val viewModel = NotificationsViewModel(getUseCase, updateUseCase, notificationManager)
+        val viewModel = NotificationsViewModel(getUseCase, updateUseCase, notificationManager, alarmScheduler)
         viewModel.onEvent(NotificationsEvent.SetAdhanVolume(50))
 
         coVerify { updateUseCase(match { it.adhanVolume == 50 }) }
@@ -88,7 +90,7 @@ class NotificationsViewModelTest {
     fun `setting pre-prayer reminder persists minutes`() = runTest {
         coEvery { getUseCase() } returns NotificationSettings()
 
-        val viewModel = NotificationsViewModel(getUseCase, updateUseCase, notificationManager)
+        val viewModel = NotificationsViewModel(getUseCase, updateUseCase, notificationManager, alarmScheduler)
         viewModel.onEvent(NotificationsEvent.SetPrePrayerReminder(true, 30))
 
         coVerify {
@@ -100,7 +102,7 @@ class NotificationsViewModelTest {
     fun `setting daily reminder persists time`() = runTest {
         coEvery { getUseCase() } returns NotificationSettings()
 
-        val viewModel = NotificationsViewModel(getUseCase, updateUseCase, notificationManager)
+        val viewModel = NotificationsViewModel(getUseCase, updateUseCase, notificationManager, alarmScheduler)
         viewModel.onEvent(NotificationsEvent.SetDailyReminder(true, 7, 30))
 
         coVerify {
@@ -118,10 +120,20 @@ class NotificationsViewModelTest {
     fun `send test notification creates channels and shows test notification`() = runTest {
         coEvery { getUseCase() } returns NotificationSettings(enabled = true)
 
-        val viewModel = NotificationsViewModel(getUseCase, updateUseCase, notificationManager)
+        val viewModel = NotificationsViewModel(getUseCase, updateUseCase, notificationManager, alarmScheduler)
         viewModel.onEvent(NotificationsEvent.SendTest)
 
         verify { notificationManager.createChannels(any()) }
         verify { notificationManager.showTestNotification() }
+    }
+
+    @Test
+    fun `scheduling a test adhan invokes the alarm scheduler`() = runTest {
+        coEvery { getUseCase() } returns NotificationSettings()
+
+        val viewModel = NotificationsViewModel(getUseCase, updateUseCase, notificationManager, alarmScheduler)
+        viewModel.onEvent(NotificationsEvent.ScheduleTestAdhan(5))
+
+        verify { alarmScheduler.scheduleTestAdhan(5) }
     }
 }

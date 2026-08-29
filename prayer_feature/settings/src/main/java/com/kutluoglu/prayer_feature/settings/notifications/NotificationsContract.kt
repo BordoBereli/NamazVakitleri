@@ -22,4 +22,5 @@ sealed class NotificationsEvent {
     data class SetSoundEnabled(val enabled: Boolean) : NotificationsEvent()
     data class SetVibrationEnabled(val enabled: Boolean) : NotificationsEvent()
     data object SendTest : NotificationsEvent()
+    data class ScheduleTestAdhan(val delayMinutes: Int) : NotificationsEvent()
 }
