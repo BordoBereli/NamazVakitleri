@@ -4,26 +4,44 @@ import android.content.Context
 import android.media.AudioAttributes
 import android.media.AudioFocusRequest
 import android.media.AudioManager
-import android.media.MediaPlayer
+import android.net.Uri
 import android.util.Log
+import androidx.media3.common.MediaItem
+import androidx.media3.common.PlaybackException
+import androidx.media3.common.Player
 import com.kutluoglu.prayer_notifications.R
 import org.koin.core.annotation.Single
 
 @Single
 class AdhanPlayer(
-    private val context: Context
+    private val context: Context,
+    private val player: Player,
 ) {
     private val audioManager: AudioManager =
         context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
-    private var mediaPlayer: MediaPlayer? = null
     private var onCompletion: (() -> Unit)? = null
     private var onFocusLoss: (() -> Unit)? = null
     private var focusRequest: AudioFocusRequest? = null
-    internal val volumeController = AdhanVolumeController(context).also { controller ->
+    internal val volumeController = AdhanVolumeController(context, player).also { controller ->
         controller.setOnMuteRequestedListener {
             stop()
             onFocusLoss?.invoke()
+        }
+    }
+
+    private val playerListener = object : Player.Listener {
+        override fun onPlaybackStateChanged(playbackState: Int) {
+            if (playbackState == Player.STATE_ENDED) {
+                abandonAudioFocus()
+                volumeController.deactivate()
+                onCompletion?.invoke()
+            }
+        }
+
+        override fun onPlayerError(error: PlaybackException) {
+            stop()
+            Log.e("AdhanPlayer", "Failed to play adhan -> ${error.message}")
         }
     }
 
@@ -32,6 +50,10 @@ class AdhanPlayer(
             stop()
             onFocusLoss?.invoke()
         }
+    }
+
+    init {
+        player.addListener(playerListener)
     }
 
     fun setOnCompletionListener(listener: () -> Unit) {
@@ -53,41 +75,24 @@ class AdhanPlayer(
             "Isha" -> R.raw.adhan_isha
             else -> R.raw.adhan_fajr
         }
-        val player = MediaPlayer()
         try {
-            player.apply {
-                setAudioAttributes(
-                    AudioAttributes.Builder()
-                        .setUsage(AudioAttributes.USAGE_ALARM)
-                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                        .build()
-                )
-                setDataSource(context, android.net.Uri.parse("android.resource://${context.packageName}/$resId"))
-                setOnCompletionListener {
-                    abandonAudioFocus()
-                    volumeController.deactivate()
-                    onCompletion?.invoke()
-                }
-                prepare()
-                start()
-                setVolume(volume, volume)
-            }
-            mediaPlayer = player
+            player.setMediaItem(
+                MediaItem.fromUri(Uri.parse("android.resource://${context.packageName}/$resId"))
+            )
+            player.volume = volume
+            player.prepare()
+            player.playWhenReady = true
             requestAudioFocus()
             volumeController.activate()
         } catch (e: Exception) {
-            runCatching { player.release() }
+            runCatching { player.stop() }
             volumeController.deactivate()
             Log.e("AdhanPlayer", "Failed to play adhan -> ${e.message}")
         }
     }
 
     fun stop() {
-        mediaPlayer?.let {
-            runCatching { it.stop() }
-            it.release()
-        }
-        mediaPlayer = null
+        runCatching { player.stop() }
         volumeController.deactivate()
         abandonAudioFocus()
     }

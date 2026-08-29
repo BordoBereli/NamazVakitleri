@@ -1,54 +1,26 @@
 package com.kutluoglu.prayer_notifications.manager
 
 import android.content.Context
-import android.media.AudioManager
-import android.support.v4.media.session.MediaSessionCompat
-import android.support.v4.media.session.PlaybackStateCompat
-import androidx.media.VolumeProviderCompat
+import androidx.media3.common.Player
+import androidx.media3.session.MediaSession
+import java.util.UUID
 
-class AdhanVolumeController(
-    private val context: Context
+internal class AdhanVolumeController(
+    private val context: Context,
+    private val player: Player,
 ) {
-
-    private val audioManager: AudioManager =
-        context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-
-    internal val volumeProvider: VolumeProviderCompat = object : VolumeProviderCompat(
-        VolumeProviderCompat.VOLUME_CONTROL_RELATIVE,
-        MAX_VOLUME,
-        audioManager.getStreamVolume(AudioManager.STREAM_ALARM) * MAX_VOLUME /
-            audioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM)
-    ) {
-        override fun onAdjustVolume(direction: Int) {
-            val lowerAtFloor = direction == AudioManager.ADJUST_LOWER &&
-                audioManager.getStreamVolume(AudioManager.STREAM_ALARM) > 0
-            val before = audioManager.getStreamVolume(AudioManager.STREAM_ALARM)
-            audioManager.adjustStreamVolume(
-                AudioManager.STREAM_ALARM,
-                direction,
-                AudioManager.FLAG_SHOW_UI
-            )
-            val streamMax = audioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM)
-            currentVolume =
-                audioManager.getStreamVolume(AudioManager.STREAM_ALARM) * MAX_VOLUME / streamMax
-            if (lowerAtFloor && audioManager.getStreamVolume(AudioManager.STREAM_ALARM) == before) {
-                onMuteRequested?.invoke()
-            }
-        }
-
-        override fun onSetVolumeTo(volume: Int) {
-            val streamMax = audioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM)
-            val target = volume.coerceIn(0, MAX_VOLUME) * streamMax / MAX_VOLUME
-            audioManager.setStreamVolume(AudioManager.STREAM_ALARM, target, 0)
-            currentVolume =
-                audioManager.getStreamVolume(AudioManager.STREAM_ALARM) * MAX_VOLUME / streamMax
-        }
-    }
-
-    internal var mediaSession: MediaSessionCompat? = null
+    internal var mediaSession: MediaSession? = null
         private set
 
     private var onMuteRequested: (() -> Unit)? = null
+
+    private val playerListener = object : Player.Listener {
+        override fun onDeviceVolumeChanged(volume: Int, muted: Boolean) {
+            if (muted || volume <= 0) {
+                onMuteRequested?.invoke()
+            }
+        }
+    }
 
     fun setOnMuteRequestedListener(listener: () -> Unit) {
         onMuteRequested = listener
@@ -56,28 +28,20 @@ class AdhanVolumeController(
 
     fun activate() {
         if (mediaSession == null) {
-            val session = MediaSessionCompat(context, TAG)
-            session.setPlaybackToRemote(volumeProvider)
-            session.setPlaybackState(
-                PlaybackStateCompat.Builder()
-                    .setState(PlaybackStateCompat.STATE_PLAYING, 0, 1f)
-                    .build()
-            )
-            session.isActive = true
-            mediaSession = session
+            mediaSession = MediaSession.Builder(context, player)
+                .setId(ID_PREFIX + UUID.randomUUID())
+                .build()
+            player.addListener(playerListener)
         }
     }
 
     fun deactivate() {
-        mediaSession?.let { session ->
-            session.isActive = false
-            session.release()
-        }
+        mediaSession?.release()
         mediaSession = null
+        player.removeListener(playerListener)
     }
 
     private companion object {
-        const val TAG = "AdhanVolumeController"
-        const val MAX_VOLUME = 100
+        const val ID_PREFIX = "AdhanVolumeController-"
     }
 }

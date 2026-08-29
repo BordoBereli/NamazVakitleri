@@ -1,145 +1,147 @@
 package com.kutluoglu.prayer_notifications.manager
 
 import android.content.Context
-import android.media.AudioManager
+import android.os.Looper
+import androidx.media3.common.C
+import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.test.utils.FakePlayer
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
+import org.junit.After
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 
+@OptIn(UnstableApi::class)
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [35])
 class AdhanVolumeControllerTest {
 
     private val context: Context = ApplicationProvider.getApplicationContext()
 
-    private fun audioManager(): AudioManager =
-        context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+    private fun idleMainLooper() {
+        shadowOf(Looper.getMainLooper()).idle()
+    }
 
-    @Test
-    fun `lowering volume key decreases alarm stream volume`() {
-        audioManager().setStreamVolume(AudioManager.STREAM_ALARM, 5, 0)
-        val controller = AdhanVolumeController(context)
-        controller.volumeProvider.onAdjustVolume(AudioManager.ADJUST_LOWER)
-        assertThat(audioManager().getStreamVolume(AudioManager.STREAM_ALARM)).isEqualTo(4)
+    private fun newController(player: Player = FakePlayer(bufferingDelayMs = 0)) =
+        AdhanVolumeController(context, player)
+
+    @After
+    fun flushPendingSessionWork() {
+        idleMainLooper()
     }
 
     @Test
-    fun `raising volume key increases alarm stream volume`() {
-        audioManager().setStreamVolume(AudioManager.STREAM_ALARM, 5, 0)
-        val controller = AdhanVolumeController(context)
-        controller.volumeProvider.onAdjustVolume(AudioManager.ADJUST_RAISE)
-        assertThat(audioManager().getStreamVolume(AudioManager.STREAM_ALARM)).isEqualTo(6)
-    }
-
-    @Test
-    fun `set volume to sets alarm stream volume`() {
-        audioManager().setStreamVolume(AudioManager.STREAM_ALARM, 5, 0)
-        val controller = AdhanVolumeController(context)
-        controller.volumeProvider.onSetVolumeTo(50)
-        assertThat(audioManager().getStreamVolume(AudioManager.STREAM_ALARM)).isEqualTo(3)
-    }
-
-    @Test
-    fun `activate creates an active media session and deactivate releases it`() {
-        val controller = AdhanVolumeController(context)
+    fun `activate creates a media session and deactivate releases it`() {
+        val controller = newController()
         controller.activate()
-        assertThat(controller.mediaSession?.isActive).isTrue()
+        assertThat(controller.mediaSession).isNotNull()
         controller.deactivate()
         assertThat(controller.mediaSession).isNull()
+    }
+
+    @Test
+    fun `double activate keeps a single session`() {
+        val controller = newController()
+        controller.activate()
+        val first = controller.mediaSession
+        controller.activate()
+        assertThat(controller.mediaSession).isSameInstanceAs(first)
+        controller.deactivate()
     }
 
     @Test
     fun `deactivate is idempotent`() {
-        val controller = AdhanVolumeController(context)
+        val controller = newController()
         controller.activate()
         controller.deactivate()
-        controller.deactivate()
-        assertThat(controller.mediaSession).isNull()
-    }
-
-    @Test
-    fun `lowering volume key at minimum keeps volume unchanged`() {
-        audioManager().setStreamVolume(AudioManager.STREAM_ALARM, 1, 0)
-        val controller = AdhanVolumeController(context)
-        controller.volumeProvider.onAdjustVolume(AudioManager.ADJUST_LOWER)
-        assertThat(audioManager().getStreamVolume(AudioManager.STREAM_ALARM)).isEqualTo(1)
-    }
-
-    @Test
-    fun `raising volume key at maximum keeps volume unchanged`() {
-        audioManager().setStreamVolume(AudioManager.STREAM_ALARM, 7, 0)
-        val controller = AdhanVolumeController(context)
-        controller.volumeProvider.onAdjustVolume(AudioManager.ADJUST_RAISE)
-        assertThat(audioManager().getStreamVolume(AudioManager.STREAM_ALARM)).isEqualTo(7)
-    }
-
-    @Test
-    fun `set volume to maps percent onto stream max`() {
-        audioManager().setStreamVolume(AudioManager.STREAM_ALARM, 0, 0)
-        val controller = AdhanVolumeController(context)
-        controller.volumeProvider.onSetVolumeTo(100)
-        assertThat(audioManager().getStreamVolume(AudioManager.STREAM_ALARM)).isEqualTo(7)
-    }
-
-    @Test
-    fun `double activate keeps a single active session`() {
-        val controller = AdhanVolumeController(context)
-        controller.activate()
-        controller.activate()
-        assertThat(controller.mediaSession?.isActive).isTrue()
         controller.deactivate()
         assertThat(controller.mediaSession).isNull()
     }
 
     @Test
     fun `deactivate before activate does not throw`() {
-        val controller = AdhanVolumeController(context)
+        val controller = newController()
         controller.deactivate()
         controller.activate()
-        assertThat(controller.mediaSession?.isActive).isTrue()
+        assertThat(controller.mediaSession).isNotNull()
         controller.deactivate()
     }
 
     @Test
-    fun `adjusted volume reports on the provider percent scale`() {
-        audioManager().setStreamVolume(AudioManager.STREAM_ALARM, 5, 0)
-        val controller = AdhanVolumeController(context)
-        controller.volumeProvider.onAdjustVolume(AudioManager.ADJUST_RAISE)
-        assertThat(controller.volumeProvider.currentVolume).isEqualTo(85)
-    }
-
-    @Test
-    fun `lowering at the minimum invokes the mute listener`() {
-        audioManager().setStreamVolume(AudioManager.STREAM_ALARM, 1, 0)
-        val controller = AdhanVolumeController(context)
+    fun `muted device volume invokes the mute listener`() {
+        val player = TestVolumePlayer()
+        val controller = newController(player)
         var muted = false
         controller.setOnMuteRequestedListener { muted = true }
-        controller.volumeProvider.onAdjustVolume(AudioManager.ADJUST_LOWER)
+        controller.activate()
+        player.setDeviceMuted(true, C.VOLUME_FLAG_SHOW_UI)
+        idleMainLooper()
         assertThat(muted).isTrue()
-        assertThat(audioManager().getStreamVolume(AudioManager.STREAM_ALARM)).isEqualTo(1)
+        controller.deactivate()
     }
 
     @Test
-    fun `lowering above the minimum does not invoke the mute listener`() {
-        audioManager().setStreamVolume(AudioManager.STREAM_ALARM, 5, 0)
-        val controller = AdhanVolumeController(context)
+    fun `volume reaching zero invokes the mute listener`() {
+        val player = TestVolumePlayer()
+        val controller = newController(player)
         var muted = false
         controller.setOnMuteRequestedListener { muted = true }
-        controller.volumeProvider.onAdjustVolume(AudioManager.ADJUST_LOWER)
+        controller.activate()
+        player.setDeviceVolume(5, C.VOLUME_FLAG_SHOW_UI)
+        idleMainLooper()
+        player.setDeviceVolume(0, C.VOLUME_FLAG_SHOW_UI)
+        idleMainLooper()
+        assertThat(muted).isTrue()
+        controller.deactivate()
+    }
+
+    @Test
+    fun `unmuted positive volume does not invoke the mute listener`() {
+        val player = TestVolumePlayer()
+        val controller = newController(player)
+        var muted = false
+        controller.setOnMuteRequestedListener { muted = true }
+        controller.activate()
+        player.setDeviceVolume(85, C.VOLUME_FLAG_SHOW_UI)
+        idleMainLooper()
         assertThat(muted).isFalse()
-        assertThat(audioManager().getStreamVolume(AudioManager.STREAM_ALARM)).isEqualTo(4)
+        controller.deactivate()
     }
 
     @Test
-    fun `raising at the minimum does not invoke the mute listener`() {
-        audioManager().setStreamVolume(AudioManager.STREAM_ALARM, 1, 0)
-        val controller = AdhanVolumeController(context)
+    fun `listener is not attached until activate`() {
+        val player = TestVolumePlayer()
+        val controller = newController(player)
         var muted = false
         controller.setOnMuteRequestedListener { muted = true }
-        controller.volumeProvider.onAdjustVolume(AudioManager.ADJUST_RAISE)
+        player.setDeviceMuted(true, C.VOLUME_FLAG_SHOW_UI)
+        idleMainLooper()
+        assertThat(muted).isFalse()
+        controller.activate()
+        player.setDeviceMuted(false, C.VOLUME_FLAG_SHOW_UI)
+        idleMainLooper()
+        player.setDeviceMuted(true, C.VOLUME_FLAG_SHOW_UI)
+        idleMainLooper()
+        assertThat(muted).isTrue()
+        controller.deactivate()
+    }
+
+    @Test
+    fun `listener is removed after deactivate`() {
+        val player = TestVolumePlayer()
+        val controller = newController(player)
+        var muted = false
+        controller.setOnMuteRequestedListener { muted = true }
+        controller.activate()
+        player.setDeviceVolume(5, C.VOLUME_FLAG_SHOW_UI)
+        idleMainLooper()
+        controller.deactivate()
+        player.setDeviceMuted(true, C.VOLUME_FLAG_SHOW_UI)
+        idleMainLooper()
         assertThat(muted).isFalse()
     }
 }
