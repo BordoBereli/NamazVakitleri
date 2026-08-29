@@ -925,7 +925,7 @@ git commit -m "refactor: migrate adhan playback from MediaPlayer/MediaSessionCom
 
 **Files:** none (verification only). The branch must be clean-merge-ready afterwards.
 
-- [ ] **Step 1: Full project build + unit test suites**
+- [x] **Step 1: Full project build + unit test suites**
 
 Run:
 ```bash
@@ -933,7 +933,7 @@ Run:
 ```
 Expected: BUILD SUCCESSFUL.
 
-- [ ] **Step 2: Run GitNexus change detection**
+- [x] **Step 2: Run GitNexus change detection**
 
 Run (per AGENTS.md):
 ```
@@ -954,7 +954,7 @@ Install `:app` (debug) on a physical device and verify:
 
 > **If hardware volume keys do NOT route to the ALARM stream via the bare `MediaSession`** (spec Risk #1 materializes): stop, and restore capture with the documented fallback — re-add an in-process `MediaController` that listens and forwards `setDeviceVolume`/`increaseDeviceVolume`/`decreaseDeviceVolume` to the player — then rely on the FakePlayer tests unchanged. File that as a follow-up task; do not change the already-green unit test contract.
 
-- [ ] **Step 4: Convenience cleanup**
+- [x] **Step 4: Convenience cleanup**
 
 If the module still compiles with `SparkLint`/lint on the project, run:
 ```bash
@@ -962,7 +962,7 @@ If the module still compiles with `SparkLint`/lint on the project, run:
 ```
 Expected: no new errors introduced by this change.
 
-- [ ] **Step 5: Final GitNexus check + commit readiness**
+- [x] **Step 5: Final GitNexus check + commit readiness**
 
 Re-run `gitnexus_detect_changes()` (scope = `all`) to confirm only expected symbols changed, then report the branch ready for review/PR (`main` → `dev/feature/media3-migration`).
 
