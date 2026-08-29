@@ -700,7 +700,6 @@ class AdhanVolumeController(
     private companion object {
         const val TAG = "AdhanVolumeController"
         const val ID_PREFIX = "$TAG-"
-        const val TAG = "AdhanVolumeController"
     }
 }
 ```

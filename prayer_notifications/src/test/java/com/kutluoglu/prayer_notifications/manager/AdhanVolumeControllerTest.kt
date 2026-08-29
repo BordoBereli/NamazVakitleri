@@ -113,6 +113,18 @@ class AdhanVolumeControllerTest {
     }
 
     @Test
+    fun `activating at device volume zero does not stop immediately`() {
+        val player = TestVolumePlayer()
+        val controller = newController(player)
+        var muted = false
+        controller.setOnMuteRequestedListener { muted = true }
+        controller.activate()
+        idleMainLooper()
+        assertThat(muted).isFalse()
+        controller.deactivate()
+    }
+
+    @Test
     fun `listener is not attached until activate`() {
         val player = TestVolumePlayer()
         val controller = newController(player)
