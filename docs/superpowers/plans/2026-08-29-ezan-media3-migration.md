@@ -117,14 +117,19 @@ The two files are compile-coupled (the new controller requires a `Player`, and o
 **Files:**
 - Rewrite (test): `prayer_notifications/src/test/java/com/kutluoglu/prayer_notifications/manager/AdhanVolumeControllerTest.kt`
 - Rewrite (test): `prayer_notifications/src/test/java/com/kutluoglu/prayer_notifications/manager/AdhanPlayerTest.kt`
+- Add (test helper): `prayer_notifications/src/test/java/com/kutluoglu/prayer_notifications/manager/TestVolumePlayer.kt`
 - Rewrite (main): `prayer_notifications/src/main/java/com/kutluoglu/prayer_notifications/manager/AdhanVolumeController.kt`
 - Rewrite (main): `prayer_notifications/src/main/java/com/kutluoglu/prayer_notifications/manager/AdhanPlayer.kt`
 - Modify (main): `prayer_notifications/src/main/java/com/kutluoglu/prayer_notifications/di/PrayerNotificationsModule.kt`
 - Modify: `prayer_notifications/build.gradle.kts`
 
+> **Implementation note (FIX-1/FIX-2, discovered during execution):**
+> - **FIX-1:** `AdhanVolumeController.context` must be a **property parameter** (`private val context`) — Kotlin non-property primary-ctor params are not visible inside member functions like `activate()`. The origin implements it as `private val context: Context`.
+> - **FIX-2:** A bare `FakePlayer` cannot simulate device volume: `SimpleBasePlayer`'s default `handleSetDeviceMuted`/`handleSetDeviceVolume`/`handleIncreaseDeviceVolume`/`handleDecreaseDeviceVolume` throw `IllegalStateException("Missing implementation to handle ...")`, and `FakePlayer` (test-utils 1.11.0) does not override them (verified in media3 1.11.0 sources). The device-volume tests therefore use the `TestVolumePlayer` helper (Step 2b), which overrides those handlers and `getState()` so the base's state-diff dispatches `onDeviceVolumeChanged` to the player listeners.
+
 ### RED
 
-- [ ] **Step 1: Replace `AdhanVolumeControllerTest.kt` with the new Media3 test**
+- [x] **Step 1: Replace `AdhanVolumeControllerTest.kt` with the new Media3 test**
 
 Write the **entire** file to `prayer_notifications/src/test/java/com/kutluoglu/prayer_notifications/manager/AdhanVolumeControllerTest.kt`:
 
@@ -197,7 +202,7 @@ class AdhanVolumeControllerTest {
 
     @Test
     fun `muted device volume invokes the mute listener`() {
-        val player = FakePlayer(bufferingDelayMs = 0)
+        val player = TestVolumePlayer()
         val controller = newController(player)
         var muted = false
         controller.setOnMuteRequestedListener { muted = true }
@@ -209,7 +214,7 @@ class AdhanVolumeControllerTest {
 
     @Test
     fun `volume reaching zero invokes the mute listener`() {
-        val player = FakePlayer(bufferingDelayMs = 0)
+        val player = TestVolumePlayer()
         val controller = newController(player)
         var muted = false
         controller.setOnMuteRequestedListener { muted = true }
@@ -223,7 +228,7 @@ class AdhanVolumeControllerTest {
 
     @Test
     fun `unmuted positive volume does not invoke the mute listener`() {
-        val player = FakePlayer(bufferingDelayMs = 0)
+        val player = TestVolumePlayer()
         val controller = newController(player)
         var muted = false
         controller.setOnMuteRequestedListener { muted = true }
@@ -235,7 +240,7 @@ class AdhanVolumeControllerTest {
 
     @Test
     fun `listener is not attached until activate`() {
-        val player = FakePlayer(bufferingDelayMs = 0)
+        val player = TestVolumePlayer()
         val controller = newController(player)
         var muted = false
         controller.setOnMuteRequestedListener { muted = true }
@@ -252,7 +257,7 @@ class AdhanVolumeControllerTest {
 
     @Test
     fun `listener is removed after deactivate`() {
-        val player = FakePlayer(bufferingDelayMs = 0)
+        val player = TestVolumePlayer()
         val controller = newController(player)
         var muted = false
         controller.setOnMuteRequestedListener { muted = true }
@@ -267,7 +272,7 @@ class AdhanVolumeControllerTest {
 }
 ```
 
-- [ ] **Step 2: Replace `AdhanPlayerTest.kt` with the new Media3 test**
+- [x] **Step 2: Replace `AdhanPlayerTest.kt` with the new Media3 test**
 
 Write the **entire** file to `prayer_notifications/src/test/java/com/kutluoglu/prayer_notifications/manager/AdhanPlayerTest.kt`:
 
@@ -434,7 +439,7 @@ class AdhanPlayerTest {
 
     @Test
     fun `mute stops playback and notifies listener`() {
-        val fakePlayer = FakePlayer(bufferingDelayMs = 0)
+        val fakePlayer = TestVolumePlayer()
         val player = adhanPlayer(fakePlayer)
         var focusLost = false
         player.setOnFocusLossListener { focusLost = true }
@@ -447,7 +452,7 @@ class AdhanPlayerTest {
 
     @Test
     fun `volume reaching zero stops playback and notifies listener`() {
-        val fakePlayer = FakePlayer(bufferingDelayMs = 0)
+        val fakePlayer = TestVolumePlayer()
         val player = adhanPlayer(fakePlayer)
         var focusLost = false
         player.setOnFocusLossListener { focusLost = true }
@@ -462,7 +467,7 @@ class AdhanPlayerTest {
 
     @Test
     fun `unmuted positive volume keeps playing`() {
-        val fakePlayer = FakePlayer(bufferingDelayMs = 0)
+        val fakePlayer = TestVolumePlayer()
         val player = adhanPlayer(fakePlayer)
         var focusLost = false
         player.setOnFocusLossListener { focusLost = true }
@@ -476,7 +481,158 @@ class AdhanPlayerTest {
 }
 ```
 
-- [ ] **Step 3: Run tests to verify RED**
+- [x] **Step 2b: Add the `TestVolumePlayer` test helper (FIX-2)**
+
+> **FIX-2b (execution discovery):** `FakePlayer` is a **Kotlin `final` class in media3 1.11.0** — it cannot be subclassed (`This type is final, so it cannot be extended`). `TestVolumePlayer` therefore extends the open Java base `SimpleBasePlayer(Looper.myLooper()!!)` directly and replicates FakePlayer's essential handlers (`handlePrepare`, `handleStop`, `handleSetMediaItems`, `handleSetVolume`, `handleSetPlayWhenReady`, media metadata, `setPlaybackState`/`setPlayerError` helpers) plus the device-volume handlers from FIX-2. Handler bodies should route through a `handleStateUpdate { ... }` helper returning `Futures.immediateVoidFuture()` (Kotlin overrides must return `ListenableFuture<*>` explicitly). The simulated volume/mute must be stored in fields named `simulatedDeviceVolume`/`simulatedDeviceMuted` — naming them `deviceVolume`/`isDeviceMuted` shadows `SimpleBasePlayer`'s `getDeviceVolume()`/`getIsDeviceMuted()` and NPEs during construction — and injected in `getState()` as `state.buildUpon().setDeviceVolume(...).setIsDeviceMuted(...).build()` so the base's state-diff dispatches `onDeviceVolumeChanged(volume, muted)` to player listeners. `guava`'s `Futures` is already on the test compile classpath transitively via `media3-common` (no extra dependency needed).
+
+Actual file (`prayer_notifications/src/test/java/com/kutluoglu/prayer_notifications/manager/TestVolumePlayer.kt`):
+
+```kotlin
+package com.kutluoglu.prayer_notifications.manager
+
+import android.os.Looper
+import androidx.media3.common.DeviceInfo
+import androidx.media3.common.MediaItem
+import androidx.media3.common.PlaybackException
+import androidx.media3.common.PlaybackParameters
+import androidx.media3.common.Player
+import androidx.media3.common.SimpleBasePlayer
+import androidx.media3.common.TrackSelectionParameters
+import androidx.media3.common.util.UnstableApi
+import com.google.common.util.concurrent.Futures
+import com.google.common.util.concurrent.ListenableFuture
+
+@OptIn(UnstableApi::class)
+class TestVolumePlayer : SimpleBasePlayer(Looper.myLooper()!!) {
+
+    private var simulatedDeviceVolume = 0
+    private var simulatedDeviceMuted = false
+
+    private var state = State.Builder()
+        .setAvailableCommands(Player.Commands.Builder().addAllCommands().build())
+        .setPlayWhenReady(false, PLAY_WHEN_READY_CHANGE_REASON_USER_REQUEST)
+        .setPlaybackParameters(PlaybackParameters(DEFAULT_PLAYBACK_SPEED))
+        .setDeviceInfo(DeviceInfo.Builder(DeviceInfo.PLAYBACK_TYPE_LOCAL).build())
+        .setDeviceVolume(0)
+        .setIsDeviceMuted(false)
+        .build()
+
+    private fun handleStateUpdate(block: State.Builder.() -> Unit): ListenableFuture<*> {
+        state = state.buildUpon().apply(block).build()
+        invalidateState()
+        return Futures.immediateVoidFuture()
+    }
+
+    override fun getState(): State = state.buildUpon()
+        .setDeviceVolume(simulatedDeviceVolume)
+        .setIsDeviceMuted(simulatedDeviceMuted)
+        .build()
+
+    override fun handleSetPlayWhenReady(playWhenReady: Boolean) = handleStateUpdate {
+        setPlayWhenReady(playWhenReady, PLAY_WHEN_READY_CHANGE_REASON_USER_REQUEST)
+    }
+
+    override fun handlePrepare() = handleStateUpdate {
+        if (state.timeline.isEmpty) {
+            setPlaybackState(STATE_ENDED)
+        } else {
+            setPlaybackState(STATE_READY)
+        }
+    }
+
+    override fun handleStop() = handleStateUpdate {
+        setPlaybackState(STATE_IDLE)
+            .setTotalBufferedDurationMs(PositionSupplier.ZERO)
+            .setIsLoading(false)
+    }
+
+    override fun handleRelease(): ListenableFuture<*> = Futures.immediateVoidFuture()
+
+    override fun handleSetMediaItems(
+        mediaItems: MutableList<MediaItem>,
+        startIndex: Int,
+        startPositionMs: Long,
+    ) = handleStateUpdate {
+        if (mediaItems.isEmpty() && playbackState != STATE_IDLE) {
+            setPlaybackState(STATE_ENDED)
+        }
+        setPlaylist(mediaItems.map { MediaItemData.Builder(it.mediaId).setMediaItem(it).build() })
+            .setContentPositionMs(startPositionMs)
+            .setCurrentMediaItemIndex(startIndex)
+    }
+
+    override fun handleSetShuffleModeEnabled(shuffleModeEnabled: Boolean) = handleStateUpdate {
+        setShuffleModeEnabled(shuffleModeEnabled)
+    }
+
+    override fun handleSetRepeatMode(repeatMode: Int) = handleStateUpdate {
+        setRepeatMode(repeatMode)
+    }
+
+    override fun handleSetPlaybackParameters(playbackParameters: PlaybackParameters) =
+        handleStateUpdate { setPlaybackParameters(playbackParameters) }
+
+    override fun handleSetTrackSelectionParameters(
+        trackSelectionParameters: TrackSelectionParameters
+    ) = handleStateUpdate { setTrackSelectionParameters(trackSelectionParameters) }
+
+    override fun handleSetVolume(
+        volume: Float,
+        volumeOperationType: @androidx.media3.common.C.VolumeOperationType Int
+    ) = handleStateUpdate { setVolume(volume) }
+
+    override fun handleSetDeviceVolume(deviceVolume: Int, flags: Int): ListenableFuture<*> {
+        simulatedDeviceVolume = deviceVolume
+        invalidateState()
+        return Futures.immediateVoidFuture()
+    }
+
+    override fun handleIncreaseDeviceVolume(flags: Int): ListenableFuture<*> {
+        simulatedDeviceVolume += 1
+        invalidateState()
+        return Futures.immediateVoidFuture()
+    }
+
+    override fun handleDecreaseDeviceVolume(flags: Int): ListenableFuture<*> {
+        simulatedDeviceVolume = maxOf(0, simulatedDeviceVolume - 1)
+        invalidateState()
+        return Futures.immediateVoidFuture()
+    }
+
+    override fun handleSetDeviceMuted(isDeviceMuted: Boolean, flags: Int): ListenableFuture<*> {
+        simulatedDeviceMuted = isDeviceMuted
+        invalidateState()
+        return Futures.immediateVoidFuture()
+    }
+
+    fun setPlaybackState(playbackState: @Player.State Int) {
+        state = state.buildUpon().setPlaybackState(playbackState).build()
+        invalidateState()
+    }
+
+    fun setPlayerError(playerError: PlaybackException?) {
+        val builder = state.buildUpon()
+        if (playerError != null) {
+            builder.setPlaybackState(STATE_IDLE)
+        }
+        state = builder.setPlayerError(playerError).build()
+        invalidateState()
+    }
+
+    companion object {
+        private const val DEFAULT_PLAYBACK_SPEED = 1f
+    }
+}
+```
+
+**In the two test files, the device-volume tests must use `TestVolumePlayer()` and NOT bare `FakePlayer(...)`.** Specifically, replace `val player = FakePlayer(bufferingDelayMs = 0)` / `val fakePlayer = FakePlayer(bufferingDelayMs = 0)` with `TestVolumePlayer()` in exactly these tests:
+
+- `AdhanVolumeControllerTest`: `muted device volume invokes the mute listener`, `volume reaching zero invokes the mute listener`, `unmuted positive volume does not invoke the mute listener`, `listener is not attached until activate`, `listener is removed after deactivate`.
+- `AdhanPlayerTest`: `mute stops playback and notifies listener`, `volume reaching zero stops playback and notifies listener`, `unmuted positive volume keeps playing`.
+
+(The controller test's `newController(player: Player = FakePlayer(bufferingDelayMs = 0))` and the player test's `adhanPlayer(fakePlayer: Player = FakePlayer(bufferingDelayMs = 0))` helpers are typed `Player` — not `FakePlayer` — and keep plain `FakePlayer` as their default, since `TestVolumePlayer` is not a `FakePlayer` subtype.)
+
+- [x] **Step 3: Run tests to verify RED**
 
 Run:
 ```bash
@@ -488,11 +644,13 @@ Then run:
 ```bash
 ./gradlew :prayer_notifications:testDebugUnitTest --tests "com.kutluoglu.prayer_notifications.manager.AdhanVolumeControllerTest"
 ```
-Expected: FAIL — compilation error `Unresolved reference: constructor AdhanVolumeController(context, player)` (new ctor does not exist yet). This is the RED state.
+Expected: FAIL — test-compilation error about the new constructor, either `Unresolved reference: constructor AdhanVolumeController(context, player)` OR `Too many arguments for 'constructor AdhanVolumeController(context: Context)'` / `Too many arguments for 'constructor AdhanPlayer(context: Context)'` (old ctors still single-arg). This is the RED state.
 
 ### GREEN
 
-- [ ] **Step 4: Rewrite `AdhanVolumeController.kt`**
+- [x] **Step 4: Rewrite `AdhanVolumeController.kt`**
+
+> **FIX-3 (spec deviation — discovered during execution):** the original `SetId(TAG)` is dropped. A fixed id combined with Media3's static singleton `SESSION_ID_TO_SESSION_MAP` poisoned the shared Robolectric sandbox in tests (any throw before `deactivate()` leaks the id, which then cascades as "Session ID must be unique. ID=AdhanVolumeController" into every later test), and `MediaSession.release()` unregisters **synchronously** — so any code path that throws after `build()` but before `release()` would permanently leak the id in production too. Verified nothing in the app reads the session id (no `MediaSessionCompat`, `sessionToken`, `MediaButtonReceiver`, or `MediaController` consumer remains after this migration), so there is no functional downside to uniqueness. `activate()` now builds with `setId(ID_PREFIX + UUID.randomUUID())` using `ID_PREFIX = "AdhanVolumeController-"` and keeps a `private val sessionId`-style random id per session.
 
 Write the **entire** file to `prayer_notifications/src/main/java/com/kutluoglu/prayer_notifications/manager/AdhanVolumeController.kt`:
 
@@ -504,7 +662,7 @@ import androidx.media3.common.Player
 import androidx.media3.session.MediaSession
 
 class AdhanVolumeController(
-    context: Context,
+    private val context: Context,
     private val player: Player,
 ) {
     internal var mediaSession: MediaSession? = null
@@ -527,7 +685,7 @@ class AdhanVolumeController(
     fun activate() {
         if (mediaSession == null) {
             mediaSession = MediaSession.Builder(context, player)
-                .setId(TAG)
+                .setId(ID_PREFIX + UUID.randomUUID())
                 .build()
             player.addListener(playerListener)
         }
@@ -541,11 +699,13 @@ class AdhanVolumeController(
 
     private companion object {
         const val TAG = "AdhanVolumeController"
+        const val ID_PREFIX = "$TAG-"
+        const val TAG = "AdhanVolumeController"
     }
 }
 ```
 
-- [ ] **Step 5: Rewrite `AdhanPlayer.kt`**
+- [x] **Step 5: Rewrite `AdhanPlayer.kt`**
 
 Write the **entire** file to `prayer_notifications/src/main/java/com/kutluoglu/prayer_notifications/manager/AdhanPlayer.kt`:
 
@@ -670,7 +830,7 @@ class AdhanPlayer(
 }
 ```
 
-- [ ] **Step 6: Add the Koin `ExoPlayer` provider**
+- [x] **Step 6: Add the Koin `ExoPlayer` provider**
 
 Write the **entire** file to `prayer_notifications/src/main/java/com/kutluoglu/prayer_notifications/di/PrayerNotificationsModule.kt`:
 
@@ -711,7 +871,7 @@ object PrayerNotificationsModule {
 }
 ```
 
-- [ ] **Step 7: Remove the deprecated `androidx.media` dependency**
+- [x] **Step 7: Remove the deprecated `androidx.media` dependency**
 
 In `prayer_notifications/build.gradle.kts`, delete the line `implementation(libs.androidx.media)` (line 58). The three media3 dependencies added in Task 1 remain.
 
@@ -724,7 +884,7 @@ grep -rn "androidxMedia\|libs.androidx.media" gradle/*.toml prayer_notifications
 ```
 Expected: no matches.
 
-- [ ] **Step 8: Run both new test classes to verify GREEN**
+- [x] **Step 8: Run both new test classes to verify GREEN**
 
 Run:
 ```bash
@@ -736,7 +896,7 @@ Expected: BUILD SUCCESSFUL — all tests pass.
 
 **If test-utils compilation fails with unresolved `com.google.common.util.concurrent` symbols**, add `testImplementation(com.google.common:guava)` to the module and note it in the commit. (Expected not to be needed — our tests never reference the guava types in `FakePlayer`'s public surface.)
 
-- [ ] **Step 9: Full module regression**
+- [x] **Step 9: Full module regression**
 
 Run:
 ```bash
@@ -744,7 +904,7 @@ Run:
 ```
 Expected: BUILD SUCCESSFUL — includes `AdhanServiceTest`, `AlarmReceiverTest`, `PrayerNotificationSchedulerTest`, `DailyRescheduleWorkerTest`, `NotificationSettingsDataStoreTest`, `PrayerNotificationManagerTest` (they all either mock `AdhanPlayer` or never touch it).
 
-- [ ] **Step 10: App compile**
+- [x] **Step 10: App compile**
 
 Run:
 ```bash
@@ -752,7 +912,7 @@ Run:
 ```
 Expected: BUILD SUCCESSFUL (verifies the Koin-generated graph and `AdhanService`'s use of `AdhanPlayer` still resolve at compile time).
 
-- [ ] **Step 11: Commit**
+- [x] **Step 11: Commit**
 
 ```bash
 git add prayer_notifications/src
