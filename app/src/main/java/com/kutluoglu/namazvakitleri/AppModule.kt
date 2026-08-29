@@ -65,5 +65,5 @@ val appModule: Module = module {
     factory { CalculationMethodViewModel(get(), get(), get()) }
     factory { HijriAdjustmentViewModel(get(), get(), get()) }
     factory { LanguageSelectionViewModel(get(), get(), get()) }
-    viewModel { NotificationsViewModel(get(), get(), get()) }
+    viewModel { NotificationsViewModel(get(), get(), get(), get()) }
 }
