@@ -86,6 +86,10 @@
     <string name="sound">Sound</string>
     <string name="vibration">Vibration</string>
     <string name="send_test_notification">Send test notification</string>
+    <string name="test_adhan">Test Adhan</string>
+    <string name="test_adhan_instant">Instant</string>
+    <string name="schedule_adhan_test">Schedule Adhan test</string>
+    <string name="test_adhan_adhan_off_warning">Adhan toggle is OFF — the test will show a notification but will NOT play sound.</string>
     <string name="minutes_before">minutes before</string>
     <string name="cancel">Cancel</string>
 
