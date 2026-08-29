@@ -38,4 +38,13 @@ interface AlarmScheduler {
     fun scheduleCountdownTick(targetMillis: Long, prayerName: String, previousTimeMillis: Long?)
 
     suspend fun scheduleDailyReminder()
+
+    /**
+     * Schedules a single debug "Test Adhan" prayer alarm to fire [delayMinutes] from
+     * now (clamped to 0..15). Scheduling again cancels any previously scheduled test
+     * alarm. Uses the exact production PRAYER alarm path, so playback runs through
+     * [com.kutluoglu.prayer_notifications.scheduler.AlarmReceiver] and respects the
+     * current adhan-enabled setting.
+     */
+    fun scheduleTestAdhan(delayMinutes: Int)
 }

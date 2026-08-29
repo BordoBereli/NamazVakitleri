@@ -511,4 +511,76 @@ class PrayerNotificationSchedulerTest {
         val stopped = shadowOf(context as Application).getNextStoppedService()
         assertThat(stopped).isNull()
     }
+
+    @Test
+    fun `scheduleTestAdhan schedules a single exact alarm at now plus delay`() = runTest {
+        val before = System.currentTimeMillis()
+        val scheduler = scheduler(CoroutineScope(UnconfinedTestDispatcher(testScheduler)))
+        scheduler.scheduleTestAdhan(5)
+        val after = System.currentTimeMillis()
+
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val alarm = shadowOf(alarmManager).scheduledAlarms.single()
+        assertThat(shadowOf(alarm.operation).requestCode)
+            .isEqualTo(PrayerNotificationScheduler.REQUEST_CODE_TEST_ADHAN)
+        assertThat(alarm.type).isEqualTo(AlarmManager.RTC_WAKEUP)
+        assertThat(alarm.triggerAtTime).isAtLeast(before + 300_000L)
+        assertThat(alarm.triggerAtTime).isAtMost(after + 300_000L)
+        val testIntent = shadowOf(alarm.operation).savedIntent
+        assertThat(testIntent.getStringExtra(AlarmReceiver.EXTRA_PRAYER_KEY)).isEqualTo("Fajr")
+        assertThat(testIntent.getStringExtra(AlarmReceiver.EXTRA_ALARM_TYPE))
+            .isEqualTo(AlarmType.PRAYER.name)
+    }
+
+    @Test
+    fun `scheduleTestAdhan with zero delay fires at once`() = runTest {
+        val before = System.currentTimeMillis()
+        val scheduler = scheduler(CoroutineScope(UnconfinedTestDispatcher(testScheduler)))
+        scheduler.scheduleTestAdhan(0)
+        val after = System.currentTimeMillis()
+
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val alarm = shadowOf(alarmManager).scheduledAlarms.single()
+        assertThat(alarm.triggerAtTime).isAtLeast(before)
+        assertThat(alarm.triggerAtTime).isAtMost(after)
+    }
+
+    @Test
+    fun `scheduleTestAdhan clamps delay to fifteen minutes`() = runTest {
+        val before = System.currentTimeMillis()
+        val scheduler = scheduler(CoroutineScope(UnconfinedTestDispatcher(testScheduler)))
+        scheduler.scheduleTestAdhan(20)
+        val after = System.currentTimeMillis()
+
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val alarm = shadowOf(alarmManager).scheduledAlarms.single()
+        assertThat(alarm.triggerAtTime).isAtLeast(before + 900_000L)
+        assertThat(alarm.triggerAtTime).isAtMost(after + 900_000L)
+    }
+
+    @Test
+    fun `scheduleTestAdhan replaces a previously scheduled test alarm`() = runTest {
+        val before = System.currentTimeMillis()
+        val scheduler = scheduler(CoroutineScope(UnconfinedTestDispatcher(testScheduler)))
+        scheduler.scheduleTestAdhan(15)
+        scheduler.scheduleTestAdhan(0)
+        val after = System.currentTimeMillis()
+
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val alarm = shadowOf(alarmManager).scheduledAlarms.single()
+        assertThat(alarm.triggerAtTime).isAtLeast(before)
+        assertThat(alarm.triggerAtTime).isAtMost(after)
+    }
+
+    @Test
+    fun `cancelAll leaves the test adhan alarm scheduled`() = runTest {
+        val scheduler = scheduler(CoroutineScope(UnconfinedTestDispatcher(testScheduler)))
+        scheduler.scheduleTestAdhan(5)
+        scheduler.cancelAll()
+
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val alarm = shadowOf(alarmManager).scheduledAlarms.single()
+        assertThat(shadowOf(alarm.operation).requestCode)
+            .isEqualTo(PrayerNotificationScheduler.REQUEST_CODE_TEST_ADHAN)
+    }
 }

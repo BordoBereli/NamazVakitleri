@@ -49,6 +49,8 @@ class PrayerNotificationScheduler(
         // 24h coverage: 10 prayers + 10 pre-prayers max = 20 codes; the range must cover it.
         const val REQUEST_CODE_START = 1000
         const val REQUEST_CODE_END = 1020
+        // Debug "Test Adhan" alarm; outside the 1000..1020 daily range so cancelAll() ignores it.
+        const val REQUEST_CODE_TEST_ADHAN = 900
         const val DAILY_RESCHEDULE_WORK_NAME = "daily_prayer_reschedule"
     }
 
@@ -206,6 +208,23 @@ class PrayerNotificationScheduler(
             )
             pendingIntent?.let { alarmManager.cancel(it) }
         }
+    }
+
+    override fun scheduleTestAdhan(delayMinutes: Int) {
+        val delayMillis = delayMinutes.coerceIn(0, 15) * 60_000L
+        val testIntent = Intent(context, AlarmReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(
+            context, REQUEST_CODE_TEST_ADHAN, testIntent,
+            PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
+        )
+        pendingIntent?.let { alarmManager.cancel(it) }
+        scheduleAlarm(
+            ScheduledAlarm(
+                prayerKey = "Fajr",
+                triggerAtMillis = System.currentTimeMillis() + delayMillis,
+                requestCode = REQUEST_CODE_TEST_ADHAN
+            )
+        )
     }
 
     private fun scheduleAlarm(alarm: ScheduledAlarm) {
