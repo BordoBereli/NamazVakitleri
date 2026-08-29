@@ -40,7 +40,7 @@
 
 | File | Action |
 |------|--------|
-| `gradle/libs.versions.toml` | Modify: add `media3 = "1.11.0"` + 4 libs; remove `androidxMedia`/`androidx-media` |
+| `gradle/libs.versions.toml` | Modify: add `media3 = "1.11.0"` + 4 libs; remove `androidxMedia`/`androidx-media` (in Task 2) |
 | `prayer_notifications/build.gradle.kts` | Modify: swap `libs.androidx.media` → 3 media3 impl deps + `libs.media3.test.utils` |
 | `prayer_notifications/.../manager/AdhanVolumeController.kt` | Rewrite (session lifecycle + muted listener) |
 | `prayer_notifications/.../manager/AdhanPlayer.kt` | Rewrite (injected `Player`) |
@@ -58,7 +58,7 @@ Decisions locked in the spec (`docs/superpowers/specs/2026-08-29-ezan-media3-mig
 - Modify: `gradle/libs.versions.toml`
 - Modify: `prayer_notifications/build.gradle.kts`
 
-- [ ] **Step 1: Add the version and library entries**
+- [x] **Step 1: Add the version and library entries**
 
 In `gradle/libs.versions.toml` `[versions]`, after the `androidxMedia = "1.8.0"` line (line 35), add:
 
@@ -77,7 +77,7 @@ media3-test-utils = { module = "androidx.media3:media3-test-utils", version.ref 
 
 Do **not** remove `androidx-media` yet — the current `AdhanVolumeController.kt` still imports it.
 
-- [ ] **Step 2: Add the dependencies to the module build file**
+- [x] **Step 2: Add the dependencies to the module build file**
 
 In `prayer_notifications/build.gradle.kts`, after line 58 (`implementation(libs.androidx.media)`), add:
 
@@ -93,7 +93,7 @@ After line 81 (`testImplementation(libs.robolectric)`), add:
     testImplementation(libs.media3.test.utils)
 ```
 
-- [ ] **Step 3: Verify additive build stays green**
+- [x] **Step 3: Verify additive build stays green**
 
 Run:
 ```bash
@@ -101,7 +101,7 @@ Run:
 ```
 Expected: BUILD SUCCESSFUL (both compile classes and unit tests pass unchanged).
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add gradle/libs.versions.toml prayer_notifications/build.gradle.kts
@@ -715,9 +715,12 @@ object PrayerNotificationsModule {
 
 In `prayer_notifications/build.gradle.kts`, delete the line `implementation(libs.androidx.media)` (line 58). The three media3 dependencies added in Task 1 remain.
 
+In `gradle/libs.versions.toml`, also delete the now-dead catalog entries: the `androidx-media` library line (line 87) AND the `androidxMedia = "1.8.0"` version line (line 35) — no build file references them after the dependency removal (verified: `libs.androidx.media` appears only at `build.gradle.kts:58`).
+
 Verify nothing still references it:
 ```bash
 grep -rn "androidx.media\.\|MediaSessionCompat\|VolumeProviderCompat\|PlaybackStateCompat" --include="*.kt" prayer_notifications/src
+grep -rn "androidxMedia\|libs.androidx.media" gradle/*.toml prayer_notifications/build.gradle.kts
 ```
 Expected: no matches.
 
