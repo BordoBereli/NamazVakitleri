@@ -33,6 +33,14 @@ object PrayerDataModule {
         )
 
     @Single
+    @Named("quranStore")
+    fun provideQuranDataStore(context: Context): DataStore<Preferences> =
+        PreferenceDataStoreFactory.create(
+            corruptionHandler = ReplaceFileCorruptionHandler { emptyPreferences() },
+            produceFile = { context.preferencesDataStoreFile("quran_store") }
+        )
+
+    @Single
     @Named("preCacheScope")
     fun providePreCacheScope(): CoroutineScope =
         CoroutineScope(SupervisorJob() + Dispatchers.Default)
