@@ -51,9 +51,7 @@ class AdhanService : Service(), KoinComponent {
 
     private val volumeObserver = object : ContentObserver(Handler(Looper.getMainLooper())) {
         override fun onChange(selfChange: Boolean) {
-            if (isStreamAtFloor(audioManager, AudioManager.STREAM_ALARM) ||
-                isStreamAtFloor(audioManager, AudioManager.STREAM_MUSIC)
-            ) {
+            if (isAtVolumeFloor()) {
                 stopSelf()
             }
         }
@@ -87,17 +85,22 @@ class AdhanService : Service(), KoinComponent {
     private fun startVolumePolling() {
         volumePollJob?.cancel()
         volumePollJob = serviceScope.launch(Dispatchers.Default) {
+            var wasAtFloor = isAtVolumeFloor()
             while (isActive) {
-                if (isStreamAtFloor(audioManager, AudioManager.STREAM_ALARM) ||
-                    isStreamAtFloor(audioManager, AudioManager.STREAM_MUSIC)
-                ) {
+                val isAtFloor = isAtVolumeFloor()
+                if (isAtFloor && !wasAtFloor) {
                     stopSelf()
                     break
                 }
+                wasAtFloor = isAtFloor
                 delay(VOLUME_POLL_INTERVAL_MS)
             }
         }
     }
+
+    private fun isAtVolumeFloor(): Boolean =
+        isStreamAtFloor(audioManager, AudioManager.STREAM_ALARM) ||
+            isStreamAtFloor(audioManager, AudioManager.STREAM_MUSIC)
 
     private fun registerVolumeObserver() {
         if (volumeObserverRegistered) return

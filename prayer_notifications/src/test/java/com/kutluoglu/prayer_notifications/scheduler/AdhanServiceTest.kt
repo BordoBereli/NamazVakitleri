@@ -4,6 +4,7 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.media.AudioManager
+import android.os.Looper
 import android.provider.Settings
 import androidx.core.app.NotificationCompat
 import androidx.test.core.app.ApplicationProvider
@@ -159,6 +160,19 @@ class AdhanServiceTest {
         assertThat(shadowOf(controller.get()).isStoppedBySelf()).isTrue()
         controller.destroy()
         verify { adhanPlayer.stop() }
+    }
+
+    @Test
+    fun `service starting with volume at floor does not stop immediately`() {
+        val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        audioManager.setStreamVolume(AudioManager.STREAM_ALARM, 0, 0)
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 5, 0)
+        val controller = startService("Fajr")
+        shadowOf(Looper.getMainLooper()).idle()
+        Thread.sleep(100)
+        shadowOf(Looper.getMainLooper()).idle()
+        assertThat(shadowOf(controller.get()).isStoppedBySelf()).isFalse()
+        controller.destroy()
     }
 
     @Test
