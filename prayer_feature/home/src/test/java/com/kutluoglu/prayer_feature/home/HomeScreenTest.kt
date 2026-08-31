@@ -224,7 +224,44 @@ class HomeScreenTest {
         }
         composeTestRule.waitForIdle()
         composeTestRule.onNodeWithContentDescription("Save Verse")
+            // performClick() is swallowed by CustomBottomSheet's drag gestures under Robolectric,
+            // so invoke the semantics OnClick action directly.
             .performSemanticsAction(SemanticsActions.OnClick) { it() }
         assertThat(toggled).isTrue()
+    }
+
+    @Test
+    fun `verse detail sheet shows unsave state when verse is saved`() {
+        val verse = com.kutluoglu.prayer.model.quran.AyahData(
+            text = "Bismillah",
+            surah = com.kutluoglu.prayer.model.quran.SurahInfo(
+                englishName = "Al-Fatihah",
+                name = "الفاتحة",
+                number = 1,
+                numberOfAyahs = 7
+            ),
+            numberInSurah = 1
+        )
+        composeTestRule.setContent {
+            HomeScreen(
+                navController = mockk<NavController>(relaxed = true),
+                uiState = HomeUiState.Success(
+                    locationState = com.kutluoglu.prayer_feature.common.states.LocationUiState(
+                        locationData = istanbul.location,
+                        locationInfoText = "Istanbul, Turkey"
+                    ),
+                    quranVerse = verse,
+                    isVerseDetailSheetVisible = true,
+                    isVerseSaved = true
+                ),
+                locationsState = LocationsState(entries = listOf(istanbul), selectedId = "loc-1"),
+                prayerDataByLocation = emptyMap(),
+                activeLocationId = "loc-1",
+                quranVerseFormatter = mockk<QuranVerseFormatter>(relaxed = true),
+                onEvent = {}
+            )
+        }
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithContentDescription("Unsave Verse").assertIsDisplayed()
     }
 }
