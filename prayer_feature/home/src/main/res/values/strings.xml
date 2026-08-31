@@ -137,5 +137,10 @@
     <string name="add_location">Add location</string>
     <string name="use_my_location">Use My Location</string>
     <string name="permission_denied_hint">Location permission is off. Use My Location will open settings.</string>
+    <string name="saved_verses">Saved Verses</string>
+    <string name="no_saved_verses">No saved verses yet. Bookmark a verse from the home screen.</string>
+    <string name="back">Back</string>
+    <string name="delete">Delete</string>
+    <string name="reorder">Reorder</string>
 
 </resources>
