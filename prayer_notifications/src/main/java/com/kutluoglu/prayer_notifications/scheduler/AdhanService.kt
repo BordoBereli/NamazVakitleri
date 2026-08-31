@@ -50,10 +50,26 @@ class AdhanService : Service(), KoinComponent {
     )
 
     private val volumeObserver = object : ContentObserver(Handler(Looper.getMainLooper())) {
+        private var alarmWasAtFloor = false
+        private var musicWasAtFloor = false
+
+        fun reset() {
+            alarmWasAtFloor = isStreamAtFloor(audioManager, AudioManager.STREAM_ALARM)
+            musicWasAtFloor = isStreamAtFloor(audioManager, AudioManager.STREAM_MUSIC)
+        }
+
         override fun onChange(selfChange: Boolean) {
-            if (isAtVolumeFloor()) {
+            val alarmIsAtFloor = isStreamAtFloor(audioManager, AudioManager.STREAM_ALARM)
+            val musicIsAtFloor = isStreamAtFloor(audioManager, AudioManager.STREAM_MUSIC)
+            if (shouldStopForVolumeFloor(
+                    alarmWasAtFloor, alarmIsAtFloor, musicWasAtFloor, musicIsAtFloor
+                )
+            ) {
                 stopSelf()
+                return
             }
+            alarmWasAtFloor = alarmIsAtFloor
+            musicWasAtFloor = musicIsAtFloor
         }
     }
 
@@ -85,25 +101,28 @@ class AdhanService : Service(), KoinComponent {
     private fun startVolumePolling() {
         volumePollJob?.cancel()
         volumePollJob = serviceScope.launch(Dispatchers.Default) {
-            var wasAtFloor = isAtVolumeFloor()
+            var alarmWasAtFloor = isStreamAtFloor(audioManager, AudioManager.STREAM_ALARM)
+            var musicWasAtFloor = isStreamAtFloor(audioManager, AudioManager.STREAM_MUSIC)
             while (isActive) {
-                val isAtFloor = isAtVolumeFloor()
-                if (isAtFloor && !wasAtFloor) {
+                val alarmIsAtFloor = isStreamAtFloor(audioManager, AudioManager.STREAM_ALARM)
+                val musicIsAtFloor = isStreamAtFloor(audioManager, AudioManager.STREAM_MUSIC)
+                if (shouldStopForVolumeFloor(
+                        alarmWasAtFloor, alarmIsAtFloor, musicWasAtFloor, musicIsAtFloor
+                    )
+                ) {
                     stopSelf()
                     break
                 }
-                wasAtFloor = isAtFloor
+                alarmWasAtFloor = alarmIsAtFloor
+                musicWasAtFloor = musicIsAtFloor
                 delay(VOLUME_POLL_INTERVAL_MS)
             }
         }
     }
 
-    private fun isAtVolumeFloor(): Boolean =
-        isStreamAtFloor(audioManager, AudioManager.STREAM_ALARM) ||
-            isStreamAtFloor(audioManager, AudioManager.STREAM_MUSIC)
-
     private fun registerVolumeObserver() {
         if (volumeObserverRegistered) return
+        volumeObserver.reset()
         volumeUris.forEach { uri ->
             contentResolver.registerContentObserver(uri, false, volumeObserver)
         }
@@ -138,3 +157,11 @@ internal fun isStreamAtFloor(audioManager: AudioManager, streamType: Int): Boole
     val floor = maxOf(min, 1)
     return audioManager.getStreamVolume(streamType) <= floor
 }
+
+internal fun shouldStopForVolumeFloor(
+    alarmWasAtFloor: Boolean,
+    alarmIsAtFloor: Boolean,
+    musicWasAtFloor: Boolean,
+    musicIsAtFloor: Boolean,
+): Boolean =
+    (alarmIsAtFloor && !alarmWasAtFloor) || (musicIsAtFloor && !musicWasAtFloor)

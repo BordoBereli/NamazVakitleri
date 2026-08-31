@@ -110,6 +110,32 @@ class AdhanServiceTest {
     }
 
     @Test
+    fun `volume change on the other stream does not stop when one stream started at floor`() {
+        val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        audioManager.setStreamVolume(AudioManager.STREAM_ALARM, 0, 0)
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 5, 0)
+        val controller = startService("Fajr")
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 4, 0)
+        val uri = Settings.System.getUriFor("volume_music_sound")
+        shadowOf(context.contentResolver).getContentObservers(uri).forEach { it.onChange(false) }
+        assertThat(shadowOf(controller.get()).isStoppedBySelf()).isFalse()
+        controller.destroy()
+    }
+
+    @Test
+    fun `volume down to floor on the other stream stops even when one stream started at floor`() {
+        val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        audioManager.setStreamVolume(AudioManager.STREAM_ALARM, 0, 0)
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 5, 0)
+        val controller = startService("Fajr")
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0)
+        val uri = Settings.System.getUriFor("volume_music_sound")
+        shadowOf(context.contentResolver).getContentObservers(uri).forEach { it.onChange(false) }
+        assertThat(shadowOf(controller.get()).isStoppedBySelf()).isTrue()
+        controller.destroy()
+    }
+
+    @Test
     fun `alarm volume at minimum is at floor`() {
         val audioManager = mockk<AudioManager>(relaxed = true)
         every { audioManager.getStreamMinVolume(AudioManager.STREAM_ALARM) } returns 1
@@ -173,6 +199,30 @@ class AdhanServiceTest {
         shadowOf(Looper.getMainLooper()).idle()
         assertThat(shadowOf(controller.get()).isStoppedBySelf()).isFalse()
         controller.destroy()
+    }
+
+    @Test
+    fun `one stream transitioning to floor stops even when the other started at floor`() {
+        assertThat(shouldStopForVolumeFloor(
+            alarmWasAtFloor = true, alarmIsAtFloor = true,
+            musicWasAtFloor = false, musicIsAtFloor = true,
+        )).isTrue()
+    }
+
+    @Test
+    fun `both streams at floor from start does not stop`() {
+        assertThat(shouldStopForVolumeFloor(
+            alarmWasAtFloor = true, alarmIsAtFloor = true,
+            musicWasAtFloor = true, musicIsAtFloor = true,
+        )).isFalse()
+    }
+
+    @Test
+    fun `no stream at floor does not stop`() {
+        assertThat(shouldStopForVolumeFloor(
+            alarmWasAtFloor = false, alarmIsAtFloor = false,
+            musicWasAtFloor = false, musicIsAtFloor = false,
+        )).isFalse()
     }
 
     @Test
