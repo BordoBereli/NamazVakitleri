@@ -62,6 +62,7 @@ class SavedVersesViewModel(
                 }
                 .onFailure {
                     Log.e("SavedVersesViewModel", "Failed to remove saved verse -> ${it.message}")
+                    loadSavedVerses()
                 }
         }
     }

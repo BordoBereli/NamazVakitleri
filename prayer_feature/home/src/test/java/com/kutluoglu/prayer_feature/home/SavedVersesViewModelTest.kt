@@ -82,6 +82,21 @@ class SavedVersesViewModelTest {
     }
 
     @Test
+    fun `remove failure reloads the list`() = runTest {
+        coEvery { getSavedVersesUseCase() } returnsMany listOf(
+            Result.success(listOf(verse(1), verse(2))),
+            Result.success(listOf(verse(1), verse(2)))
+        )
+        coEvery { toggleSavedVerseUseCase(verse(1)) } returns Result.failure(RuntimeException("boom"))
+
+        val vm = SavedVersesViewModel(getSavedVersesUseCase, reorderSavedVersesUseCase, toggleSavedVerseUseCase)
+        vm.onEvent(SavedVersesEvent.OnRemove(verse(1)))
+
+        coVerify { toggleSavedVerseUseCase(verse(1)) }
+        assertThat(vm.uiState.value).isEqualTo(SavedVersesUiState.Success(listOf(verse(1), verse(2))))
+    }
+
+    @Test
     fun `reorder persists the new order and updates state`() = runTest {
         coEvery { getSavedVersesUseCase() } returns Result.success(listOf(verse(1), verse(2)))
         coEvery { reorderSavedVersesUseCase(any()) } returns Result.success(Unit)
