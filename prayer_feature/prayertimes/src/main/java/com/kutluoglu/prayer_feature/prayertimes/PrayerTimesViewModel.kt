@@ -248,7 +248,8 @@ class PrayerTimesViewModel(
                     coroutineScope {
                         val results = arrayOfNulls<DailyPrayer>(month.numberOfDays)
                         val mutex = Mutex()
-                        val todayDayOfMonth = today.dayOfMonth
+                        val todayDayOfMonth =
+                            if (today.date.yearMonth == month) today.dayOfMonth else 1
                         val orderedDays = listOf(todayDayOfMonth) +
                             (1..month.numberOfDays).filter { it != todayDayOfMonth }
                         orderedDays.map { day ->

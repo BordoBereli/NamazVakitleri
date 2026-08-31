@@ -29,6 +29,7 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
@@ -47,6 +48,7 @@ import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
+import kotlinx.datetime.YearMonth
 import kotlinx.datetime.minus
 import kotlinx.datetime.onDay
 import kotlinx.datetime.plus
@@ -344,6 +346,31 @@ class PrayerTimesViewModelTest {
             assertThat(success.isCurrentMonth).isFalse()
             assertThat(success.monthlyPrayers.size).isEqualTo(nextMonth.numberOfDays)
             cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `navigating to a shorter month when today is the 31st does not throw`() = runTest {
+        mockkStatic("com.kutluoglu.core.common.LocalDateTimeExtKt")
+        try {
+            every { LocalDateTime.now(any()) } returns LocalDateTime(2026, 8, 31, 12, 0)
+
+            viewModel.loadMonthlyPrayerTimes()
+            viewModel.onEvent(PrayerTimesEvent.OnNextMonth)
+
+            viewModel.uiState.test {
+                var state = withTimeout(5_000) { awaitItem() }
+                while (state is PrayerTimesUiState.Loading) {
+                    state = withTimeout(5_000) { awaitItem() }
+                }
+                assertThat(state).isInstanceOf(PrayerTimesUiState.Success::class.java)
+                val success = state as PrayerTimesUiState.Success
+                assertThat(success.selectedMonth).isEqualTo(YearMonth(2026, 9))
+                assertThat(success.monthlyPrayers.size).isEqualTo(30)
+                cancelAndIgnoreRemainingEvents()
+            }
+        } finally {
+            unmockkStatic("com.kutluoglu.core.common.LocalDateTimeExtKt")
         }
     }
 
