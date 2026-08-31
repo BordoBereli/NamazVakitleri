@@ -24,7 +24,8 @@ sealed class HomeUiState {
         val countdownState: CountdownUiState = CountdownUiState(),
 
         val quranVerse: AyahData? = null,
-        val isVerseDetailSheetVisible: Boolean = false
+        val isVerseDetailSheetVisible: Boolean = false,
+        val isVerseSaved: Boolean = false
     ) : HomeUiState()
 }
 

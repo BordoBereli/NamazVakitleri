@@ -6,6 +6,8 @@ import com.kutluoglu.core.designsystem.utils.LanguageProvider
 import com.kutluoglu.prayer.model.quran.AyahData
 import com.kutluoglu.prayer.model.quran.SurahInfo
 import com.kutluoglu.prayer.usecases.quran.GetRandomVerseUseCase
+import com.kutluoglu.prayer.usecases.quran.IsVerseSavedUseCase
+import com.kutluoglu.prayer.usecases.quran.ToggleSavedVerseUseCase
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -21,6 +23,8 @@ import org.junit.jupiter.api.Test
 class QuranVerseLoaderTest {
 
     private val getRandomVerseUseCase: GetRandomVerseUseCase = mockk()
+    private val isVerseSavedUseCase: IsVerseSavedUseCase = mockk()
+    private val toggleSavedVerseUseCase: ToggleSavedVerseUseCase = mockk()
     private val languageProvider: LanguageProvider = mockk()
 
     @BeforeEach
@@ -43,8 +47,9 @@ class QuranVerseLoaderTest {
         )
         coEvery { languageProvider.getLanguageCode() } returns "tr"
         coEvery { getRandomVerseUseCase.invoke("tr") } returns Result.success(verse)
+        coEvery { isVerseSavedUseCase.invoke(verse) } returns false
 
-        val loader = QuranVerseLoader(getRandomVerseUseCase, languageProvider)
+        val loader = QuranVerseLoader(getRandomVerseUseCase, isVerseSavedUseCase, toggleSavedVerseUseCase, languageProvider)
         loader.loadVerse(scope = this, isScreenReady = { true })
         runCurrent()
 
@@ -57,7 +62,7 @@ class QuranVerseLoaderTest {
         coEvery { getRandomVerseUseCase.invoke("tr") } returns Result.failure(RuntimeException("x"))
 
         var ready = false
-        val loader = QuranVerseLoader(getRandomVerseUseCase, languageProvider)
+        val loader = QuranVerseLoader(getRandomVerseUseCase, isVerseSavedUseCase, toggleSavedVerseUseCase, languageProvider)
         loader.loadVerse(scope = this, isScreenReady = { ready })
 
         advanceTimeBy(5_000)
@@ -72,10 +77,55 @@ class QuranVerseLoaderTest {
 
     @Test
     fun `setSheetVisible toggles the sheet flag`() = runTest {
-        val loader = QuranVerseLoader(getRandomVerseUseCase, languageProvider)
+        val loader = QuranVerseLoader(getRandomVerseUseCase, isVerseSavedUseCase, toggleSavedVerseUseCase, languageProvider)
         loader.setSheetVisible(true)
         assertThat(loader.quranState.value.isSheetVisible).isTrue()
         loader.setSheetVisible(false)
         assertThat(loader.quranState.value.isSheetVisible).isFalse()
+    }
+
+    @Test
+    fun `loadVerse sets isSaved from the store`() = runTest {
+        val verse = AyahData(
+            text = "Bismillah...",
+            surah = SurahInfo(
+                englishName = "Al-Fatihah",
+                name = "الفاتحة",
+                number = 1,
+                numberOfAyahs = 7
+            ),
+            numberInSurah = 1
+        )
+        coEvery { languageProvider.getLanguageCode() } returns "tr"
+        coEvery { getRandomVerseUseCase.invoke("tr") } returns Result.success(verse)
+        coEvery { isVerseSavedUseCase.invoke(verse) } returns true
+
+        val loader = QuranVerseLoader(getRandomVerseUseCase, isVerseSavedUseCase, toggleSavedVerseUseCase, languageProvider)
+        loader.loadVerse(scope = this, isScreenReady = { true })
+        runCurrent()
+
+        assertThat(loader.quranState.value.verse).isEqualTo(verse)
+        assertThat(loader.quranState.value.isSaved).isTrue()
+    }
+
+    @Test
+    fun `toggleSaved flips isSaved on success`() = runTest {
+        val verse = AyahData(
+            text = "Bismillah...",
+            surah = SurahInfo(
+                englishName = "Al-Fatihah",
+                name = "الفاتحة",
+                number = 1,
+                numberOfAyahs = 7
+            ),
+            numberInSurah = 1
+        )
+        coEvery { toggleSavedVerseUseCase.invoke(verse) } returns Result.success(Unit)
+
+        val loader = QuranVerseLoader(getRandomVerseUseCase, isVerseSavedUseCase, toggleSavedVerseUseCase, languageProvider)
+        loader.toggleSaved(verse, scope = this)
+        runCurrent()
+
+        assertThat(loader.quranState.value.isSaved).isTrue()
     }
 }

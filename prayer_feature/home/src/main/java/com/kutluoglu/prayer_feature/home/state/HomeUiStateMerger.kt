@@ -49,7 +49,8 @@ fun mergeToHomeUiState(
                     locationState = location,
                     countdownState = countdown,
                     quranVerse = quran.verse,
-                    isVerseDetailSheetVisible = quran.isSheetVisible
+                    isVerseDetailSheetVisible = quran.isSheetVisible,
+                    isVerseSaved = quran.isSaved
                 )
             }
         }

@@ -4,5 +4,6 @@ import com.kutluoglu.prayer.model.quran.AyahData
 
 data class QuranUiState(
     val verse: AyahData? = null,
-    val isSheetVisible: Boolean = false
+    val isSheetVisible: Boolean = false,
+    val isSaved: Boolean = false
 )

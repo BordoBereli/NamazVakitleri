@@ -160,6 +160,11 @@ class HomeViewModel(
                 analyticsTracker.logEvent(AnalyticsEvents.QURAN_VERSE_DISMISSED)
                 setVerseSheetVisibility(isVisible = false)
             }
+            HomeEvent.OnToggleVerseSaved -> {
+                quranVerseLoader.quranState.value.verse?.let { verse ->
+                    quranVerseLoader.toggleSaved(verse, viewModelScope)
+                }
+            }
             is HomeEvent.OnLocationSelected -> {
                 analyticsTracker.logEvent(
                     AnalyticsEvents.LOCATION_SWITCHED,

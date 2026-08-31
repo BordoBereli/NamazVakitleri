@@ -11,5 +11,6 @@ sealed interface HomeEvent {
     object OnLoadQuranVerse : HomeEvent
     object OnVerseClicked : HomeEvent
     object OnVerseDetailDismissed : HomeEvent
+    object OnToggleVerseSaved : HomeEvent
     data class OnLocationSelected(val locationId: String) : HomeEvent
 }
