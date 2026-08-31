@@ -81,4 +81,28 @@ class QuranRepositoryTest {
         assertThat(result.isFailure).isTrue()
         coVerify(exactly = 0) { quranSurahCache.putSurah(any(), any()) }
     }
+
+    @Test
+    fun `getSavedVerses returns the store list`() = runTest {
+        val saved = listOf(verse(1, 1), verse(1, 2))
+        coEvery { savedVersesStore.getSavedVerses() } returns saved
+
+        val repository = QuranRepository(quranDataSource, quranSurahCache, savedVersesStore)
+        val result = repository.getSavedVerses()
+
+        assertThat(result.isSuccess).isTrue()
+        assertThat(result.getOrThrow()).isEqualTo(saved)
+    }
+
+    @Test
+    fun `reorderSavedVerses persists the new order`() = runTest {
+        val order = listOf(verse(1, 2), verse(1, 1))
+        coEvery { savedVersesStore.reorder(order) } returns Unit
+
+        val repository = QuranRepository(quranDataSource, quranSurahCache, savedVersesStore)
+        val result = repository.reorderSavedVerses(order)
+
+        assertThat(result.isSuccess).isTrue()
+        coVerify(exactly = 1) { savedVersesStore.reorder(order) }
+    }
 }

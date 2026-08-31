@@ -38,4 +38,10 @@ class QuranRepository(
 
     override suspend fun toggleSavedVerse(verse: AyahData): Result<Unit> =
         runCatching { savedVersesStore.toggle(verse) }
+
+    override suspend fun getSavedVerses(): Result<List<AyahData>> =
+        runCatching { savedVersesStore.getSavedVerses() }
+
+    override suspend fun reorderSavedVerses(verses: List<AyahData>): Result<Unit> =
+        runCatching { savedVersesStore.reorder(verses) }
 }
