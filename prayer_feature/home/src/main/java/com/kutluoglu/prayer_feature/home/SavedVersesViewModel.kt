@@ -51,6 +51,7 @@ class SavedVersesViewModel(
             _uiState.value = SavedVersesUiState.Loading
             getSavedVersesUseCase()
                 .onSuccess { verses ->
+                    Log.d("SavedVersesViewModel", "Loaded ${verses.size} saved verses")
                     _uiState.value = SavedVersesUiState.Success(verses)
                 }
                 .onFailure {

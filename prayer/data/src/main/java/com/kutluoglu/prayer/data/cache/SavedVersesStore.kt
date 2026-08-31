@@ -26,10 +26,13 @@ class SavedVersesStore(
 
     suspend fun getSavedVerses(): List<AyahData> {
         val raw = dataStore.data.map { it[key] }.firstOrNull()
+        println("SavedVersesStore getSavedVerses raw=$raw")
         if (raw.isNullOrBlank()) return emptyList()
-        return withContext(Dispatchers.Default) {
+        val decoded = withContext(Dispatchers.Default) {
             runCatching { json.decodeFromString<List<AyahData>>(raw) }.getOrDefault(emptyList())
         }
+        println("SavedVersesStore getSavedVerses decoded=${decoded.size}")
+        return decoded
     }
 
     suspend fun isSaved(verse: AyahData): Boolean = getSavedVerses().any { it == verse }

@@ -53,6 +53,7 @@ import com.kutluoglu.prayer_feature.home.feature.CustomBottomSheet
 import com.kutluoglu.prayer_feature.home.feature.VerseDetailSheetContent
 import com.kutluoglu.prayer_feature.home.state.SavedVersesUiState
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
@@ -108,6 +109,7 @@ fun SavedVersesScreen(
     LaunchedEffect(Unit) {
         snapshotFlow { reorderableState.isAnyItemDragging }
             .distinctUntilChanged()
+            .drop(1)
             .filter { !it }
             .collect { onEvent(SavedVersesEvent.OnReorder(entries.toList())) }
     }

@@ -102,6 +102,8 @@ dependencies {
 
     //region --- Default Testing Dependencies ---
     testImplementation(libs.junit)
+    testImplementation(project(":prayer:data"))
+    testImplementation(project(":prayer_remote"))
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     //endregion
