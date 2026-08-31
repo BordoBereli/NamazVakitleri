@@ -101,7 +101,7 @@ fun LocationChipsRow(
             state = listState,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 4.dp),
+                .padding(start = 12.dp, end = 68.dp, top = 4.dp, bottom = 4.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             itemsIndexed(entries, key = { _, entry -> entry.id }) { index, entry ->
