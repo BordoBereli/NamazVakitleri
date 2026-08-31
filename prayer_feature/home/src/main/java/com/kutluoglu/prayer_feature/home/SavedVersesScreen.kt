@@ -41,6 +41,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -158,28 +159,42 @@ fun SavedVersesScreen(
                     ) {
                         items(entries, key = { it.toString() }) { verse ->
                             ReorderableItem(state = reorderableState, key = verse.toString()) { isDragging ->
-                                SwipeToDismissBox(
-                                    state = rememberSwipeToDismissBoxState(
-                                        confirmValueChange = { value ->
-                                            if (value != SwipeToDismissBoxValue.Settled) {
-                                                entries.remove(verse)
-                                                onEvent(SavedVersesEvent.OnRemove(verse))
-                                            }
-                                            true
+                                val dismissState = rememberSwipeToDismissBoxState(
+                                    confirmValueChange = { value ->
+                                        if (value != SwipeToDismissBoxValue.Settled) {
+                                            entries.remove(verse)
+                                            onEvent(SavedVersesEvent.OnRemove(verse))
                                         }
-                                    ),
+                                        true
+                                    }
+                                )
+                                SwipeToDismissBox(
+                                    state = dismissState,
                                     backgroundContent = {
+                                        val isSwiping =
+                                            dismissState.currentValue != SwipeToDismissBoxValue.Settled ||
+                                                dismissState.targetValue != SwipeToDismissBoxValue.Settled
                                         Box(
                                             modifier = Modifier
                                                 .fillMaxSize()
-                                                .background(MaterialTheme.colorScheme.errorContainer)
+                                                .background(
+                                                    if (isSwiping) {
+                                                        MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
+                                                    } else {
+                                                        MaterialTheme.colorScheme.background
+                                                    }
+                                                )
                                                 .padding(horizontal = 16.dp),
                                             contentAlignment = Alignment.CenterEnd
                                         ) {
                                             Icon(
                                                 Icons.Default.Delete,
                                                 contentDescription = null,
-                                                tint = MaterialTheme.colorScheme.onErrorContainer
+                                                tint = if (isSwiping) {
+                                                    MaterialTheme.colorScheme.primary
+                                                } else {
+                                                    Color.Transparent
+                                                }
                                             )
                                         }
                                     }
