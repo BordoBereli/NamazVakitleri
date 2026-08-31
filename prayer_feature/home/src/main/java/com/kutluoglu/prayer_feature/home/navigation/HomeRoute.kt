@@ -9,6 +9,7 @@ import com.kutluoglu.prayer_feature.home.HomeScreen
 import com.kutluoglu.prayer_feature.home.HomeViewModel
 import com.kutluoglu.prayer_feature.home.common.QuranVerseFormatter
 import com.kutluoglu.prayer_feature.home.state.mergeToHomeUiState
+import com.kutluoglu.prayer_navigation.core.Screen
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
@@ -50,6 +51,9 @@ fun HomeRoute(
         prayerDataByLocation = prayerData,
         activeLocationId = activeLocationId,
         quranVerseFormatter = verseFormatter,
+        onNavigateToSavedVerses = {
+            navController.navigate(Screen.SavedVersesScreen.route)
+        },
         onEvent = { event -> viewModel.onEvent(event) }
     )
 }

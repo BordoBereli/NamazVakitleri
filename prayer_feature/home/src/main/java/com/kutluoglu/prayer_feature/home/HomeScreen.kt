@@ -5,14 +5,23 @@ import android.net.Uri
 import android.provider.Settings
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.BookmarkBorder
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -33,6 +42,7 @@ fun HomeScreen(
     prayerDataByLocation: Map<String, LoadedPrayerData>,
     activeLocationId: String?,
     quranVerseFormatter: QuranVerseFormatter,
+    onNavigateToSavedVerses: () -> Unit = {},
     onEvent: (HomeEvent) -> Unit
 ) {
     val onPrayerTimesClick = {
@@ -106,6 +116,18 @@ fun HomeScreen(
                 },
                 permissionDenied = permissionActions.permanentlyDenied,
                 onEvent = onEvent
+            )
+        }
+        IconButton(
+            onClick = onNavigateToSavedVerses,
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .statusBarsPadding()
+                .padding(8.dp)
+        ) {
+            Icon(
+                Icons.Outlined.BookmarkBorder,
+                contentDescription = stringResource(R.string.saved_verses)
             )
         }
     }

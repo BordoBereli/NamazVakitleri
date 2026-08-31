@@ -264,4 +264,25 @@ class HomeScreenTest {
         composeTestRule.waitForIdle()
         composeTestRule.onNodeWithContentDescription("Unsave Verse").assertIsDisplayed()
     }
+
+    @Test
+    fun `bookmark icon fires onNavigateToSavedVerses`() {
+        var navigated = false
+        composeTestRule.setContent {
+            HomeScreen(
+                navController = mockk<NavController>(relaxed = true),
+                uiState = HomeUiState.Empty,
+                locationsState = LocationsState(),
+                prayerDataByLocation = emptyMap(),
+                activeLocationId = null,
+                quranVerseFormatter = mockk<QuranVerseFormatter>(relaxed = true),
+                onNavigateToSavedVerses = { navigated = true },
+                onEvent = {}
+            )
+        }
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithContentDescription("Saved Verses").performClick()
+        composeTestRule.waitForIdle()
+        assertThat(navigated).isTrue()
+    }
 }
