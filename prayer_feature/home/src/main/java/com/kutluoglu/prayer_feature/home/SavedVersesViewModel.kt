@@ -69,6 +69,10 @@ class SavedVersesViewModel(
     private fun reorder(verses: List<AyahData>) {
         viewModelScope.launch {
             reorderSavedVersesUseCase(verses)
+                .onSuccess {
+                    val current = _uiState.value as? SavedVersesUiState.Success ?: return@onSuccess
+                    _uiState.value = current.copy(verses = verses)
+                }
                 .onFailure {
                     Log.e("SavedVersesViewModel", "Failed to reorder saved verses -> ${it.message}")
                     loadSavedVerses()

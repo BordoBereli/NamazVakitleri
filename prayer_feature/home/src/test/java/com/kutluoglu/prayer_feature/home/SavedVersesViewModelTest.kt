@@ -82,7 +82,7 @@ class SavedVersesViewModelTest {
     }
 
     @Test
-    fun `reorder persists the new order`() = runTest {
+    fun `reorder persists the new order and updates state`() = runTest {
         coEvery { getSavedVersesUseCase() } returns Result.success(listOf(verse(1), verse(2)))
         coEvery { reorderSavedVersesUseCase(any()) } returns Result.success(Unit)
 
@@ -90,6 +90,7 @@ class SavedVersesViewModelTest {
         vm.onEvent(SavedVersesEvent.OnReorder(listOf(verse(2), verse(1))))
 
         coVerify { reorderSavedVersesUseCase(listOf(verse(2), verse(1))) }
+        assertThat(vm.uiState.value).isEqualTo(SavedVersesUiState.Success(listOf(verse(2), verse(1))))
     }
 
     @Test
