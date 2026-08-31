@@ -14,7 +14,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,7 +25,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.kutluoglu.core.designsystem.components.LoadingIndicator
+import com.kutluoglu.prayer.domain.PrayerLogicEngine
 import com.kutluoglu.prayer.model.location.LocationEntry
+import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
 import com.kutluoglu.prayer_feature.home.R
 import com.kutluoglu.prayer_feature.home.common.QuranVerseFormatter
 import com.kutluoglu.prayer_feature.home.components.BottomContainer
@@ -37,9 +42,12 @@ import com.kutluoglu.prayer_feature.home.feature.VerseDetailSheetContent
 import com.kutluoglu.prayer_feature.home.layout.HomeResponsiveLayout
 import com.kutluoglu.prayer_feature.home.state.CountdownUiState
 import com.kutluoglu.prayer_feature.home.state.HomeUiState
+import com.kutluoglu.prayer_feature.home.state.PrayerUiState
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
+import java.time.ZoneId
 
 @Composable
 fun LocationPager(
@@ -54,7 +62,9 @@ fun LocationPager(
     onChooseLocation: () -> Unit,
     onUseMyLocation: () -> Unit,
     permissionDenied: Boolean,
-    onEvent: (HomeEvent) -> Unit
+    onEvent: (HomeEvent) -> Unit,
+    calculator: PrayerLogicEngine,
+    formatter: PrayerFormatter
 ) {
     if (entries.isEmpty()) {
         if (uiState is HomeUiState.Loading) {
@@ -126,7 +136,9 @@ fun LocationPager(
                 data != null -> LocationPagePreview(
                     data = data,
                     isAutoGps = entry.isAutoGps,
-                    onViewAllClicked = onPrayerTimesClick
+                    onViewAllClicked = onPrayerTimesClick,
+                    calculator = calculator,
+                    formatter = formatter
                 )
                 else -> LocationPlaceholder(entry)
             }
@@ -148,13 +160,21 @@ private fun LocationPlaceholder(entry: LocationEntry?) {
 private fun LocationPagePreview(
     data: LoadedPrayerData,
     isAutoGps: Boolean,
-    onViewAllClicked: () -> Unit
+    onViewAllClicked: () -> Unit,
+    calculator: PrayerLogicEngine,
+    formatter: PrayerFormatter
 ) {
+    val countdownState = rememberLocationCountdown(
+        prayerState = data.prayerState,
+        zoneId = data.zoneId,
+        calculator = calculator,
+        formatter = formatter
+    )
     val successState = HomeUiState.Success(
         timeState = data.timeState,
         prayerState = data.prayerState,
         locationState = data.locationState,
-        countdownState = CountdownUiState(),
+        countdownState = countdownState,
         quranVerse = null,
         isVerseDetailSheetVisible = false
     )
@@ -181,6 +201,39 @@ private fun LocationPagePreview(
         },
         bottomContainer = { modifier -> Box(modifier = modifier) }
     )
+}
+
+/**
+ * Computes a live per-second countdown for a non-active location page so the
+ * preview shows the real time remaining instead of the "--:--:--" placeholder.
+ */
+@Composable
+private fun rememberLocationCountdown(
+    prayerState: PrayerUiState,
+    zoneId: ZoneId,
+    calculator: PrayerLogicEngine,
+    formatter: PrayerFormatter
+): CountdownUiState {
+    var countdown by remember(prayerState, zoneId) {
+        mutableStateOf(CountdownUiState())
+    }
+    LaunchedEffect(prayerState, zoneId) {
+        while (true) {
+            val nextPrayer = prayerState.nextPrayer
+            countdown = CountdownUiState(
+                timeRemaining = if (nextPrayer != null) {
+                    formatter.formatTimeRemaining(
+                        calculator.calculateTimeRemaining(nextPrayer.time, zoneId)
+                    )
+                } else {
+                    "--:--:--"
+                },
+                currentTime = formatter.getFormattedCurrentTime(zoneId)
+            )
+            delay(1_000)
+        }
+    }
+    return countdown
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

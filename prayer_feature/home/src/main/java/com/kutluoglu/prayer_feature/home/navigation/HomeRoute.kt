@@ -5,6 +5,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.navigation.NavController
+import com.kutluoglu.prayer.domain.PrayerLogicEngine
+import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
 import com.kutluoglu.prayer_feature.home.HomeScreen
 import com.kutluoglu.prayer_feature.home.HomeViewModel
 import com.kutluoglu.prayer_feature.home.common.QuranVerseFormatter
@@ -22,6 +24,8 @@ import org.koin.compose.koinInject
 fun HomeRoute(
         viewModel: HomeViewModel = koinViewModel(),
         verseFormatter: QuranVerseFormatter = koinInject<QuranVerseFormatter>(),
+        calculator: PrayerLogicEngine = koinInject(),
+        formatter: PrayerFormatter = koinInject(),
         navController: NavController
 ) {
     val gate by viewModel.screenGate.collectAsState()
@@ -51,6 +55,8 @@ fun HomeRoute(
         prayerDataByLocation = prayerData,
         activeLocationId = activeLocationId,
         quranVerseFormatter = verseFormatter,
+        calculator = calculator,
+        formatter = formatter,
         onNavigateToSavedVerses = {
             navController.navigate(Screen.SavedVersesScreen.route)
         },

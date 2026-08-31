@@ -26,6 +26,8 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.kutluoglu.core.designsystem.components.PermissionHandler
+import com.kutluoglu.prayer.domain.PrayerLogicEngine
+import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
 import com.kutluoglu.prayer_feature.home.common.QuranVerseFormatter
 import com.kutluoglu.prayer_feature.home.domain.LoadedPrayerData
 import com.kutluoglu.prayer_feature.home.state.HomeUiState
@@ -42,6 +44,8 @@ fun HomeScreen(
     prayerDataByLocation: Map<String, LoadedPrayerData>,
     activeLocationId: String?,
     quranVerseFormatter: QuranVerseFormatter,
+    calculator: PrayerLogicEngine,
+    formatter: PrayerFormatter,
     onNavigateToSavedVerses: () -> Unit = {},
     onEvent: (HomeEvent) -> Unit
 ) {
@@ -99,6 +103,8 @@ fun HomeScreen(
                 uiState = uiState,
                 prayerDataByLocation = prayerDataByLocation,
                 quranVerseFormatter = quranVerseFormatter,
+                calculator = calculator,
+                formatter = formatter,
                 onPrayerTimesClick = onPrayerTimesClick,
                 onAddLocation = onAddLocation,
                 onChooseLocation = onChooseLocation,
