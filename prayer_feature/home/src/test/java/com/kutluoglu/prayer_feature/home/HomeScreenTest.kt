@@ -2,10 +2,13 @@ package com.kutluoglu.prayer_feature.home
 
 import android.Manifest
 import androidx.activity.ComponentActivity
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performSemanticsAction
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavController
 import com.google.common.truth.Truth.assertThat
@@ -185,5 +188,43 @@ class HomeScreenTest {
         composeTestRule.waitForIdle()
 
         assertThat(events).contains(HomeEvent.OnUseMyLocation)
+    }
+
+    @Test
+    fun `verse detail sheet bookmark toggles saved state`() {
+        val verse = com.kutluoglu.prayer.model.quran.AyahData(
+            text = "Bismillah",
+            surah = com.kutluoglu.prayer.model.quran.SurahInfo(
+                englishName = "Al-Fatihah",
+                name = "الفاتحة",
+                number = 1,
+                numberOfAyahs = 7
+            ),
+            numberInSurah = 1
+        )
+        var toggled = false
+        composeTestRule.setContent {
+            HomeScreen(
+                navController = mockk<NavController>(relaxed = true),
+                uiState = HomeUiState.Success(
+                    locationState = com.kutluoglu.prayer_feature.common.states.LocationUiState(
+                        locationData = istanbul.location,
+                        locationInfoText = "Istanbul, Turkey"
+                    ),
+                    quranVerse = verse,
+                    isVerseDetailSheetVisible = true,
+                    isVerseSaved = false
+                ),
+                locationsState = LocationsState(entries = listOf(istanbul), selectedId = "loc-1"),
+                prayerDataByLocation = emptyMap(),
+                activeLocationId = "loc-1",
+                quranVerseFormatter = mockk<QuranVerseFormatter>(relaxed = true),
+                onEvent = { if (it == HomeEvent.OnToggleVerseSaved) toggled = true }
+            )
+        }
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithContentDescription("Save Verse")
+            .performSemanticsAction(SemanticsActions.OnClick) { it() }
+        assertThat(toggled).isTrue()
     }
 }

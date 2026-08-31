@@ -16,7 +16,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -26,22 +28,24 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
+import androidx.core.graphics.createBitmap
 import com.kutluoglu.prayer.model.quran.AyahData
 import com.kutluoglu.prayer_feature.home.R
 import com.kutluoglu.prayer_feature.home.common.QuranVerseFormatter
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
-import androidx.core.graphics.createBitmap
-import androidx.compose.ui.platform.LocalResources
 
 @Composable
 fun VerseDetailSheetContent(
         verse: AyahData,
         verseFormatter: QuranVerseFormatter,
+        isSaved: Boolean = false,
+        onToggleSaved: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val localizedSurahName = verseFormatter.getLocalizedNameOf(
@@ -76,7 +80,7 @@ fun VerseDetailSheetContent(
             textAlign = TextAlign.Start,
         )
         Spacer(modifier = Modifier.height(16.dp))
-        // for the verse info and the share button
+        // for the verse info and the action buttons
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween, // Pushes items to the ends
@@ -88,13 +92,25 @@ fun VerseDetailSheetContent(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
 
-            IconButton(
-                onClick = { shareVerse(fullTextToShare, context) }
-            ) {
-                Icon(
-                    Icons.Default.Share,
-                    contentDescription = context.getString(R.string.share_verse)
-                )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                IconButton(
+                    onClick = onToggleSaved
+                ) {
+                    Icon(
+                        imageVector = if (isSaved) Icons.Filled.Bookmark else Icons.Outlined.BookmarkBorder,
+                        contentDescription = context.getString(
+                            if (isSaved) R.string.unsave_verse else R.string.save_verse
+                        )
+                    )
+                }
+                IconButton(
+                    onClick = { shareVerse(fullTextToShare, context) }
+                ) {
+                    Icon(
+                        Icons.Default.Share,
+                        contentDescription = context.getString(R.string.share_verse)
+                    )
+                }
             }
         }
     }

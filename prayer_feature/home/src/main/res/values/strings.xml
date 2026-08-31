@@ -10,6 +10,8 @@
     <string name="prayer_jumuah">Jumu\'ah</string>
     <string name="unknown_error_message">Unknown error</string>
     <string name="share_verse">Share Verse</string>
+    <string name="save_verse">Save Verse</string>
+    <string name="unsave_verse">Unsave Verse</string>
 
     <!-- ... surah name ... -->
     <string name="surah_name_1">Al-Fatihah</string>

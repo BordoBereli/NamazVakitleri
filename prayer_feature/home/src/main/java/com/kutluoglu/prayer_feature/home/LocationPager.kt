@@ -257,7 +257,12 @@ private fun PrayerContent(
                 onDismiss = { onEvent(HomeEvent.OnVerseDetailDismissed) }
             ) {
                 quranVerse?.let { verse ->
-                    VerseDetailSheetContent(verse = verse, verseFormatter = quranVerseFormatter)
+                    VerseDetailSheetContent(
+                        verse = verse,
+                        verseFormatter = quranVerseFormatter,
+                        isSaved = successState?.isVerseSaved == true,
+                        onToggleSaved = { onEvent(HomeEvent.OnToggleVerseSaved) }
+                    )
                 }
             }
         }
