@@ -1,10 +1,5 @@
 package com.kutluoglu.prayer_feature.home.feature
 
-import android.content.Context
-import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
-import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,14 +26,10 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.core.content.FileProvider
-import androidx.core.graphics.createBitmap
 import com.kutluoglu.prayer.model.quran.AyahData
 import com.kutluoglu.prayer_feature.home.R
 import com.kutluoglu.prayer_feature.home.common.QuranVerseFormatter
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
+import com.kutluoglu.prayer_feature.home.common.shareVerse
 
 @Composable
 fun VerseDetailSheetContent(
@@ -53,9 +44,6 @@ fun VerseDetailSheetContent(
         context = context
     )
     val verseInfo = "($localizedSurahName - $verse)"
-    val appName = context.getString(R.string.app_name)
-    val sharedApp = "\n\n${context.getString(R.string.shared_from_app, appName)}"
-    val fullTextToShare = "\"${verse.text}\" - $verseInfo $sharedApp"
 
     // Get screen height to calculate max height in Dp
     val screenHeight =
@@ -104,7 +92,7 @@ fun VerseDetailSheetContent(
                     )
                 }
                 IconButton(
-                    onClick = { shareVerse(fullTextToShare, context) }
+                    onClick = { shareVerse(verse, verseFormatter, context) }
                 ) {
                     Icon(
                         Icons.Default.Share,
@@ -114,65 +102,4 @@ fun VerseDetailSheetContent(
             }
         }
     }
-}
-
-private fun shareVerse(fullTextToShare: String, context: Context) {
-    val intent = Intent(Intent.ACTION_SEND).apply {
-        type = "image/png"
-        putExtra(Intent.EXTRA_TEXT, fullTextToShare)
-
-        // Get the icon URI
-        val iconUri = getIconUri(context)
-        iconUri?.let {
-            putExtra(Intent.EXTRA_STREAM, it)
-            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        }
-    }
-
-    context.startActivity(
-        Intent.createChooser(
-            intent,
-            context.getString(R.string.share_verse)
-        )
-    )
-}
-
-private fun getIconUri(context: Context): Uri? {
-    try {
-        // Get the launcher icon drawable
-        val drawable = context.packageManager.getApplicationIcon(context.packageName)
-
-        val originalBitmap = if (drawable is BitmapDrawable) {
-            drawable.bitmap
-        } else {
-            // Create a bitmap from the drawable
-            createBitmap(
-                drawable.intrinsicWidth,
-                drawable.intrinsicHeight,
-                Bitmap.Config.ARGB_8888
-            ).also {
-                val canvas = android.graphics.Canvas(it)
-                drawable.setBounds(0, 0, canvas.width, canvas.height)
-                drawable.draw(canvas)
-            }
-        }
-
-        // Save the bitmap to the cache directory
-        val imagesDir = File(context.cacheDir, "images")
-        imagesDir.mkdirs()
-        val imageFile = File(imagesDir, "app_icon.png")
-
-        FileOutputStream(imageFile).use {
-            originalBitmap.compress(
-                Bitmap.CompressFormat.PNG, 100, it
-            )
-        }
-
-        // Get the content URI using FileProvider
-        return FileProvider.getUriForFile(context, "${context.packageName}.provider", imageFile)
-
-    } catch (e: IOException) {
-        e.printStackTrace()
-    }
-    return null
 }
