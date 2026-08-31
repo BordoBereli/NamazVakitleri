@@ -34,14 +34,20 @@ class SavedVersesStore(
 
     suspend fun isSaved(verse: AyahData): Boolean = getSavedVerses().any { it == verse }
 
-    suspend fun toggle(verse: AyahData) {
-        val current = getSavedVerses()
-        val updated = if (current.any { it == verse }) {
-            current.filterNot { it == verse }
-        } else {
-            current + verse
+    suspend fun toggle(verse: AyahData): Unit {
+        dataStore.edit { prefs ->
+            val raw = prefs[key]
+            val current = if (raw.isNullOrBlank()) {
+                emptyList()
+            } else {
+                runCatching { json.decodeFromString<List<AyahData>>(raw) }.getOrDefault(emptyList())
+            }
+            val updated = if (current.any { it == verse }) {
+                current.filterNot { it == verse }
+            } else {
+                current + verse
+            }
+            prefs[key] = withContext(Dispatchers.Default) { json.encodeToString(updated) }
         }
-        val raw = withContext(Dispatchers.Default) { json.encodeToString(updated) }
-        dataStore.edit { it[key] = raw }
     }
 }

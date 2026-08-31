@@ -69,4 +69,16 @@ class QuranRepositoryTest {
         assertThat(result.isFailure).isTrue()
         coVerify(exactly = 0) { quranSurahCache.putSurah(any(), any()) }
     }
+
+    @Test
+    fun `returns failure when remote returns an empty surah`() = runTest {
+        coEvery { quranSurahCache.getSurah(any()) } returns null
+        coEvery { quranDataSource.getSurah(any(), "tr") } returns Result.success(emptyList())
+
+        val repository = QuranRepository(quranDataSource, quranSurahCache, savedVersesStore)
+        val result = repository.getRandomVerse("tr")
+
+        assertThat(result.isFailure).isTrue()
+        coVerify(exactly = 0) { quranSurahCache.putSurah(any(), any()) }
+    }
 }

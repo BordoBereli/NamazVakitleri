@@ -5,8 +5,8 @@ import com.kutluoglu.prayer.data.cache.SavedVersesStore
 import com.kutluoglu.prayer.model.quran.AyahData
 import com.kutluoglu.prayer.repository.IQuranRepository
 import com.kutluoglu.prayer_remote.quran.QuranDataSource
-import org.koin.core.annotation.Single
 import kotlin.random.Random
+import org.koin.core.annotation.Single
 
 /**
  * Cache-first random verse provider. Picks a random surah (1-114); serves from
@@ -19,20 +19,19 @@ class QuranRepository(
     private val quranSurahCache: QuranSurahCache,
     private val savedVersesStore: SavedVersesStore
 ) : IQuranRepository {
-    override suspend fun getRandomVerse(langCode: String): Result<AyahData> {
+    override suspend fun getRandomVerse(langCode: String): Result<AyahData> = runCatching {
         val surahNumber = Random.nextInt(1, 115)
         val cached = quranSurahCache.getSurah(surahNumber)
         if (!cached.isNullOrEmpty()) {
-            return Result.success(cached.random())
+            cached.random()
+        } else {
+            val ayahs = quranDataSource.getSurah(surahNumber, langCode).getOrThrow()
+            if (ayahs.isNotEmpty()) {
+                quranSurahCache.putSurah(surahNumber, ayahs)
+            }
+            require(ayahs.isNotEmpty()) { "Surah $surahNumber returned no ayahs" }
+            ayahs.random()
         }
-        return quranDataSource.getSurah(surahNumber, langCode)
-            .onSuccess { ayahs ->
-                if (ayahs.isNotEmpty()) quranSurahCache.putSurah(surahNumber, ayahs)
-            }
-            .mapCatching { ayahs ->
-                require(ayahs.isNotEmpty()) { "Surah $surahNumber returned no ayahs" }
-                ayahs.random()
-            }
     }
 
     override suspend fun isVerseSaved(verse: AyahData): Boolean = savedVersesStore.isSaved(verse)
