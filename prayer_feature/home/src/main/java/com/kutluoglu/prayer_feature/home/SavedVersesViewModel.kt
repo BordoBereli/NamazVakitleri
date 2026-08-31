@@ -37,6 +37,15 @@ class SavedVersesViewModel(
         }
     }
 
+    /**
+     * Re-fetches the saved verses. Called when the screen becomes visible so the
+     * list reflects verses saved since the ViewModel was created (a one-shot load
+     * in [init] would otherwise show stale data if the instance is reused).
+     */
+    fun reload() {
+        loadSavedVerses()
+    }
+
     private fun loadSavedVerses() {
         viewModelScope.launch {
             _uiState.value = SavedVersesUiState.Loading

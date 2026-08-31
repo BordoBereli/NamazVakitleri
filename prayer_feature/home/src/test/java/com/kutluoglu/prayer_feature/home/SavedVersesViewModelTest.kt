@@ -67,6 +67,21 @@ class SavedVersesViewModelTest {
     }
 
     @Test
+    fun `reload re-fetches saved verses`() = runTest {
+        coEvery { getSavedVersesUseCase() } returnsMany listOf(
+            Result.success(emptyList()),
+            Result.success(listOf(verse(1)))
+        )
+
+        val vm = SavedVersesViewModel(getSavedVersesUseCase, reorderSavedVersesUseCase, toggleSavedVerseUseCase)
+        assertThat(vm.uiState.value).isEqualTo(SavedVersesUiState.Success(emptyList()))
+
+        vm.reload()
+
+        assertThat(vm.uiState.value).isEqualTo(SavedVersesUiState.Success(listOf(verse(1))))
+    }
+
+    @Test
     fun `remove toggles the verse and reloads`() = runTest {
         coEvery { getSavedVersesUseCase() } returnsMany listOf(
             Result.success(listOf(verse(1), verse(2))),

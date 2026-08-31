@@ -66,6 +66,9 @@ fun SavedVersesRoute(
     verseFormatter: QuranVerseFormatter = koinInject()
 ) {
     val state by viewModel.uiState.collectAsState()
+    LaunchedEffect(Unit) {
+        viewModel.reload()
+    }
     SavedVersesScreen(
         state = state,
         verseFormatter = verseFormatter,
