@@ -46,9 +46,11 @@ Add a secondary "Saved Verses" screen where users can:
    `EmptyStateContent` for the empty state, `TopAppBar` with back arrow.
 4. **Reuse `VerseDetailSheetContent`.** Tapping a saved verse opens the existing detail bottom
    sheet (share + unsave), so behavior is consistent with the verse-of-the-day.
-5. **Order = save order.** `SavedVersesStore.toggle()` appends new saves to the end of the JSON
-   list. The screen displays the list **reversed (newest first)** for readability; reordering
-   rewrites the persisted list in the displayed order.
+5. **Order = save order (newest first).** `SavedVersesStore.toggle()` **prepends** new saves to
+   the front of the JSON list, so the store order is already newest-first. The screen displays the
+   store order directly (no reversal), and reordering rewrites the persisted list in the displayed
+   order. This keeps display order and persisted order identical, so a reload after reorder is
+   stable.
 6. **Data via use cases.** `GetSavedVersesUseCase` / `ReorderSavedVersesUseCase` follow the
    existing use-case pattern; the ViewModel exposes a sealed `SavedVersesUiState`.
 
@@ -65,7 +67,26 @@ sealed class Screen(val route: String) {
 
 ### `:prayer:data` — `SavedVersesStore`
 
+`toggle` prepends new saves (newest first); `reorder` rewrites the whole list:
+
 ```kotlin
+suspend fun toggle(verse: AyahData): Unit {
+    dataStore.edit { prefs ->
+        val raw = prefs[key]
+        val current = if (raw.isNullOrBlank()) {
+            emptyList()
+        } else {
+            runCatching { json.decodeFromString<List<AyahData>>(raw) }.getOrDefault(emptyList())
+        }
+        val updated = if (current.any { it == verse }) {
+            current.filterNot { it == verse }
+        } else {
+            listOf(verse) + current
+        }
+        prefs[key] = withContext(Dispatchers.Default) { json.encodeToString(updated) }
+    }
+}
+
 suspend fun reorder(verses: List<AyahData>) {
     dataStore.edit { prefs ->
         prefs[key] = withContext(Dispatchers.Default) { json.encodeToString(verses) }
@@ -76,7 +97,8 @@ suspend fun reorder(verses: List<AyahData>) {
 ### `:prayer:data` — `QuranRepository`
 
 ```kotlin
-override suspend fun getSavedVerses(): List<AyahData> = savedVersesStore.getSavedVerses()
+override suspend fun getSavedVerses(): Result<List<AyahData>> =
+    runCatching { savedVersesStore.getSavedVerses() }
 
 override suspend fun reorderSavedVerses(verses: List<AyahData>): Result<Unit> =
     runCatching { savedVersesStore.reorder(verses) }
@@ -85,7 +107,7 @@ override suspend fun reorderSavedVerses(verses: List<AyahData>): Result<Unit> =
 ### `:prayer:domain` — `IQuranRepository`
 
 ```kotlin
-suspend fun getSavedVerses(): List<AyahData>
+suspend fun getSavedVerses(): Result<List<AyahData>>
 suspend fun reorderSavedVerses(verses: List<AyahData>): Result<Unit>
 ```
 
