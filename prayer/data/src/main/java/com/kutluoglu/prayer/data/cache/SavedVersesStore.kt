@@ -45,9 +45,15 @@ class SavedVersesStore(
             val updated = if (current.any { it == verse }) {
                 current.filterNot { it == verse }
             } else {
-                current + verse
+                listOf(verse) + current
             }
             prefs[key] = withContext(Dispatchers.Default) { json.encodeToString(updated) }
+        }
+    }
+
+    suspend fun reorder(verses: List<AyahData>) {
+        dataStore.edit { prefs ->
+            prefs[key] = withContext(Dispatchers.Default) { json.encodeToString(verses) }
         }
     }
 }

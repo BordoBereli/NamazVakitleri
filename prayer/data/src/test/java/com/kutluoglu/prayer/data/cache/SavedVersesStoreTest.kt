@@ -70,4 +70,26 @@ class SavedVersesStoreTest {
         val reloaded = SavedVersesStore(dataStore)
         assertThat(reloaded.isSaved(v)).isTrue()
     }
+
+    @Test
+    fun `toggle prepends new saves so newest is first`() = runBlocking {
+        store.toggle(verse(1))
+        store.toggle(verse(2))
+
+        val saved = store.getSavedVerses()
+
+        assertThat(saved.map { it.numberInSurah }).containsExactly(2, 1).inOrder()
+    }
+
+    @Test
+    fun `reorder rewrites the persisted order`() = runBlocking {
+        store.toggle(verse(1))
+        store.toggle(verse(2))
+        store.toggle(verse(3))
+
+        store.reorder(listOf(verse(1), verse(3), verse(2)))
+
+        val saved = store.getSavedVerses()
+        assertThat(saved.map { it.numberInSurah }).containsExactly(1, 3, 2).inOrder()
+    }
 }
