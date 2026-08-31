@@ -129,4 +129,19 @@ class HomeUiStateMergerTest {
         )
         assertThat(result).isEqualTo(HomeUiState.Loading)
     }
+
+    @Test
+    fun `merge on Ready carries isVerseSaved from quran state`() {
+        val quranSaved = quran.copy(isSaved = true)
+        val result = mergeToHomeUiState(
+            gate = HomeScreenGate.Ready,
+            location = location,
+            time = time,
+            prayer = prayer,
+            countdown = countdown,
+            quran = quranSaved
+        ) as HomeUiState.Success
+
+        assertThat(result.isVerseSaved).isTrue()
+    }
 }

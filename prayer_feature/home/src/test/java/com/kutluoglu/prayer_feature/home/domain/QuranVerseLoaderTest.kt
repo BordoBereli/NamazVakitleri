@@ -128,4 +128,25 @@ class QuranVerseLoaderTest {
 
         assertThat(loader.quranState.value.isSaved).isTrue()
     }
+
+    @Test
+    fun `toggleSaved keeps isSaved unchanged on failure`() = runTest {
+        val verse = AyahData(
+            text = "Bismillah...",
+            surah = SurahInfo(
+                englishName = "Al-Fatihah",
+                name = "الفاتحة",
+                number = 1,
+                numberOfAyahs = 7
+            ),
+            numberInSurah = 1
+        )
+        coEvery { toggleSavedVerseUseCase.invoke(verse) } returns Result.failure(RuntimeException("x"))
+
+        val loader = QuranVerseLoader(getRandomVerseUseCase, isVerseSavedUseCase, toggleSavedVerseUseCase, languageProvider)
+        loader.toggleSaved(verse, scope = this)
+        runCurrent()
+
+        assertThat(loader.quranState.value.isSaved).isFalse()
+    }
 }
