@@ -10,7 +10,6 @@ import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithContentDescription
-import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -164,7 +163,22 @@ class SavedVersesScreenTest {
     }
 
     @Test
-    fun `expand and collapse all buttons fire their events`() {
+    fun `toggle button shows expand all when all collapsed and fires OnExpandAll`() {
+        var lastEvent: SavedVersesEvent? = null
+        setContent(
+            SavedVersesUiState.Success(
+                groups = listOf(group(1, 1), group(36, 1)),
+                filteredGroups = listOf(group(1, 1), group(36, 1)),
+                collapsedSurahs = setOf(1, 36)
+            ),
+            onEvent = { lastEvent = it }
+        )
+        composeTestRule.onNodeWithText("Expand All").performClick()
+        assertThat(lastEvent).isEqualTo(SavedVersesEvent.OnExpandAll)
+    }
+
+    @Test
+    fun `toggle button shows collapse all when expanded and fires OnCollapseAll`() {
         var lastEvent: SavedVersesEvent? = null
         setContent(
             SavedVersesUiState.Success(
@@ -174,9 +188,7 @@ class SavedVersesScreenTest {
             ),
             onEvent = { lastEvent = it }
         )
-        composeTestRule.onNodeWithContentDescription("Expand All").performClick()
-        assertThat(lastEvent).isEqualTo(SavedVersesEvent.OnExpandAll)
-        composeTestRule.onNodeWithContentDescription("Collapse All").performClick()
+        composeTestRule.onNodeWithText("Collapse All").performClick()
         assertThat(lastEvent).isEqualTo(SavedVersesEvent.OnCollapseAll)
     }
 

@@ -26,8 +26,9 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.UnfoldLess
+import androidx.compose.material.icons.filled.UnfoldMore
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.rounded.DragHandle
@@ -43,6 +44,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
@@ -227,6 +229,8 @@ fun SavedVersesScreen(
             ) { Text(state.message) }
 
             is SavedVersesUiState.Success -> {
+                val allCollapsed = state.groups.isNotEmpty() &&
+                    state.groups.all { it.surah.number in state.collapsedSurahs }
                 if (state.groups.isEmpty()) {
                     Box(
                         modifier = Modifier.fillMaxSize().padding(padding),
@@ -245,8 +249,16 @@ fun SavedVersesScreen(
                         )
                         if (state.query.isBlank()) {
                             CollapseControls(
-                                onExpandAll = { onEvent(SavedVersesEvent.OnExpandAll) },
-                                onCollapseAll = { onEvent(SavedVersesEvent.OnCollapseAll) }
+                                allCollapsed = allCollapsed,
+                                onToggle = {
+                                    onEvent(
+                                        if (allCollapsed) {
+                                            SavedVersesEvent.OnExpandAll
+                                        } else {
+                                            SavedVersesEvent.OnCollapseAll
+                                        }
+                                    )
+                                }
                             )
                             SurahJumpChips(
                                 groups = state.filteredGroups,
@@ -417,27 +429,20 @@ private fun SearchField(query: String, onQueryChange: (String) -> Unit) {
 
 @Composable
 private fun CollapseControls(
-    onExpandAll: () -> Unit,
-    onCollapseAll: () -> Unit
+    allCollapsed: Boolean,
+    onToggle: () -> Unit
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        IconButton(onClick = onExpandAll) {
-            Icon(
-                Icons.Default.KeyboardArrowDown,
-                contentDescription = stringResource(R.string.expand_all)
+    TextButton(onClick = onToggle) {
+        Icon(
+            imageVector = if (allCollapsed) Icons.Filled.UnfoldMore else Icons.Filled.UnfoldLess,
+            contentDescription = null
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            text = stringResource(
+                if (allCollapsed) R.string.expand_all else R.string.collapse_all
             )
-        }
-        IconButton(onClick = onCollapseAll) {
-            Icon(
-                Icons.Default.KeyboardArrowUp,
-                contentDescription = stringResource(R.string.collapse_all)
-            )
-        }
+        )
     }
 }
 
