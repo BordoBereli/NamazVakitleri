@@ -69,4 +69,21 @@ class CityLocalizerTest {
         val noCity = city.copy(city = null)
         assertThat(CityLocalizer.localizedProvince(noCity, "en")).isEqualTo("Istanbul")
     }
+
+    @Test
+    fun `localizedProvince falls back to localized name for non-Turkey city`() {
+        val riyadh = City(
+            name = "Riyadh",
+            country = "Saudi Arabia",
+            latitude = 24.7136,
+            longitude = 46.6753,
+            timezone = "Asia/Riyadh",
+            nameTr = "Riyad",
+            nameAr = "الرياض",
+            nameFa = "ریاض"
+        )
+        assertThat(CityLocalizer.localizedProvince(riyadh, "tr")).isEqualTo("Riyad")
+        assertThat(CityLocalizer.localizedProvince(riyadh, "ar")).isEqualTo("الرياض")
+        assertThat(CityLocalizer.localizedProvince(riyadh, "fa")).isEqualTo("ریاض")
+    }
 }

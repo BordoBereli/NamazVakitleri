@@ -19,9 +19,9 @@ object CityLocalizer {
     }
 
     fun localizedProvince(city: City, languageCode: String): String = when (languageCode) {
-        "tr" -> city.cityTr ?: (city.city ?: city.name)
-        "ar" -> city.cityAr ?: (city.city ?: city.name)
-        "fa" -> city.cityFa ?: (city.city ?: city.name)
+        "tr" -> city.cityTr ?: localizedName(city, "tr")
+        "ar" -> city.cityAr ?: localizedName(city, "ar")
+        "fa" -> city.cityFa ?: localizedName(city, "fa")
         else -> city.city ?: city.name
     }
 }
