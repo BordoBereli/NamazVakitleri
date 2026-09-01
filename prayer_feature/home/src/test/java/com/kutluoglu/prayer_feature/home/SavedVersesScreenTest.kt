@@ -4,11 +4,13 @@ import androidx.activity.ComponentActivity
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithContentDescription
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
@@ -75,6 +77,18 @@ class SavedVersesScreenTest {
         headerNode("Ya-Sin", 1).assertIsDisplayed()
         composeTestRule.onNodeWithText("Verse 1:1").assertIsDisplayed()
         composeTestRule.onNodeWithText("Verse 36:1").assertIsDisplayed()
+    }
+
+    @Test
+    fun `surah header shows its index badge`() {
+        setContent(
+            SavedVersesUiState.Success(
+                groups = listOf(group(1, 1)),
+                filteredGroups = listOf(group(1, 1)),
+                collapsedSurahs = emptySet()
+            )
+        )
+        composeTestRule.onNodeWithTag("surah_index_1", useUnmergedTree = true).assertIsDisplayed()
     }
 
     @Test
