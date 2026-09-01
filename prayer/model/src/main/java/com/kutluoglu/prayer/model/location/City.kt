@@ -10,7 +10,16 @@ data class City(
     val longitude: Double,
     val timezone: String,
     val city: String? = null,
-    val county: String? = null
+    val county: String? = null,
+    val nameTr: String? = null,
+    val nameAr: String? = null,
+    val nameFa: String? = null,
+    val countryTr: String? = null,
+    val countryAr: String? = null,
+    val countryFa: String? = null,
+    val cityTr: String? = null,
+    val cityAr: String? = null,
+    val cityFa: String? = null
 ) {
     val province: String get() = city ?: name
 
