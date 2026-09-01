@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.kutluoglu.prayer.model.quran.AyahData
+import com.kutluoglu.prayer.model.quran.SavedVerseGroup
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
@@ -67,4 +68,17 @@ class SavedVersesStore(
      */
     private fun AyahData.sameVerse(other: AyahData): Boolean =
         surah.number == other.surah.number && numberInSurah == other.numberInSurah
+}
+
+internal fun groupBySurah(verses: List<AyahData>): List<SavedVerseGroup> {
+    val order = LinkedHashMap<Int, SavedVerseGroup>()
+    verses.forEach { verse ->
+        val existing = order[verse.surah.number]
+        order[verse.surah.number] = if (existing == null) {
+            SavedVerseGroup(surah = verse.surah, verses = listOf(verse))
+        } else {
+            existing.copy(verses = existing.verses + verse)
+        }
+    }
+    return order.values.toList()
 }

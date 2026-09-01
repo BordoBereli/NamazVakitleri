@@ -104,4 +104,22 @@ class SavedVersesStoreTest {
         val saved = store.getSavedVerses()
         assertThat(saved.map { it.numberInSurah }).containsExactly(1, 3, 2).inOrder()
     }
+
+    @Test
+    fun `groupBySurah groups flat verses by surah preserving order`() = runBlocking {
+        val surah1 = SurahInfo("Al-Fatihah", "الفاتحة", 1, 7)
+        val surah36 = SurahInfo("Ya-Sin", "يس", 36, 83)
+        val flat = listOf(
+            AyahData("a", surah36, 1),
+            AyahData("b", surah1, 1),
+            AyahData("c", surah1, 2),
+            AyahData("d", surah36, 2),
+        )
+
+        val groups = groupBySurah(flat)
+
+        assertThat(groups.map { it.surah.number }).containsExactly(36, 1).inOrder()
+        assertThat(groups[0].verses.map { it.numberInSurah }).containsExactly(1, 2).inOrder()
+        assertThat(groups[1].verses.map { it.numberInSurah }).containsExactly(1, 2).inOrder()
+    }
 }
