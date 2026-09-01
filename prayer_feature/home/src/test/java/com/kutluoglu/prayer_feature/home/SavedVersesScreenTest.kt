@@ -92,6 +92,18 @@ class SavedVersesScreenTest {
     }
 
     @Test
+    fun `ayah card shows its ayah number medallion`() {
+        setContent(
+            SavedVersesUiState.Success(
+                groups = listOf(group(1, 1)),
+                filteredGroups = listOf(group(1, 1)),
+                collapsedSurahs = emptySet()
+            )
+        )
+        composeTestRule.onNodeWithTag("ayah_index_1_1", useUnmergedTree = true).assertIsDisplayed()
+    }
+
+    @Test
     fun `collapsed group hides its verses`() {
         setContent(
             SavedVersesUiState.Success(

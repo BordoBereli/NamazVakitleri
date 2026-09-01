@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -61,7 +60,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.kutluoglu.core.designsystem.components.EmptyStateContent
 import com.kutluoglu.core.designsystem.components.LoadingIndicator
@@ -340,7 +339,6 @@ fun SavedVersesScreen(
                                                 ) {
                                                     VerseRow(
                                                         verse = row.verse,
-                                                        verseFormatter = verseFormatter,
                                                         isDragging = isDragging,
                                                         onSelect = { onEvent(SavedVersesEvent.OnSelect(row.verse)) },
                                                         onShare = { shareVerse(row.verse, verseFormatter, context) },
@@ -494,50 +492,70 @@ private fun SurahHeader(
 @Composable
 private fun VerseRow(
     verse: AyahData,
-    verseFormatter: QuranVerseFormatter,
     isDragging: Boolean = false,
     onSelect: () -> Unit,
     onShare: () -> Unit,
     dragHandle: (@Composable () -> Unit)? = null
 ) {
-    val context = LocalContext.current
-    val localizedSurahName = verseFormatter.getLocalizedNameOf(verse, context)
-    val verseInfo = "($localizedSurahName - $verse)"
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 4.dp)
             .clickable(onClick = onSelect),
+        shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
+            containerColor = MaterialTheme.colorScheme.surface
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = if (isDragging) 8.dp else 0.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = if (isDragging) 8.dp else 2.dp)
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
+        Box(modifier = Modifier.fillMaxWidth()) {
+            Box(
+                modifier = Modifier
+                    .matchParentSize()
+                    .width(4.dp)
+                    .background(MaterialTheme.colorScheme.primary)
+            )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, end = 8.dp, top = 8.dp, bottom = 8.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.primaryContainer)
+                            .testTag("ayah_index_${verse.surah.number}_${verse.numberInSurah}"),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "${verse.numberInSurah}",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                    Spacer(modifier = Modifier.weight(1f))
+                    IconButton(onClick = onShare) {
+                        Icon(
+                            Icons.Default.Share,
+                            contentDescription = stringResource(R.string.share_verse)
+                        )
+                    }
+                    dragHandle?.invoke()
+                }
                 Text(
                     text = verse.text,
-                    style = MaterialTheme.typography.bodyMedium,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = verseInfo,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    style = MaterialTheme.typography.titleMedium,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp, bottom = 8.dp)
                 )
             }
-            IconButton(onClick = onShare) {
-                Icon(
-                    Icons.Default.Share,
-                    contentDescription = stringResource(R.string.share_verse)
-                )
-            }
-            dragHandle?.invoke()
         }
     }
 }
