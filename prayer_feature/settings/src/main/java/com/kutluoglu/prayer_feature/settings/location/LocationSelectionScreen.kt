@@ -278,103 +278,126 @@ fun LocationSelectionRoute(
             )
         }
     ) { paddingValues ->
-        Column(
+        BoxWithConstraints(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            // Use My Location Button
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
-            ) {
-                Button(
-                    onClick = { requestLocationAndUseMyLocation() },
-                    modifier = Modifier.fillMaxWidth()
+            val isLandscape = maxWidth > maxHeight
+            Column(modifier = Modifier.fillMaxSize()) {
+                // Use My Location Button
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.MyLocation,
-                        contentDescription = null,
-                        modifier = Modifier.size(20.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(stringResource(R.string.use_my_location))
-                }
-            }
-
-            // Tabs
-            PrimaryTabRow(selectedTabIndex = selectedTabIndex) {
-                tabs.forEachIndexed { index, title ->
-                    Tab(
-                        selected = selectedTabIndex == index,
-                        onClick = { selectedTabIndex = index },
-                        text = { Text(title) }
-                    )
-                }
-            }
-
-            // Tab Content
-            AnimatedVisibility(
-                visible = selectedTabIndex == 0,
-                enter = fadeIn() + slideInHorizontally { it },
-                exit = fadeOut() + slideOutHorizontally { it }
-            ) {
-                PresetCitiesContent(
-                    uiState = uiState,
-                    languageCode = languageCode,
-                    searchQuery = searchQuery,
-                    onSearchQueryChange = { searchQuery = it },
-                    onSearch = { viewModel.onEvent(LocationSelectionEvent.SearchCountry(it)) },
-                    onCountryClick = { viewModel.onEvent(LocationSelectionEvent.SelectCountry(it)) },
-                    onCityClick = { city ->
-                        viewModel.onEvent(LocationSelectionEvent.SelectCity(city))
-                    },
-                    onSelectProvince = { province, mainCity ->
-                        viewModel.onEvent(LocationSelectionEvent.SelectProvince(province, mainCity))
-                    },
-                    onSelectDistrict = { district ->
-                        viewModel.onEvent(LocationSelectionEvent.SelectDistrict(district))
-                    },
-                    showCountryFilter = showCountryFilter,
-                    onShowCountryFilter = { showCountryFilter = !showCountryFilter },
-                    onCountrySelect = { viewModel.onEvent(LocationSelectionEvent.SelectCountry(it)) }
-                )
-            }
-
-            AnimatedVisibility(
-                visible = selectedTabIndex == 1,
-                enter = fadeIn() + slideInHorizontally { it },
-                exit = fadeOut() + slideOutHorizontally { it }
-            ) {
-                SearchTab(
-                    uiState = uiState,
-                    searchQuery = searchQuery,
-                    onSearchQueryChange = { searchQuery = it },
-                    onSearch = { viewModel.onEvent(LocationSelectionEvent.Search(it)) },
-                    onClearSearch = { 
-                        searchQuery = ""
-                        viewModel.onEvent(LocationSelectionEvent.ClearSearch)
-                    },
-                    onCityClick = { viewModel.onEvent(LocationSelectionEvent.SelectCity(it)) },
-                    onClearHistory = { viewModel.onEvent(LocationSelectionEvent.ClearHistory) }
-                )
-            }
-
-            AnimatedVisibility(
-                visible = selectedTabIndex == 2,
-                enter = fadeIn() + slideInHorizontally { it },
-                exit = fadeOut() + slideOutHorizontally { it }
-            ) {
-                MapTab(
-                    uiState = uiState,
-                    onLocationSelected = { lat, lon -> 
-                        viewModel.onEvent(LocationSelectionEvent.UpdateMapLocation(lat, lon))
-                    },
-                    onConfirmLocation = { location ->
-                        viewModel.onEvent(LocationSelectionEvent.ConfirmMapLocation(location))
+                    Button(
+                        onClick = { requestLocationAndUseMyLocation() },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.MyLocation,
+                            contentDescription = null,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(stringResource(R.string.use_my_location))
                     }
-                )
+                }
+
+                // Tabs
+                PrimaryTabRow(selectedTabIndex = selectedTabIndex) {
+                    tabs.forEachIndexed { index, title ->
+                        Tab(
+                            selected = selectedTabIndex == index,
+                            onClick = { selectedTabIndex = index },
+                            text = { Text(title) }
+                        )
+                    }
+                }
+
+                // Tab Content
+                if (isLandscape && selectedTabIndex == 0) {
+                    PresetCitiesLandscapeContent(
+                        uiState = uiState,
+                        languageCode = languageCode,
+                        searchQuery = searchQuery,
+                        onSearchQueryChange = { searchQuery = it },
+                        onSearch = { viewModel.onEvent(LocationSelectionEvent.SearchCountry(it)) },
+                        onCountryClick = { viewModel.onEvent(LocationSelectionEvent.SelectCountry(it)) },
+                        onCityClick = { city ->
+                            viewModel.onEvent(LocationSelectionEvent.SelectCity(city))
+                        },
+                        onSelectProvince = { province, mainCity ->
+                            viewModel.onEvent(LocationSelectionEvent.SelectProvince(province, mainCity))
+                        },
+                        onSelectDistrict = { district ->
+                            viewModel.onEvent(LocationSelectionEvent.SelectDistrict(district))
+                        }
+                    )
+                } else {
+                    AnimatedVisibility(
+                        visible = selectedTabIndex == 0,
+                        enter = fadeIn() + slideInHorizontally { it },
+                        exit = fadeOut() + slideOutHorizontally { it }
+                    ) {
+                        PresetCitiesContent(
+                            uiState = uiState,
+                            languageCode = languageCode,
+                            searchQuery = searchQuery,
+                            onSearchQueryChange = { searchQuery = it },
+                            onSearch = { viewModel.onEvent(LocationSelectionEvent.SearchCountry(it)) },
+                            onCountryClick = { viewModel.onEvent(LocationSelectionEvent.SelectCountry(it)) },
+                            onCityClick = { city ->
+                                viewModel.onEvent(LocationSelectionEvent.SelectCity(city))
+                            },
+                            onSelectProvince = { province, mainCity ->
+                                viewModel.onEvent(LocationSelectionEvent.SelectProvince(province, mainCity))
+                            },
+                            onSelectDistrict = { district ->
+                                viewModel.onEvent(LocationSelectionEvent.SelectDistrict(district))
+                            },
+                            showCountryFilter = showCountryFilter,
+                            onShowCountryFilter = { showCountryFilter = !showCountryFilter },
+                            onCountrySelect = { viewModel.onEvent(LocationSelectionEvent.SelectCountry(it)) }
+                        )
+                    }
+
+                    AnimatedVisibility(
+                        visible = selectedTabIndex == 1,
+                        enter = fadeIn() + slideInHorizontally { it },
+                        exit = fadeOut() + slideOutHorizontally { it }
+                    ) {
+                        SearchTab(
+                            uiState = uiState,
+                            searchQuery = searchQuery,
+                            onSearchQueryChange = { searchQuery = it },
+                            onSearch = { viewModel.onEvent(LocationSelectionEvent.Search(it)) },
+                            onClearSearch = {
+                                searchQuery = ""
+                                viewModel.onEvent(LocationSelectionEvent.ClearSearch)
+                            },
+                            onCityClick = { viewModel.onEvent(LocationSelectionEvent.SelectCity(it)) },
+                            onClearHistory = { viewModel.onEvent(LocationSelectionEvent.ClearHistory) }
+                        )
+                    }
+
+                    AnimatedVisibility(
+                        visible = selectedTabIndex == 2,
+                        enter = fadeIn() + slideInHorizontally { it },
+                        exit = fadeOut() + slideOutHorizontally { it }
+                    ) {
+                        MapTab(
+                            uiState = uiState,
+                            onLocationSelected = { lat, lon ->
+                                viewModel.onEvent(LocationSelectionEvent.UpdateMapLocation(lat, lon))
+                            },
+                            onConfirmLocation = { location ->
+                                viewModel.onEvent(LocationSelectionEvent.ConfirmMapLocation(location))
+                            }
+                        )
+                    }
+                }
             }
         }
     }
@@ -567,6 +590,126 @@ private fun PresetCitiesContent(
             }
             
             else -> {}
+        }
+    }
+}
+
+@Composable
+private fun PresetCitiesLandscapeContent(
+    uiState: LocationSelectionUiState,
+    languageCode: String,
+    searchQuery: String,
+    onSearchQueryChange: (String) -> Unit,
+    onSearch: (String) -> Unit,
+    onCountryClick: (String) -> Unit,
+    onCityClick: (City) -> Unit,
+    onSelectProvince: (String, City) -> Unit,
+    onSelectDistrict: (City) -> Unit
+) {
+    val focusManager = LocalFocusManager.current
+
+    val countries = when (uiState) {
+        is LocationSelectionUiState.CountrySelection -> uiState.countries
+        is LocationSelectionUiState.CitySelection -> uiState.countries
+        is LocationSelectionUiState.ProvinceSelection -> uiState.countries
+        else -> emptyList()
+    }
+
+    Row(modifier = Modifier.fillMaxSize()) {
+        // Left pane: master (country search + country list)
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight()
+        ) {
+            OutlinedTextField(
+                value = searchQuery,
+                onValueChange = {
+                    onSearchQueryChange(it)
+                    onSearch(it)
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                placeholder = { Text(stringResource(R.string.search_country)) },
+                leadingIcon = {
+                    Icon(Icons.Default.Search, contentDescription = null)
+                },
+                trailingIcon = {
+                    if (searchQuery.isNotEmpty()) {
+                        IconButton(onClick = {
+                            onSearchQueryChange("")
+                            onSearch("")
+                        }) {
+                            Icon(Icons.Default.Clear, contentDescription = stringResource(R.string.clear))
+                        }
+                    }
+                },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                keyboardActions = KeyboardActions(onSearch = { focusManager.clearFocus() }),
+                shape = RoundedCornerShape(12.dp)
+            )
+
+            CountryList(
+                countries = countries,
+                onCountryClick = onCountryClick
+            )
+        }
+
+        VerticalDivider()
+
+        // Right pane: detail (provinces / districts)
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight()
+        ) {
+            when (uiState) {
+                is LocationSelectionUiState.Loading -> {
+                    SkeletonList(itemCount = 10)
+                }
+
+                is LocationSelectionUiState.CountrySelection -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = stringResource(R.string.select_country_hint),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+
+                is LocationSelectionUiState.CitySelection -> {
+                    ProvinceListByProvince(
+                        citiesByProvince = uiState.citiesByProvince,
+                        selectedProvince = uiState.selectedProvince,
+                        languageCode = languageCode,
+                        onProvinceClick = onSelectProvince
+                    )
+                }
+
+                is LocationSelectionUiState.ProvinceSelection -> {
+                    ProvinceDetailContent(
+                        provinceSelection = uiState,
+                        languageCode = languageCode,
+                        onDistrictClick = onSelectDistrict,
+                        onMainCityClick = onCityClick
+                    )
+                }
+
+                is LocationSelectionUiState.Error -> {
+                    ErrorContent(
+                        message = uiState.message,
+                        onRetry = {}
+                    )
+                }
+
+                else -> {}
+            }
         }
     }
 }

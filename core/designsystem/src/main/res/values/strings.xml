@@ -28,6 +28,7 @@
     <string name="search">Search</string>
     <string name="search_city">Search city</string>
     <string name="search_country">Search country</string>
+    <string name="select_country_hint">Select a country</string>
     <string name="filter">Filter</string>
     <string name="sort">Sort</string>
     <string name="clear">Clear</string>
