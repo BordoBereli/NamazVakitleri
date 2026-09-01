@@ -47,6 +47,23 @@ class LocationChipsLocalizationTest {
     }
 
     @Test
+    fun `chip renders localized name for arabic`() {
+        composeTestRule.setContent {
+            val pagerState = rememberPagerState(pageCount = { 1 })
+            LocationChipsRow(
+                entries = listOf(istanbul),
+                selectedId = null,
+                pagerState = pagerState,
+                onLocationSelected = {},
+                onAddLocation = {},
+                languageCode = "ar"
+            )
+        }
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText("إسطنبول، تركيا").assertIsDisplayed()
+    }
+
+    @Test
     fun `chip renders english displayName as fallback`() {
         composeTestRule.setContent {
             val pagerState = rememberPagerState(pageCount = { 1 })
