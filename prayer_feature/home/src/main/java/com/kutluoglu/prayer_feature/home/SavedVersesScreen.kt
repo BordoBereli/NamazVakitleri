@@ -316,7 +316,11 @@ fun SavedVersesScreen(
                                                         Box(
                                                             modifier = Modifier
                                                                 .fillMaxSize()
-                                                                .padding(horizontal = 16.dp, vertical = 4.dp),
+                                                                .padding(horizontal = 16.dp, vertical = 4.dp)
+                                                                .clip(RoundedCornerShape(16.dp))
+                                                                .background(
+                                                                    MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.7f)
+                                                                ),
                                                             contentAlignment = Alignment.CenterStart
                                                         ) {
                                                             Box(
@@ -515,13 +519,21 @@ private fun VerseRow(
                 modifier = Modifier
                     .matchParentSize()
                     .width(4.dp)
-                    .background(MaterialTheme.colorScheme.primary)
+//                    .background(MaterialTheme.colorScheme.primary)
             )
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 16.dp, end = 8.dp, top = 8.dp, bottom = 8.dp)
             ) {
+                Text(
+                    text = verse.text,
+                    style = MaterialTheme.typography.titleMedium,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp, bottom = 8.dp)
+                )
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
@@ -549,14 +561,6 @@ private fun VerseRow(
                     }
                     dragHandle?.invoke()
                 }
-                Text(
-                    text = verse.text,
-                    style = MaterialTheme.typography.titleMedium,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 8.dp, bottom = 8.dp)
-                )
             }
         }
     }
