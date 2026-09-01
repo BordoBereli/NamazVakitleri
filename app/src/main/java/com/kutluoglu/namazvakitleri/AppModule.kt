@@ -60,7 +60,7 @@ val appModule: Module = module {
     
     // Settings ViewModels
     viewModel { SettingsViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get()) }
-    factory { LocationSelectionViewModel(get(), get(), get(), get(), get()) }
+    factory { LocationSelectionViewModel(get(), get(), get(), get(), get(), get()) }
     viewModel { MyLocationsViewModel(get(), get()) }
     factory { CalculationMethodViewModel(get(), get(), get()) }
     factory { HijriAdjustmentViewModel(get(), get(), get()) }

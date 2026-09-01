@@ -16,6 +16,8 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import io.mockk.slot
+import com.kutluoglu.core.designsystem.utils.LanguageProvider
+import io.mockk.every
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
@@ -37,12 +39,34 @@ class LocationSelectionViewModelTest {
     private lateinit var locationServiceHelper: LocationServiceHelper
     private lateinit var locationsCoordinator: LocationsCoordinator
     private val analyticsTracker = mockk<AnalyticsTracker>(relaxed = true)
+    private val languageProvider = mockk<LanguageProvider>()
     private lateinit var viewModel: LocationSelectionViewModel
 
     private val presetCities = listOf(
-        City("Istanbul", "Turkey", 41.0082, 28.9784, "Europe/Istanbul", "Istanbul"),
-        City("Ankara", "Turkey", 39.9334, 32.8597, "Europe/Istanbul", "Ankara"),
-        City("London", "United Kingdom", 51.5074, -0.1278, "Europe/London", "London")
+        City(
+            "Istanbul", "Turkey", 41.0082, 28.9784, "Europe/Istanbul", "Istanbul",
+            nameTr = "İstanbul", nameAr = "إسطنبول", nameFa = "استانبول",
+            countryTr = "Türkiye", countryAr = "تركيا", countryFa = "ترکیه",
+            cityTr = "İstanbul", cityAr = "إسطنبول", cityFa = "استانبول"
+        ),
+        City(
+            "Ankara", "Turkey", 39.9334, 32.8597, "Europe/Istanbul", "Ankara",
+            nameTr = "Ankara", nameAr = "أنقرة", nameFa = "آنکارا",
+            countryTr = "Türkiye", countryAr = "تركيا", countryFa = "ترکیه",
+            cityTr = "Ankara", cityAr = "أنقرة", cityFa = "آنکارا"
+        ),
+        City(
+            "Riyadh", "Saudi Arabia", 24.7136, 46.6753, "Asia/Riyadh", "Riyadh",
+            nameTr = "Riyad", nameAr = "الرياض", nameFa = "ریاض",
+            countryTr = "Suudi Arabistan", countryAr = "السعودية", countryFa = "عربستان سعودی",
+            cityTr = "Riyad", cityAr = "الرياض", cityFa = "ریاض"
+        ),
+        City(
+            "London", "United Kingdom", 51.5074, -0.1278, "Europe/London", "London",
+            nameTr = "Londra", nameAr = "لندن", nameFa = "لندن",
+            countryTr = "Birleşik Krallık", countryAr = "المملكة المتحدة", countryFa = "بریتانیا",
+            cityTr = "Londra", cityAr = "لندن", cityFa = "لندن"
+        )
     )
 
     @BeforeEach
@@ -52,12 +76,14 @@ class LocationSelectionViewModelTest {
         locationServiceHelper = mockk()
         locationsCoordinator = mockk(relaxed = true)
         coEvery { locationRepository.getPresetCities() } returns presetCities
+        every { languageProvider.getLanguageCode() } returns "en"
         viewModel = LocationSelectionViewModel(
             locationRepository,
             searchLocationUseCase,
             locationServiceHelper,
             locationsCoordinator,
             analyticsTracker,
+            languageProvider,
             defaultDispatcher = mainCoroutineRule.dispatcher
         )
     }
@@ -293,7 +319,106 @@ class LocationSelectionViewModelTest {
                 }
             }
             assertThat(restored.countries.map { it.name })
-                .containsExactly("Turkey", "United Kingdom")
+                .containsExactly("Turkey", "Saudi Arabia", "United Kingdom")
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `Country list should pin Turkey first among priority countries`() = runTest {
+        viewModel.uiState.test {
+            val state = awaitItem()
+            val countryState = state as LocationSelectionUiState.CountrySelection
+            assertThat(countryState.countries.map { it.key })
+                .containsExactly("Turkey", "Saudi Arabia", "United Kingdom")
+            assertThat(countryState.countries.first().key).isEqualTo("Turkey")
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `Country list should show localized country names for Turkish`() = runTest {
+        every { languageProvider.getLanguageCode() } returns "tr"
+        viewModel.onEvent(LocationSelectionEvent.LoadCountries)
+
+        viewModel.uiState.test {
+            val state = awaitItem()
+            val countryState = state as LocationSelectionUiState.CountrySelection
+            assertThat(countryState.countries.first().name).isEqualTo("Türkiye")
+            assertThat(countryState.countries.first().key).isEqualTo("Turkey")
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `Country list should show localized country names for Arabic`() = runTest {
+        every { languageProvider.getLanguageCode() } returns "ar"
+        viewModel.onEvent(LocationSelectionEvent.LoadCountries)
+
+        viewModel.uiState.test {
+            val state = awaitItem()
+            val countryState = state as LocationSelectionUiState.CountrySelection
+            assertThat(countryState.countries.first().name).isEqualTo("تركيا")
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `Country list should fall back to English for unsupported language`() = runTest {
+        every { languageProvider.getLanguageCode() } returns "de"
+
+        viewModel.uiState.test {
+            val state = awaitItem()
+            val countryState = state as LocationSelectionUiState.CountrySelection
+            assertThat(countryState.countries.first().name).isEqualTo("Turkey")
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `SearchCountry should match localized country names`() = runTest {
+        every { languageProvider.getLanguageCode() } returns "tr"
+        viewModel.onEvent(LocationSelectionEvent.SearchCountry("Türkiye"))
+
+        viewModel.uiState.test {
+            var filtered: LocationSelectionUiState.CountrySelection? = null
+            while (filtered == null) {
+                val state = awaitItem()
+                if (state is LocationSelectionUiState.CountrySelection && state.searchQuery == "Türkiye") {
+                    filtered = state
+                }
+            }
+            assertThat(filtered.countries.map { it.key }).containsExactly("Turkey")
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `SelectCountry should carry the master country list for two-pane`() = runTest {
+        viewModel.onEvent(LocationSelectionEvent.SelectCountry("Turkey"))
+
+        viewModel.uiState.test {
+            val state = awaitItem()
+            val cityState = state as LocationSelectionUiState.CitySelection
+            assertThat(cityState.countries.map { it.key })
+                .containsExactly("Turkey", "Saudi Arabia", "United Kingdom")
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `SelectProvince should carry the master country list for two-pane`() = runTest {
+        viewModel.onEvent(LocationSelectionEvent.SelectCountry("Turkey"))
+        viewModel.uiState.test { awaitItem(); cancelAndIgnoreRemainingEvents() }
+
+        val mainCity = presetCities.first()
+        viewModel.onEvent(LocationSelectionEvent.SelectProvince("Istanbul", mainCity))
+
+        viewModel.uiState.test {
+            val state = awaitItem()
+            val provinceState = state as LocationSelectionUiState.ProvinceSelection
+            assertThat(provinceState.countries.map { it.key })
+                .containsExactly("Turkey", "Saudi Arabia", "United Kingdom")
             cancelAndIgnoreRemainingEvents()
         }
     }

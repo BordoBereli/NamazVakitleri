@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.kutluoglu.core.common.analytics.AnalyticsEvents
 import com.kutluoglu.core.common.analytics.AnalyticsParams
 import com.kutluoglu.core.common.analytics.AnalyticsTracker
+import com.kutluoglu.core.designsystem.utils.LanguageProvider
 import com.kutluoglu.prayer.model.location.City
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.location.LocationEntry
@@ -37,6 +38,7 @@ class LocationSelectionViewModel(
     private val locationServiceHelper: LocationServiceHelper,
     private val locationsCoordinator: LocationsCoordinator,
     private val analyticsTracker: AnalyticsTracker,
+    private val languageProvider: LanguageProvider,
     private val defaultDispatcher: CoroutineDispatcher = Dispatchers.Default
 ) : ViewModel() {
 
@@ -86,23 +88,34 @@ class LocationSelectionViewModel(
             try {
                 _uiState.value = LocationSelectionUiState.Loading
                 allCities = locationRepository.getPresetCities()
-                
-                val countries = allCities
-                    .groupBy { it.country }
-                    .map { (country, cities) ->
-                        CountryInfo(
-                            name = country,
-                            cityCount = cities.size,
-                            isPriority = PRIORITY_COUNTRIES.contains(country)
-                        )
-                    }
-                    .sortedWith(compareBy({ !it.isPriority }, { it.name }))
-                
-                _uiState.value = LocationSelectionUiState.CountrySelection(countries)
+
+                _uiState.value = LocationSelectionUiState.CountrySelection(buildCountries(allCities))
             } catch (e: Exception) {
                 _uiState.value = LocationSelectionUiState.Error(getUserFriendlyErrorMessage(e))
             }
         }
+    }
+
+    private fun buildCountries(cities: List<City>): List<CountryInfo> {
+        val lang = languageProvider.getLanguageCode()
+        return cities
+            .groupBy { it.country }
+            .map { (country, cities) ->
+                val sample = cities.first()
+                CountryInfo(
+                    name = CityLocalizer.localizedCountry(sample, lang),
+                    key = country,
+                    cityCount = cities.size,
+                    isPriority = PRIORITY_COUNTRIES.contains(country)
+                )
+            }
+            .sortedWith(
+                compareBy(
+                    { !it.isPriority },
+                    { it.key != "Turkey" },
+                    { it.name.lowercase() }
+                )
+            )
     }
 
     private fun searchCountries(query: String) {
@@ -114,28 +127,15 @@ class LocationSelectionViewModel(
 
             val filtered = withContext(defaultDispatcher) {
                 if (query.isBlank()) {
-                    allCities
-                        .groupBy { it.country }
-                        .map { (country, cities) ->
-                            CountryInfo(
-                                name = country,
-                                cityCount = cities.size,
-                                isPriority = PRIORITY_COUNTRIES.contains(country)
-                            )
-                        }
-                        .sortedWith(compareBy({ !it.isPriority }, { it.name }))
+                    buildCountries(allCities)
                 } else {
+                    val lang = languageProvider.getLanguageCode()
                     allCities
-                        .filter { matchesTurkish(it.name, query) || matchesTurkish(it.country, query) }
-                        .groupBy { it.country }
-                        .map { (country, cities) ->
-                            CountryInfo(
-                                name = country,
-                                cityCount = cities.size,
-                                isPriority = PRIORITY_COUNTRIES.contains(country)
-                            )
+                        .filter { city ->
+                            matchesTurkish(CityLocalizer.localizedName(city, lang), query) ||
+                                matchesTurkish(CityLocalizer.localizedCountry(city, lang), query)
                         }
-                        .sortedWith(compareBy({ !it.isPriority }, { it.name }))
+                        .let { buildCountries(it) }
                 }
             }
 
@@ -156,7 +156,8 @@ class LocationSelectionViewModel(
             cities = citiesInCountry,
             citiesByProvince = citiesByProvince,
             selectedProvince = null,
-            sortOrder = currentSortOrder
+            sortOrder = currentSortOrder,
+            countries = buildCountries(allCities)
         )
     }
 
@@ -175,7 +176,8 @@ class LocationSelectionViewModel(
             province = province,
             mainCity = mainCity,
             districts = districts.sortedBy { it.name.lowercase() },
-            sortOrder = currentSortOrder
+            sortOrder = currentSortOrder,
+            countries = buildCountries(allCities)
         )
     }
 
