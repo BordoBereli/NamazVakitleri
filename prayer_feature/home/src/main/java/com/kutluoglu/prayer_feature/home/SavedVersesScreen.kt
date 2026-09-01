@@ -537,7 +537,7 @@ private fun VerseRow(
                         Text(
                             text = "${verse.numberInSurah}",
                             style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.primary
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
                         )
                     }
                     Spacer(modifier = Modifier.weight(1f))
