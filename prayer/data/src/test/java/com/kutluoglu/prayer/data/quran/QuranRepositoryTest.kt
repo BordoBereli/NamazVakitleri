@@ -4,6 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.prayer.data.cache.QuranSurahCache
 import com.kutluoglu.prayer.data.cache.SavedVersesStore
 import com.kutluoglu.prayer.model.quran.AyahData
+import com.kutluoglu.prayer.model.quran.SavedVerseGroup
 import com.kutluoglu.prayer.model.quran.SurahInfo
 import com.kutluoglu.prayer_remote.quran.QuranDataSource
 import io.mockk.coEvery
@@ -124,23 +125,23 @@ class QuranRepositoryTest {
     }
 
     @Test
-    fun `getSavedVerses returns the store list`() = runTest {
-        val saved = listOf(verse(1, 1), verse(1, 2))
-        coEvery { savedVersesStore.getSavedVerses() } returns saved
-        coEvery { quranSurahCache.getSurah(any(), any()) } returns saved
+    fun `getSavedVerses returns the store groups`() = runTest {
+        val groups = listOf(SavedVerseGroup(verse(1, 1).surah, listOf(verse(1, 1), verse(1, 2))))
+        coEvery { savedVersesStore.getSavedVerseGroups() } returns groups
+        coEvery { quranSurahCache.getSurah(any(), any()) } returns listOf(verse(1, 1), verse(1, 2))
 
         val repository = QuranRepository(quranDataSource, quranSurahCache, savedVersesStore)
         val result = repository.getSavedVerses("tr")
 
         assertThat(result.isSuccess).isTrue()
-        assertThat(result.getOrThrow()).isEqualTo(saved)
+        assertThat(result.getOrThrow()).isEqualTo(groups)
     }
 
     @Test
     fun `getSavedVerses re-localizes verses in the requested language`() = runTest {
-        val stored = listOf(verse(1, 1).copy(text = "Türkçe metin"))
+        val stored = listOf(SavedVerseGroup(verse(1, 1).surah, listOf(verse(1, 1).copy(text = "Türkçe metin"))))
         val localized = listOf(verse(1, 1).copy(text = "English text"))
-        coEvery { savedVersesStore.getSavedVerses() } returns stored
+        coEvery { savedVersesStore.getSavedVerseGroups() } returns stored
         coEvery { quranSurahCache.getSurah(any(), any()) } returns null
         coEvery { quranSurahCache.putSurah(any(), any(), any()) } returns Unit
         coEvery { quranDataSource.getSurah(any(), "en") } returns Result.success(localized)
@@ -149,32 +150,29 @@ class QuranRepositoryTest {
         val result = repository.getSavedVerses("en")
 
         assertThat(result.isSuccess).isTrue()
-        assertThat(result.getOrThrow()).isEqualTo(localized)
+        assertThat(result.getOrThrow()[0].verses).isEqualTo(localized)
     }
 
     @Test
-    fun `getSavedVerses falls back to stored text when re-fetch fails`() = runTest {
-        val stored = listOf(verse(1, 1).copy(text = "Türkçe metin"))
-        coEvery { savedVersesStore.getSavedVerses() } returns stored
-        coEvery { quranSurahCache.getSurah(any(), any()) } returns null
-        coEvery { quranDataSource.getSurah(any(), any()) } returns Result.failure(RuntimeException("network"))
+    fun `reorderSavedVerses persists the nested groups`() = runTest {
+        val groups = listOf(SavedVerseGroup(verse(1, 1).surah, listOf(verse(1, 2), verse(1, 1))))
+        coEvery { savedVersesStore.saveGroups(groups) } returns Unit
 
         val repository = QuranRepository(quranDataSource, quranSurahCache, savedVersesStore)
-        val result = repository.getSavedVerses("tr")
+        val result = repository.reorderSavedVerses(groups)
 
         assertThat(result.isSuccess).isTrue()
-        assertThat(result.getOrThrow()).isEqualTo(stored)
+        coVerify(exactly = 1) { savedVersesStore.saveGroups(groups) }
     }
 
     @Test
-    fun `reorderSavedVerses persists the new order`() = runTest {
-        val order = listOf(verse(1, 2), verse(1, 1))
-        coEvery { savedVersesStore.reorder(order) } returns Unit
+    fun `collapse state delegates to the store`() = runTest {
+        coEvery { savedVersesStore.getCollapsedSurahs() } returns setOf(1)
+        coEvery { savedVersesStore.setCollapsedSurahs(any()) } returns Unit
 
         val repository = QuranRepository(quranDataSource, quranSurahCache, savedVersesStore)
-        val result = repository.reorderSavedVerses(order)
-
-        assertThat(result.isSuccess).isTrue()
-        coVerify(exactly = 1) { savedVersesStore.reorder(order) }
+        assertThat(repository.getCollapsedSurahs()).containsExactly(1)
+        repository.setCollapsedSurahs(setOf(36))
+        coVerify(exactly = 1) { savedVersesStore.setCollapsedSurahs(setOf(36)) }
     }
 }

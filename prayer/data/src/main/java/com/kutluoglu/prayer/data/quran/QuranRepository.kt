@@ -3,6 +3,7 @@ package com.kutluoglu.prayer.data.quran
 import com.kutluoglu.prayer.data.cache.QuranSurahCache
 import com.kutluoglu.prayer.data.cache.SavedVersesStore
 import com.kutluoglu.prayer.model.quran.AyahData
+import com.kutluoglu.prayer.model.quran.SavedVerseGroup
 import com.kutluoglu.prayer.repository.IQuranRepository
 import com.kutluoglu.prayer_remote.quran.QuranDataSource
 import kotlin.random.Random
@@ -58,14 +59,20 @@ class QuranRepository(
     override suspend fun toggleSavedVerse(verse: AyahData): Result<Unit> =
         runCatching { savedVersesStore.toggle(verse) }
 
-    override suspend fun getSavedVerses(language: String): Result<List<AyahData>> = runCatching {
-        val saved = savedVersesStore.getSavedVerses()
-        saved.map { verse ->
-            getVerse(verse.surah.number, verse.numberInSurah, language)
-                .getOrElse { verse }
+    override suspend fun getSavedVerses(language: String): Result<List<SavedVerseGroup>> = runCatching {
+        savedVersesStore.getSavedVerseGroups().map { group ->
+            group.copy(verses = group.verses.map { verse ->
+                getVerse(verse.surah.number, verse.numberInSurah, language).getOrElse { verse }
+            })
         }
     }
 
-    override suspend fun reorderSavedVerses(verses: List<AyahData>): Result<Unit> =
-        runCatching { savedVersesStore.reorder(verses) }
+    override suspend fun reorderSavedVerses(groups: List<SavedVerseGroup>): Result<Unit> =
+        runCatching { savedVersesStore.saveGroups(groups) }
+
+    override suspend fun getCollapsedSurahs(): Set<Int> = savedVersesStore.getCollapsedSurahs()
+
+    override suspend fun setCollapsedSurahs(surahs: Set<Int>) {
+        savedVersesStore.setCollapsedSurahs(surahs)
+    }
 }

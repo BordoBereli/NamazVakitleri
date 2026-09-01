@@ -1,6 +1,6 @@
 package com.kutluoglu.prayer.usecases.quran
 
-import com.kutluoglu.prayer.model.quran.AyahData
+import com.kutluoglu.prayer.model.quran.SavedVerseGroup
 import com.kutluoglu.prayer.repository.IQuranRepository
 import org.koin.core.annotation.Factory
 
@@ -8,6 +8,6 @@ import org.koin.core.annotation.Factory
 class ReorderSavedVersesUseCase(
     private val repository: IQuranRepository
 ) {
-    suspend operator fun invoke(verses: List<AyahData>): Result<Unit> =
-        repository.reorderSavedVerses(verses)
+    suspend operator fun invoke(groups: List<SavedVerseGroup>): Result<Unit> =
+        repository.reorderSavedVerses(groups)
 }

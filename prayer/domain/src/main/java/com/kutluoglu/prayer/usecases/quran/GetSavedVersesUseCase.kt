@@ -1,6 +1,6 @@
 package com.kutluoglu.prayer.usecases.quran
 
-import com.kutluoglu.prayer.model.quran.AyahData
+import com.kutluoglu.prayer.model.quran.SavedVerseGroup
 import com.kutluoglu.prayer.repository.IQuranRepository
 import org.koin.core.annotation.Factory
 
@@ -9,6 +9,6 @@ import org.koin.core.annotation.Factory
 class GetSavedVersesUseCase(
     private val repository: IQuranRepository
 ) {
-    suspend operator fun invoke(language: String): Result<List<AyahData>> =
+    suspend operator fun invoke(language: String): Result<List<SavedVerseGroup>> =
         repository.getSavedVerses(language)
 }
