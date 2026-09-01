@@ -5,6 +5,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.navigation.NavController
+import com.kutluoglu.core.designsystem.utils.LanguageProvider
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
 import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
 import com.kutluoglu.prayer_feature.home.HomeScreen
@@ -28,6 +29,8 @@ fun HomeRoute(
         formatter: PrayerFormatter = koinInject(),
         navController: NavController
 ) {
+    val languageProvider = koinInject<LanguageProvider>()
+    val languageCode = languageProvider.getLanguageCode()
     val gate by viewModel.screenGate.collectAsState()
     val countdown by viewModel.countdownState.collectAsState()
     val quran by viewModel.quranState.collectAsState()
@@ -54,6 +57,7 @@ fun HomeRoute(
         locationsState = locations,
         prayerDataByLocation = prayerData,
         activeLocationId = activeLocationId,
+        languageCode = languageCode,
         quranVerseFormatter = verseFormatter,
         calculator = calculator,
         formatter = formatter,

@@ -27,6 +27,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.kutluoglu.prayer.model.location.LocationEntry
+import com.kutluoglu.prayer.model.location.LocationNameLocalizer
 import kotlinx.coroutines.flow.first
 
 @Composable
@@ -36,6 +37,7 @@ fun LocationChipsRow(
     pagerState: PagerState,
     onLocationSelected: (String) -> Unit,
     onAddLocation: () -> Unit,
+    languageCode: String,
     modifier: Modifier = Modifier
 ) {
     val listState = rememberLazyListState()
@@ -106,7 +108,7 @@ fun LocationChipsRow(
         ) {
             itemsIndexed(entries, key = { _, entry -> entry.id }) { index, entry ->
                 LocationChip(
-                    text = entry.displayName,
+                    text = LocationNameLocalizer.localized(entry, languageCode),
                     selectionProgress = ChipsSelectionGeometry.selectionProgressFor(
                         index = index,
                         currentPage = currentPage,

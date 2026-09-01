@@ -84,7 +84,8 @@ class LocationPagerCountdownTest {
                 permissionDenied = false,
                 onEvent = {},
                 calculator = calculator,
-                formatter = formatter
+                formatter = formatter,
+                languageCode = "en"
             )
         }
         composeTestRule.waitForIdle()

@@ -53,6 +53,7 @@ class HomeScreenTest {
                 quranVerseFormatter = mockk<QuranVerseFormatter>(relaxed = true),
                 calculator = mockk<PrayerLogicEngine>(relaxed = true),
                 formatter = mockk<PrayerFormatter>(relaxed = true),
+                languageCode = "en",
                 onEvent = {}
             )
         }
@@ -73,6 +74,7 @@ class HomeScreenTest {
                 quranVerseFormatter = mockk<QuranVerseFormatter>(relaxed = true),
                 calculator = mockk<PrayerLogicEngine>(relaxed = true),
                 formatter = mockk<PrayerFormatter>(relaxed = true),
+                languageCode = "en",
                 onEvent = {}
             )
         }
@@ -93,6 +95,7 @@ class HomeScreenTest {
                 quranVerseFormatter = mockk<QuranVerseFormatter>(relaxed = true),
                 calculator = mockk<PrayerLogicEngine>(relaxed = true),
                 formatter = mockk<PrayerFormatter>(relaxed = true),
+                languageCode = "en",
                 onEvent = {}
             )
         }
@@ -131,6 +134,7 @@ class HomeScreenTest {
                 quranVerseFormatter = mockk<QuranVerseFormatter>(relaxed = true),
                 calculator = mockk<PrayerLogicEngine>(relaxed = true),
                 formatter = mockk<PrayerFormatter>(relaxed = true),
+                languageCode = "en",
                 onEvent = { events.add(it) }
             )
         }
@@ -157,6 +161,7 @@ class HomeScreenTest {
                 quranVerseFormatter = mockk<QuranVerseFormatter>(relaxed = true),
                 calculator = mockk<PrayerLogicEngine>(relaxed = true),
                 formatter = mockk<PrayerFormatter>(relaxed = true),
+                languageCode = "en",
                 onEvent = { events.add(it) }
             )
         }
@@ -186,6 +191,7 @@ class HomeScreenTest {
                 quranVerseFormatter = mockk<QuranVerseFormatter>(relaxed = true),
                 calculator = mockk<PrayerLogicEngine>(relaxed = true),
                 formatter = mockk<PrayerFormatter>(relaxed = true),
+                languageCode = "en",
                 onEvent = { events.add(it) }
             )
         }
@@ -235,6 +241,7 @@ class HomeScreenTest {
                 quranVerseFormatter = mockk<QuranVerseFormatter>(relaxed = true),
                 calculator = mockk<PrayerLogicEngine>(relaxed = true),
                 formatter = mockk<PrayerFormatter>(relaxed = true),
+                languageCode = "en",
                 onEvent = { if (it == HomeEvent.OnToggleVerseSaved) toggled = true }
             )
         }
@@ -276,6 +283,7 @@ class HomeScreenTest {
                 quranVerseFormatter = mockk<QuranVerseFormatter>(relaxed = true),
                 calculator = mockk<PrayerLogicEngine>(relaxed = true),
                 formatter = mockk<PrayerFormatter>(relaxed = true),
+                languageCode = "en",
                 onEvent = {}
             )
         }
@@ -296,6 +304,7 @@ class HomeScreenTest {
                 quranVerseFormatter = mockk<QuranVerseFormatter>(relaxed = true),
                 calculator = mockk<PrayerLogicEngine>(relaxed = true),
                 formatter = mockk<PrayerFormatter>(relaxed = true),
+                languageCode = "en",
                 onNavigateToSavedVerses = { navigated = true },
                 onEvent = {}
             )

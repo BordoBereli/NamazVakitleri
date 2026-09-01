@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.kutluoglu.core.designsystem.components.LoadingIndicator
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
 import com.kutluoglu.prayer.model.location.LocationEntry
+import com.kutluoglu.prayer.model.location.LocationNameLocalizer
 import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
 import com.kutluoglu.prayer_feature.home.R
 import com.kutluoglu.prayer_feature.home.common.QuranVerseFormatter
@@ -64,7 +65,8 @@ fun LocationPager(
     permissionDenied: Boolean,
     onEvent: (HomeEvent) -> Unit,
     calculator: PrayerLogicEngine,
-    formatter: PrayerFormatter
+    formatter: PrayerFormatter,
+    languageCode: String
 ) {
     if (entries.isEmpty()) {
         if (uiState is HomeUiState.Loading) {
@@ -114,7 +116,8 @@ fun LocationPager(
             selectedId = selectedId,
             pagerState = pagerState,
             onLocationSelected = { id -> onEvent(HomeEvent.OnLocationSelected(id)) },
-            onAddLocation = onAddLocation
+            onAddLocation = onAddLocation,
+            languageCode = languageCode
         )
         HorizontalPager(
             state = pagerState,
@@ -140,17 +143,17 @@ fun LocationPager(
                     calculator = calculator,
                     formatter = formatter
                 )
-                else -> LocationPlaceholder(entry)
+                else -> LocationPlaceholder(entry, languageCode)
             }
         }
     }
 }
 
 @Composable
-private fun LocationPlaceholder(entry: LocationEntry?) {
+private fun LocationPlaceholder(entry: LocationEntry?, languageCode: String) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Text(
-            text = entry?.displayName ?: "",
+            text = entry?.let { LocationNameLocalizer.localized(it, languageCode) } ?: "",
             style = MaterialTheme.typography.titleLarge
         )
     }
