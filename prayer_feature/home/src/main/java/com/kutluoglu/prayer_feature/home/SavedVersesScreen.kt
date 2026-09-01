@@ -506,7 +506,7 @@ private fun VerseRow(
             .clickable(onClick = onSelect),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = if (isDragging) 8.dp else 2.dp)
     ) {
@@ -530,14 +530,14 @@ private fun VerseRow(
                         modifier = Modifier
                             .size(24.dp)
                             .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.primaryContainer)
+                            .background(MaterialTheme.colorScheme.primary)
                             .testTag("ayah_index_${verse.surah.number}_${verse.numberInSurah}"),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
                             text = "${verse.numberInSurah}",
                             style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                            color = MaterialTheme.colorScheme.onPrimary
                         )
                     }
                     Spacer(modifier = Modifier.weight(1f))
