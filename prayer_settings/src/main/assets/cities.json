@@ -6,7 +6,10 @@
       "latitude": 24.7136,
       "longitude": 46.6753,
       "timezone": "Asia/Riyadh",
-      "county": "Riyadh"
+      "county": "Riyadh",
+      "countryTr": "Suudi Arabistan",
+      "countryAr": "السعودية",
+      "countryFa": "عربستان سعودی"
     },
     {
       "name": "Jeddah",
@@ -14,21 +17,30 @@
       "latitude": 21.4858,
       "longitude": 39.1925,
       "timezone": "Asia/Riyadh",
-      "county": "Mecca"
+      "county": "Mecca",
+      "countryTr": "Suudi Arabistan",
+      "countryAr": "السعودية",
+      "countryFa": "عربستان سعودی"
     },
     {
       "name": "Mekka",
       "country": "Saudi Arabia",
       "latitude": 21.3891,
       "longitude": 39.8579,
-      "timezone": "Asia/Riyadh"
+      "timezone": "Asia/Riyadh",
+      "countryTr": "Suudi Arabistan",
+      "countryAr": "السعودية",
+      "countryFa": "عربستان سعودی"
     },
     {
       "name": "Medine",
       "country": "Saudi Arabia",
       "latitude": 24.5247,
       "longitude": 39.5692,
-      "timezone": "Asia/Riyadh"
+      "timezone": "Asia/Riyadh",
+      "countryTr": "Suudi Arabistan",
+      "countryAr": "السعودية",
+      "countryFa": "عربستان سعودی"
     },
     {
       "name": "Dammam",
@@ -36,7 +48,10 @@
       "latitude": 26.4207,
       "longitude": 50.0888,
       "timezone": "Asia/Riyadh",
-      "county": "Eastern"
+      "county": "Eastern",
+      "countryTr": "Suudi Arabistan",
+      "countryAr": "السعودية",
+      "countryFa": "عربستان سعودی"
     },
     {
       "name": "Taif",
@@ -44,133 +59,190 @@
       "latitude": 21.2703,
       "longitude": 40.4054,
       "timezone": "Asia/Riyadh",
-      "county": "Mecca"
+      "county": "Mecca",
+      "countryTr": "Suudi Arabistan",
+      "countryAr": "السعودية",
+      "countryFa": "عربستان سعودی"
     },
     {
       "name": "Buraydah",
       "country": "Saudi Arabia",
       "latitude": 26.326,
       "longitude": 43.775,
-      "timezone": "Asia/Riyadh"
+      "timezone": "Asia/Riyadh",
+      "countryTr": "Suudi Arabistan",
+      "countryAr": "السعودية",
+      "countryFa": "عربستان سعودی"
     },
     {
       "name": "Tabuk",
       "country": "Saudi Arabia",
       "latitude": 28.3838,
       "longitude": 36.5668,
-      "timezone": "Asia/Riyadh"
+      "timezone": "Asia/Riyadh",
+      "countryTr": "Suudi Arabistan",
+      "countryAr": "السعودية",
+      "countryFa": "عربستان سعودی"
     },
     {
       "name": "Abha",
       "country": "Saudi Arabia",
       "latitude": 18.2164,
       "longitude": 42.5044,
-      "timezone": "Asia/Riyadh"
+      "timezone": "Asia/Riyadh",
+      "countryTr": "Suudi Arabistan",
+      "countryAr": "السعودية",
+      "countryFa": "عربستان سعودی"
     },
     {
       "name": "Al Qunfudhah",
       "country": "Saudi Arabia",
       "latitude": 18.2063,
       "longitude": 41.7083,
-      "timezone": "Asia/Riyadh"
+      "timezone": "Asia/Riyadh",
+      "countryTr": "Suudi Arabistan",
+      "countryAr": "السعودية",
+      "countryFa": "عربستان سعودی"
     },
     {
       "name": "Al-Baha",
       "country": "Saudi Arabia",
       "latitude": 20.2724,
       "longitude": 41.5753,
-      "timezone": "Asia/Riyadh"
+      "timezone": "Asia/Riyadh",
+      "countryTr": "Suudi Arabistan",
+      "countryAr": "السعودية",
+      "countryFa": "عربستان سعودی"
     },
     {
       "name": "Al-Jubail",
       "country": "Saudi Arabia",
       "latitude": 27.0119,
       "longitude": 49.6572,
-      "timezone": "Asia/Riyadh"
+      "timezone": "Asia/Riyadh",
+      "countryTr": "Suudi Arabistan",
+      "countryAr": "السعودية",
+      "countryFa": "عربستان سعودی"
     },
     {
       "name": "Al-Khobar",
       "country": "Saudi Arabia",
       "latitude": 26.2171,
       "longitude": 50.1528,
-      "timezone": "Asia/Riyadh"
+      "timezone": "Asia/Riyadh",
+      "countryTr": "Suudi Arabistan",
+      "countryAr": "السعودية",
+      "countryFa": "عربستان سعودی"
     },
     {
       "name": "Al-Madinah",
       "country": "Saudi Arabia",
       "latitude": 24.5247,
       "longitude": 39.5692,
-      "timezone": "Asia/Riyadh"
+      "timezone": "Asia/Riyadh",
+      "countryTr": "Suudi Arabistan",
+      "countryAr": "السعودية",
+      "countryFa": "عربستان سعودی"
     },
     {
       "name": "Arar",
       "country": "Saudi Arabia",
       "latitude": 30.9756,
       "longitude": 41.6901,
-      "timezone": "Asia/Riyadh"
+      "timezone": "Asia/Riyadh",
+      "countryTr": "Suudi Arabistan",
+      "countryAr": "السعودية",
+      "countryFa": "عربستان سعودی"
     },
     {
       "name": "Dhahran",
       "country": "Saudi Arabia",
       "latitude": 26.2425,
       "longitude": 50.1593,
-      "timezone": "Asia/Riyadh"
+      "timezone": "Asia/Riyadh",
+      "countryTr": "Suudi Arabistan",
+      "countryAr": "السعودية",
+      "countryFa": "عربستان سعودی"
     },
     {
       "name": "Hafar Al-Batin",
       "country": "Saudi Arabia",
       "latitude": 28.4333,
       "longitude": 45.9667,
-      "timezone": "Asia/Riyadh"
+      "timezone": "Asia/Riyadh",
+      "countryTr": "Suudi Arabistan",
+      "countryAr": "السعودية",
+      "countryFa": "عربستان سعودی"
     },
     {
       "name": "Hail",
       "country": "Saudi Arabia",
       "latitude": 27.5236,
       "longitude": 41.6956,
-      "timezone": "Asia/Riyadh"
+      "timezone": "Asia/Riyadh",
+      "countryTr": "Suudi Arabistan",
+      "countryAr": "السعودية",
+      "countryFa": "عربستان سعودی"
     },
     {
       "name": "Jizan",
       "country": "Saudi Arabia",
       "latitude": 17.3333,
       "longitude": 42.6667,
-      "timezone": "Asia/Riyadh"
+      "timezone": "Asia/Riyadh",
+      "countryTr": "Suudi Arabistan",
+      "countryAr": "السعودية",
+      "countryFa": "عربستان سعودی"
     },
     {
       "name": "Jouf",
       "country": "Saudi Arabia",
       "latitude": 29.8737,
       "longitude": 40.1135,
-      "timezone": "Asia/Riyadh"
+      "timezone": "Asia/Riyadh",
+      "countryTr": "Suudi Arabistan",
+      "countryAr": "السعودية",
+      "countryFa": "عربستان سعودی"
     },
     {
       "name": "Khamis Mushait",
       "country": "Saudi Arabia",
       "latitude": 18.306,
       "longitude": 42.8333,
-      "timezone": "Asia/Riyadh"
+      "timezone": "Asia/Riyadh",
+      "countryTr": "Suudi Arabistan",
+      "countryAr": "السعودية",
+      "countryFa": "عربستان سعودی"
     },
     {
       "name": "Najran",
       "country": "Saudi Arabia",
       "latitude": 17.4923,
       "longitude": 44.1314,
-      "timezone": "Asia/Riyadh"
+      "timezone": "Asia/Riyadh",
+      "countryTr": "Suudi Arabistan",
+      "countryAr": "السعودية",
+      "countryFa": "عربستان سعودی"
     },
     {
       "name": "Qassim",
       "country": "Saudi Arabia",
       "latitude": 26.326,
       "longitude": 43.775,
-      "timezone": "Asia/Riyadh"
+      "timezone": "Asia/Riyadh",
+      "countryTr": "Suudi Arabistan",
+      "countryAr": "السعودية",
+      "countryFa": "عربستان سعودی"
     },
     {
       "name": "Yanbu",
       "country": "Saudi Arabia",
       "latitude": 24.0897,
       "longitude": 38.0623,
-      "timezone": "Asia/Riyadh"
+      "timezone": "Asia/Riyadh",
+      "countryTr": "Suudi Arabistan",
+      "countryAr": "السعودية",
+      "countryFa": "عربستان سعودی"
     },
     {
       "name": "Cairo",
@@ -178,7 +250,10 @@
       "latitude": 30.0444,
       "longitude": 31.2357,
       "timezone": "Africa/Cairo",
-      "county": "Cairo"
+      "county": "Cairo",
+      "countryTr": "Mısır",
+      "countryAr": "مصر",
+      "countryFa": "مصر"
     },
     {
       "name": "Alexandria",
@@ -186,7 +261,10 @@
       "latitude": 31.2001,
       "longitude": 29.9187,
       "timezone": "Africa/Cairo",
-      "county": "Alexandria"
+      "county": "Alexandria",
+      "countryTr": "Mısır",
+      "countryAr": "مصر",
+      "countryFa": "مصر"
     },
     {
       "name": "Giza",
@@ -194,35 +272,50 @@
       "latitude": 30.0131,
       "longitude": 31.2089,
       "timezone": "Africa/Cairo",
-      "county": "Giza"
+      "county": "Giza",
+      "countryTr": "Mısır",
+      "countryAr": "مصر",
+      "countryFa": "مصر"
     },
     {
       "name": "Mansoura",
       "country": "Egypt",
       "latitude": 31.0409,
       "longitude": 31.3785,
-      "timezone": "Africa/Cairo"
+      "timezone": "Africa/Cairo",
+      "countryTr": "Mısır",
+      "countryAr": "مصر",
+      "countryFa": "مصر"
     },
     {
       "name": "Tanta",
       "country": "Egypt",
       "latitude": 30.7865,
       "longitude": 31.0004,
-      "timezone": "Africa/Cairo"
+      "timezone": "Africa/Cairo",
+      "countryTr": "Mısır",
+      "countryAr": "مصر",
+      "countryFa": "مصر"
     },
     {
       "name": "Faiyum",
       "country": "Egypt",
       "latitude": 29.3099,
       "longitude": 30.8418,
-      "timezone": "Africa/Cairo"
+      "timezone": "Africa/Cairo",
+      "countryTr": "Mısır",
+      "countryAr": "مصر",
+      "countryFa": "مصر"
     },
     {
       "name": "Ismailia",
       "country": "Egypt",
       "latitude": 30.5966,
       "longitude": 32.2714,
-      "timezone": "Africa/Cairo"
+      "timezone": "Africa/Cairo",
+      "countryTr": "Mısır",
+      "countryAr": "مصر",
+      "countryFa": "مصر"
     },
     {
       "name": "Luxor",
@@ -230,21 +323,30 @@
       "latitude": 25.6872,
       "longitude": 32.6396,
       "timezone": "Africa/Cairo",
-      "county": "Luxor"
+      "county": "Luxor",
+      "countryTr": "Mısır",
+      "countryAr": "مصر",
+      "countryFa": "مصر"
     },
     {
       "name": "Suez",
       "country": "Egypt",
       "latitude": 29.9737,
       "longitude": 32.5263,
-      "timezone": "Africa/Cairo"
+      "timezone": "Africa/Cairo",
+      "countryTr": "Mısır",
+      "countryAr": "مصر",
+      "countryFa": "مصر"
     },
     {
       "name": "Zagazig",
       "country": "Egypt",
       "latitude": 30.5875,
       "longitude": 31.502,
-      "timezone": "Africa/Cairo"
+      "timezone": "Africa/Cairo",
+      "countryTr": "Mısır",
+      "countryAr": "مصر",
+      "countryFa": "مصر"
     },
     {
       "name": "Jakarta",
@@ -252,7 +354,10 @@
       "latitude": -6.2088,
       "longitude": 106.8456,
       "timezone": "Asia/Jakarta",
-      "county": "Jakarta"
+      "county": "Jakarta",
+      "countryTr": "Endonezya",
+      "countryAr": "إندونيسيا",
+      "countryFa": "اندونزی"
     },
     {
       "name": "Surabaya",
@@ -260,7 +365,10 @@
       "latitude": -7.2575,
       "longitude": 112.7521,
       "timezone": "Asia/Jakarta",
-      "county": "East Java"
+      "county": "East Java",
+      "countryTr": "Endonezya",
+      "countryAr": "إندونيسيا",
+      "countryFa": "اندونزی"
     },
     {
       "name": "Bandung",
@@ -268,7 +376,10 @@
       "latitude": -6.9175,
       "longitude": 107.6191,
       "timezone": "Asia/Jakarta",
-      "county": "West Java"
+      "county": "West Java",
+      "countryTr": "Endonezya",
+      "countryAr": "إندونيسيا",
+      "countryFa": "اندونزی"
     },
     {
       "name": "Medan",
@@ -276,7 +387,10 @@
       "latitude": 3.5881,
       "longitude": 98.6729,
       "timezone": "Asia/Jakarta",
-      "county": "North Sumatra"
+      "county": "North Sumatra",
+      "countryTr": "Endonezya",
+      "countryAr": "إندونيسيا",
+      "countryFa": "اندونزی"
     },
     {
       "name": "Makassar",
@@ -284,42 +398,60 @@
       "latitude": -5.1429,
       "longitude": 119.4122,
       "timezone": "Asia/Makassar",
-      "county": "South Sulawesi"
+      "county": "South Sulawesi",
+      "countryTr": "Endonezya",
+      "countryAr": "إندونيسيا",
+      "countryFa": "اندونزی"
     },
     {
       "name": "Depok",
       "country": "Indonesia",
       "latitude": -6.4025,
       "longitude": 106.7942,
-      "timezone": "Asia/Jakarta"
+      "timezone": "Asia/Jakarta",
+      "countryTr": "Endonezya",
+      "countryAr": "إندونيسيا",
+      "countryFa": "اندونزی"
     },
     {
       "name": "Kudus",
       "country": "Indonesia",
       "latitude": -6.8048,
       "longitude": 110.8415,
-      "timezone": "Asia/Jakarta"
+      "timezone": "Asia/Jakarta",
+      "countryTr": "Endonezya",
+      "countryAr": "إندونيسيا",
+      "countryFa": "اندونزی"
     },
     {
       "name": "Palembang",
       "country": "Indonesia",
       "latitude": -2.9913,
       "longitude": 104.7618,
-      "timezone": "Asia/Jakarta"
+      "timezone": "Asia/Jakarta",
+      "countryTr": "Endonezya",
+      "countryAr": "إندونيسيا",
+      "countryFa": "اندونزی"
     },
     {
       "name": "Semarang",
       "country": "Indonesia",
       "latitude": -6.9671,
       "longitude": 110.4205,
-      "timezone": "Asia/Jakarta"
+      "timezone": "Asia/Jakarta",
+      "countryTr": "Endonezya",
+      "countryAr": "إندونيسيا",
+      "countryFa": "اندونزی"
     },
     {
       "name": "Tangerang",
       "country": "Indonesia",
       "latitude": -6.1783,
       "longitude": 106.63,
-      "timezone": "Asia/Jakarta"
+      "timezone": "Asia/Jakarta",
+      "countryTr": "Endonezya",
+      "countryAr": "إندونيسيا",
+      "countryFa": "اندونزی"
     },
     {
       "name": "Kuala Lumpur",
@@ -327,7 +459,10 @@
       "latitude": 3.139,
       "longitude": 101.6869,
       "timezone": "Asia/Kuala_Lumpur",
-      "county": "Federal Territory"
+      "county": "Federal Territory",
+      "countryTr": "Malezya",
+      "countryAr": "ماليزيا",
+      "countryFa": "مالزی"
     },
     {
       "name": "Johor Bahru",
@@ -335,28 +470,40 @@
       "latitude": 1.4927,
       "longitude": 103.7414,
       "timezone": "Asia/Kuala_Lumpur",
-      "county": "Johor"
+      "county": "Johor",
+      "countryTr": "Malezya",
+      "countryAr": "ماليزيا",
+      "countryFa": "مالزی"
     },
     {
       "name": "Ipoh",
       "country": "Malaysia",
       "latitude": 4.5975,
       "longitude": 101.0901,
-      "timezone": "Asia/Kuala_Lumpur"
+      "timezone": "Asia/Kuala_Lumpur",
+      "countryTr": "Malezya",
+      "countryAr": "ماليزيا",
+      "countryFa": "مالزی"
     },
     {
       "name": "Kota Bharu",
       "country": "Malaysia",
       "latitude": 6.1256,
       "longitude": 102.2395,
-      "timezone": "Asia/Kuala_Lumpur"
+      "timezone": "Asia/Kuala_Lumpur",
+      "countryTr": "Malezya",
+      "countryAr": "ماليزيا",
+      "countryFa": "مالزی"
     },
     {
       "name": "Kuala Terengganu",
       "country": "Malaysia",
       "latitude": 5.3117,
       "longitude": 103.1144,
-      "timezone": "Asia/Kuala_Lumpur"
+      "timezone": "Asia/Kuala_Lumpur",
+      "countryTr": "Malezya",
+      "countryAr": "ماليزيا",
+      "countryFa": "مالزی"
     },
     {
       "name": "Penang",
@@ -364,7 +511,10 @@
       "latitude": 5.4141,
       "longitude": 100.3288,
       "timezone": "Asia/Kuala_Lumpur",
-      "county": "Penang"
+      "county": "Penang",
+      "countryTr": "Malezya",
+      "countryAr": "ماليزيا",
+      "countryFa": "مالزی"
     },
     {
       "name": "Karachi",
@@ -372,7 +522,10 @@
       "latitude": 24.8607,
       "longitude": 67.0011,
       "timezone": "Asia/Karachi",
-      "county": "Sindh"
+      "county": "Sindh",
+      "countryTr": "Pakistan",
+      "countryAr": "باكستان",
+      "countryFa": "پاکستان"
     },
     {
       "name": "Lahore",
@@ -380,42 +533,60 @@
       "latitude": 31.5204,
       "longitude": 74.3587,
       "timezone": "Asia/Karachi",
-      "county": "Punjab"
+      "county": "Punjab",
+      "countryTr": "Pakistan",
+      "countryAr": "باكستان",
+      "countryFa": "پاکستان"
     },
     {
       "name": "Faisalabad",
       "country": "Pakistan",
       "latitude": 31.4504,
       "longitude": 73.135,
-      "timezone": "Asia/Karachi"
+      "timezone": "Asia/Karachi",
+      "countryTr": "Pakistan",
+      "countryAr": "باكستان",
+      "countryFa": "پاکستان"
     },
     {
       "name": "Rawalpindi",
       "country": "Pakistan",
       "latitude": 33.5651,
       "longitude": 73.0169,
-      "timezone": "Asia/Karachi"
+      "timezone": "Asia/Karachi",
+      "countryTr": "Pakistan",
+      "countryAr": "باكستان",
+      "countryFa": "پاکستان"
     },
     {
       "name": "Multan",
       "country": "Pakistan",
       "latitude": 30.1575,
       "longitude": 71.5249,
-      "timezone": "Asia/Karachi"
+      "timezone": "Asia/Karachi",
+      "countryTr": "Pakistan",
+      "countryAr": "باكستان",
+      "countryFa": "پاکستان"
     },
     {
       "name": "Bahawalpur",
       "country": "Pakistan",
       "latitude": 29.3956,
       "longitude": 71.6723,
-      "timezone": "Asia/Karachi"
+      "timezone": "Asia/Karachi",
+      "countryTr": "Pakistan",
+      "countryAr": "باكستان",
+      "countryFa": "پاکستان"
     },
     {
       "name": "Gujranwala",
       "country": "Pakistan",
       "latitude": 32.1877,
       "longitude": 74.1945,
-      "timezone": "Asia/Karachi"
+      "timezone": "Asia/Karachi",
+      "countryTr": "Pakistan",
+      "countryAr": "باكستان",
+      "countryFa": "پاکستان"
     },
     {
       "name": "Peshawar",
@@ -423,21 +594,30 @@
       "latitude": 33.9937,
       "longitude": 71.3428,
       "timezone": "Asia/Karachi",
-      "county": "Khyber Pakhtunkhwa"
+      "county": "Khyber Pakhtunkhwa",
+      "countryTr": "Pakistan",
+      "countryAr": "باكستان",
+      "countryFa": "پاکستان"
     },
     {
       "name": "Sargodha",
       "country": "Pakistan",
       "latitude": 32.0741,
       "longitude": 72.6756,
-      "timezone": "Asia/Karachi"
+      "timezone": "Asia/Karachi",
+      "countryTr": "Pakistan",
+      "countryAr": "باكستان",
+      "countryFa": "پاکستان"
     },
     {
       "name": "Sialkot",
       "country": "Pakistan",
       "latitude": 32.4945,
       "longitude": 74.5389,
-      "timezone": "Asia/Karachi"
+      "timezone": "Asia/Karachi",
+      "countryTr": "Pakistan",
+      "countryAr": "باكستان",
+      "countryFa": "پاکستان"
     },
     {
       "name": "Delhi",
@@ -445,7 +625,10 @@
       "latitude": 28.7041,
       "longitude": 77.1025,
       "timezone": "Asia/Kolkata",
-      "county": "Delhi"
+      "county": "Delhi",
+      "countryTr": "Hindistan",
+      "countryAr": "الهند",
+      "countryFa": "هند"
     },
     {
       "name": "Mumbai",
@@ -453,7 +636,10 @@
       "latitude": 19.076,
       "longitude": 72.8777,
       "timezone": "Asia/Kolkata",
-      "county": "Maharashtra"
+      "county": "Maharashtra",
+      "countryTr": "Hindistan",
+      "countryAr": "الهند",
+      "countryFa": "هند"
     },
     {
       "name": "Kolkata",
@@ -461,7 +647,10 @@
       "latitude": 22.5726,
       "longitude": 88.3639,
       "timezone": "Asia/Kolkata",
-      "county": "West Bengal"
+      "county": "West Bengal",
+      "countryTr": "Hindistan",
+      "countryAr": "الهند",
+      "countryFa": "هند"
     },
     {
       "name": "Chennai",
@@ -469,7 +658,10 @@
       "latitude": 13.0827,
       "longitude": 80.2707,
       "timezone": "Asia/Kolkata",
-      "county": "Tamil Nadu"
+      "county": "Tamil Nadu",
+      "countryTr": "Hindistan",
+      "countryAr": "الهند",
+      "countryFa": "هند"
     },
     {
       "name": "Hyderabad",
@@ -477,7 +669,10 @@
       "latitude": 17.385,
       "longitude": 78.4867,
       "timezone": "Asia/Kolkata",
-      "county": "Telangana"
+      "county": "Telangana",
+      "countryTr": "Hindistan",
+      "countryAr": "الهند",
+      "countryFa": "هند"
     },
     {
       "name": "Bangalore",
@@ -485,7 +680,10 @@
       "latitude": 12.9716,
       "longitude": 77.5946,
       "timezone": "Asia/Kolkata",
-      "county": "Karnataka"
+      "county": "Karnataka",
+      "countryTr": "Hindistan",
+      "countryAr": "الهند",
+      "countryFa": "هند"
     },
     {
       "name": "Dhaka",
@@ -493,7 +691,10 @@
       "latitude": 23.8103,
       "longitude": 90.4125,
       "timezone": "Asia/Dhaka",
-      "county": "Dhaka"
+      "county": "Dhaka",
+      "countryTr": "Bangladeş",
+      "countryAr": "بنغلاديش",
+      "countryFa": "بنگلادش"
     },
     {
       "name": "Chittagong",
@@ -501,7 +702,10 @@
       "latitude": 22.3569,
       "longitude": 91.7832,
       "timezone": "Asia/Dhaka",
-      "county": "Chittagong"
+      "county": "Chittagong",
+      "countryTr": "Bangladeş",
+      "countryAr": "بنغلاديش",
+      "countryFa": "بنگلادش"
     },
     {
       "name": "Lagos",
@@ -509,7 +713,10 @@
       "latitude": 6.5244,
       "longitude": 3.3792,
       "timezone": "Africa/Lagos",
-      "county": "Lagos"
+      "county": "Lagos",
+      "countryTr": "Nijerya",
+      "countryAr": "نيجيريا",
+      "countryFa": "نیجریه"
     },
     {
       "name": "Kano",
@@ -517,7 +724,10 @@
       "latitude": 12.0022,
       "longitude": 8.5919,
       "timezone": "Africa/Lagos",
-      "county": "Kano"
+      "county": "Kano",
+      "countryTr": "Nijerya",
+      "countryAr": "نيجيريا",
+      "countryFa": "نیجریه"
     },
     {
       "name": "Casablanca",
@@ -525,7 +735,10 @@
       "latitude": 33.5731,
       "longitude": -7.5898,
       "timezone": "Africa/Casablanca",
-      "county": "Casablanca-Settat"
+      "county": "Casablanca-Settat",
+      "countryTr": "Fas",
+      "countryAr": "المغرب",
+      "countryFa": "مراکش"
     },
     {
       "name": "Rabat",
@@ -533,14 +746,20 @@
       "latitude": 34.0209,
       "longitude": -6.8416,
       "timezone": "Africa/Casablanca",
-      "county": "Rabat-Sale-Kenitra"
+      "county": "Rabat-Sale-Kenitra",
+      "countryTr": "Fas",
+      "countryAr": "المغرب",
+      "countryFa": "مراکش"
     },
     {
       "name": "Marrakech",
       "country": "Morocco",
       "latitude": 31.6295,
       "longitude": -7.9811,
-      "timezone": "Africa/Casablanca"
+      "timezone": "Africa/Casablanca",
+      "countryTr": "Fas",
+      "countryAr": "المغرب",
+      "countryFa": "مراکش"
     },
     {
       "name": "Fes",
@@ -548,21 +767,30 @@
       "latitude": 34.0181,
       "longitude": -5.0078,
       "timezone": "Africa/Casablanca",
-      "county": "Fes-Meknes"
+      "county": "Fes-Meknes",
+      "countryTr": "Fas",
+      "countryAr": "المغرب",
+      "countryFa": "مراکش"
     },
     {
       "name": "Tangier",
       "country": "Morocco",
       "latitude": 35.7595,
       "longitude": -5.834,
-      "timezone": "Africa/Casablanca"
+      "timezone": "Africa/Casablanca",
+      "countryTr": "Fas",
+      "countryAr": "المغرب",
+      "countryFa": "مراکش"
     },
     {
       "name": "Agadir",
       "country": "Morocco",
       "latitude": 30.4278,
       "longitude": -9.5981,
-      "timezone": "Africa/Casablanca"
+      "timezone": "Africa/Casablanca",
+      "countryTr": "Fas",
+      "countryAr": "المغرب",
+      "countryFa": "مراکش"
     },
     {
       "name": "Algiers",
@@ -570,21 +798,30 @@
       "latitude": 36.7538,
       "longitude": 3.0588,
       "timezone": "Africa/Algiers",
-      "county": "Algiers"
+      "county": "Algiers",
+      "countryTr": "Cezayir",
+      "countryAr": "الجزائر",
+      "countryFa": "الجزایر"
     },
     {
       "name": "Annaba",
       "country": "Algeria",
       "latitude": 36.9,
       "longitude": 7.7667,
-      "timezone": "Africa/Algiers"
+      "timezone": "Africa/Algiers",
+      "countryTr": "Cezayir",
+      "countryAr": "الجزائر",
+      "countryFa": "الجزایر"
     },
     {
       "name": "Biskra",
       "country": "Algeria",
       "latitude": 34.8448,
       "longitude": 5.7248,
-      "timezone": "Africa/Algiers"
+      "timezone": "Africa/Algiers",
+      "countryTr": "Cezayir",
+      "countryAr": "الجزائر",
+      "countryFa": "الجزایر"
     },
     {
       "name": "Constantine",
@@ -592,14 +829,20 @@
       "latitude": 36.365,
       "longitude": 6.6147,
       "timezone": "Africa/Algiers",
-      "county": "Constantine"
+      "county": "Constantine",
+      "countryTr": "Cezayir",
+      "countryAr": "الجزائر",
+      "countryFa": "الجزایر"
     },
     {
       "name": "Ghardaia",
       "country": "Algeria",
       "latitude": 32.4833,
       "longitude": 3.6667,
-      "timezone": "Africa/Algiers"
+      "timezone": "Africa/Algiers",
+      "countryTr": "Cezayir",
+      "countryAr": "الجزائر",
+      "countryFa": "الجزایر"
     },
     {
       "name": "Oran",
@@ -607,21 +850,30 @@
       "latitude": 35.6969,
       "longitude": -0.6332,
       "timezone": "Africa/Algiers",
-      "county": "Oran"
+      "county": "Oran",
+      "countryTr": "Cezayir",
+      "countryAr": "الجزائر",
+      "countryFa": "الجزایر"
     },
     {
       "name": "Ouargla",
       "country": "Algeria",
       "latitude": 31.9528,
       "longitude": 5.3333,
-      "timezone": "Africa/Algiers"
+      "timezone": "Africa/Algiers",
+      "countryTr": "Cezayir",
+      "countryAr": "الجزائر",
+      "countryFa": "الجزایر"
     },
     {
       "name": "Kairouan",
       "country": "Tunisia",
       "latitude": 35.6843,
       "longitude": 10.0754,
-      "timezone": "Africa/Tunis"
+      "timezone": "Africa/Tunis",
+      "countryTr": "Tunus",
+      "countryAr": "تونس",
+      "countryFa": "تونس"
     },
     {
       "name": "Sfax",
@@ -629,7 +881,10 @@
       "latitude": 34.7398,
       "longitude": 10.756,
       "timezone": "Africa/Tunis",
-      "county": "Sfax"
+      "county": "Sfax",
+      "countryTr": "Tunus",
+      "countryAr": "تونس",
+      "countryFa": "تونس"
     },
     {
       "name": "Sousse",
@@ -637,7 +892,10 @@
       "latitude": 35.8254,
       "longitude": 10.6088,
       "timezone": "Africa/Tunis",
-      "county": "Sousse"
+      "county": "Sousse",
+      "countryTr": "Tunus",
+      "countryAr": "تونس",
+      "countryFa": "تونس"
     },
     {
       "name": "Tunis",
@@ -645,7 +903,10 @@
       "latitude": 36.8065,
       "longitude": 10.1815,
       "timezone": "Africa/Tunis",
-      "county": "Tunis"
+      "county": "Tunis",
+      "countryTr": "Tunus",
+      "countryAr": "تونس",
+      "countryFa": "تونس"
     },
     {
       "name": "Amman",
@@ -653,14 +914,20 @@
       "latitude": 31.9454,
       "longitude": 35.9284,
       "timezone": "Asia/Amman",
-      "county": "Amman"
+      "county": "Amman",
+      "countryTr": "Ürdün",
+      "countryAr": "الأردن",
+      "countryFa": "اردن"
     },
     {
       "name": "Aqaba",
       "country": "Jordan",
       "latitude": 29.5317,
       "longitude": 35.0061,
-      "timezone": "Asia/Amman"
+      "timezone": "Asia/Amman",
+      "countryTr": "Ürdün",
+      "countryAr": "الأردن",
+      "countryFa": "اردن"
     },
     {
       "name": "Irbid",
@@ -668,7 +935,10 @@
       "latitude": 32.5556,
       "longitude": 35.8473,
       "timezone": "Asia/Amman",
-      "county": "Irbid"
+      "county": "Irbid",
+      "countryTr": "Ürdün",
+      "countryAr": "الأردن",
+      "countryFa": "اردن"
     },
     {
       "name": "Zarqa",
@@ -676,7 +946,10 @@
       "latitude": 32.0622,
       "longitude": 36.0939,
       "timezone": "Asia/Amman",
-      "county": "Zarqa"
+      "county": "Zarqa",
+      "countryTr": "Ürdün",
+      "countryAr": "الأردن",
+      "countryFa": "اردن"
     },
     {
       "name": "Dubai",
@@ -684,7 +957,10 @@
       "latitude": 25.2048,
       "longitude": 55.2708,
       "timezone": "Asia/Dubai",
-      "county": "Dubai"
+      "county": "Dubai",
+      "countryTr": "BAE",
+      "countryAr": "الإمارات",
+      "countryFa": "امارات متحده عربی"
     },
     {
       "name": "Abu Dhabi",
@@ -692,7 +968,10 @@
       "latitude": 24.4539,
       "longitude": 54.3773,
       "timezone": "Asia/Dubai",
-      "county": "Abu Dhabi"
+      "county": "Abu Dhabi",
+      "countryTr": "BAE",
+      "countryAr": "الإمارات",
+      "countryFa": "امارات متحده عربی"
     },
     {
       "name": "Sharjah",
@@ -700,14 +979,20 @@
       "latitude": 25.3463,
       "longitude": 55.4209,
       "timezone": "Asia/Dubai",
-      "county": "Sharjah"
+      "county": "Sharjah",
+      "countryTr": "BAE",
+      "countryAr": "الإمارات",
+      "countryFa": "امارات متحده عربی"
     },
     {
       "name": "Al Ain",
       "country": "UAE",
       "latitude": 24.2075,
       "longitude": 55.7447,
-      "timezone": "Asia/Dubai"
+      "timezone": "Asia/Dubai",
+      "countryTr": "BAE",
+      "countryAr": "الإمارات",
+      "countryFa": "امارات متحده عربی"
     },
     {
       "name": "Kuwait City",
@@ -715,14 +1000,20 @@
       "latitude": 29.3759,
       "longitude": 47.9774,
       "timezone": "Asia/Kuwait",
-      "county": "Capital"
+      "county": "Capital",
+      "countryTr": "Kuveyt",
+      "countryAr": "الكويت",
+      "countryFa": "کویت"
     },
     {
       "name": "Al Ahmadi",
       "country": "Kuwait",
       "latitude": 29.0799,
       "longitude": 48.0838,
-      "timezone": "Asia/Kuwait"
+      "timezone": "Asia/Kuwait",
+      "countryTr": "Kuveyt",
+      "countryAr": "الكويت",
+      "countryFa": "کویت"
     },
     {
       "name": "Doha",
@@ -730,14 +1021,20 @@
       "latitude": 25.2854,
       "longitude": 51.531,
       "timezone": "Asia/Qatar",
-      "county": "Doha"
+      "county": "Doha",
+      "countryTr": "Katar",
+      "countryAr": "قطر",
+      "countryFa": "قطر"
     },
     {
       "name": "Al Rayyan",
       "country": "Qatar",
       "latitude": 25.2919,
       "longitude": 51.4248,
-      "timezone": "Asia/Qatar"
+      "timezone": "Asia/Qatar",
+      "countryTr": "Katar",
+      "countryAr": "قطر",
+      "countryFa": "قطر"
     },
     {
       "name": "Manama",
@@ -745,21 +1042,30 @@
       "latitude": 26.2285,
       "longitude": 50.586,
       "timezone": "Asia/Bahrain",
-      "county": "Capital"
+      "county": "Capital",
+      "countryTr": "Bahreyn",
+      "countryAr": "البحرين",
+      "countryFa": "بحرین"
     },
     {
       "name": "Muharraq",
       "country": "Bahrain",
       "latitude": 26.2551,
       "longitude": 50.6136,
-      "timezone": "Asia/Bahrain"
+      "timezone": "Asia/Bahrain",
+      "countryTr": "Bahreyn",
+      "countryAr": "البحرين",
+      "countryFa": "بحرین"
     },
     {
       "name": "Riffa",
       "country": "Bahrain",
       "latitude": 26.1083,
       "longitude": 50.5507,
-      "timezone": "Asia/Bahrain"
+      "timezone": "Asia/Bahrain",
+      "countryTr": "Bahreyn",
+      "countryAr": "البحرين",
+      "countryFa": "بحرین"
     },
     {
       "name": "Muscat",
@@ -767,7 +1073,10 @@
       "latitude": 23.588,
       "longitude": 58.3829,
       "timezone": "Asia/Muscat",
-      "county": "Muscat"
+      "county": "Muscat",
+      "countryTr": "Umman",
+      "countryAr": "عمان",
+      "countryFa": "عمان"
     },
     {
       "name": "Salalah",
@@ -775,168 +1084,240 @@
       "latitude": 17.0154,
       "longitude": 54.0924,
       "timezone": "Asia/Muscat",
-      "county": "Dhofar"
+      "county": "Dhofar",
+      "countryTr": "Umman",
+      "countryAr": "عمان",
+      "countryFa": "عمان"
     },
     {
       "name": "Sohar",
       "country": "Oman",
       "latitude": 24.3442,
       "longitude": 56.7075,
-      "timezone": "Asia/Muscat"
+      "timezone": "Asia/Muscat",
+      "countryTr": "Umman",
+      "countryAr": "عمان",
+      "countryFa": "عمان"
     },
     {
       "name": "Brisbane",
       "country": "Australia",
       "latitude": -27.4698,
       "longitude": 153.0251,
-      "timezone": "Australia/Brisbane"
+      "timezone": "Australia/Brisbane",
+      "countryTr": "Avustralya",
+      "countryAr": "أستراليا",
+      "countryFa": "استرالیا"
     },
     {
       "name": "Melbourne",
       "country": "Australia",
       "latitude": -37.8136,
       "longitude": 144.9631,
-      "timezone": "Australia/Melbourne"
+      "timezone": "Australia/Melbourne",
+      "countryTr": "Avustralya",
+      "countryAr": "أستراليا",
+      "countryFa": "استرالیا"
     },
     {
       "name": "Perth",
       "country": "Australia",
       "latitude": -31.9505,
       "longitude": 115.8605,
-      "timezone": "Australia/Perth"
+      "timezone": "Australia/Perth",
+      "countryTr": "Avustralya",
+      "countryAr": "أستراليا",
+      "countryFa": "استرالیا"
     },
     {
       "name": "Sydney",
       "country": "Australia",
       "latitude": -33.8688,
       "longitude": 151.2093,
-      "timezone": "Australia/Sydney"
+      "timezone": "Australia/Sydney",
+      "countryTr": "Avustralya",
+      "countryAr": "أستراليا",
+      "countryFa": "استرالیا"
     },
     {
       "name": "Vienna",
       "country": "Austria",
       "latitude": 48.2082,
       "longitude": 16.3738,
-      "timezone": "Europe/Vienna"
+      "timezone": "Europe/Vienna",
+      "countryTr": "Avusturya",
+      "countryAr": "النمسا",
+      "countryFa": "اتریش"
     },
     {
       "name": "Brussels",
       "country": "Belgium",
       "latitude": 50.8503,
       "longitude": 4.3517,
-      "timezone": "Europe/Brussels"
+      "timezone": "Europe/Brussels",
+      "countryTr": "Belçika",
+      "countryAr": "بلجيكا",
+      "countryFa": "بلژیک"
     },
     {
       "name": "Phnom Penh",
       "country": "Cambodia",
       "latitude": 11.5564,
       "longitude": 104.9282,
-      "timezone": "Asia/Phnom_Penh"
+      "timezone": "Asia/Phnom_Penh",
+      "countryTr": "Kamboçya",
+      "countryAr": "كمبوديا",
+      "countryFa": "کامبوج"
     },
     {
       "name": "Montreal",
       "country": "Canada",
       "latitude": 45.5017,
       "longitude": -73.5673,
-      "timezone": "America/Montreal"
+      "timezone": "America/Montreal",
+      "countryTr": "Kanada",
+      "countryAr": "كندا",
+      "countryFa": "کانادا"
     },
     {
       "name": "Toronto",
       "country": "Canada",
       "latitude": 43.6532,
       "longitude": -79.3832,
-      "timezone": "America/Toronto"
+      "timezone": "America/Toronto",
+      "countryTr": "Kanada",
+      "countryAr": "كندا",
+      "countryFa": "کانادا"
     },
     {
       "name": "Vancouver",
       "country": "Canada",
       "latitude": 49.2827,
       "longitude": -123.1207,
-      "timezone": "America/Vancouver"
+      "timezone": "America/Vancouver",
+      "countryTr": "Kanada",
+      "countryAr": "كندا",
+      "countryFa": "کانادا"
     },
     {
       "name": "Beijing",
       "country": "China",
       "latitude": 39.9042,
       "longitude": 116.4074,
-      "timezone": "Asia/Shanghai"
+      "timezone": "Asia/Shanghai",
+      "countryTr": "Çin",
+      "countryAr": "الصين",
+      "countryFa": "چین"
     },
     {
       "name": "Chengdu",
       "country": "China",
       "latitude": 30.5728,
       "longitude": 104.0668,
-      "timezone": "Asia/Shanghai"
+      "timezone": "Asia/Shanghai",
+      "countryTr": "Çin",
+      "countryAr": "الصين",
+      "countryFa": "چین"
     },
     {
       "name": "Guangzhou",
       "country": "China",
       "latitude": 23.1291,
       "longitude": 113.2644,
-      "timezone": "Asia/Shanghai"
+      "timezone": "Asia/Shanghai",
+      "countryTr": "Çin",
+      "countryAr": "الصين",
+      "countryFa": "چین"
     },
     {
       "name": "Nanjing",
       "country": "China",
       "latitude": 32.0603,
       "longitude": 118.7969,
-      "timezone": "Asia/Shanghai"
+      "timezone": "Asia/Shanghai",
+      "countryTr": "Çin",
+      "countryAr": "الصين",
+      "countryFa": "چین"
     },
     {
       "name": "Shanghai",
       "country": "China",
       "latitude": 31.2304,
       "longitude": 121.4737,
-      "timezone": "Asia/Shanghai"
+      "timezone": "Asia/Shanghai",
+      "countryTr": "Çin",
+      "countryAr": "الصين",
+      "countryFa": "چین"
     },
     {
       "name": "Shenzhen",
       "country": "China",
       "latitude": 22.5431,
       "longitude": 114.0579,
-      "timezone": "Asia/Shanghai"
+      "timezone": "Asia/Shanghai",
+      "countryTr": "Çin",
+      "countryAr": "الصين",
+      "countryFa": "چین"
     },
     {
       "name": "Wuhan",
       "country": "China",
       "latitude": 30.5928,
       "longitude": 114.3055,
-      "timezone": "Asia/Shanghai"
+      "timezone": "Asia/Shanghai",
+      "countryTr": "Çin",
+      "countryAr": "الصين",
+      "countryFa": "چین"
     },
     {
       "name": "Xian",
       "country": "China",
       "latitude": 34.3416,
       "longitude": 108.9398,
-      "timezone": "Asia/Shanghai"
+      "timezone": "Asia/Shanghai",
+      "countryTr": "Çin",
+      "countryAr": "الصين",
+      "countryFa": "چین"
     },
     {
       "name": "Prague",
       "country": "Czech Republic",
       "latitude": 50.0755,
       "longitude": 14.4378,
-      "timezone": "Europe/Prague"
+      "timezone": "Europe/Prague",
+      "countryTr": "Çek Cumhuriyeti",
+      "countryAr": "التشيك",
+      "countryFa": "جمهوری چک"
     },
     {
       "name": "Copenhagen",
       "country": "Denmark",
       "latitude": 55.6761,
       "longitude": 12.5683,
-      "timezone": "Europe/Copenhagen"
+      "timezone": "Europe/Copenhagen",
+      "countryTr": "Danimarka",
+      "countryAr": "الدنمارك",
+      "countryFa": "دانمارک"
     },
     {
       "name": "Addis Ababa",
       "country": "Ethiopia",
       "latitude": 9.032,
       "longitude": 38.7469,
-      "timezone": "Africa/Addis_Ababa"
+      "timezone": "Africa/Addis_Ababa",
+      "countryTr": "Etiyopya",
+      "countryAr": "إثيوبيا",
+      "countryFa": "اتیوپی"
     },
     {
       "name": "Helsinki",
       "country": "Finland",
       "latitude": 60.1699,
       "longitude": 24.9384,
-      "timezone": "Europe/Helsinki"
+      "timezone": "Europe/Helsinki",
+      "countryTr": "Finlandiya",
+      "countryAr": "فنلندا",
+      "countryFa": "فنلاند"
     },
     {
       "name": "Lyon",
@@ -944,7 +1325,10 @@
       "latitude": 45.764,
       "longitude": 4.8357,
       "timezone": "Europe/Paris",
-      "county": "Auvergne-Rhone-Alpes"
+      "county": "Auvergne-Rhone-Alpes",
+      "countryTr": "Fransa",
+      "countryAr": "فرنسا",
+      "countryFa": "فرانسه"
     },
     {
       "name": "Marseille",
@@ -952,7 +1336,10 @@
       "latitude": 43.2965,
       "longitude": 5.3698,
       "timezone": "Europe/Paris",
-      "county": "Provence-Alpes-Cote d'Azur"
+      "county": "Provence-Alpes-Cote d'Azur",
+      "countryTr": "Fransa",
+      "countryAr": "فرنسا",
+      "countryFa": "فرانسه"
     },
     {
       "name": "Paris",
@@ -960,7 +1347,10 @@
       "latitude": 48.8566,
       "longitude": 2.3522,
       "timezone": "Europe/Paris",
-      "county": "Ile-de-France"
+      "county": "Ile-de-France",
+      "countryTr": "Fransa",
+      "countryAr": "فرنسا",
+      "countryFa": "فرانسه"
     },
     {
       "name": "Berlin",
@@ -968,7 +1358,10 @@
       "latitude": 52.52,
       "longitude": 13.405,
       "timezone": "Europe/Berlin",
-      "county": "Berlin"
+      "county": "Berlin",
+      "countryTr": "Almanya",
+      "countryAr": "ألمانيا",
+      "countryFa": "آلمان"
     },
     {
       "name": "Frankfurt",
@@ -976,7 +1369,10 @@
       "latitude": 50.1109,
       "longitude": 8.6821,
       "timezone": "Europe/Berlin",
-      "county": "Hesse"
+      "county": "Hesse",
+      "countryTr": "Almanya",
+      "countryAr": "ألمانيا",
+      "countryFa": "آلمان"
     },
     {
       "name": "Hamburg",
@@ -984,7 +1380,10 @@
       "latitude": 53.5511,
       "longitude": 9.9937,
       "timezone": "Europe/Berlin",
-      "county": "Hamburg"
+      "county": "Hamburg",
+      "countryTr": "Almanya",
+      "countryAr": "ألمانيا",
+      "countryFa": "آلمان"
     },
     {
       "name": "Munich",
@@ -992,245 +1391,350 @@
       "latitude": 48.1351,
       "longitude": 11.582,
       "timezone": "Europe/Berlin",
-      "county": "Bavaria"
+      "county": "Bavaria",
+      "countryTr": "Almanya",
+      "countryAr": "ألمانيا",
+      "countryFa": "آلمان"
     },
     {
       "name": "Accra",
       "country": "Ghana",
       "latitude": 5.6037,
       "longitude": -0.187,
-      "timezone": "Africa/Accra"
+      "timezone": "Africa/Accra",
+      "countryTr": "Gana",
+      "countryAr": "غانا",
+      "countryFa": "غنا"
     },
     {
       "name": "Athens",
       "country": "Greece",
       "latitude": 37.9838,
       "longitude": 23.7275,
-      "timezone": "Europe/Athens"
+      "timezone": "Europe/Athens",
+      "countryTr": "Yunanistan",
+      "countryAr": "اليونان",
+      "countryFa": "یونان"
     },
     {
       "name": "Thessaloniki",
       "country": "Greece",
       "latitude": 40.6401,
       "longitude": 22.9444,
-      "timezone": "Europe/Athens"
+      "timezone": "Europe/Athens",
+      "countryTr": "Yunanistan",
+      "countryAr": "اليونان",
+      "countryFa": "یونان"
     },
     {
       "name": "Hong Kong",
       "country": "Hong Kong",
       "latitude": 22.3193,
       "longitude": 114.1694,
-      "timezone": "Asia/Hong_Kong"
+      "timezone": "Asia/Hong_Kong",
+      "countryTr": "Hong Kong",
+      "countryAr": "هونغ كونغ",
+      "countryFa": "هنگ کنگ"
     },
     {
       "name": "Budapest",
       "country": "Hungary",
       "latitude": 47.4979,
       "longitude": 19.0402,
-      "timezone": "Europe/Budapest"
+      "timezone": "Europe/Budapest",
+      "countryTr": "Macaristan",
+      "countryAr": "المجر",
+      "countryFa": "مجارستان"
     },
     {
       "name": "Ahvaz",
       "country": "Iran",
       "latitude": 31.3183,
       "longitude": 48.6706,
-      "timezone": "Asia/Tehran"
+      "timezone": "Asia/Tehran",
+      "countryTr": "İran",
+      "countryAr": "إيران",
+      "countryFa": "ایران"
     },
     {
       "name": "Isfahan",
       "country": "Iran",
       "latitude": 32.6546,
       "longitude": 51.668,
-      "timezone": "Asia/Tehran"
+      "timezone": "Asia/Tehran",
+      "countryTr": "İran",
+      "countryAr": "إيران",
+      "countryFa": "ایران"
     },
     {
       "name": "Karaj",
       "country": "Iran",
       "latitude": 35.7326,
       "longitude": 51.0806,
-      "timezone": "Asia/Tehran"
+      "timezone": "Asia/Tehran",
+      "countryTr": "İran",
+      "countryAr": "إيران",
+      "countryFa": "ایران"
     },
     {
       "name": "Kermanshah",
       "country": "Iran",
       "latitude": 34.3138,
       "longitude": 47.0675,
-      "timezone": "Asia/Tehran"
+      "timezone": "Asia/Tehran",
+      "countryTr": "İran",
+      "countryAr": "إيران",
+      "countryFa": "ایران"
     },
     {
       "name": "Mashhad",
       "country": "Iran",
       "latitude": 36.2971,
       "longitude": 59.6067,
-      "timezone": "Asia/Tehran"
+      "timezone": "Asia/Tehran",
+      "countryTr": "İran",
+      "countryAr": "إيران",
+      "countryFa": "ایران"
     },
     {
       "name": "Qom",
       "country": "Iran",
       "latitude": 34.6414,
       "longitude": 50.8746,
-      "timezone": "Asia/Tehran"
+      "timezone": "Asia/Tehran",
+      "countryTr": "İran",
+      "countryAr": "إيران",
+      "countryFa": "ایران"
     },
     {
       "name": "Shiraz",
       "country": "Iran",
       "latitude": 29.5918,
       "longitude": 52.5837,
-      "timezone": "Asia/Tehran"
+      "timezone": "Asia/Tehran",
+      "countryTr": "İran",
+      "countryAr": "إيران",
+      "countryFa": "ایران"
     },
     {
       "name": "Tabriz",
       "country": "Iran",
       "latitude": 38.0962,
       "longitude": 46.2743,
-      "timezone": "Asia/Tehran"
+      "timezone": "Asia/Tehran",
+      "countryTr": "İran",
+      "countryAr": "إيران",
+      "countryFa": "ایران"
     },
     {
       "name": "Tehran",
       "country": "Iran",
       "latitude": 35.6892,
       "longitude": 51.389,
-      "timezone": "Asia/Tehran"
+      "timezone": "Asia/Tehran",
+      "countryTr": "İran",
+      "countryAr": "إيران",
+      "countryFa": "ایران"
     },
     {
       "name": "Baghdad",
       "country": "Iraq",
       "latitude": 33.3128,
       "longitude": 44.3615,
-      "timezone": "Asia/Baghdad"
+      "timezone": "Asia/Baghdad",
+      "countryTr": "Irak",
+      "countryAr": "العراق",
+      "countryFa": "عراق"
     },
     {
       "name": "Basra",
       "country": "Iraq",
       "latitude": 30.5085,
       "longitude": 47.7805,
-      "timezone": "Asia/Baghdad"
+      "timezone": "Asia/Baghdad",
+      "countryTr": "Irak",
+      "countryAr": "العراق",
+      "countryFa": "عراق"
     },
     {
       "name": "Erbil",
       "country": "Iraq",
       "latitude": 36.1921,
       "longitude": 44.0094,
-      "timezone": "Asia/Baghdad"
+      "timezone": "Asia/Baghdad",
+      "countryTr": "Irak",
+      "countryAr": "العراق",
+      "countryFa": "عراق"
     },
     {
       "name": "Karbala",
       "country": "Iraq",
       "latitude": 32.6185,
       "longitude": 44.0347,
-      "timezone": "Asia/Baghdad"
+      "timezone": "Asia/Baghdad",
+      "countryTr": "Irak",
+      "countryAr": "العراق",
+      "countryFa": "عراق"
     },
     {
       "name": "Mosul",
       "country": "Iraq",
       "latitude": 36.335,
       "longitude": 43.1183,
-      "timezone": "Asia/Baghdad"
+      "timezone": "Asia/Baghdad",
+      "countryTr": "Irak",
+      "countryAr": "العراق",
+      "countryFa": "عراق"
     },
     {
       "name": "Najaf",
       "country": "Iraq",
       "latitude": 31.9973,
       "longitude": 44.3182,
-      "timezone": "Asia/Baghdad"
+      "timezone": "Asia/Baghdad",
+      "countryTr": "Irak",
+      "countryAr": "العراق",
+      "countryFa": "عراق"
     },
     {
       "name": "Dublin",
       "country": "Ireland",
       "latitude": 53.3498,
       "longitude": -6.2603,
-      "timezone": "Europe/Dublin"
+      "timezone": "Europe/Dublin",
+      "countryTr": "İrlanda",
+      "countryAr": "أيرلندا",
+      "countryFa": "ایرلند"
     },
     {
       "name": "Milan",
       "country": "Italy",
       "latitude": 45.4642,
       "longitude": 9.19,
-      "timezone": "Europe/Rome"
+      "timezone": "Europe/Rome",
+      "countryTr": "İtalya",
+      "countryAr": "إيطاليا",
+      "countryFa": "ایتالیا"
     },
     {
       "name": "Rome",
       "country": "Italy",
       "latitude": 41.9028,
       "longitude": 12.4964,
-      "timezone": "Europe/Rome"
+      "timezone": "Europe/Rome",
+      "countryTr": "İtalya",
+      "countryAr": "إيطاليا",
+      "countryFa": "ایتالیا"
     },
     {
       "name": "Kyoto",
       "country": "Japan",
       "latitude": 35.0116,
       "longitude": 135.7681,
-      "timezone": "Asia/Tokyo"
+      "timezone": "Asia/Tokyo",
+      "countryTr": "Japonya",
+      "countryAr": "اليابان",
+      "countryFa": "ژاپن"
     },
     {
       "name": "Osaka",
       "country": "Japan",
       "latitude": 34.6937,
       "longitude": 135.5023,
-      "timezone": "Asia/Tokyo"
+      "timezone": "Asia/Tokyo",
+      "countryTr": "Japonya",
+      "countryAr": "اليابان",
+      "countryFa": "ژاپن"
     },
     {
       "name": "Tokyo",
       "country": "Japan",
       "latitude": 35.6762,
       "longitude": 139.6503,
-      "timezone": "Asia/Tokyo"
+      "timezone": "Asia/Tokyo",
+      "countryTr": "Japonya",
+      "countryAr": "اليابان",
+      "countryFa": "ژاپن"
     },
     {
       "name": "Nairobi",
       "country": "Kenya",
       "latitude": -1.2921,
       "longitude": 36.8219,
-      "timezone": "Africa/Nairobi"
+      "timezone": "Africa/Nairobi",
+      "countryTr": "Kenya",
+      "countryAr": "كينيا",
+      "countryFa": "کنیا"
     },
     {
       "name": "Beirut",
       "country": "Lebanon",
       "latitude": 33.8938,
       "longitude": 35.5018,
-      "timezone": "Asia/Beirut"
+      "timezone": "Asia/Beirut",
+      "countryTr": "Lübnan",
+      "countryAr": "لبنان",
+      "countryFa": "لبنان"
     },
     {
       "name": "Sidon",
       "country": "Lebanon",
       "latitude": 33.5604,
       "longitude": 35.3778,
-      "timezone": "Asia/Beirut"
+      "timezone": "Asia/Beirut",
+      "countryTr": "Lübnan",
+      "countryAr": "لبنان",
+      "countryFa": "لبنان"
     },
     {
       "name": "Tripoli",
       "country": "Lebanon",
       "latitude": 34.4367,
       "longitude": 35.8497,
-      "timezone": "Asia/Beirut"
+      "timezone": "Asia/Beirut",
+      "countryTr": "Lübnan",
+      "countryAr": "لبنان",
+      "countryFa": "لبنان"
     },
     {
       "name": "Benghazi",
       "country": "Libya",
       "latitude": 32.1168,
       "longitude": 20.0695,
-      "timezone": "Africa/Tripoli"
+      "timezone": "Africa/Tripoli",
+      "countryTr": "Libya",
+      "countryAr": "ليبيا",
+      "countryFa": "لیبی"
     },
     {
       "name": "Tripoli",
       "country": "Libya",
       "latitude": 32.8872,
       "longitude": 13.1913,
-      "timezone": "Africa/Tripoli"
+      "timezone": "Africa/Tripoli",
+      "countryTr": "Libya",
+      "countryAr": "ليبيا",
+      "countryFa": "لیبی"
     },
     {
       "name": "Antananarivo",
       "country": "Madagascar",
       "latitude": -18.8792,
       "longitude": 47.5079,
-      "timezone": "Indian/Antananarivo"
+      "timezone": "Indian/Antananarivo",
+      "countryTr": "Madagaskar",
+      "countryAr": "مدغشقر",
+      "countryFa": "ماداگاسکار"
     },
     {
       "name": "Kathmandu",
       "country": "Nepal",
       "latitude": 27.7172,
       "longitude": 85.324,
-      "timezone": "Asia/Kathmandu"
+      "timezone": "Asia/Kathmandu",
+      "countryTr": "Nepal",
+      "countryAr": "نيبال",
+      "countryFa": "نپال"
     },
     {
       "name": "Amsterdam",
@@ -1238,7 +1742,10 @@
       "latitude": 52.3676,
       "longitude": 4.9041,
       "timezone": "Europe/Amsterdam",
-      "county": "North Holland"
+      "county": "North Holland",
+      "countryTr": "Hollanda",
+      "countryAr": "هولندا",
+      "countryFa": "هلند"
     },
     {
       "name": "Rotterdam",
@@ -1246,245 +1753,350 @@
       "latitude": 51.9244,
       "longitude": 4.4777,
       "timezone": "Europe/Amsterdam",
-      "county": "South Holland"
+      "county": "South Holland",
+      "countryTr": "Hollanda",
+      "countryAr": "هولندا",
+      "countryFa": "هلند"
     },
     {
       "name": "Oslo",
       "country": "Norway",
       "latitude": 59.9139,
       "longitude": 10.7522,
-      "timezone": "Europe/Oslo"
+      "timezone": "Europe/Oslo",
+      "countryTr": "Norveç",
+      "countryAr": "النرويج",
+      "countryFa": "نروژ"
     },
     {
       "name": "Manila",
       "country": "Philippines",
       "latitude": 14.5995,
       "longitude": 120.9842,
-      "timezone": "Asia/Manila"
+      "timezone": "Asia/Manila",
+      "countryTr": "Filipinler",
+      "countryAr": "الفلبين",
+      "countryFa": "فیلیپین"
     },
     {
       "name": "Krakow",
       "country": "Poland",
       "latitude": 50.0647,
       "longitude": 19.945,
-      "timezone": "Europe/Warsaw"
+      "timezone": "Europe/Warsaw",
+      "countryTr": "Polonya",
+      "countryAr": "بولندا",
+      "countryFa": "لهستان"
     },
     {
       "name": "Warsaw",
       "country": "Poland",
       "latitude": 52.2297,
       "longitude": 21.0122,
-      "timezone": "Europe/Warsaw"
+      "timezone": "Europe/Warsaw",
+      "countryTr": "Polonya",
+      "countryAr": "بولندا",
+      "countryFa": "لهستان"
     },
     {
       "name": "Lisbon",
       "country": "Portugal",
       "latitude": 38.7223,
       "longitude": -9.1393,
-      "timezone": "Europe/Lisbon"
+      "timezone": "Europe/Lisbon",
+      "countryTr": "Portekiz",
+      "countryAr": "البرتغال",
+      "countryFa": "پرتغال"
     },
     {
       "name": "Porto",
       "country": "Portugal",
       "latitude": 41.1579,
       "longitude": -8.6291,
-      "timezone": "Europe/Lisbon"
+      "timezone": "Europe/Lisbon",
+      "countryTr": "Portekiz",
+      "countryAr": "البرتغال",
+      "countryFa": "پرتغال"
     },
     {
       "name": "Bucharest",
       "country": "Romania",
       "latitude": 44.4268,
       "longitude": 26.1025,
-      "timezone": "Europe/Bucharest"
+      "timezone": "Europe/Bucharest",
+      "countryTr": "Romanya",
+      "countryAr": "رومانيا",
+      "countryFa": "رومانی"
     },
     {
       "name": "Kazan",
       "country": "Russia",
       "latitude": 55.8304,
       "longitude": 49.0661,
-      "timezone": "Europe/Moscow"
+      "timezone": "Europe/Moscow",
+      "countryTr": "Rusya",
+      "countryAr": "روسيا",
+      "countryFa": "روسیه"
     },
     {
       "name": "Moscow",
       "country": "Russia",
       "latitude": 55.7558,
       "longitude": 37.6173,
-      "timezone": "Europe/Moscow"
+      "timezone": "Europe/Moscow",
+      "countryTr": "Rusya",
+      "countryAr": "روسيا",
+      "countryFa": "روسیه"
     },
     {
       "name": "Novosibirsk",
       "country": "Russia",
       "latitude": 55.0084,
       "longitude": 82.9357,
-      "timezone": "Asia/Novosibirsk"
+      "timezone": "Asia/Novosibirsk",
+      "countryTr": "Rusya",
+      "countryAr": "روسيا",
+      "countryFa": "روسیه"
     },
     {
       "name": "Saint Petersburg",
       "country": "Russia",
       "latitude": 59.9311,
       "longitude": 30.3609,
-      "timezone": "Europe/Moscow"
+      "timezone": "Europe/Moscow",
+      "countryTr": "Rusya",
+      "countryAr": "روسيا",
+      "countryFa": "روسیه"
     },
     {
       "name": "Yekaterinburg",
       "country": "Russia",
       "latitude": 56.8389,
       "longitude": 60.6057,
-      "timezone": "Asia/Yekaterinburg"
+      "timezone": "Asia/Yekaterinburg",
+      "countryTr": "Rusya",
+      "countryAr": "روسيا",
+      "countryFa": "روسیه"
     },
     {
       "name": "Singapore",
       "country": "Singapore",
       "latitude": 1.3521,
       "longitude": 103.8198,
-      "timezone": "Asia/Singapore"
+      "timezone": "Asia/Singapore",
+      "countryTr": "Singapur",
+      "countryAr": "سنغافورة",
+      "countryFa": "سنگاپور"
     },
     {
       "name": "Mogadishu",
       "country": "Somalia",
       "latitude": 2.0469,
       "longitude": 45.3182,
-      "timezone": "Africa/Mogadishu"
+      "timezone": "Africa/Mogadishu",
+      "countryTr": "Somali",
+      "countryAr": "الصومال",
+      "countryFa": "سومالی"
     },
     {
       "name": "Cape Town",
       "country": "South Africa",
       "latitude": -33.9249,
       "longitude": 18.4241,
-      "timezone": "Africa/Johannesburg"
+      "timezone": "Africa/Johannesburg",
+      "countryTr": "Güney Afrika",
+      "countryAr": "جنوب أفريقيا",
+      "countryFa": "آفریقای جنوبی"
     },
     {
       "name": "Durban",
       "country": "South Africa",
       "latitude": -29.8587,
       "longitude": 31.0218,
-      "timezone": "Africa/Johannesburg"
+      "timezone": "Africa/Johannesburg",
+      "countryTr": "Güney Afrika",
+      "countryAr": "جنوب أفريقيا",
+      "countryFa": "آفریقای جنوبی"
     },
     {
       "name": "Johannesburg",
       "country": "South Africa",
       "latitude": -26.2041,
       "longitude": 28.0473,
-      "timezone": "Africa/Johannesburg"
+      "timezone": "Africa/Johannesburg",
+      "countryTr": "Güney Afrika",
+      "countryAr": "جنوب أفريقيا",
+      "countryFa": "آفریقای جنوبی"
     },
     {
       "name": "Busan",
       "country": "South Korea",
       "latitude": 35.1796,
       "longitude": 129.0756,
-      "timezone": "Asia/Seoul"
+      "timezone": "Asia/Seoul",
+      "countryTr": "Güney Kore",
+      "countryAr": "كوريا الجنوبية",
+      "countryFa": "کره جنوبی"
     },
     {
       "name": "Seoul",
       "country": "South Korea",
       "latitude": 37.5665,
       "longitude": 126.978,
-      "timezone": "Asia/Seoul"
+      "timezone": "Asia/Seoul",
+      "countryTr": "Güney Kore",
+      "countryAr": "كوريا الجنوبية",
+      "countryFa": "کره جنوبی"
     },
     {
       "name": "Barcelona",
       "country": "Spain",
       "latitude": 41.3851,
       "longitude": 2.1734,
-      "timezone": "Europe/Madrid"
+      "timezone": "Europe/Madrid",
+      "countryTr": "İspanya",
+      "countryAr": "إسبانيا",
+      "countryFa": "اسپانیا"
     },
     {
       "name": "Madrid",
       "country": "Spain",
       "latitude": 40.4168,
       "longitude": -3.7038,
-      "timezone": "Europe/Madrid"
+      "timezone": "Europe/Madrid",
+      "countryTr": "İspanya",
+      "countryAr": "إسبانيا",
+      "countryFa": "اسپانیا"
     },
     {
       "name": "Colombo",
       "country": "Sri Lanka",
       "latitude": 6.9271,
       "longitude": 79.8612,
-      "timezone": "Asia/Colombo"
+      "timezone": "Asia/Colombo",
+      "countryTr": "Sri Lanka",
+      "countryAr": "سريلانكا",
+      "countryFa": "سریلانکا"
     },
     {
       "name": "Khartoum",
       "country": "Sudan",
       "latitude": 15.5007,
       "longitude": 32.5599,
-      "timezone": "Africa/Khartoum"
+      "timezone": "Africa/Khartoum",
+      "countryTr": "Sudan",
+      "countryAr": "السودان",
+      "countryFa": "سودان"
     },
     {
       "name": "Stockholm",
       "country": "Sweden",
       "latitude": 59.3293,
       "longitude": 18.0686,
-      "timezone": "Europe/Stockholm"
+      "timezone": "Europe/Stockholm",
+      "countryTr": "İsveç",
+      "countryAr": "السويد",
+      "countryFa": "سوئد"
     },
     {
       "name": "Geneva",
       "country": "Switzerland",
       "latitude": 46.2044,
       "longitude": 6.1432,
-      "timezone": "Europe/Zurich"
+      "timezone": "Europe/Zurich",
+      "countryTr": "İsviçre",
+      "countryAr": "سويسرا",
+      "countryFa": "سوئیس"
     },
     {
       "name": "Zurich",
       "country": "Switzerland",
       "latitude": 47.3769,
       "longitude": 8.5417,
-      "timezone": "Europe/Zurich"
+      "timezone": "Europe/Zurich",
+      "countryTr": "İsviçre",
+      "countryAr": "سويسرا",
+      "countryFa": "سوئیس"
     },
     {
       "name": "Aleppo",
       "country": "Syria",
       "latitude": 36.2012,
       "longitude": 37.1341,
-      "timezone": "Asia/Damascus"
+      "timezone": "Asia/Damascus",
+      "countryTr": "Suriye",
+      "countryAr": "سوريا",
+      "countryFa": "سوریه"
     },
     {
       "name": "Damascus",
       "country": "Syria",
       "latitude": 33.5138,
       "longitude": 36.2765,
-      "timezone": "Asia/Damascus"
+      "timezone": "Asia/Damascus",
+      "countryTr": "Suriye",
+      "countryAr": "سوريا",
+      "countryFa": "سوریه"
     },
     {
       "name": "Hama",
       "country": "Syria",
       "latitude": 35.1319,
       "longitude": 36.7578,
-      "timezone": "Asia/Damascus"
+      "timezone": "Asia/Damascus",
+      "countryTr": "Suriye",
+      "countryAr": "سوريا",
+      "countryFa": "سوریه"
     },
     {
       "name": "Homs",
       "country": "Syria",
       "latitude": 34.7408,
       "longitude": 36.7135,
-      "timezone": "Asia/Damascus"
+      "timezone": "Asia/Damascus",
+      "countryTr": "Suriye",
+      "countryAr": "سوريا",
+      "countryFa": "سوریه"
     },
     {
       "name": "Latakia",
       "country": "Syria",
       "latitude": 35.5177,
       "longitude": 35.9182,
-      "timezone": "Asia/Damascus"
+      "timezone": "Asia/Damascus",
+      "countryTr": "Suriye",
+      "countryAr": "سوريا",
+      "countryFa": "سوریه"
     },
     {
       "name": "Taipei",
       "country": "Taiwan",
       "latitude": 25.033,
       "longitude": 121.5654,
-      "timezone": "Asia/Taipei"
+      "timezone": "Asia/Taipei",
+      "countryTr": "Tayvan",
+      "countryAr": "تايوان",
+      "countryFa": "تایوان"
     },
     {
       "name": "Dar es Salaam",
       "country": "Tanzania",
       "latitude": -6.7924,
       "longitude": 39.2083,
-      "timezone": "Africa/Dar_es_Salaam"
+      "timezone": "Africa/Dar_es_Salaam",
+      "countryTr": "Tanzanya",
+      "countryAr": "تنزانيا",
+      "countryFa": "تانزانیا"
     },
     {
       "name": "Bangkok",
       "country": "Thailand",
       "latitude": 13.7563,
       "longitude": 100.5018,
-      "timezone": "Asia/Bangkok"
+      "timezone": "Asia/Bangkok",
+      "countryTr": "Tayland",
+      "countryAr": "تايلاند",
+      "countryFa": "تایلند"
     },
     {
       "name": "Chicago",
@@ -1492,7 +2104,10 @@
       "latitude": 41.8781,
       "longitude": -87.6298,
       "timezone": "America/Chicago",
-      "county": "Illinois"
+      "county": "Illinois",
+      "countryTr": "ABD",
+      "countryAr": "الولايات المتحدة",
+      "countryFa": "ایالات متحده آمریکا"
     },
     {
       "name": "Houston",
@@ -1500,7 +2115,10 @@
       "latitude": 29.7604,
       "longitude": -95.3698,
       "timezone": "America/Chicago",
-      "county": "Texas"
+      "county": "Texas",
+      "countryTr": "ABD",
+      "countryAr": "الولايات المتحدة",
+      "countryFa": "ایالات متحده آمریکا"
     },
     {
       "name": "Los Angeles",
@@ -1508,7 +2126,10 @@
       "latitude": 34.0522,
       "longitude": -118.2437,
       "timezone": "America/Los_Angeles",
-      "county": "California"
+      "county": "California",
+      "countryTr": "ABD",
+      "countryAr": "الولايات المتحدة",
+      "countryFa": "ایالات متحده آمریکا"
     },
     {
       "name": "New York",
@@ -1516,7 +2137,10 @@
       "latitude": 40.7128,
       "longitude": -74.006,
       "timezone": "America/New_York",
-      "county": "New York"
+      "county": "New York",
+      "countryTr": "ABD",
+      "countryAr": "الولايات المتحدة",
+      "countryFa": "ایالات متحده آمریکا"
     },
     {
       "name": "Phoenix",
@@ -1524,14 +2148,20 @@
       "latitude": 33.4484,
       "longitude": -112.074,
       "timezone": "America/Phoenix",
-      "county": "Arizona"
+      "county": "Arizona",
+      "countryTr": "ABD",
+      "countryAr": "الولايات المتحدة",
+      "countryFa": "ایالات متحده آمریکا"
     },
     {
       "name": "Kampala",
       "country": "Uganda",
       "latitude": 0.3476,
       "longitude": 32.5825,
-      "timezone": "Africa/Kampala"
+      "timezone": "Africa/Kampala",
+      "countryTr": "Uganda",
+      "countryAr": "أوغندا",
+      "countryFa": "اوگاندا"
     },
     {
       "name": "Birmingham",
@@ -1539,7 +2169,10 @@
       "latitude": 52.4862,
       "longitude": -1.8904,
       "timezone": "Europe/London",
-      "county": "England"
+      "county": "England",
+      "countryTr": "Birleşik Krallık",
+      "countryAr": "المملكة المتحدة",
+      "countryFa": "بریتانیا"
     },
     {
       "name": "London",
@@ -1547,7 +2180,10 @@
       "latitude": 51.5074,
       "longitude": -0.1278,
       "timezone": "Europe/London",
-      "county": "England"
+      "county": "England",
+      "countryTr": "Birleşik Krallık",
+      "countryAr": "المملكة المتحدة",
+      "countryFa": "بریتانیا"
     },
     {
       "name": "Manchester",
@@ -1555,117 +2191,162 @@
       "latitude": 53.4808,
       "longitude": -2.2426,
       "timezone": "Europe/London",
-      "county": "England"
+      "county": "England",
+      "countryTr": "Birleşik Krallık",
+      "countryAr": "المملكة المتحدة",
+      "countryFa": "بریتانیا"
     },
     {
       "name": "Hanoi",
       "country": "Vietnam",
       "latitude": 21.0278,
       "longitude": 105.8342,
-      "timezone": "Asia/Ho_Chi_Minh"
+      "timezone": "Asia/Ho_Chi_Minh",
+      "countryTr": "Vietnam",
+      "countryAr": "فيتنام",
+      "countryFa": "ویتنام"
     },
     {
       "name": "Ho Chi Minh City",
       "country": "Vietnam",
       "latitude": 10.8231,
       "longitude": 106.6297,
-      "timezone": "Asia/Ho_Chi_Minh"
+      "timezone": "Asia/Ho_Chi_Minh",
+      "countryTr": "Vietnam",
+      "countryAr": "فيتنام",
+      "countryFa": "ویتنام"
     },
-{
+    {
       "name": "Arnavutköy",
       "country": "Turkey",
       "latitude": 41.1827,
       "longitude": 28.3445,
       "timezone": "Europe/Istanbul",
-      "city": "Istanbul"
+      "city": "Istanbul",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
-      "name": "Avc\u0131lar",
+      "name": "Avcılar",
       "country": "Turkey",
       "latitude": 40.9965,
       "longitude": 28.7157,
       "timezone": "Europe/Istanbul",
-      "city": "Istanbul"
+      "city": "Istanbul",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
-      "name": "Ba\u011fc\u0131lar",
+      "name": "Bağcılar",
       "country": "Turkey",
       "latitude": 41.0392,
       "longitude": 28.8526,
       "timezone": "Europe/Istanbul",
-      "city": "Istanbul"
+      "city": "Istanbul",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
-      "name": "Bah\u00e7elievler",
+      "name": "Bahçelievler",
       "country": "Turkey",
       "latitude": 41.0034,
       "longitude": 28.8086,
       "timezone": "Europe/Istanbul",
-      "city": "Istanbul"
+      "city": "Istanbul",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
-      "name": "Bak\u0131rk\u00f6y",
+      "name": "Bakırköy",
       "country": "Turkey",
       "latitude": 40.9746,
       "longitude": 28.7926,
       "timezone": "Europe/Istanbul",
-      "city": "Istanbul"
+      "city": "Istanbul",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
-      "name": "Ba\u015fak\u015fehir",
+      "name": "Başakşehir",
       "country": "Turkey",
       "latitude": 41.0897,
       "longitude": 28.8373,
       "timezone": "Europe/Istanbul",
-      "city": "Istanbul"
+      "city": "Istanbul",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
-      "name": "Bayrampa\u015fa",
+      "name": "Bayrampaşa",
       "country": "Turkey",
       "latitude": 41.047,
       "longitude": 28.9091,
       "timezone": "Europe/Istanbul",
-      "city": "Istanbul"
+      "city": "Istanbul",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
-      "name": "Be\u015fikta\u015f",
+      "name": "Beşiktaş",
       "country": "Turkey",
       "latitude": 41.0446,
       "longitude": 29.0072,
       "timezone": "Europe/Istanbul",
-      "city": "Istanbul"
+      "city": "Istanbul",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
-      "name": "Beylikd\u00fcz\u00fc",
+      "name": "Beylikdüzü",
       "country": "Turkey",
       "latitude": 41.0925,
       "longitude": 28.636,
       "timezone": "Europe/Istanbul",
-      "city": "Istanbul"
+      "city": "Istanbul",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
-      "name": "Beyo\u011flu",
+      "name": "Beyoğlu",
       "country": "Turkey",
       "latitude": 41.0341,
       "longitude": 28.9777,
       "timezone": "Europe/Istanbul",
-      "city": "Istanbul"
+      "city": "Istanbul",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
-      "name": "B\u00fcy\u00fck\u00e7ekmece",
+      "name": "Büyükçekmece",
       "country": "Turkey",
       "latitude": 41.0209,
       "longitude": 28.597,
       "timezone": "Europe/Istanbul",
-      "city": "Istanbul"
+      "city": "Istanbul",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
-      "name": "\u00c7atalca",
+      "name": "Çatalca",
       "country": "Turkey",
       "latitude": 41.1434,
       "longitude": 28.4673,
       "timezone": "Europe/Istanbul",
-      "city": "Istanbul"
+      "city": "Istanbul",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Esenler",
@@ -1673,7 +2354,10 @@
       "latitude": 41.0462,
       "longitude": 28.8821,
       "timezone": "Europe/Istanbul",
-      "city": "Istanbul"
+      "city": "Istanbul",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Esenyurt",
@@ -1681,15 +2365,21 @@
       "latitude": 41.0627,
       "longitude": 28.6276,
       "timezone": "Europe/Istanbul",
-      "city": "Istanbul"
+      "city": "Istanbul",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
-      "name": "Ey\u00fcpsultan",
+      "name": "Eyüpsultan",
       "country": "Turkey",
       "latitude": 41.0679,
       "longitude": 28.9403,
       "timezone": "Europe/Istanbul",
-      "city": "Istanbul"
+      "city": "Istanbul",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Fatih",
@@ -1697,47 +2387,65 @@
       "latitude": 41.0364,
       "longitude": 28.9603,
       "timezone": "Europe/Istanbul",
-      "city": "Istanbul"
+      "city": "Istanbul",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
-      "name": "Gaziosmanpa\u015fa",
+      "name": "Gaziosmanpaşa",
       "country": "Turkey",
       "latitude": 41.0581,
       "longitude": 28.9132,
       "timezone": "Europe/Istanbul",
-      "city": "Istanbul"
+      "city": "Istanbul",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
-      "name": "G\u00fcng\u00f6ren",
+      "name": "Güngören",
       "country": "Turkey",
       "latitude": 41.0215,
       "longitude": 28.8526,
       "timezone": "Europe/Istanbul",
-      "city": "Istanbul"
+      "city": "Istanbul",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
-      "name": "Ka\u011f\u0131thane",
+      "name": "Kağıthane",
       "country": "Turkey",
       "latitude": 41.0724,
       "longitude": 28.9443,
       "timezone": "Europe/Istanbul",
-      "city": "Istanbul"
+      "city": "Istanbul",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
-      "name": "K\u00fc\u00e7\u00fck\u00e7ekmece",
+      "name": "Küçükçekmece",
       "country": "Turkey",
       "latitude": 41.0449,
       "longitude": 28.7284,
       "timezone": "Europe/Istanbul",
-      "city": "Istanbul"
+      "city": "Istanbul",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
-      "name": "Sar\u0131yer",
+      "name": "Sarıyer",
       "country": "Turkey",
       "latitude": 41.1659,
       "longitude": 29.0566,
       "timezone": "Europe/Istanbul",
-      "city": "Istanbul"
+      "city": "Istanbul",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Silivri",
@@ -1745,7 +2453,10 @@
       "latitude": 41.0735,
       "longitude": 28.2693,
       "timezone": "Europe/Istanbul",
-      "city": "Istanbul"
+      "city": "Istanbul",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Sultangazi",
@@ -1753,15 +2464,21 @@
       "latitude": 41.0799,
       "longitude": 28.8627,
       "timezone": "Europe/Istanbul",
-      "city": "Istanbul"
+      "city": "Istanbul",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
-      "name": "\u015ei\u015fli",
+      "name": "Şişli",
       "country": "Turkey",
       "latitude": 41.061,
       "longitude": 28.9675,
       "timezone": "Europe/Istanbul",
-      "city": "Istanbul"
+      "city": "Istanbul",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Zeytinburnu",
@@ -1769,7 +2486,10 @@
       "latitude": 41.0184,
       "longitude": 28.8814,
       "timezone": "Europe/Istanbul",
-      "city": "Istanbul"
+      "city": "Istanbul",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Adalar",
@@ -1777,15 +2497,21 @@
       "latitude": 40.873,
       "longitude": 29.01,
       "timezone": "Europe/Istanbul",
-      "city": "Istanbul"
+      "city": "Istanbul",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
-      "name": "Ata\u015fehir",
+      "name": "Ataşehir",
       "country": "Turkey",
       "latitude": 40.9929,
       "longitude": 29.1032,
       "timezone": "Europe/Istanbul",
-      "city": "Istanbul"
+      "city": "Istanbul",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Beykoz",
@@ -1793,23 +2519,32 @@
       "latitude": 41.0678,
       "longitude": 29.1069,
       "timezone": "Europe/Istanbul",
-      "city": "Istanbul"
+      "city": "Istanbul",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
-      "name": "\u00c7ekmek\u00f6y",
+      "name": "Çekmeköy",
       "country": "Turkey",
       "latitude": 41.0478,
       "longitude": 29.1798,
       "timezone": "Europe/Istanbul",
-      "city": "Istanbul"
+      "city": "Istanbul",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
-      "name": "Kad\u0131k\u00f6y",
+      "name": "Kadıköy",
       "country": "Turkey",
       "latitude": 40.9824,
       "longitude": 29.0727,
       "timezone": "Europe/Istanbul",
-      "city": "Istanbul"
+      "city": "Istanbul",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Kartal",
@@ -1817,7 +2552,10 @@
       "latitude": 40.9007,
       "longitude": 29.1745,
       "timezone": "Europe/Istanbul",
-      "city": "Istanbul"
+      "city": "Istanbul",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Maltepe",
@@ -1825,7 +2563,10 @@
       "latitude": 40.9365,
       "longitude": 29.0913,
       "timezone": "Europe/Istanbul",
-      "city": "Istanbul"
+      "city": "Istanbul",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Pendik",
@@ -1833,7 +2574,10 @@
       "latitude": 40.8782,
       "longitude": 29.2849,
       "timezone": "Europe/Istanbul",
-      "city": "Istanbul"
+      "city": "Istanbul",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Sancaktepe",
@@ -1841,7 +2585,10 @@
       "latitude": 41.0135,
       "longitude": 29.213,
       "timezone": "Europe/Istanbul",
-      "city": "Istanbul"
+      "city": "Istanbul",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Sultanbeyli",
@@ -1849,15 +2596,21 @@
       "latitude": 40.9629,
       "longitude": 29.2603,
       "timezone": "Europe/Istanbul",
-      "city": "Istanbul"
+      "city": "Istanbul",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
-      "name": "\u015eile",
+      "name": "Şile",
       "country": "Turkey",
       "latitude": 41.1807,
       "longitude": 29.613,
       "timezone": "Europe/Istanbul",
-      "city": "Istanbul"
+      "city": "Istanbul",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Tuzla",
@@ -1865,31 +2618,43 @@
       "latitude": 40.8552,
       "longitude": 29.3144,
       "timezone": "Europe/Istanbul",
-      "city": "Istanbul"
+      "city": "Istanbul",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
-      "name": "\u00dcmraniye",
+      "name": "Ümraniye",
       "country": "Turkey",
       "latitude": 41.0284,
       "longitude": 29.102,
       "timezone": "Europe/Istanbul",
-      "city": "Istanbul"
+      "city": "Istanbul",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
-      "name": "\u00dcsk\u00fcdar",
+      "name": "Üsküdar",
       "country": "Turkey",
       "latitude": 41.04,
       "longitude": 29.0285,
       "timezone": "Europe/Istanbul",
-      "city": "Istanbul"
+      "city": "Istanbul",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
-{
+    {
       "name": "Fatih",
       "country": "Turkey",
       "latitude": 41.0364,
       "longitude": 28.9603,
       "timezone": "Europe/Istanbul",
-      "city": "Istanbul"
+      "city": "Istanbul",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Ankara",
@@ -1897,7 +2662,10 @@
       "latitude": 39.9334,
       "longitude": 32.8597,
       "timezone": "Europe/Istanbul",
-      "city": "Ankara"
+      "city": "Ankara",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Izmir",
@@ -1905,7 +2673,10 @@
       "latitude": 38.4192,
       "longitude": 27.1287,
       "timezone": "Europe/Istanbul",
-      "city": "Izmir"
+      "city": "Izmir",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Bursa",
@@ -1913,7 +2684,10 @@
       "latitude": 40.1826,
       "longitude": 29.0665,
       "timezone": "Europe/Istanbul",
-      "city": "Bursa"
+      "city": "Bursa",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Antalya",
@@ -1921,7 +2695,10 @@
       "latitude": 36.8969,
       "longitude": 30.7133,
       "timezone": "Europe/Istanbul",
-      "city": "Antalya"
+      "city": "Antalya",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Adana",
@@ -1929,7 +2706,10 @@
       "latitude": 37.0016,
       "longitude": 35.3213,
       "timezone": "Europe/Istanbul",
-      "city": "Adana"
+      "city": "Adana",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Gaziantep",
@@ -1937,7 +2717,10 @@
       "latitude": 37.0662,
       "longitude": 37.3833,
       "timezone": "Europe/Istanbul",
-      "city": "Gaziantep"
+      "city": "Gaziantep",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Konya",
@@ -1945,7 +2728,10 @@
       "latitude": 37.8746,
       "longitude": 32.4932,
       "timezone": "Europe/Istanbul",
-      "city": "Konya"
+      "city": "Konya",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Mersin",
@@ -1953,7 +2739,10 @@
       "latitude": 36.8,
       "longitude": 34.6333,
       "timezone": "Europe/Istanbul",
-      "city": "Mersin"
+      "city": "Mersin",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Diyarbakir",
@@ -1961,7 +2750,10 @@
       "latitude": 37.9144,
       "longitude": 40.2306,
       "timezone": "Europe/Istanbul",
-      "city": "Diyarbakir"
+      "city": "Diyarbakir",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Eskisehir",
@@ -1969,7 +2761,10 @@
       "latitude": 39.7667,
       "longitude": 30.5256,
       "timezone": "Europe/Istanbul",
-      "city": "Eskisehir"
+      "city": "Eskisehir",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Samsun",
@@ -1977,7 +2772,10 @@
       "latitude": 41.2928,
       "longitude": 36.3313,
       "timezone": "Europe/Istanbul",
-      "city": "Samsun"
+      "city": "Samsun",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Denizli",
@@ -1985,7 +2783,10 @@
       "latitude": 37.7765,
       "longitude": 29.0864,
       "timezone": "Europe/Istanbul",
-      "city": "Denizli"
+      "city": "Denizli",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Kahramanmaras",
@@ -1993,7 +2794,10 @@
       "latitude": 37.5858,
       "longitude": 36.9371,
       "timezone": "Europe/Istanbul",
-      "city": "Kahramanmaras"
+      "city": "Kahramanmaras",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Malatya",
@@ -2001,7 +2805,10 @@
       "latitude": 38.3552,
       "longitude": 38.3095,
       "timezone": "Europe/Istanbul",
-      "city": "Malatya"
+      "city": "Malatya",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Erzurum",
@@ -2009,7 +2816,10 @@
       "latitude": 39.9043,
       "longitude": 41.2679,
       "timezone": "Europe/Istanbul",
-      "city": "Erzurum"
+      "city": "Erzurum",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Van",
@@ -2017,7 +2827,10 @@
       "latitude": 38.4891,
       "longitude": 43.4089,
       "timezone": "Europe/Istanbul",
-      "city": "Van"
+      "city": "Van",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Elazig",
@@ -2025,7 +2838,10 @@
       "latitude": 38.681,
       "longitude": 39.2264,
       "timezone": "Europe/Istanbul",
-      "city": "Elazig"
+      "city": "Elazig",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Zonguldak",
@@ -2033,7 +2849,10 @@
       "latitude": 41.4564,
       "longitude": 31.7987,
       "timezone": "Europe/Istanbul",
-      "city": "Zonguldak"
+      "city": "Zonguldak",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Manisa",
@@ -2041,7 +2860,10 @@
       "latitude": 38.6191,
       "longitude": 27.4289,
       "timezone": "Europe/Istanbul",
-      "city": "Manisa"
+      "city": "Manisa",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Sakarya",
@@ -2049,7 +2871,10 @@
       "latitude": 40.694,
       "longitude": 30.4358,
       "timezone": "Europe/Istanbul",
-      "city": "Sakarya"
+      "city": "Sakarya",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Kocaeli",
@@ -2057,7 +2882,10 @@
       "latitude": 40.8533,
       "longitude": 29.8815,
       "timezone": "Europe/Istanbul",
-      "city": "Kocaeli"
+      "city": "Kocaeli",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Trabzon",
@@ -2065,7 +2893,10 @@
       "latitude": 41.0027,
       "longitude": 39.7168,
       "timezone": "Europe/Istanbul",
-      "city": "Trabzon"
+      "city": "Trabzon",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Edirne",
@@ -2073,7 +2904,10 @@
       "latitude": 41.6771,
       "longitude": 26.5557,
       "timezone": "Europe/Istanbul",
-      "city": "Edirne"
+      "city": "Edirne",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Kirikkale",
@@ -2081,7 +2915,10 @@
       "latitude": 39.8468,
       "longitude": 33.5153,
       "timezone": "Europe/Istanbul",
-      "city": "Kirikkale"
+      "city": "Kirikkale",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Aydin",
@@ -2089,7 +2926,10 @@
       "latitude": 37.856,
       "longitude": 27.8416,
       "timezone": "Europe/Istanbul",
-      "city": "Aydin"
+      "city": "Aydin",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Usak",
@@ -2097,7 +2937,10 @@
       "latitude": 38.6823,
       "longitude": 29.4082,
       "timezone": "Europe/Istanbul",
-      "city": "Usak"
+      "city": "Usak",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Aksaray",
@@ -2105,7 +2948,10 @@
       "latitude": 38.3687,
       "longitude": 34.037,
       "timezone": "Europe/Istanbul",
-      "city": "Aksaray"
+      "city": "Aksaray",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Nigde",
@@ -2113,7 +2959,10 @@
       "latitude": 37.9667,
       "longitude": 34.6939,
       "timezone": "Europe/Istanbul",
-      "city": "Nigde"
+      "city": "Nigde",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Tokat",
@@ -2121,7 +2970,10 @@
       "latitude": 40.3167,
       "longitude": 36.55,
       "timezone": "Europe/Istanbul",
-      "city": "Tokat"
+      "city": "Tokat",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Tekirdag",
@@ -2129,7 +2981,10 @@
       "latitude": 40.9839,
       "longitude": 27.5091,
       "timezone": "Europe/Istanbul",
-      "city": "Tekirdag"
+      "city": "Tekirdag",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Karabuk",
@@ -2137,7 +2992,10 @@
       "latitude": 41.2061,
       "longitude": 32.6204,
       "timezone": "Europe/Istanbul",
-      "city": "Karabuk"
+      "city": "Karabuk",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Kastamonu",
@@ -2145,7 +3003,10 @@
       "latitude": 41.3887,
       "longitude": 33.7827,
       "timezone": "Europe/Istanbul",
-      "city": "Kastamonu"
+      "city": "Kastamonu",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Sivas",
@@ -2153,7 +3014,10 @@
       "latitude": 39.7477,
       "longitude": 37.0179,
       "timezone": "Europe/Istanbul",
-      "city": "Sivas"
+      "city": "Sivas",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Yalova",
@@ -2161,7 +3025,10 @@
       "latitude": 40.65,
       "longitude": 29.2667,
       "timezone": "Europe/Istanbul",
-      "city": "Yalova"
+      "city": "Yalova",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Kirsehir",
@@ -2169,7 +3036,10 @@
       "latitude": 39.1425,
       "longitude": 34.1709,
       "timezone": "Europe/Istanbul",
-      "city": "Kirsehir"
+      "city": "Kirsehir",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Nevsehir",
@@ -2177,7 +3047,10 @@
       "latitude": 38.6939,
       "longitude": 34.6857,
       "timezone": "Europe/Istanbul",
-      "city": "Nevsehir"
+      "city": "Nevsehir",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Cankiri",
@@ -2185,7 +3058,10 @@
       "latitude": 40.6013,
       "longitude": 33.6134,
       "timezone": "Europe/Istanbul",
-      "city": "Cankiri"
+      "city": "Cankiri",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Bartin",
@@ -2193,7 +3069,10 @@
       "latitude": 41.6344,
       "longitude": 32.3375,
       "timezone": "Europe/Istanbul",
-      "city": "Bartin"
+      "city": "Bartin",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Duzce",
@@ -2201,7 +3080,10 @@
       "latitude": 40.8438,
       "longitude": 31.1565,
       "timezone": "Europe/Istanbul",
-      "city": "Duzce"
+      "city": "Duzce",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Bolu",
@@ -2209,7 +3091,10 @@
       "latitude": 40.7355,
       "longitude": 31.6061,
       "timezone": "Europe/Istanbul",
-      "city": "Bolu"
+      "city": "Bolu",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Karaman",
@@ -2217,7 +3102,10 @@
       "latitude": 37.1759,
       "longitude": 33.2287,
       "timezone": "Europe/Istanbul",
-      "city": "Karaman"
+      "city": "Karaman",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Kirklareli",
@@ -2225,7 +3113,10 @@
       "latitude": 41.7333,
       "longitude": 27.2167,
       "timezone": "Europe/Istanbul",
-      "city": "Kirklareli"
+      "city": "Kirklareli",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Mus",
@@ -2233,7 +3124,10 @@
       "latitude": 38.9462,
       "longitude": 41.7539,
       "timezone": "Europe/Istanbul",
-      "city": "Mus"
+      "city": "Mus",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Bingol",
@@ -2241,7 +3135,10 @@
       "latitude": 38.8855,
       "longitude": 40.4966,
       "timezone": "Europe/Istanbul",
-      "city": "Bingol"
+      "city": "Bingol",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Tunceli",
@@ -2249,7 +3146,10 @@
       "latitude": 39.1079,
       "longitude": 39.5401,
       "timezone": "Europe/Istanbul",
-      "city": "Tunceli"
+      "city": "Tunceli",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Hakkari",
@@ -2257,7 +3157,10 @@
       "latitude": 37.5744,
       "longitude": 43.7408,
       "timezone": "Europe/Istanbul",
-      "city": "Hakkari"
+      "city": "Hakkari",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Sanliurfa",
@@ -2265,7 +3168,10 @@
       "latitude": 37.1591,
       "longitude": 38.7969,
       "timezone": "Europe/Istanbul",
-      "city": "Sanliurfa"
+      "city": "Sanliurfa",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Sirnak",
@@ -2273,7 +3179,10 @@
       "latitude": 37.4187,
       "longitude": 42.4918,
       "timezone": "Europe/Istanbul",
-      "city": "Sirnak"
+      "city": "Sirnak",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Siirt",
@@ -2281,7 +3190,10 @@
       "latitude": 37.9333,
       "longitude": 41.95,
       "timezone": "Europe/Istanbul",
-      "city": "Siirt"
+      "city": "Siirt",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Bitlis",
@@ -2289,7 +3201,10 @@
       "latitude": 38.4004,
       "longitude": 42.1095,
       "timezone": "Europe/Istanbul",
-      "city": "Bitlis"
+      "city": "Bitlis",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Kilis",
@@ -2297,7 +3212,10 @@
       "latitude": 36.7184,
       "longitude": 37.1212,
       "timezone": "Europe/Istanbul",
-      "city": "Kilis"
+      "city": "Kilis",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Mardin",
@@ -2305,7 +3223,10 @@
       "latitude": 37.3212,
       "longitude": 40.7245,
       "timezone": "Europe/Istanbul",
-      "city": "Mardin"
+      "city": "Mardin",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Batman",
@@ -2313,7 +3234,10 @@
       "latitude": 37.8812,
       "longitude": 41.1351,
       "timezone": "Europe/Istanbul",
-      "city": "Batman"
+      "city": "Batman",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Igdir",
@@ -2321,7 +3245,10 @@
       "latitude": 39.9167,
       "longitude": 44.0333,
       "timezone": "Europe/Istanbul",
-      "city": "Igdir"
+      "city": "Igdir",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Ardahan",
@@ -2329,7 +3256,10 @@
       "latitude": 41.1105,
       "longitude": 42.7022,
       "timezone": "Europe/Istanbul",
-      "city": "Ardahan"
+      "city": "Ardahan",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Artvin",
@@ -2337,7 +3267,10 @@
       "latitude": 41.1828,
       "longitude": 41.8183,
       "timezone": "Europe/Istanbul",
-      "city": "Artvin"
+      "city": "Artvin",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Gumushane",
@@ -2345,7 +3278,10 @@
       "latitude": 40.4386,
       "longitude": 39.5086,
       "timezone": "Europe/Istanbul",
-      "city": "Gumushane"
+      "city": "Gumushane",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Bayburt",
@@ -2353,7 +3289,10 @@
       "latitude": 40.2552,
       "longitude": 40.2249,
       "timezone": "Europe/Istanbul",
-      "city": "Bayburt"
+      "city": "Bayburt",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Amasya",
@@ -2361,7 +3300,10 @@
       "latitude": 40.6499,
       "longitude": 35.8353,
       "timezone": "Europe/Istanbul",
-      "city": "Amasya"
+      "city": "Amasya",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Ordu",
@@ -2369,7 +3311,10 @@
       "latitude": 40.9839,
       "longitude": 37.8764,
       "timezone": "Europe/Istanbul",
-      "city": "Ordu"
+      "city": "Ordu",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Giresun",
@@ -2377,7 +3322,10 @@
       "latitude": 40.9128,
       "longitude": 38.3895,
       "timezone": "Europe/Istanbul",
-      "city": "Giresun"
+      "city": "Giresun",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Rize",
@@ -2385,7 +3333,10 @@
       "latitude": 41.0201,
       "longitude": 40.5234,
       "timezone": "Europe/Istanbul",
-      "city": "Rize"
+      "city": "Rize",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Sinop",
@@ -2393,7 +3344,10 @@
       "latitude": 42.0231,
       "longitude": 35.1531,
       "timezone": "Europe/Istanbul",
-      "city": "Sinop"
+      "city": "Sinop",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Kayseri",
@@ -2401,7 +3355,10 @@
       "latitude": 38.7312,
       "longitude": 35.4787,
       "timezone": "Europe/Istanbul",
-      "city": "Kayseri"
+      "city": "Kayseri",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Isparta",
@@ -2409,7 +3366,10 @@
       "latitude": 37.7648,
       "longitude": 30.5566,
       "timezone": "Europe/Istanbul",
-      "city": "Isparta"
+      "city": "Isparta",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Bilecik",
@@ -2417,7 +3377,10 @@
       "latitude": 40.0567,
       "longitude": 30.0665,
       "timezone": "Europe/Istanbul",
-      "city": "Bilecik"
+      "city": "Bilecik",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Burdur",
@@ -2425,7 +3388,10 @@
       "latitude": 37.4613,
       "longitude": 30.0665,
       "timezone": "Europe/Istanbul",
-      "city": "Burdur"
+      "city": "Burdur",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Kutahya",
@@ -2433,7 +3399,10 @@
       "latitude": 39.4242,
       "longitude": 29.9833,
       "timezone": "Europe/Istanbul",
-      "city": "Kutahya"
+      "city": "Kutahya",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Afyon",
@@ -2441,7 +3410,10 @@
       "latitude": 38.7312,
       "longitude": 30.5387,
       "timezone": "Europe/Istanbul",
-      "city": "Afyon"
+      "city": "Afyon",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Canakkale",
@@ -2449,7 +3421,10 @@
       "latitude": 40.1553,
       "longitude": 26.4142,
       "timezone": "Europe/Istanbul",
-      "city": "Canakkale"
+      "city": "Canakkale",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Balikesir",
@@ -2457,7 +3432,10 @@
       "latitude": 39.6484,
       "longitude": 27.8826,
       "timezone": "Europe/Istanbul",
-      "city": "Balikesir"
+      "city": "Balikesir",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Yozgat",
@@ -2465,7 +3443,10 @@
       "latitude": 39.8181,
       "longitude": 34.8147,
       "timezone": "Europe/Istanbul",
-      "city": "Yozgat"
+      "city": "Yozgat",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     },
     {
       "name": "Hatay",
@@ -2473,7 +3454,10 @@
       "latitude": 36.4018,
       "longitude": 36.3498,
       "timezone": "Europe/Istanbul",
-      "city": "Hatay"
+      "city": "Hatay",
+      "countryTr": "Türkiye",
+      "countryAr": "تركيا",
+      "countryFa": "ترکیه"
     }
   ]
 }
