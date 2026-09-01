@@ -10,6 +10,7 @@ import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithContentDescription
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -173,9 +174,9 @@ class SavedVersesScreenTest {
             ),
             onEvent = { lastEvent = it }
         )
-        composeTestRule.onNodeWithText("Expand All").performClick()
+        composeTestRule.onNodeWithContentDescription("Expand All").performClick()
         assertThat(lastEvent).isEqualTo(SavedVersesEvent.OnExpandAll)
-        composeTestRule.onNodeWithText("Collapse All").performClick()
+        composeTestRule.onNodeWithContentDescription("Collapse All").performClick()
         assertThat(lastEvent).isEqualTo(SavedVersesEvent.OnCollapseAll)
     }
 

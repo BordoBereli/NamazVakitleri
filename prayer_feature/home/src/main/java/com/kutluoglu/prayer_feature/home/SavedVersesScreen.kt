@@ -26,6 +26,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.BookmarkBorder
@@ -42,7 +43,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
@@ -426,11 +426,17 @@ private fun CollapseControls(
             .padding(horizontal = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        TextButton(onClick = onExpandAll) {
-            Text(stringResource(R.string.expand_all))
+        IconButton(onClick = onExpandAll) {
+            Icon(
+                Icons.Default.KeyboardArrowDown,
+                contentDescription = stringResource(R.string.expand_all)
+            )
         }
-        TextButton(onClick = onCollapseAll) {
-            Text(stringResource(R.string.collapse_all))
+        IconButton(onClick = onCollapseAll) {
+            Icon(
+                Icons.Default.KeyboardArrowUp,
+                contentDescription = stringResource(R.string.collapse_all)
+            )
         }
     }
 }
