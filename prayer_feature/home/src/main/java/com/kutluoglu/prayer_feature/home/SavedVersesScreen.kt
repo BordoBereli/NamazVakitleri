@@ -1,9 +1,12 @@
 package com.kutluoglu.prayer_feature.home
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,22 +14,30 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.rounded.DragHandle
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
@@ -38,7 +49,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,6 +64,7 @@ import androidx.compose.ui.unit.dp
 import com.kutluoglu.core.designsystem.components.EmptyStateContent
 import com.kutluoglu.core.designsystem.components.LoadingIndicator
 import com.kutluoglu.prayer.model.quran.AyahData
+import com.kutluoglu.prayer.model.quran.SavedVerseGroup
 import com.kutluoglu.prayer_feature.home.common.QuranVerseFormatter
 import com.kutluoglu.prayer_feature.home.common.shareVerse
 import com.kutluoglu.prayer_feature.home.feature.CustomBottomSheet
@@ -58,10 +73,38 @@ import com.kutluoglu.prayer_feature.home.state.SavedVersesUiState
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
+
+private sealed interface SavedRow {
+    val key: String
+    data class Header(val group: SavedVerseGroup) : SavedRow {
+        override val key: String = "h-${group.surah.number}"
+    }
+    data class Verse(val group: SavedVerseGroup, val verse: AyahData) : SavedRow {
+        override val key: String = "v-${group.surah.number}-${verse.numberInSurah}"
+    }
+}
+
+private fun List<SavedVerseGroup>.toRows(): List<SavedRow> = flatMap { group ->
+    listOf(SavedRow.Header(group)) + group.verses.map { SavedRow.Verse(group, it) }
+}
+
+private fun rowsToGroups(rows: List<SavedRow>): List<SavedVerseGroup> =
+    rows.filterIsInstance<SavedRow.Header>().map { it.group }
+
+private fun moveGroup(groups: List<SavedVerseGroup>, from: Int, to: Int): List<SavedVerseGroup> {
+    val mutable = groups.toMutableList()
+    val group = mutable.removeAt(from)
+    mutable.add(to.coerceIn(0, mutable.size), group)
+    return mutable
+}
+
+private fun AyahData.samePosition(other: AyahData): Boolean =
+    surah.number == other.surah.number && numberInSurah == other.numberInSurah
 
 @Composable
 fun SavedVersesRoute(
@@ -70,9 +113,7 @@ fun SavedVersesRoute(
     verseFormatter: QuranVerseFormatter = koinInject()
 ) {
     val state by viewModel.uiState.collectAsState()
-    LaunchedEffect(Unit) {
-        viewModel.reload()
-    }
+    LaunchedEffect(Unit) { viewModel.reload() }
     SavedVersesScreen(
         state = state,
         verseFormatter = verseFormatter,
@@ -89,23 +130,60 @@ fun SavedVersesScreen(
     onNavigateBack: () -> Unit,
     onEvent: (SavedVersesEvent) -> Unit
 ) {
-    val lazyListState = rememberLazyListState()
-    val entries = remember { mutableStateListOf<AyahData>() }
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val lazyListState = rememberLazyListState()
+    val rows = remember { mutableStateListOf<SavedRow>() }
+    var pendingReorder by remember { mutableStateOf<SavedVersesEvent?>(null) }
+
     val reorderableState = rememberReorderableLazyListState(lazyListState) { from, to ->
-        val fromIndex = entries.indexOfFirst { it.toString() == from.key }
-        val toIndex = entries.indexOfFirst { it.toString() == to.key }
-        if (fromIndex != -1 && toIndex != -1) {
-            entries.add(toIndex, entries.removeAt(fromIndex))
+        val success = state as? SavedVersesUiState.Success ?: return@rememberReorderableLazyListState
+        if (success.query.isNotBlank()) return@rememberReorderableLazyListState
+        val fromIndex = rows.indexOfFirst { it.key == from.key }
+        val toIndex = rows.indexOfFirst { it.key == to.key }
+        if (fromIndex == -1 || toIndex == -1) return@rememberReorderableLazyListState
+        val fromRow = rows[fromIndex]
+        when (fromRow) {
+            is SavedRow.Header -> {
+                val fromGroupIndex = rows.take(fromIndex).count { it is SavedRow.Header }
+                val toGroupIndex = rows.take(toIndex).count { it is SavedRow.Header }
+                val newGroups = moveGroup(rowsToGroups(rows), fromGroupIndex, toGroupIndex)
+                rows.clear()
+                rows.addAll(newGroups.toRows())
+                pendingReorder = SavedVersesEvent.OnReorderGroups(newGroups)
+            }
+            is SavedRow.Verse -> {
+                val toRow = rows[toIndex]
+                if (toRow !is SavedRow.Verse || toRow.group.surah.number != fromRow.group.surah.number) {
+                    return@rememberReorderableLazyListState
+                }
+                val group = rowsToGroups(rows).first { it.surah.number == fromRow.group.surah.number }
+                val fromVerseIndex = group.verses.indexOfFirst { it.samePosition(fromRow.verse) }
+                val toVerseIndex = group.verses.indexOfFirst { it.samePosition(toRow.verse) }
+                if (fromVerseIndex == -1 || toVerseIndex == -1) return@rememberReorderableLazyListState
+                val newVerses = group.verses.toMutableList().apply {
+                    add(toVerseIndex, removeAt(fromVerseIndex))
+                }
+                val newGroups = rowsToGroups(rows).map { g ->
+                    if (g.surah.number == group.surah.number) g.copy(verses = newVerses) else g
+                }
+                rows.clear()
+                rows.addAll(newGroups.toRows())
+                pendingReorder = SavedVersesEvent.OnReorderWithinGroup(group.surah.number, newVerses)
+            }
         }
     }
 
     LaunchedEffect(state) {
         if (reorderableState.isAnyItemDragging) return@LaunchedEffect
         val success = state as? SavedVersesUiState.Success ?: return@LaunchedEffect
-        if (entries.toList() != success.verses) {
-            entries.clear()
-            entries.addAll(success.verses)
+        val searching = success.query.isNotBlank()
+        val target = success.filteredGroups.toRows().filterNot { row ->
+            !searching && row is SavedRow.Verse && row.group.surah.number in success.collapsedSurahs
+        }
+        if (rows.toList() != target) {
+            rows.clear()
+            rows.addAll(target)
         }
     }
 
@@ -114,7 +192,10 @@ fun SavedVersesScreen(
             .distinctUntilChanged()
             .drop(1)
             .filter { !it }
-            .collect { onEvent(SavedVersesEvent.OnReorder(entries.toList())) }
+            .collect {
+                pendingReorder?.let { onEvent(it) }
+                pendingReorder = null
+            }
     }
 
     Scaffold(
@@ -144,7 +225,7 @@ fun SavedVersesScreen(
             ) { Text(state.message) }
 
             is SavedVersesUiState.Success -> {
-                if (state.verses.isEmpty()) {
+                if (state.groups.isEmpty()) {
                     Box(
                         modifier = Modifier.fillMaxSize().padding(padding),
                         contentAlignment = Alignment.Center
@@ -155,68 +236,128 @@ fun SavedVersesScreen(
                         )
                     }
                 } else {
-                    LazyColumn(
-                        state = lazyListState,
-                        modifier = Modifier.fillMaxSize().padding(padding)
-                    ) {
-                        items(entries, key = { it.toString() }) { verse ->
-                            ReorderableItem(state = reorderableState, key = verse.toString()) { isDragging ->
-                                val dismissState = rememberSwipeToDismissBoxState(
-                                    confirmValueChange = { value ->
-                                        if (value != SwipeToDismissBoxValue.Settled) {
-                                            entries.remove(verse)
-                                            onEvent(SavedVersesEvent.OnRemove(verse))
-                                        }
-                                        true
+                    Column(modifier = Modifier.fillMaxSize().padding(padding)) {
+                        SearchField(
+                            query = state.query,
+                            onQueryChange = { onEvent(SavedVersesEvent.OnSearch(it)) }
+                        )
+                        if (state.query.isBlank()) {
+                            SurahJumpChips(
+                                groups = state.filteredGroups,
+                                verseFormatter = verseFormatter,
+                                context = context,
+                                onJump = { surahNumber ->
+                                    val index = rows.indexOfFirst {
+                                        it is SavedRow.Header && it.group.surah.number == surahNumber
                                     }
+                                    if (index != -1) scope.launch { lazyListState.scrollToItem(index) }
+                                }
+                            )
+                        }
+                        if (state.filteredGroups.isEmpty()) {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                EmptyStateContent(
+                                    icon = Icons.Default.Search,
+                                    text = stringResource(R.string.no_matching_verses)
                                 )
-                                SwipeToDismissBox(
-                                    state = dismissState,
-                                    enableDismissFromStartToEnd = true,
-                                    enableDismissFromEndToStart = false,
-                                    backgroundContent = {
-                                        Box(
-                                            modifier = Modifier
-                                                .fillMaxSize()
-                                                .padding(horizontal = 16.dp, vertical = 4.dp),
-                                            contentAlignment = Alignment.CenterStart
-                                        ) {
-                                            Box(
-                                                modifier = Modifier
-                                                    .size(44.dp)
-                                                    .clip(RoundedCornerShape(12.dp))
-                                                    .background(
-                                                        MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.3f)
-                                                    ),
-                                                contentAlignment = Alignment.Center
-                                            ) {
-                                                Icon(
-                                                    Icons.Default.Delete,
-                                                    contentDescription = stringResource(R.string.delete),
-                                                    tint = MaterialTheme.colorScheme.error
+                            }
+                        } else {
+                            LazyColumn(
+                                state = lazyListState,
+                                modifier = Modifier.fillMaxSize()
+                            ) {
+                                rows.forEach { row ->
+                                    when (row) {
+                                        is SavedRow.Header -> item(key = row.key) {
+                                            ReorderableItem(state = reorderableState, key = row.key) { isDragging ->
+                                                SurahHeader(
+                                                    group = row.group,
+                                                    isCollapsed = state.query.isBlank() &&
+                                                        row.group.surah.number in state.collapsedSurahs,
+                                                    verseFormatter = verseFormatter,
+                                                    context = context,
+                                                    onToggle = {
+                                                        onEvent(SavedVersesEvent.OnToggleCollapse(row.group.surah.number))
+                                                    },
+                                                    dragHandle = {
+                                                        IconButton(
+                                                            modifier = Modifier.draggableHandle(),
+                                                            onClick = {}
+                                                        ) {
+                                                            Icon(
+                                                                Icons.Rounded.DragHandle,
+                                                                contentDescription = stringResource(R.string.reorder)
+                                                            )
+                                                        }
+                                                    }
                                                 )
+                                            }
+                                        }
+                                        is SavedRow.Verse -> item(key = row.key) {
+                                            ReorderableItem(state = reorderableState, key = row.key) { isDragging ->
+                                                val dismissState = rememberSwipeToDismissBoxState(
+                                                    confirmValueChange = { value ->
+                                                        if (value != SwipeToDismissBoxValue.Settled) {
+                                                            rows.remove(row)
+                                                            onEvent(SavedVersesEvent.OnRemove(row.verse))
+                                                        }
+                                                        true
+                                                    }
+                                                )
+                                                SwipeToDismissBox(
+                                                    state = dismissState,
+                                                    enableDismissFromStartToEnd = true,
+                                                    enableDismissFromEndToStart = false,
+                                                    backgroundContent = {
+                                                        Box(
+                                                            modifier = Modifier
+                                                                .fillMaxSize()
+                                                                .padding(horizontal = 16.dp, vertical = 4.dp),
+                                                            contentAlignment = Alignment.CenterStart
+                                                        ) {
+                                                            Box(
+                                                                modifier = Modifier
+                                                                    .size(44.dp)
+                                                                    .clip(RoundedCornerShape(12.dp))
+                                                                    .background(
+                                                                        MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.3f)
+                                                                    ),
+                                                                contentAlignment = Alignment.Center
+                                                            ) {
+                                                                Icon(
+                                                                    Icons.Default.Delete,
+                                                                    contentDescription = stringResource(R.string.delete),
+                                                                    tint = MaterialTheme.colorScheme.error
+                                                                )
+                                                            }
+                                                        }
+                                                    }
+                                                ) {
+                                                    VerseRow(
+                                                        verse = row.verse,
+                                                        verseFormatter = verseFormatter,
+                                                        isDragging = isDragging,
+                                                        onSelect = { onEvent(SavedVersesEvent.OnSelect(row.verse)) },
+                                                        onShare = { shareVerse(row.verse, verseFormatter, context) },
+                                                        dragHandle = {
+                                                            IconButton(
+                                                                modifier = Modifier.draggableHandle(),
+                                                                onClick = {}
+                                                            ) {
+                                                                Icon(
+                                                                    Icons.Rounded.DragHandle,
+                                                                    contentDescription = stringResource(R.string.reorder)
+                                                                )
+                                                            }
+                                                        }
+                                                    )
+                                                }
                                             }
                                         }
                                     }
-                                ) {
-                                    VerseRow(
-                                        verse = verse,
-                                        verseFormatter = verseFormatter,
-                                        isDragging = isDragging,
-                                        onSelect = { onEvent(SavedVersesEvent.OnSelect(verse)) },
-                                        onShare = { shareVerse(verse, verseFormatter, context) },
-                                        dragHandle = {
-                                            IconButton(
-                                                modifier = Modifier.draggableHandle(),
-                                                onClick = {}
-                                            ) {
-                                                Icon(
-                                                    Icons.Rounded.DragHandle,
-                                                    contentDescription = stringResource(R.string.reorder)
-                                                )
-                                            }
-                                        }
-                                    )
                                 }
                             }
                         }
@@ -239,6 +380,89 @@ fun SavedVersesScreen(
                 onToggleSaved = { onEvent(SavedVersesEvent.OnRemove(verse)) }
             )
         }
+    }
+}
+
+@Composable
+private fun SearchField(query: String, onQueryChange: (String) -> Unit) {
+    OutlinedTextField(
+        value = query,
+        onValueChange = onQueryChange,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        placeholder = { Text(stringResource(R.string.search_saved_verses)) },
+        leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+        trailingIcon = if (query.isNotEmpty()) {
+            {
+                IconButton(onClick = { onQueryChange("") }) {
+                    Icon(Icons.Default.Close, contentDescription = stringResource(R.string.clear))
+                }
+            }
+        } else {
+            null
+        },
+        singleLine = true
+    )
+}
+
+@Composable
+private fun SurahJumpChips(
+    groups: List<SavedVerseGroup>,
+    verseFormatter: QuranVerseFormatter,
+    context: Context,
+    onJump: (Int) -> Unit
+) {
+    LazyRow(
+        modifier = Modifier.fillMaxWidth(),
+        contentPadding = PaddingValues(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        items(groups, key = { it.surah.number }) { group ->
+            FilterChip(
+                selected = false,
+                onClick = { onJump(group.surah.number) },
+                label = { Text(verseFormatter.getLocalizedNameOf(group.surah, context)) }
+            )
+        }
+    }
+}
+
+@Composable
+private fun SurahHeader(
+    group: SavedVerseGroup,
+    isCollapsed: Boolean,
+    verseFormatter: QuranVerseFormatter,
+    context: Context,
+    onToggle: () -> Unit,
+    dragHandle: @Composable () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.surfaceVariant)
+            .clickable(onClick = onToggle)
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = if (isCollapsed) Icons.Default.KeyboardArrowRight else Icons.Default.KeyboardArrowDown,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            text = verseFormatter.getLocalizedNameOf(group.surah, context),
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.weight(1f)
+        )
+        Text(
+            text = "${group.verses.size}",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        dragHandle()
     }
 }
 

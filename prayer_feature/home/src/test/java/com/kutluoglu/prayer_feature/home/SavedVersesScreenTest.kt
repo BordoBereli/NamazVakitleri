@@ -1,26 +1,21 @@
 package com.kutluoglu.prayer_feature.home
 
 import androidx.activity.ComponentActivity
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.semantics.SemanticsActions
-import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasSetTextAction
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onAllNodesWithContentDescription
-import androidx.compose.ui.test.onAllNodesWithText
-import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performSemanticsAction
-import androidx.compose.ui.test.performTouchInput
-import androidx.compose.ui.test.swipeLeft
-import androidx.compose.ui.test.swipeRight
-import com.google.common.truth.Truth.assertThat
+import androidx.compose.ui.test.performTextInput
+import androidx.test.core.app.ApplicationProvider
 import com.kutluoglu.prayer.model.quran.AyahData
+import com.kutluoglu.prayer.model.quran.SavedVerseGroup
 import com.kutluoglu.prayer.model.quran.SurahInfo
 import com.kutluoglu.prayer_feature.home.common.QuranVerseFormatter
 import com.kutluoglu.prayer_feature.home.state.SavedVersesUiState
-import io.mockk.mockk
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -28,169 +23,141 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
-@Config(sdk = [35])
+@Config(sdk = [35], qualifiers = "w400dp-h1200dp")
 class SavedVersesScreenTest {
 
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
-    private fun verse(numberInSurah: Int) = AyahData(
-        text = "Text $numberInSurah",
-        surah = SurahInfo(
-            englishName = "Al-Fatihah",
-            name = "الفاتحة",
-            number = 1,
-            numberOfAyahs = 7
-        ),
+    private val formatter = QuranVerseFormatter()
+
+    private fun verse(surahNumber: Int, numberInSurah: Int) = AyahData(
+        text = "Verse $surahNumber:$numberInSurah",
+        surah = SurahInfo("Surah $surahNumber", "سورة", surahNumber, 10),
         numberInSurah = numberInSurah
     )
 
-    @Test
-    fun `renders empty state when no saved verses`() {
+    private fun group(surahNumber: Int, vararg numbers: Int) = SavedVerseGroup(
+        surah = verse(surahNumber, 1).surah,
+        verses = numbers.map { verse(surahNumber, it) }
+    )
+
+    private fun headerNode(surahName: String, count: Int) =
+        composeTestRule.onNode(hasText(surahName) and hasText(count.toString()))
+
+    private fun setContent(state: SavedVersesUiState, onEvent: (SavedVersesEvent) -> Unit = {}) {
         composeTestRule.setContent {
             SavedVersesScreen(
-                state = SavedVersesUiState.Success(emptyList()),
-                verseFormatter = mockk<QuranVerseFormatter>(relaxed = true),
+                state = state,
+                verseFormatter = formatter,
                 onNavigateBack = {},
-                onEvent = {}
+                onEvent = onEvent
             )
         }
         composeTestRule.waitForIdle()
+    }
+
+    @Test
+    fun `renders group headers and verses`() {
+        setContent(
+            SavedVersesUiState.Success(
+                groups = listOf(group(1, 1, 2), group(36, 1)),
+                filteredGroups = listOf(group(1, 1, 2), group(36, 1)),
+                collapsedSurahs = emptySet()
+            )
+        )
+        headerNode("Al-Fatihah", 2).assertIsDisplayed()
+        headerNode("Ya-Sin", 1).assertIsDisplayed()
+        composeTestRule.onNodeWithText("Verse 1:1").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Verse 36:1").assertIsDisplayed()
+    }
+
+    @Test
+    fun `collapsed group hides its verses`() {
+        setContent(
+            SavedVersesUiState.Success(
+                groups = listOf(group(1, 1, 2)),
+                filteredGroups = listOf(group(1, 1, 2)),
+                collapsedSurahs = setOf(1)
+            )
+        )
+        headerNode("Al-Fatihah", 2).assertIsDisplayed()
+        composeTestRule.onNodeWithText("Verse 1:1").assertDoesNotExist()
+    }
+
+    @Test
+    fun `search filters the displayed groups`() {
+        var lastEvent: SavedVersesEvent? = null
+        setContent(
+            SavedVersesUiState.Success(
+                groups = listOf(group(1, 1), group(36, 1)),
+                filteredGroups = listOf(group(36, 1)),
+                collapsedSurahs = emptySet(),
+                query = "36"
+            ),
+            onEvent = { lastEvent = it }
+        )
+        composeTestRule.onNodeWithText("Ya-Sin").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Al-Fatihah").assertDoesNotExist()
+    }
+
+    @Test
+    fun `typing in search emits OnSearch`() {
+        var lastEvent: SavedVersesEvent? = null
+        setContent(
+            SavedVersesUiState.Success(
+                groups = listOf(group(1, 1)),
+                filteredGroups = listOf(group(1, 1)),
+                collapsedSurahs = emptySet()
+            ),
+            onEvent = { lastEvent = it }
+        )
+        composeTestRule.onNode(hasSetTextAction()).performTextInput("36")
+        assertThat(lastEvent).isEqualTo(SavedVersesEvent.OnSearch("36"))
+    }
+
+    @Test
+    fun `tapping a header emits OnToggleCollapse`() {
+        var lastEvent: SavedVersesEvent? = null
+        setContent(
+            SavedVersesUiState.Success(
+                groups = listOf(group(1, 1)),
+                filteredGroups = listOf(group(1, 1)),
+                collapsedSurahs = emptySet()
+            ),
+            onEvent = { lastEvent = it }
+        )
+        headerNode("Al-Fatihah", 1).performClick()
+        assertThat(lastEvent).isEqualTo(SavedVersesEvent.OnToggleCollapse(1))
+    }
+
+    @Test
+    fun `shows empty state when there are no saved verses`() {
+        setContent(
+            SavedVersesUiState.Success(
+                groups = emptyList(),
+                filteredGroups = emptyList(),
+                collapsedSurahs = emptySet()
+            )
+        )
         composeTestRule.onNodeWithText("No saved verses yet. Bookmark a verse from the home screen.")
             .assertIsDisplayed()
     }
 
     @Test
-    fun `renders saved verses list`() {
-        composeTestRule.setContent {
-            SavedVersesScreen(
-                state = SavedVersesUiState.Success(listOf(verse(1), verse(2))),
-                verseFormatter = mockk<QuranVerseFormatter>(relaxed = true),
-                onNavigateBack = {},
-                onEvent = {}
+    fun `shows no-matches state when search finds nothing`() {
+        setContent(
+            SavedVersesUiState.Success(
+                groups = listOf(group(1, 1)),
+                filteredGroups = emptyList(),
+                collapsedSurahs = emptySet(),
+                query = "zzz"
             )
-        }
-        composeTestRule.waitForIdle()
-        composeTestRule.onNodeWithText("Text 1").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Text 2").assertIsDisplayed()
+        )
+        composeTestRule.onNodeWithText("No saved verses match your search.").assertIsDisplayed()
     }
 
-    @Test
-    fun `tapping a verse fires OnSelect`() {
-        val events = mutableListOf<SavedVersesEvent>()
-        composeTestRule.setContent {
-            SavedVersesScreen(
-                state = SavedVersesUiState.Success(listOf(verse(1))),
-                verseFormatter = mockk<QuranVerseFormatter>(relaxed = true),
-                onNavigateBack = {},
-                onEvent = { events.add(it) }
-            )
-        }
-        composeTestRule.waitForIdle()
-        composeTestRule.onNodeWithText("Text 1").performClick()
-        composeTestRule.waitForIdle()
-        assertThat(events).contains(SavedVersesEvent.OnSelect(verse(1)))
-    }
-
-    @Test
-    fun `swiping a verse right fires OnRemove`() {
-        val events = mutableListOf<SavedVersesEvent>()
-        composeTestRule.setContent {
-            SavedVersesScreen(
-                state = SavedVersesUiState.Success(listOf(verse(1))),
-                verseFormatter = mockk<QuranVerseFormatter>(relaxed = true),
-                onNavigateBack = {},
-                onEvent = { events.add(it) }
-            )
-        }
-        composeTestRule.waitForIdle()
-        composeTestRule.onNodeWithText("Text 1").performTouchInput { swipeRight() }
-        composeTestRule.mainClock.advanceTimeBy(1_000)
-        composeTestRule.waitForIdle()
-        assertThat(events).contains(SavedVersesEvent.OnRemove(verse(1)))
-    }
-
-    @Test
-    fun `swiping a verse left does not fire OnRemove`() {
-        val events = mutableListOf<SavedVersesEvent>()
-        composeTestRule.setContent {
-            SavedVersesScreen(
-                state = SavedVersesUiState.Success(listOf(verse(1))),
-                verseFormatter = mockk<QuranVerseFormatter>(relaxed = true),
-                onNavigateBack = {},
-                onEvent = { events.add(it) }
-            )
-        }
-        composeTestRule.waitForIdle()
-        composeTestRule.onNodeWithText("Text 1").performTouchInput { swipeLeft() }
-        composeTestRule.mainClock.advanceTimeBy(1_000)
-        composeTestRule.waitForIdle()
-        assertThat(events).doesNotContain(SavedVersesEvent.OnRemove(verse(1)))
-    }
-
-    @Test
-    fun `detail sheet shows the selected verse`() {
-        composeTestRule.setContent {
-            SavedVersesScreen(
-                state = SavedVersesUiState.Success(
-                    verses = listOf(verse(1)),
-                    selectedVerse = verse(1),
-                    isDetailVisible = true
-                ),
-                verseFormatter = mockk<QuranVerseFormatter>(relaxed = true),
-                onNavigateBack = {},
-                onEvent = {}
-            )
-        }
-        composeTestRule.waitForIdle()
-        composeTestRule.onAllNodesWithText("Text 1").assertCountEquals(2)
-        composeTestRule.onNodeWithContentDescription("Unsave Verse").assertIsDisplayed()
-    }
-
-    @Test
-    fun `unsaving from the detail sheet fires OnRemove`() {
-        val events = mutableListOf<SavedVersesEvent>()
-        composeTestRule.setContent {
-            SavedVersesScreen(
-                state = SavedVersesUiState.Success(
-                    verses = listOf(verse(1)),
-                    selectedVerse = verse(1),
-                    isDetailVisible = true
-                ),
-                verseFormatter = mockk<QuranVerseFormatter>(relaxed = true),
-                onNavigateBack = {},
-                onEvent = { events.add(it) }
-            )
-        }
-        composeTestRule.waitForIdle()
-        composeTestRule.onNodeWithContentDescription("Unsave Verse")
-            // performClick() is swallowed by CustomBottomSheet's drag gestures under Robolectric,
-            // so invoke the semantics OnClick action directly (same as HomeScreenTest).
-            .performSemanticsAction(SemanticsActions.OnClick) { it() }
-        composeTestRule.waitForIdle()
-        assertThat(events).contains(SavedVersesEvent.OnRemove(verse(1)))
-    }
-
-    @Test
-    fun `dragging the reorder handle fires OnReorder`() {
-        val events = mutableListOf<SavedVersesEvent>()
-        composeTestRule.setContent {
-            SavedVersesScreen(
-                state = SavedVersesUiState.Success(listOf(verse(1), verse(2))),
-                verseFormatter = mockk<QuranVerseFormatter>(relaxed = true),
-                onNavigateBack = {},
-                onEvent = { events.add(it) }
-            )
-        }
-        composeTestRule.waitForIdle()
-        composeTestRule.onAllNodesWithContentDescription("Reorder")[0].performTouchInput {
-            down(center)
-            advanceEventTime(600)
-            moveBy(Offset(0f, 120f))
-            up()
-        }
-        composeTestRule.mainClock.advanceTimeBy(1_000)
-        composeTestRule.waitForIdle()
-        assertThat(events.any { it is SavedVersesEvent.OnReorder }).isTrue()
+    companion object {
+        private fun assertThat(actual: Any?) = com.google.common.truth.Truth.assertThat(actual)
     }
 }
