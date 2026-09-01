@@ -336,13 +336,27 @@ class LocationSelectionViewModel(
                 id = UUID.randomUUID().toString(),
                 location = location,
                 displayName = listOfNotNull(location.county, location.city, location.country)
-                    .joinToString(", ").ifBlank { "My Location" }
+                    .joinToString(", ").ifBlank { "My Location" },
+                displayNameTr = localizedDisplayName(city, "tr"),
+                displayNameAr = localizedDisplayName(city, "ar"),
+                displayNameFa = localizedDisplayName(city, "fa")
             )
         )
         analyticsTracker.logEvent(
             AnalyticsEvents.LOCATION_ADDED,
             mapOf(AnalyticsParams.SOURCE to "search")
         )
+    }
+
+    private fun localizedDisplayName(city: City, languageCode: String): String {
+        val county = city.county?.takeIf { it.isNotBlank() }
+            ?: city.name.takeIf { it != city.province }
+        val parts = listOfNotNull(
+            county,
+            CityLocalizer.localizedProvince(city, languageCode),
+            CityLocalizer.localizedCountry(city, languageCode)
+        )
+        return parts.joinToString(", ").ifBlank { "My Location" }
     }
 
     private fun getCountryCode(country: String): String {

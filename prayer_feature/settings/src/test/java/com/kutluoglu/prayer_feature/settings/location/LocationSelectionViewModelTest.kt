@@ -197,6 +197,38 @@ class LocationSelectionViewModelTest {
     }
 
     @Test
+    fun `saveLocation populates localized display names`() = runTest {
+        val slot = slot<LocationEntry>()
+        coEvery { locationsCoordinator.addLocation(capture(slot)) } returns Unit
+
+        val district = City(
+            name = "Fatih",
+            country = "Turkey",
+            latitude = 41.0364,
+            longitude = 28.9603,
+            timezone = "Europe/Istanbul",
+            city = "Istanbul",
+            county = "Fatih",
+            nameTr = "Fatih",
+            nameAr = "فاتح",
+            nameFa = "فاتح",
+            countryTr = "Türkiye",
+            countryAr = "تركيا",
+            countryFa = "ترکیه",
+            cityTr = "İstanbul",
+            cityAr = "إسطنبول",
+            cityFa = "استانبول"
+        )
+        viewModel.onEvent(LocationSelectionEvent.SelectDistrict(district))
+
+        val entry = slot.captured
+        assertThat(entry.displayName).isEqualTo("Fatih, Istanbul, Turkey")
+        assertThat(entry.displayNameTr).isEqualTo("Fatih, İstanbul, Türkiye")
+        assertThat(entry.displayNameAr).isEqualTo("Fatih, إسطنبول, تركيا")
+        assertThat(entry.displayNameFa).isEqualTo("Fatih, استانبول, ترکیه")
+    }
+
+    @Test
     fun `ChangeSortOrder should update state with new sort order`() = runTest {
         viewModel.onEvent(LocationSelectionEvent.SelectCountry("Turkey"))
         
