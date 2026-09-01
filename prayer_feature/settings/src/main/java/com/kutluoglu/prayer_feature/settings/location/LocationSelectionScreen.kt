@@ -16,10 +16,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.fitInside
@@ -73,6 +75,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -97,6 +100,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import java.util.Locale
 import com.kutluoglu.core.designsystem.R
 import com.kutluoglu.core.designsystem.components.SkeletonList
 import com.kutluoglu.prayer.model.location.City
@@ -123,6 +127,7 @@ fun LocationSelectionRoute(
     val context = LocalContext.current
     val activity = LocalActivity.current
     val analyticsTracker: AnalyticsTracker = koinInject()
+    val languageCode = Locale.getDefault().language
     
     var selectedTabIndex by remember { mutableIntStateOf(0) }
     var searchQuery by remember { mutableStateOf("") }
@@ -317,6 +322,7 @@ fun LocationSelectionRoute(
             ) {
                 PresetCitiesContent(
                     uiState = uiState,
+                    languageCode = languageCode,
                     searchQuery = searchQuery,
                     onSearchQueryChange = { searchQuery = it },
                     onSearch = { viewModel.onEvent(LocationSelectionEvent.SearchCountry(it)) },
@@ -377,6 +383,7 @@ fun LocationSelectionRoute(
 @Composable
 private fun PresetCitiesContent(
     uiState: LocationSelectionUiState,
+    languageCode: String,
     searchQuery: String,
     onSearchQueryChange: (String) -> Unit,
     onSearch: (String) -> Unit,
@@ -513,6 +520,7 @@ private fun PresetCitiesContent(
                 ProvinceListByProvince(
                     citiesByProvince = uiState.citiesByProvince,
                     selectedProvince = uiState.selectedProvince,
+                    languageCode = languageCode,
                     onProvinceClick = onSelectProvince
                 )
             }
@@ -520,6 +528,7 @@ private fun PresetCitiesContent(
             is LocationSelectionUiState.ProvinceSelection -> {
                 ProvinceDetailContent(
                     provinceSelection = uiState,
+                    languageCode = languageCode,
                     onDistrictClick = onSelectDistrict,
                     onMainCityClick = { mainCity ->
                         onCityClick(mainCity)
@@ -590,7 +599,8 @@ private fun CountryList(
                     country = countryInfo.name,
                     cityCount = countryInfo.cityCount,
                     isPriority = true,
-                    onClick = { onCountryClick(countryInfo.name) }
+                    isTurkey = countryInfo.key == "Turkey",
+                    onClick = { onCountryClick(countryInfo.key) }
                 )
             }
         }
@@ -610,7 +620,8 @@ private fun CountryList(
                     country = countryInfo.name,
                     cityCount = countryInfo.cityCount,
                     isPriority = false,
-                    onClick = { onCountryClick(countryInfo.name) }
+                    isTurkey = false,
+                    onClick = { onCountryClick(countryInfo.key) }
                 )
             }
         }
@@ -622,6 +633,7 @@ private fun CountryItem(
     country: String,
     cityCount: Int,
     isPriority: Boolean,
+    isTurkey: Boolean,
     onClick: () -> Unit
 ) {
     Card(
@@ -629,10 +641,11 @@ private fun CountryItem(
             .fillMaxWidth()
             .clickable(onClick = onClick),
         colors = CardDefaults.cardColors(
-            containerColor = if (isPriority) 
-                MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
-            else 
-                MaterialTheme.colorScheme.surfaceVariant
+            containerColor = when {
+                isTurkey -> MaterialTheme.colorScheme.primaryContainer
+                isPriority -> MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
+                else -> MaterialTheme.colorScheme.surfaceVariant
+            }
         ),
         shape = RoundedCornerShape(12.dp)
     ) {
@@ -646,15 +659,25 @@ private fun CountryItem(
                 modifier = Modifier
                     .size(40.dp)
                     .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)),
+                    .background(
+                        if (isTurkey) MaterialTheme.colorScheme.primary
+                        else MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+                    ),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    imageVector = Icons.Default.Public,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(24.dp)
-                )
+                if (isTurkey) {
+                    Text(
+                        text = "🇹🇷",
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.Default.Public,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
             }
             Spacer(modifier = Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {
@@ -682,6 +705,7 @@ private fun CountryItem(
 private fun ProvinceListByProvince(
     citiesByProvince: Map<String, List<City>>,
     selectedProvince: String?,
+    languageCode: String,
     onProvinceClick: (String, City) -> Unit
 ) {
     val filteredData = if (selectedProvince != null) {
@@ -697,7 +721,8 @@ private fun ProvinceListByProvince(
         filteredData.forEach { (province, cities) ->
             val mainCity = cities.firstOrNull { it.city == province && it.name == province }
                 ?: cities.firstOrNull()
-            
+            val displayProvince = CityLocalizer.localizedProvince(cities.first(), languageCode)
+
             item {
                 Row(
                     modifier = Modifier.padding(vertical = 8.dp),
@@ -711,7 +736,7 @@ private fun ProvinceListByProvince(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = province,
+                        text = displayProvince,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary
@@ -724,11 +749,12 @@ private fun ProvinceListByProvince(
                     )
                 }
             }
-            
+
             items(cities.distinctBy { it.name }) { city ->
                 ProvinceItem(
                     city = city,
                     isMainCity = city.name == province,
+                    languageCode = languageCode,
                     onClick = { onProvinceClick(province, mainCity ?: city) }
                 )
             }
@@ -740,6 +766,7 @@ private fun ProvinceListByProvince(
 private fun ProvinceItem(
     city: City,
     isMainCity: Boolean,
+    languageCode: String,
     onClick: () -> Unit
 ) {
     Card(
@@ -747,9 +774,9 @@ private fun ProvinceItem(
             .fillMaxWidth()
             .clickable(onClick = onClick),
         colors = CardDefaults.cardColors(
-            containerColor = if (isMainCity) 
+            containerColor = if (isMainCity)
                 MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f)
-            else 
+            else
                 MaterialTheme.colorScheme.surfaceVariant
         ),
         shape = RoundedCornerShape(12.dp)
@@ -769,7 +796,7 @@ private fun ProvinceItem(
             Spacer(modifier = Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = city.name,
+                    text = CityLocalizer.localizedName(city, languageCode),
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = if (isMainCity) FontWeight.SemiBold else FontWeight.Medium
                 )
@@ -804,6 +831,7 @@ private fun ProvinceItem(
 @Composable
 private fun ProvinceDetailContent(
     provinceSelection: LocationSelectionUiState.ProvinceSelection,
+    languageCode: String,
     onDistrictClick: (City) -> Unit,
     onMainCityClick: (City) -> Unit
 ) {
@@ -828,13 +856,13 @@ private fun ProvinceDetailContent(
                 Spacer(modifier = Modifier.width(12.dp))
                 Column {
                     Text(
-                        text = provinceSelection.province,
+                        text = CityLocalizer.localizedProvince(provinceSelection.mainCity, languageCode),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                     Text(
-                        text = provinceSelection.country,
+                        text = CityLocalizer.localizedCountry(provinceSelection.mainCity, languageCode),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
                     )
@@ -856,6 +884,7 @@ private fun ProvinceDetailContent(
             ProvinceItem(
                 city = provinceSelection.mainCity,
                 isMainCity = true,
+                languageCode = languageCode,
                 onClick = { onMainCityClick(provinceSelection.mainCity) }
             )
         }
@@ -875,6 +904,7 @@ private fun ProvinceDetailContent(
                 ProvinceItem(
                     city = district,
                     isMainCity = false,
+                    languageCode = languageCode,
                     onClick = { onDistrictClick(district) }
                 )
             }

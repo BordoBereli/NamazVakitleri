@@ -28,6 +28,7 @@
     <string name="all_provinces">All Provinces</string>
     <string name="popular_countries">Popular Countries</string>
     <string name="other_countries">Other Countries</string>
+    <string name="select_country_hint">Select a country</string>
     <string name="getting_location">Getting location...</string>
     <string name="tap_map_to_select">Tap on map to select location</string>
     <string name="selected_location">Selected Location</string>

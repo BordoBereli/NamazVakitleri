@@ -28,6 +28,7 @@
     <string name="all_provinces">Tüm İller</string>
     <string name="popular_countries">Popüler Ülkeler</string>
     <string name="other_countries">Diğer Ülkeler</string>
+    <string name="select_country_hint">Bir ülke seçin</string>
     <string name="getting_location">Konum alınıyor...</string>
     <string name="tap_map_to_select">Konum seçmek için haritaya dokunun</string>
     <string name="selected_location">Seçilen Konum</string>
