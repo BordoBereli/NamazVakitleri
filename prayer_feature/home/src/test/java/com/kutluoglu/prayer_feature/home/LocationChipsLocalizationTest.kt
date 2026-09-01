@@ -46,6 +46,29 @@ class LocationChipsLocalizationTest {
         composeTestRule.onNodeWithText("İstanbul, Türkiye").assertIsDisplayed()
     }
 
+    private val unlocalized = LocationEntry(
+        id = "loc-2",
+        location = LocationData(39.9334, 32.8597, "Turkey", "TR", "Ankara", null),
+        displayName = "Ankara, Turkey"
+    )
+
+    @Test
+    fun `chip falls back to english when localized fields are null`() {
+        composeTestRule.setContent {
+            val pagerState = rememberPagerState(pageCount = { 1 })
+            LocationChipsRow(
+                entries = listOf(unlocalized),
+                selectedId = null,
+                pagerState = pagerState,
+                onLocationSelected = {},
+                onAddLocation = {},
+                languageCode = "tr"
+            )
+        }
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText("Ankara, Turkey").assertIsDisplayed()
+    }
+
     @Test
     fun `chip renders localized name for arabic`() {
         composeTestRule.setContent {
