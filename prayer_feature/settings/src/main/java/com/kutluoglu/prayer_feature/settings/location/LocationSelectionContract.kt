@@ -24,6 +24,7 @@ data class MapLocationState(
 
 data class CountryInfo(
     val name: String,
+    val key: String,
     val cityCount: Int,
     val isPriority: Boolean = false
 )
@@ -48,7 +49,8 @@ sealed class LocationSelectionUiState {
         val cities: List<City>,
         val citiesByProvince: Map<String, List<City>>,
         val selectedProvince: String? = null,
-        val sortOrder: SortOrder = SortOrder.ASCENDING
+        val sortOrder: SortOrder = SortOrder.ASCENDING,
+        val countries: List<CountryInfo> = emptyList()
     ) : LocationSelectionUiState()
     
     data class ProvinceSelection(
@@ -56,7 +58,8 @@ sealed class LocationSelectionUiState {
         val province: String,
         val mainCity: City,
         val districts: List<City>,
-        val sortOrder: SortOrder = SortOrder.ASCENDING
+        val sortOrder: SortOrder = SortOrder.ASCENDING,
+        val countries: List<CountryInfo> = emptyList()
     ) : LocationSelectionUiState()
     
     data class SearchResults(
