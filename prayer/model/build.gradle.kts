@@ -16,4 +16,12 @@ kotlin {
 dependencies {
     implementation(libs.kotlinx.datetime)
     implementation(libs.kotlinx.serialization.json) // For object serialization
+
+    // --- Testing Dependencies ---
+    // Standard JUnit 5 for running tests
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
 }
+tasks.withType<Test> { useJUnitPlatform() }
