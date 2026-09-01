@@ -38,6 +38,24 @@
 
 - [ ] **Step 1: Write the failing serialization test**
 
+- [ ] **Step 0: Add test infrastructure to `prayer:model` (setup)**
+
+`prayer:model` is a pure `java-library` Kotlin JVM module with **no test dependencies**. Add the standard JUnit 5 test deps used across the repo (same block as `prayer/domain/build.gradle.kts`) and enable the JUnit platform:
+
+```kotlin
+// inside dependencies { } of prayer/model/build.gradle.kts
+testImplementation(platform(libs.junit.bom))
+testImplementation(libs.junit.jupiter.api)
+testRuntimeOnly(libs.junit.jupiter.engine)
+
+// at the end of the file
+tasks.withType<Test> { useJUnitPlatform() }
+```
+
+Note: `prayer:model` is NOT an Android module, so its test task is `test`, NOT `testDebugUnitTest`.
+
+- [ ] **Step 1: Write the failing test**
+
 Create `prayer/model/src/test/java/com/kutluoglu/prayer/model/location/LocationEntrySerializationTest.kt`:
 
 ```kotlin
@@ -87,7 +105,7 @@ Note: this module uses JUnit 5 (assertJ/truth available per module build config,
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `./gradlew :prayer:model:testDebugUnitTest --tests="com.kutluoglu.prayer.model.location.LocationEntrySerializationTest"`
+Run: `./gradlew :prayer:model:test --tests="com.kutluoglu.prayer.model.location.LocationEntrySerializationTest"`
 Expected: FAIL to compile — `displayNameTr` does not exist on `LocationEntry`.
 
 - [ ] **Step 3: Add the fields to `LocationEntry`**
@@ -123,7 +141,7 @@ The `= null` defaults keep decoding of legacy persisted JSON working (missing fi
 
 - [ ] **Step 4: Run test to verify it passes**
 
-Run: `./gradlew :prayer:model:testDebugUnitTest --tests="com.kutluoglu.prayer.model.location.LocationEntrySerializationTest"`
+Run: `./gradlew :prayer:model:test --tests="com.kutluoglu.prayer.model.location.LocationEntrySerializationTest"`
 Expected: PASS (2 tests).
 
 - [ ] **Step 5: Commit**
@@ -197,7 +215,7 @@ class LocationNameLocalizerTest {
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `./gradlew :prayer:model:testDebugUnitTest --tests="com.kutluoglu.prayer.model.location.LocationNameLocalizerTest"`
+Run: `./gradlew :prayer:model:test --tests="com.kutluoglu.prayer.model.location.LocationNameLocalizerTest"`
 Expected: FAIL to compile — `LocationNameLocalizer` is not defined.
 
 - [ ] **Step 3: Implement `LocationNameLocalizer`**
@@ -225,7 +243,7 @@ object LocationNameLocalizer {
 
 - [ ] **Step 4: Run test to verify it passes**
 
-Run: `./gradlew :prayer:model:testDebugUnitTest --tests="com.kutluoglu.prayer.model.location.LocationNameLocalizerTest"`
+Run: `./gradlew :prayer:model:test --tests="com.kutluoglu.prayer.model.location.LocationNameLocalizerTest"`
 Expected: PASS (5 tests).
 
 - [ ] **Step 5: Commit**
@@ -501,7 +519,7 @@ Expected: changed symbols limited to `LocationEntry`, `LocationNameLocalizer`, `
 
 Run the affected modules explicitly if the full run is slow:
 ```bash
-./gradlew :prayer:model:testDebugUnitTest \
+./gradlew :prayer:model:test \
           :prayer_feature:settings:testDebugUnitTest \
           :prayer_feature:home:testDebugUnitTest
 ```
