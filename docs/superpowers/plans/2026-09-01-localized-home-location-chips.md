@@ -316,16 +316,18 @@ Expected: FAIL — `entry.displayNameTr` is null (assertion fails).
 
 - [ ] **Step 3: Implement the localized save**
 
-In `LocationSelectionViewModel.kt`, add a private helper and update `saveLocation`. Add the helper:
+In `LocationSelectionViewModel.kt`, add a private helper and update `saveLocation`. Add the helper (it mirrors exactly the county/part logic of the existing English `displayName` builder so localized output is structurally identical, but localizes province + country):
 
 ```kotlin
 private fun localizedDisplayName(city: City, languageCode: String): String {
-    val parts = buildList {
-        city.county?.takeIf { it.isNotBlank() }?.let(::add)
-        add(CityLocalizer.localizedProvince(city, languageCode))
-        add(CityLocalizer.localizedCountry(city, languageCode))
-    }
-    return parts.distinct().joinToString(", ").ifBlank { "My Location" }
+    val county = city.county?.takeIf { it.isNotBlank() }
+        ?: city.name.takeIf { it != city.province }
+    val parts = listOfNotNull(
+        county,
+        CityLocalizer.localizedProvince(city, languageCode),
+        CityLocalizer.localizedCountry(city, languageCode)
+    )
+    return parts.joinToString(", ").ifBlank { "My Location" }
 }
 ```
 
