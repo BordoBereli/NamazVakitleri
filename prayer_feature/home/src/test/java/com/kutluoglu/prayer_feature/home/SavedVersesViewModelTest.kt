@@ -121,6 +121,35 @@ class SavedVersesViewModelTest {
     }
 
     @Test
+    fun `expand all clears the collapsed set and persists`() = runTest {
+        coEvery { getSavedVersesUseCase("tr") } returns Result.success(listOf(group(1, 1), group(36, 1)))
+        coEvery { getCollapsedSurahsUseCase() } returns setOf(1, 36)
+
+        val vm = viewModel()
+        advanceUntilIdle()
+        vm.onEvent(SavedVersesEvent.OnExpandAll)
+        advanceUntilIdle()
+
+        val state = vm.uiState.value as SavedVersesUiState.Success
+        assertThat(state.collapsedSurahs).isEmpty()
+        coVerify { setCollapsedSurahsUseCase(emptySet()) }
+    }
+
+    @Test
+    fun `collapse all collapses every surah and persists`() = runTest {
+        coEvery { getSavedVersesUseCase("tr") } returns Result.success(listOf(group(1, 1), group(36, 1)))
+
+        val vm = viewModel()
+        advanceUntilIdle()
+        vm.onEvent(SavedVersesEvent.OnCollapseAll)
+        advanceUntilIdle()
+
+        val state = vm.uiState.value as SavedVersesUiState.Success
+        assertThat(state.collapsedSurahs).containsExactly(1, 36)
+        coVerify { setCollapsedSurahsUseCase(setOf(1, 36)) }
+    }
+
+    @Test
     fun `reorder groups persists the new group order`() = runTest {
         val groups = listOf(group(1, 1), group(36, 1))
         coEvery { getSavedVersesUseCase("tr") } returns Result.success(groups)

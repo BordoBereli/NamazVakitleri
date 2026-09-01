@@ -41,6 +41,8 @@ class SavedVersesViewModel(
             is SavedVersesEvent.OnReorderGroups -> reorderGroups(event.groups)
             is SavedVersesEvent.OnReorderWithinGroup -> reorderWithinGroup(event.surahNumber, event.verses)
             is SavedVersesEvent.OnToggleCollapse -> toggleCollapse(event.surahNumber)
+            SavedVersesEvent.OnExpandAll -> expandAll()
+            SavedVersesEvent.OnCollapseAll -> collapseAll()
             is SavedVersesEvent.OnSearch -> search(event.query)
             is SavedVersesEvent.OnSelect -> selectVerse(event.verse)
             SavedVersesEvent.OnDismissDetail -> dismissDetail()
@@ -137,6 +139,25 @@ class SavedVersesViewModel(
             } else {
                 current.collapsedSurahs + surahNumber
             }
+            _uiState.value = current.copy(collapsedSurahs = collapsed)
+            runCatching { setCollapsedSurahsUseCase(collapsed) }
+                .onFailure { Log.e("SavedVersesViewModel", "Failed to persist collapse state -> ${it.message}") }
+        }
+    }
+
+    private fun expandAll() {
+        viewModelScope.launch {
+            val current = _uiState.value as? SavedVersesUiState.Success ?: return@launch
+            _uiState.value = current.copy(collapsedSurahs = emptySet())
+            runCatching { setCollapsedSurahsUseCase(emptySet()) }
+                .onFailure { Log.e("SavedVersesViewModel", "Failed to persist collapse state -> ${it.message}") }
+        }
+    }
+
+    private fun collapseAll() {
+        viewModelScope.launch {
+            val current = _uiState.value as? SavedVersesUiState.Success ?: return@launch
+            val collapsed = current.groups.map { it.surah.number }.toSet()
             _uiState.value = current.copy(collapsedSurahs = collapsed)
             runCatching { setCollapsedSurahsUseCase(collapsed) }
                 .onFailure { Log.e("SavedVersesViewModel", "Failed to persist collapse state -> ${it.message}") }

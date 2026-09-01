@@ -143,4 +143,6 @@
     <string name="reorder">Yeniden sırala</string>
     <string name="save_verse">Ayeti Kaydet</string>
     <string name="unsave_verse">Kaydı Kaldır</string>
+    <string name="expand_all">Tümünü Genişlet</string>
+    <string name="collapse_all">Tümünü Daralt</string>
 </resources>

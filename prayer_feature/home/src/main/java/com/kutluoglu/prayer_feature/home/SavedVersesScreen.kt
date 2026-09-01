@@ -42,6 +42,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
@@ -243,6 +244,10 @@ fun SavedVersesScreen(
                             onQueryChange = { onEvent(SavedVersesEvent.OnSearch(it)) }
                         )
                         if (state.query.isBlank()) {
+                            CollapseControls(
+                                onExpandAll = { onEvent(SavedVersesEvent.OnExpandAll) },
+                                onCollapseAll = { onEvent(SavedVersesEvent.OnCollapseAll) }
+                            )
                             SurahJumpChips(
                                 groups = state.filteredGroups,
                                 verseFormatter = verseFormatter,
@@ -408,6 +413,26 @@ private fun SearchField(query: String, onQueryChange: (String) -> Unit) {
         },
         singleLine = true
     )
+}
+
+@Composable
+private fun CollapseControls(
+    onExpandAll: () -> Unit,
+    onCollapseAll: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        TextButton(onClick = onExpandAll) {
+            Text(stringResource(R.string.expand_all))
+        }
+        TextButton(onClick = onCollapseAll) {
+            Text(stringResource(R.string.collapse_all))
+        }
+    }
 }
 
 @Composable

@@ -163,6 +163,23 @@ class SavedVersesScreenTest {
     }
 
     @Test
+    fun `expand and collapse all buttons fire their events`() {
+        var lastEvent: SavedVersesEvent? = null
+        setContent(
+            SavedVersesUiState.Success(
+                groups = listOf(group(1, 1), group(36, 1)),
+                filteredGroups = listOf(group(1, 1), group(36, 1)),
+                collapsedSurahs = emptySet()
+            ),
+            onEvent = { lastEvent = it }
+        )
+        composeTestRule.onNodeWithText("Expand All").performClick()
+        assertThat(lastEvent).isEqualTo(SavedVersesEvent.OnExpandAll)
+        composeTestRule.onNodeWithText("Collapse All").performClick()
+        assertThat(lastEvent).isEqualTo(SavedVersesEvent.OnCollapseAll)
+    }
+
+    @Test
     fun `shows empty state when there are no saved verses`() {
         setContent(
             SavedVersesUiState.Success(
