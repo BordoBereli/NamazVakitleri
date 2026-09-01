@@ -41,18 +41,11 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material.icons.filled.Public
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.SortByAlpha
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.FilterList
-import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.MyLocation
-import androidx.compose.material.icons.filled.Public
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.SortByAlpha
 import androidx.compose.material3.Button
@@ -857,6 +850,10 @@ private fun ProvinceListByProvince(
         citiesByProvince
     }
 
+    var expandedProvinces by remember(selectedProvince) {
+        mutableStateOf(if (selectedProvince != null) setOf(selectedProvince) else emptySet())
+    }
+
     LazyColumn(
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -865,10 +862,21 @@ private fun ProvinceListByProvince(
             val mainCity = cities.firstOrNull { it.city == province && it.name == province }
                 ?: cities.firstOrNull()
             val displayProvince = CityLocalizer.localizedProvince(cities.first(), languageCode)
+            val isExpanded = province in expandedProvinces
 
             item {
                 Row(
-                    modifier = Modifier.padding(vertical = 8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(12.dp))
+                        .clickable {
+                            expandedProvinces = if (isExpanded) {
+                                expandedProvinces - province
+                            } else {
+                                expandedProvinces + province
+                            }
+                        }
+                        .padding(vertical = 8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Box(
@@ -882,24 +890,36 @@ private fun ProvinceListByProvince(
                         text = displayProvince,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.weight(1f)
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = "(${cities.size})",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Icon(
+                        imageVector = if (isExpanded) {
+                            Icons.Default.KeyboardArrowDown
+                        } else {
+                            Icons.AutoMirrored.Filled.KeyboardArrowRight
+                        },
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
             }
 
-            items(cities.distinctBy { it.name }) { city ->
-                ProvinceItem(
-                    city = city,
-                    isMainCity = city.name == province,
-                    languageCode = languageCode,
-                    onClick = { onProvinceClick(province, mainCity ?: city) }
-                )
+            if (isExpanded) {
+                items(cities.distinctBy { it.name }) { city ->
+                    ProvinceItem(
+                        city = city,
+                        isMainCity = city.name == province,
+                        languageCode = languageCode,
+                        onClick = { onProvinceClick(province, mainCity ?: city) }
+                    )
+                }
             }
         }
     }
