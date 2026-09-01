@@ -4,11 +4,14 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
+import androidx.datastore.preferences.core.stringPreferencesKey
 import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.prayer.model.quran.AyahData
 import com.kutluoglu.prayer.model.quran.SurahInfo
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -19,6 +22,7 @@ class SavedVersesStoreTest {
     private lateinit var store: SavedVersesStore
     private lateinit var dataStore: DataStore<Preferences>
     private lateinit var tempDir: File
+    private val json = Json { ignoreUnknownKeys = true }
 
     @BeforeEach
     fun setUp() {
@@ -84,25 +88,76 @@ class SavedVersesStoreTest {
     }
 
     @Test
-    fun `toggle prepends new saves so newest is first`() = runBlocking {
-        store.toggle(verse(1))
-        store.toggle(verse(2))
+    fun `migrates legacy flat list to nested groups`() = runBlocking {
+        val legacy = listOf(
+            AyahData("a", SurahInfo("Ya-Sin", "يس", 36, 83), 2),
+            AyahData("b", SurahInfo("Al-Fatihah", "الفاتحة", 1, 7), 1),
+            AyahData("c", SurahInfo("Ya-Sin", "يس", 36, 83), 1),
+        )
+        dataStore.edit { it[stringPreferencesKey("saved_verses")] = json.encodeToString(legacy) }
 
-        val saved = store.getSavedVerses()
+        val groups = store.getSavedVerseGroups()
 
-        assertThat(saved.map { it.numberInSurah }).containsExactly(2, 1).inOrder()
+        assertThat(groups.map { it.surah.number }).containsExactly(36, 1).inOrder()
+        assertThat(groups[0].verses.map { it.numberInSurah }).containsExactly(2, 1).inOrder()
+        assertThat(groups[1].verses.map { it.numberInSurah }).containsExactly(1).inOrder()
     }
 
     @Test
-    fun `reorder rewrites the persisted order`() = runBlocking {
+    fun `toggle adds a verse to an existing group and removes it`() = runBlocking {
         store.toggle(verse(1))
         store.toggle(verse(2))
-        store.toggle(verse(3))
 
-        store.reorder(listOf(verse(1), verse(3), verse(2)))
+        var groups = store.getSavedVerseGroups()
+        assertThat(groups).hasSize(1)
+        assertThat(groups[0].verses.map { it.numberInSurah }).containsExactly(2, 1).inOrder()
 
-        val saved = store.getSavedVerses()
-        assertThat(saved.map { it.numberInSurah }).containsExactly(1, 3, 2).inOrder()
+        store.toggle(verse(1))
+        groups = store.getSavedVerseGroups()
+        assertThat(groups[0].verses.map { it.numberInSurah }).containsExactly(2).inOrder()
+    }
+
+    @Test
+    fun `toggle creates a new group when the surah is new`() = runBlocking {
+        store.toggle(verse(1))
+        val otherSurah = AyahData(
+            text = "T",
+            surah = SurahInfo("Ya-Sin", "يس", 36, 83),
+            numberInSurah = 1
+        )
+        store.toggle(otherSurah)
+
+        val groups = store.getSavedVerseGroups()
+        assertThat(groups.map { it.surah.number }).containsExactly(1, 36).inOrder()
+    }
+
+    @Test
+    fun `removing the last verse drops the group`() = runBlocking {
+        store.toggle(verse(1))
+        store.toggle(verse(1))
+
+        assertThat(store.getSavedVerseGroups()).isEmpty()
+    }
+
+    @Test
+    fun `saveGroups persists the nested order`() = runBlocking {
+        store.toggle(verse(1))
+        store.toggle(verse(2))
+        val groups = store.getSavedVerseGroups()
+        val reversed = groups.map { it.copy(verses = it.verses.reversed()) }
+
+        store.saveGroups(reversed)
+
+        assertThat(store.getSavedVerseGroups()[0].verses.map { it.numberInSurah })
+            .containsExactly(1, 2).inOrder()
+    }
+
+    @Test
+    fun `collapse state persists across store instances`() = runBlocking {
+        store.setCollapsedSurahs(setOf(1, 36))
+
+        val reloaded = SavedVersesStore(dataStore)
+        assertThat(reloaded.getCollapsedSurahs()).containsExactly(1, 36)
     }
 
     @Test

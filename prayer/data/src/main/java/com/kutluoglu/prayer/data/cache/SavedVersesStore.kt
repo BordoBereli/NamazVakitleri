@@ -15,57 +15,92 @@ import org.koin.core.annotation.Named
 import org.koin.core.annotation.Single
 
 /**
- * Persists user-bookmarked verses as a JSON list of [AyahData]. Backed by the
- * same quranStore Preferences DataStore as [QuranSurahCache].
+ * Persists user-bookmarked verses as a JSON list of [SavedVerseGroup] (surah + ordered
+ * verses). Backed by the same quranStore Preferences DataStore as [QuranSurahCache].
+ * Migrates the legacy flat `saved_verses` list to the nested format on first access.
  */
 @Single
 class SavedVersesStore(
     @Named("quranStore") private val dataStore: DataStore<Preferences>
 ) {
     private val json = Json { ignoreUnknownKeys = true }
-    private val key = stringPreferencesKey("saved_verses")
+    private val keyGroups = stringPreferencesKey("saved_verse_groups")
+    private val keyLegacy = stringPreferencesKey("saved_verses")
+    private val keyCollapsed = stringPreferencesKey("saved_verses_collapsed")
 
-    suspend fun getSavedVerses(): List<AyahData> {
-        val raw = dataStore.data.map { it[key] }.firstOrNull()
-        println("SavedVersesStore getSavedVerses raw=$raw")
+    suspend fun getSavedVerseGroups(): List<SavedVerseGroup> {
+        migrateIfNeeded()
+        val raw = dataStore.data.map { it[keyGroups] }.firstOrNull()
         if (raw.isNullOrBlank()) return emptyList()
-        val decoded = withContext(Dispatchers.Default) {
-            runCatching { json.decodeFromString<List<AyahData>>(raw) }.getOrDefault(emptyList())
+        return withContext(Dispatchers.Default) {
+            runCatching { json.decodeFromString<List<SavedVerseGroup>>(raw) }.getOrDefault(emptyList())
         }
-        println("SavedVersesStore getSavedVerses decoded=${decoded.size}")
-        return decoded
     }
 
-    suspend fun isSaved(verse: AyahData): Boolean = getSavedVerses().any { it.sameVerse(verse) }
+    suspend fun isSaved(verse: AyahData): Boolean =
+        getSavedVerseGroups().any { group -> group.verses.any { it.sameVerse(verse) } }
 
-    suspend fun toggle(verse: AyahData): Unit {
+    suspend fun toggle(verse: AyahData) {
+        migrateIfNeeded()
         dataStore.edit { prefs ->
-            val raw = prefs[key]
-            val current = if (raw.isNullOrBlank()) {
-                emptyList()
+            val current = decodeGroups(prefs[keyGroups])
+            val updated = if (current.any { group -> group.verses.any { it.sameVerse(verse) } }) {
+                current.mapNotNull { group ->
+                    val remaining = group.verses.filterNot { it.sameVerse(verse) }
+                    if (remaining.isEmpty()) null else group.copy(verses = remaining)
+                }
             } else {
-                runCatching { json.decodeFromString<List<AyahData>>(raw) }.getOrDefault(emptyList())
+                val existing = current.firstOrNull { it.surah.number == verse.surah.number }
+                if (existing != null) {
+                    current.map { group ->
+                        if (group.surah.number == verse.surah.number) {
+                            group.copy(verses = listOf(verse) + group.verses)
+                        } else group
+                    }
+                } else {
+                    current + listOf(SavedVerseGroup(surah = verse.surah, verses = listOf(verse)))
+                }
             }
-            val updated = if (current.any { it.sameVerse(verse) }) {
-                current.filterNot { it.sameVerse(verse) }
-            } else {
-                listOf(verse) + current
-            }
-            prefs[key] = withContext(Dispatchers.Default) { json.encodeToString(updated) }
+            prefs[keyGroups] = withContext(Dispatchers.Default) { json.encodeToString(updated) }
         }
     }
 
-    suspend fun reorder(verses: List<AyahData>) {
+    suspend fun saveGroups(groups: List<SavedVerseGroup>) {
+        migrateIfNeeded()
         dataStore.edit { prefs ->
-            prefs[key] = withContext(Dispatchers.Default) { json.encodeToString(verses) }
+            prefs[keyGroups] = withContext(Dispatchers.Default) { json.encodeToString(groups) }
         }
     }
 
-    /**
-     * Verses are identified by their stable position (surah number + number in
-     * surah), not by their translated text, so a verse saved in one language is
-     * still recognized after the app language changes.
-     */
+    suspend fun getCollapsedSurahs(): Set<Int> {
+        val raw = dataStore.data.map { it[keyCollapsed] }.firstOrNull()
+        if (raw.isNullOrBlank()) return emptySet()
+        return raw.split(",").mapNotNull { it.toIntOrNull() }.toSet()
+    }
+
+    suspend fun setCollapsedSurahs(surahs: Set<Int>) {
+        dataStore.edit { prefs ->
+            prefs[keyCollapsed] = surahs.sorted().joinToString(",")
+        }
+    }
+
+    private suspend fun migrateIfNeeded() {
+        dataStore.edit { prefs ->
+            if (prefs[keyGroups] != null) return@edit
+            val raw = prefs[keyLegacy] ?: return@edit
+            if (raw.isBlank()) return@edit
+            val flat = runCatching { json.decodeFromString<List<AyahData>>(raw) }.getOrDefault(emptyList())
+            val groups = groupBySurah(flat)
+            prefs[keyGroups] = withContext(Dispatchers.Default) { json.encodeToString(groups) }
+            prefs.remove(keyLegacy)
+        }
+    }
+
+    private fun decodeGroups(raw: String?): List<SavedVerseGroup> {
+        if (raw.isNullOrBlank()) return emptyList()
+        return runCatching { json.decodeFromString<List<SavedVerseGroup>>(raw) }.getOrDefault(emptyList())
+    }
+
     private fun AyahData.sameVerse(other: AyahData): Boolean =
         surah.number == other.surah.number && numberInSurah == other.numberInSurah
 }
