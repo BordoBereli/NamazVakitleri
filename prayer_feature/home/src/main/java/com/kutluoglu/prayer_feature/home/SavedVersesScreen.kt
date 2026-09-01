@@ -514,53 +514,46 @@ private fun VerseRow(
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = if (isDragging) 8.dp else 2.dp)
     ) {
-        Box(modifier = Modifier.fillMaxWidth()) {
-            Box(
-                modifier = Modifier
-                    .matchParentSize()
-                    .width(4.dp)
-//                    .background(MaterialTheme.colorScheme.primary)
-            )
-            Column(
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp, end = 8.dp, top = 8.dp, bottom = 8.dp)
+        ) {
+            Text(
+                text = verse.text,
+                style = MaterialTheme.typography.titleMedium,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 16.dp, end = 8.dp, top = 8.dp, bottom = 8.dp)
+                    .padding(top = 8.dp, bottom = 8.dp)
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = verse.text,
-                    style = MaterialTheme.typography.titleMedium,
-                    textAlign = TextAlign.Center,
+                Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 8.dp, bottom = 8.dp)
-                )
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
+                        .size(24.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.primary)
+                        .testTag("ayah_index_${verse.surah.number}_${verse.numberInSurah}"),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .size(24.dp)
-                            .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.primary)
-                            .testTag("ayah_index_${verse.surah.number}_${verse.numberInSurah}"),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "${verse.numberInSurah}",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onPrimary
-                        )
-                    }
-                    Spacer(modifier = Modifier.weight(1f))
-                    IconButton(onClick = onShare) {
-                        Icon(
-                            Icons.Default.Share,
-                            contentDescription = stringResource(R.string.share_verse)
-                        )
-                    }
-                    dragHandle?.invoke()
+                    Text(
+                        text = "${verse.numberInSurah}",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
                 }
+                Spacer(modifier = Modifier.weight(1f))
+                IconButton(onClick = onShare) {
+                    Icon(
+                        Icons.Default.Share,
+                        contentDescription = stringResource(R.string.share_verse)
+                    )
+                }
+                dragHandle?.invoke()
             }
         }
     }
