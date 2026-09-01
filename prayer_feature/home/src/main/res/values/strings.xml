@@ -142,5 +142,8 @@
     <string name="back">Back</string>
     <string name="delete">Delete</string>
     <string name="reorder">Reorder</string>
+    <string name="search_saved_verses">Search saved verses...</string>
+    <string name="no_matching_verses">No saved verses match your search.</string>
+    <string name="clear">Clear</string>
 
 </resources>

@@ -3,6 +3,7 @@ package com.kutluoglu.prayer_feature.home.common
 import android.content.Context
 import android.util.Log
 import com.kutluoglu.prayer.model.quran.AyahData
+import com.kutluoglu.prayer.model.quran.SurahInfo
 import org.koin.core.annotation.Factory
 
 /**
@@ -12,13 +13,15 @@ import org.koin.core.annotation.Factory
 
 @Factory
 class QuranVerseFormatter {
-    fun getLocalizedNameOf(quranVerse: AyahData, context: Context, ): String {
-        val surahNumber = quranVerse.surah.number
+    fun getLocalizedNameOf(quranVerse: AyahData, context: Context): String =
+        getLocalizedNameOf(quranVerse.surah, context)
+
+    fun getLocalizedNameOf(surah: SurahInfo, context: Context): String {
         return try {
-            getLocalizedSurahName(context, surahNumber, quranVerse.surah.englishName)
-        } catch(e: Exception) {
-            Log.e("QuranVerseFormatter", "Surah $surahNumber is got error with ${e.message}")
-            quranVerse.surah.englishName
+            getLocalizedSurahName(context, surah.number, surah.englishName)
+        } catch (e: Exception) {
+            Log.e("QuranVerseFormatter", "Surah ${surah.number} is got error with ${e.message}")
+            surah.englishName
         }
     }
 
