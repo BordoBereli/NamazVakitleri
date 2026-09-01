@@ -9,7 +9,10 @@
       "county": "Riyadh",
       "countryTr": "Suudi Arabistan",
       "countryAr": "السعودية",
-      "countryFa": "عربستان سعودی"
+      "countryFa": "عربستان سعودی",
+      "nameTr": "Riyad",
+      "nameAr": "الرياض",
+      "nameFa": "ریاض"
     },
     {
       "name": "Jeddah",
@@ -20,7 +23,10 @@
       "county": "Mecca",
       "countryTr": "Suudi Arabistan",
       "countryAr": "السعودية",
-      "countryFa": "عربستان سعودی"
+      "countryFa": "عربستان سعودی",
+      "nameTr": "Cidde",
+      "nameAr": "جدة",
+      "nameFa": "جده"
     },
     {
       "name": "Mekka",
@@ -30,7 +36,10 @@
       "timezone": "Asia/Riyadh",
       "countryTr": "Suudi Arabistan",
       "countryAr": "السعودية",
-      "countryFa": "عربستان سعودی"
+      "countryFa": "عربستان سعودی",
+      "nameTr": "Mekke",
+      "nameAr": "مكة المكرمة",
+      "nameFa": "مکه"
     },
     {
       "name": "Medine",
@@ -40,7 +49,10 @@
       "timezone": "Asia/Riyadh",
       "countryTr": "Suudi Arabistan",
       "countryAr": "السعودية",
-      "countryFa": "عربستان سعودی"
+      "countryFa": "عربستان سعودی",
+      "nameTr": "Medine",
+      "nameAr": "المدينة",
+      "nameFa": "مدینه"
     },
     {
       "name": "Dammam",
@@ -51,7 +63,10 @@
       "county": "Eastern",
       "countryTr": "Suudi Arabistan",
       "countryAr": "السعودية",
-      "countryFa": "عربستان سعودی"
+      "countryFa": "عربستان سعودی",
+      "nameTr": "Dammam",
+      "nameAr": "الدمام",
+      "nameFa": "دمام"
     },
     {
       "name": "Taif",
@@ -62,7 +77,10 @@
       "county": "Mecca",
       "countryTr": "Suudi Arabistan",
       "countryAr": "السعودية",
-      "countryFa": "عربستان سعودی"
+      "countryFa": "عربستان سعودی",
+      "nameTr": "Taif",
+      "nameAr": "الطائف",
+      "nameFa": "طائف"
     },
     {
       "name": "Buraydah",
@@ -72,7 +90,10 @@
       "timezone": "Asia/Riyadh",
       "countryTr": "Suudi Arabistan",
       "countryAr": "السعودية",
-      "countryFa": "عربستان سعودی"
+      "countryFa": "عربستان سعودی",
+      "nameTr": "Bureyde",
+      "nameAr": "بريدة",
+      "nameFa": "بریده"
     },
     {
       "name": "Tabuk",
@@ -82,7 +103,10 @@
       "timezone": "Asia/Riyadh",
       "countryTr": "Suudi Arabistan",
       "countryAr": "السعودية",
-      "countryFa": "عربستان سعودی"
+      "countryFa": "عربستان سعودی",
+      "nameTr": "Tebük",
+      "nameAr": "تبوك",
+      "nameFa": "تبوک"
     },
     {
       "name": "Abha",
@@ -92,7 +116,10 @@
       "timezone": "Asia/Riyadh",
       "countryTr": "Suudi Arabistan",
       "countryAr": "السعودية",
-      "countryFa": "عربستان سعودی"
+      "countryFa": "عربستان سعودی",
+      "nameTr": "Abha",
+      "nameAr": "أبها",
+      "nameFa": "ابها"
     },
     {
       "name": "Al Qunfudhah",
@@ -102,7 +129,10 @@
       "timezone": "Asia/Riyadh",
       "countryTr": "Suudi Arabistan",
       "countryAr": "السعودية",
-      "countryFa": "عربستان سعودی"
+      "countryFa": "عربستان سعودی",
+      "nameTr": "El Kunfuze",
+      "nameAr": "القنفذة",
+      "nameFa": "قنفذه"
     },
     {
       "name": "Al-Baha",
@@ -112,7 +142,10 @@
       "timezone": "Asia/Riyadh",
       "countryTr": "Suudi Arabistan",
       "countryAr": "السعودية",
-      "countryFa": "عربستان سعودی"
+      "countryFa": "عربستان سعودی",
+      "nameTr": "El Baha",
+      "nameAr": "الباحة",
+      "nameFa": "الباحه"
     },
     {
       "name": "Al-Jubail",
@@ -122,7 +155,10 @@
       "timezone": "Asia/Riyadh",
       "countryTr": "Suudi Arabistan",
       "countryAr": "السعودية",
-      "countryFa": "عربستان سعودی"
+      "countryFa": "عربستان سعودی",
+      "nameTr": "El Cübeyl",
+      "nameAr": "الجبيل",
+      "nameFa": "جبیل"
     },
     {
       "name": "Al-Khobar",
@@ -132,7 +168,10 @@
       "timezone": "Asia/Riyadh",
       "countryTr": "Suudi Arabistan",
       "countryAr": "السعودية",
-      "countryFa": "عربستان سعودی"
+      "countryFa": "عربستان سعودی",
+      "nameTr": "El Hubar",
+      "nameAr": "الخبر",
+      "nameFa": "خبر"
     },
     {
       "name": "Al-Madinah",
@@ -142,7 +181,10 @@
       "timezone": "Asia/Riyadh",
       "countryTr": "Suudi Arabistan",
       "countryAr": "السعودية",
-      "countryFa": "عربستان سعودی"
+      "countryFa": "عربستان سعودی",
+      "nameTr": "Medine",
+      "nameAr": "المدينة المنورة",
+      "nameFa": "مدینه"
     },
     {
       "name": "Arar",
@@ -152,7 +194,10 @@
       "timezone": "Asia/Riyadh",
       "countryTr": "Suudi Arabistan",
       "countryAr": "السعودية",
-      "countryFa": "عربستان سعودی"
+      "countryFa": "عربستان سعودی",
+      "nameTr": "Arar",
+      "nameAr": "عرعر",
+      "nameFa": "عرعر"
     },
     {
       "name": "Dhahran",
@@ -162,7 +207,10 @@
       "timezone": "Asia/Riyadh",
       "countryTr": "Suudi Arabistan",
       "countryAr": "السعودية",
-      "countryFa": "عربستان سعودی"
+      "countryFa": "عربستان سعودی",
+      "nameTr": "Zahran",
+      "nameAr": "الظهران",
+      "nameFa": "ظهران"
     },
     {
       "name": "Hafar Al-Batin",
@@ -172,7 +220,10 @@
       "timezone": "Asia/Riyadh",
       "countryTr": "Suudi Arabistan",
       "countryAr": "السعودية",
-      "countryFa": "عربستان سعودی"
+      "countryFa": "عربستان سعودی",
+      "nameTr": "Hafar El Batin",
+      "nameAr": "حفر الباطن",
+      "nameFa": "حفر الباطن"
     },
     {
       "name": "Hail",
@@ -182,7 +233,10 @@
       "timezone": "Asia/Riyadh",
       "countryTr": "Suudi Arabistan",
       "countryAr": "السعودية",
-      "countryFa": "عربستان سعودی"
+      "countryFa": "عربستان سعودی",
+      "nameTr": "Hail",
+      "nameAr": "حائل",
+      "nameFa": "حائل"
     },
     {
       "name": "Jizan",
@@ -192,7 +246,10 @@
       "timezone": "Asia/Riyadh",
       "countryTr": "Suudi Arabistan",
       "countryAr": "السعودية",
-      "countryFa": "عربستان سعودی"
+      "countryFa": "عربستان سعودی",
+      "nameTr": "Cizan",
+      "nameAr": "جازان",
+      "nameFa": "جازان"
     },
     {
       "name": "Jouf",
@@ -202,7 +259,10 @@
       "timezone": "Asia/Riyadh",
       "countryTr": "Suudi Arabistan",
       "countryAr": "السعودية",
-      "countryFa": "عربستان سعودی"
+      "countryFa": "عربستان سعودی",
+      "nameTr": "El Cevf",
+      "nameAr": "الجوف",
+      "nameFa": "جوف"
     },
     {
       "name": "Khamis Mushait",
@@ -212,7 +272,10 @@
       "timezone": "Asia/Riyadh",
       "countryTr": "Suudi Arabistan",
       "countryAr": "السعودية",
-      "countryFa": "عربستان سعودی"
+      "countryFa": "عربستان سعودی",
+      "nameTr": "Hamis Muşayt",
+      "nameAr": "خميس مشيط",
+      "nameFa": "خمیس مشیط"
     },
     {
       "name": "Najran",
@@ -222,7 +285,10 @@
       "timezone": "Asia/Riyadh",
       "countryTr": "Suudi Arabistan",
       "countryAr": "السعودية",
-      "countryFa": "عربستان سعودی"
+      "countryFa": "عربستان سعودی",
+      "nameTr": "Necran",
+      "nameAr": "نجران",
+      "nameFa": "نجران"
     },
     {
       "name": "Qassim",
@@ -232,7 +298,10 @@
       "timezone": "Asia/Riyadh",
       "countryTr": "Suudi Arabistan",
       "countryAr": "السعودية",
-      "countryFa": "عربستان سعودی"
+      "countryFa": "عربستان سعودی",
+      "nameTr": "El Kasim",
+      "nameAr": "القصيم",
+      "nameFa": "قصیم"
     },
     {
       "name": "Yanbu",
@@ -242,7 +311,10 @@
       "timezone": "Asia/Riyadh",
       "countryTr": "Suudi Arabistan",
       "countryAr": "السعودية",
-      "countryFa": "عربستان سعودی"
+      "countryFa": "عربستان سعودی",
+      "nameTr": "Yenbu",
+      "nameAr": "ينبع",
+      "nameFa": "ینبع"
     },
     {
       "name": "Cairo",
@@ -253,7 +325,10 @@
       "county": "Cairo",
       "countryTr": "Mısır",
       "countryAr": "مصر",
-      "countryFa": "مصر"
+      "countryFa": "مصر",
+      "nameTr": "Kahire",
+      "nameAr": "القاهرة",
+      "nameFa": "قاهره"
     },
     {
       "name": "Alexandria",
@@ -264,7 +339,10 @@
       "county": "Alexandria",
       "countryTr": "Mısır",
       "countryAr": "مصر",
-      "countryFa": "مصر"
+      "countryFa": "مصر",
+      "nameTr": "İskenderiye",
+      "nameAr": "الإسكندرية",
+      "nameFa": "اسکندریه"
     },
     {
       "name": "Giza",
@@ -275,7 +353,10 @@
       "county": "Giza",
       "countryTr": "Mısır",
       "countryAr": "مصر",
-      "countryFa": "مصر"
+      "countryFa": "مصر",
+      "nameTr": "Gize",
+      "nameAr": "الجيزة",
+      "nameFa": "جیزه"
     },
     {
       "name": "Mansoura",
@@ -285,7 +366,10 @@
       "timezone": "Africa/Cairo",
       "countryTr": "Mısır",
       "countryAr": "مصر",
-      "countryFa": "مصر"
+      "countryFa": "مصر",
+      "nameTr": "Mansure",
+      "nameAr": "المنصورة",
+      "nameFa": "منصوره"
     },
     {
       "name": "Tanta",
@@ -295,7 +379,10 @@
       "timezone": "Africa/Cairo",
       "countryTr": "Mısır",
       "countryAr": "مصر",
-      "countryFa": "مصر"
+      "countryFa": "مصر",
+      "nameTr": "Tanta",
+      "nameAr": "طنطا",
+      "nameFa": "طنطا"
     },
     {
       "name": "Faiyum",
@@ -305,7 +392,10 @@
       "timezone": "Africa/Cairo",
       "countryTr": "Mısır",
       "countryAr": "مصر",
-      "countryFa": "مصر"
+      "countryFa": "مصر",
+      "nameTr": "Feyyum",
+      "nameAr": "الفيوم",
+      "nameFa": "فیوم"
     },
     {
       "name": "Ismailia",
@@ -315,7 +405,10 @@
       "timezone": "Africa/Cairo",
       "countryTr": "Mısır",
       "countryAr": "مصر",
-      "countryFa": "مصر"
+      "countryFa": "مصر",
+      "nameTr": "İsmailiye",
+      "nameAr": "الإسماعيلية",
+      "nameFa": "اسماعیلیه"
     },
     {
       "name": "Luxor",
@@ -326,7 +419,10 @@
       "county": "Luxor",
       "countryTr": "Mısır",
       "countryAr": "مصر",
-      "countryFa": "مصر"
+      "countryFa": "مصر",
+      "nameTr": "Luksor",
+      "nameAr": "الأقصر",
+      "nameFa": "اقصر"
     },
     {
       "name": "Suez",
@@ -336,7 +432,10 @@
       "timezone": "Africa/Cairo",
       "countryTr": "Mısır",
       "countryAr": "مصر",
-      "countryFa": "مصر"
+      "countryFa": "مصر",
+      "nameTr": "Süveyş",
+      "nameAr": "السويس",
+      "nameFa": "سوئز"
     },
     {
       "name": "Zagazig",
@@ -346,7 +445,10 @@
       "timezone": "Africa/Cairo",
       "countryTr": "Mısır",
       "countryAr": "مصر",
-      "countryFa": "مصر"
+      "countryFa": "مصر",
+      "nameTr": "Zekazik",
+      "nameAr": "الزقازيق",
+      "nameFa": "زقازیق"
     },
     {
       "name": "Jakarta",
@@ -357,7 +459,10 @@
       "county": "Jakarta",
       "countryTr": "Endonezya",
       "countryAr": "إندونيسيا",
-      "countryFa": "اندونزی"
+      "countryFa": "اندونزی",
+      "nameTr": "Cakarta",
+      "nameAr": "جاكرتا",
+      "nameFa": "جاکارتا"
     },
     {
       "name": "Surabaya",
@@ -368,7 +473,10 @@
       "county": "East Java",
       "countryTr": "Endonezya",
       "countryAr": "إندونيسيا",
-      "countryFa": "اندونزی"
+      "countryFa": "اندونزی",
+      "nameTr": "Surabaya",
+      "nameAr": "سورابايا",
+      "nameFa": "سورابایا"
     },
     {
       "name": "Bandung",
@@ -379,7 +487,10 @@
       "county": "West Java",
       "countryTr": "Endonezya",
       "countryAr": "إندونيسيا",
-      "countryFa": "اندونزی"
+      "countryFa": "اندونزی",
+      "nameTr": "Bandung",
+      "nameAr": "باندونغ",
+      "nameFa": "باندونگ"
     },
     {
       "name": "Medan",
@@ -390,7 +501,10 @@
       "county": "North Sumatra",
       "countryTr": "Endonezya",
       "countryAr": "إندونيسيا",
-      "countryFa": "اندونزی"
+      "countryFa": "اندونزی",
+      "nameTr": "Medan",
+      "nameAr": "ميدان",
+      "nameFa": "مدان"
     },
     {
       "name": "Makassar",
@@ -401,7 +515,10 @@
       "county": "South Sulawesi",
       "countryTr": "Endonezya",
       "countryAr": "إندونيسيا",
-      "countryFa": "اندونزی"
+      "countryFa": "اندونزی",
+      "nameTr": "Makassar",
+      "nameAr": "ماكاسار",
+      "nameFa": "ماکاسار"
     },
     {
       "name": "Depok",
@@ -411,7 +528,10 @@
       "timezone": "Asia/Jakarta",
       "countryTr": "Endonezya",
       "countryAr": "إندونيسيا",
-      "countryFa": "اندونزی"
+      "countryFa": "اندونزی",
+      "nameTr": "Depok",
+      "nameAr": "ديبوك",
+      "nameFa": "دپوک"
     },
     {
       "name": "Kudus",
@@ -421,7 +541,10 @@
       "timezone": "Asia/Jakarta",
       "countryTr": "Endonezya",
       "countryAr": "إندونيسيا",
-      "countryFa": "اندونزی"
+      "countryFa": "اندونزی",
+      "nameTr": "Kudus",
+      "nameAr": "قدس",
+      "nameFa": "کودوس"
     },
     {
       "name": "Palembang",
@@ -431,7 +554,10 @@
       "timezone": "Asia/Jakarta",
       "countryTr": "Endonezya",
       "countryAr": "إندونيسيا",
-      "countryFa": "اندونزی"
+      "countryFa": "اندونزی",
+      "nameTr": "Palembang",
+      "nameAr": "باليمبانغ",
+      "nameFa": "پالمبانگ"
     },
     {
       "name": "Semarang",
@@ -441,7 +567,10 @@
       "timezone": "Asia/Jakarta",
       "countryTr": "Endonezya",
       "countryAr": "إندونيسيا",
-      "countryFa": "اندونزی"
+      "countryFa": "اندونزی",
+      "nameTr": "Semarang",
+      "nameAr": "سمارانغ",
+      "nameFa": "سمارانگ"
     },
     {
       "name": "Tangerang",
@@ -451,7 +580,10 @@
       "timezone": "Asia/Jakarta",
       "countryTr": "Endonezya",
       "countryAr": "إندونيسيا",
-      "countryFa": "اندونزی"
+      "countryFa": "اندونزی",
+      "nameTr": "Tangerang",
+      "nameAr": "تانغيرانغ",
+      "nameFa": "تانگرانگ"
     },
     {
       "name": "Kuala Lumpur",
@@ -462,7 +594,10 @@
       "county": "Federal Territory",
       "countryTr": "Malezya",
       "countryAr": "ماليزيا",
-      "countryFa": "مالزی"
+      "countryFa": "مالزی",
+      "nameTr": "Kuala Lumpur",
+      "nameAr": "كوالالمبور",
+      "nameFa": "کوالالامپور"
     },
     {
       "name": "Johor Bahru",
@@ -473,7 +608,10 @@
       "county": "Johor",
       "countryTr": "Malezya",
       "countryAr": "ماليزيا",
-      "countryFa": "مالزی"
+      "countryFa": "مالزی",
+      "nameTr": "Johor Bahru",
+      "nameAr": "جوهر بهرو",
+      "nameFa": "جوهور بهرو"
     },
     {
       "name": "Ipoh",
@@ -483,7 +621,10 @@
       "timezone": "Asia/Kuala_Lumpur",
       "countryTr": "Malezya",
       "countryAr": "ماليزيا",
-      "countryFa": "مالزی"
+      "countryFa": "مالزی",
+      "nameTr": "Ipoh",
+      "nameAr": "إيبوه",
+      "nameFa": "ایپوه"
     },
     {
       "name": "Kota Bharu",
@@ -493,7 +634,10 @@
       "timezone": "Asia/Kuala_Lumpur",
       "countryTr": "Malezya",
       "countryAr": "ماليزيا",
-      "countryFa": "مالزی"
+      "countryFa": "مالزی",
+      "nameTr": "Kota Bharu",
+      "nameAr": "كوتا بهارو",
+      "nameFa": "کوتا بهارو"
     },
     {
       "name": "Kuala Terengganu",
@@ -503,7 +647,10 @@
       "timezone": "Asia/Kuala_Lumpur",
       "countryTr": "Malezya",
       "countryAr": "ماليزيا",
-      "countryFa": "مالزی"
+      "countryFa": "مالزی",
+      "nameTr": "Kuala Terengganu",
+      "nameAr": "كوالا ترغكانو",
+      "nameFa": "کوالا ترنگانو"
     },
     {
       "name": "Penang",
@@ -514,7 +661,10 @@
       "county": "Penang",
       "countryTr": "Malezya",
       "countryAr": "ماليزيا",
-      "countryFa": "مالزی"
+      "countryFa": "مالزی",
+      "nameTr": "Penang",
+      "nameAr": "بينانغ",
+      "nameFa": "پنانگ"
     },
     {
       "name": "Karachi",
@@ -525,7 +675,10 @@
       "county": "Sindh",
       "countryTr": "Pakistan",
       "countryAr": "باكستان",
-      "countryFa": "پاکستان"
+      "countryFa": "پاکستان",
+      "nameTr": "Karaçi",
+      "nameAr": "كراتشي",
+      "nameFa": "کراچی"
     },
     {
       "name": "Lahore",
@@ -536,7 +689,10 @@
       "county": "Punjab",
       "countryTr": "Pakistan",
       "countryAr": "باكستان",
-      "countryFa": "پاکستان"
+      "countryFa": "پاکستان",
+      "nameTr": "Lahor",
+      "nameAr": "لاهور",
+      "nameFa": "لاهور"
     },
     {
       "name": "Faisalabad",
@@ -546,7 +702,10 @@
       "timezone": "Asia/Karachi",
       "countryTr": "Pakistan",
       "countryAr": "باكستان",
-      "countryFa": "پاکستان"
+      "countryFa": "پاکستان",
+      "nameTr": "Faysalabad",
+      "nameAr": "فيصل آباد",
+      "nameFa": "فیصلآباد"
     },
     {
       "name": "Rawalpindi",
@@ -556,7 +715,10 @@
       "timezone": "Asia/Karachi",
       "countryTr": "Pakistan",
       "countryAr": "باكستان",
-      "countryFa": "پاکستان"
+      "countryFa": "پاکستان",
+      "nameTr": "Ravalpindi",
+      "nameAr": "روالبندي",
+      "nameFa": "راولپندی"
     },
     {
       "name": "Multan",
@@ -566,7 +728,10 @@
       "timezone": "Asia/Karachi",
       "countryTr": "Pakistan",
       "countryAr": "باكستان",
-      "countryFa": "پاکستان"
+      "countryFa": "پاکستان",
+      "nameTr": "Multan",
+      "nameAr": "ملتان",
+      "nameFa": "مولتان"
     },
     {
       "name": "Bahawalpur",
@@ -576,7 +741,10 @@
       "timezone": "Asia/Karachi",
       "countryTr": "Pakistan",
       "countryAr": "باكستان",
-      "countryFa": "پاکستان"
+      "countryFa": "پاکستان",
+      "nameTr": "Bahavalpur",
+      "nameAr": "بهاولبور",
+      "nameFa": "بهاولپور"
     },
     {
       "name": "Gujranwala",
@@ -586,7 +754,10 @@
       "timezone": "Asia/Karachi",
       "countryTr": "Pakistan",
       "countryAr": "باكستان",
-      "countryFa": "پاکستان"
+      "countryFa": "پاکستان",
+      "nameTr": "Gucranvala",
+      "nameAr": "غوجرانوالا",
+      "nameFa": "گوجرانواله"
     },
     {
       "name": "Peshawar",
@@ -597,7 +768,10 @@
       "county": "Khyber Pakhtunkhwa",
       "countryTr": "Pakistan",
       "countryAr": "باكستان",
-      "countryFa": "پاکستان"
+      "countryFa": "پاکستان",
+      "nameTr": "Peşaver",
+      "nameAr": "بيشاور",
+      "nameFa": "پیشاور"
     },
     {
       "name": "Sargodha",
@@ -607,7 +781,10 @@
       "timezone": "Asia/Karachi",
       "countryTr": "Pakistan",
       "countryAr": "باكستان",
-      "countryFa": "پاکستان"
+      "countryFa": "پاکستان",
+      "nameTr": "Sargodha",
+      "nameAr": "سرغودها",
+      "nameFa": "سرگودها"
     },
     {
       "name": "Sialkot",
@@ -617,7 +794,10 @@
       "timezone": "Asia/Karachi",
       "countryTr": "Pakistan",
       "countryAr": "باكستان",
-      "countryFa": "پاکستان"
+      "countryFa": "پاکستان",
+      "nameTr": "Siyalkot",
+      "nameAr": "سيالكوت",
+      "nameFa": "سیالکوت"
     },
     {
       "name": "Delhi",
@@ -628,7 +808,10 @@
       "county": "Delhi",
       "countryTr": "Hindistan",
       "countryAr": "الهند",
-      "countryFa": "هند"
+      "countryFa": "هند",
+      "nameTr": "Delhi",
+      "nameAr": "دلهي",
+      "nameFa": "دهلی"
     },
     {
       "name": "Mumbai",
@@ -639,7 +822,10 @@
       "county": "Maharashtra",
       "countryTr": "Hindistan",
       "countryAr": "الهند",
-      "countryFa": "هند"
+      "countryFa": "هند",
+      "nameTr": "Mumbai",
+      "nameAr": "مومباي",
+      "nameFa": "بمبئی"
     },
     {
       "name": "Kolkata",
@@ -650,7 +836,10 @@
       "county": "West Bengal",
       "countryTr": "Hindistan",
       "countryAr": "الهند",
-      "countryFa": "هند"
+      "countryFa": "هند",
+      "nameTr": "Kalküta",
+      "nameAr": "كلكتا",
+      "nameFa": "کلکته"
     },
     {
       "name": "Chennai",
@@ -661,7 +850,10 @@
       "county": "Tamil Nadu",
       "countryTr": "Hindistan",
       "countryAr": "الهند",
-      "countryFa": "هند"
+      "countryFa": "هند",
+      "nameTr": "Chennai",
+      "nameAr": "تشيناي",
+      "nameFa": "چنای"
     },
     {
       "name": "Hyderabad",
@@ -672,7 +864,10 @@
       "county": "Telangana",
       "countryTr": "Hindistan",
       "countryAr": "الهند",
-      "countryFa": "هند"
+      "countryFa": "هند",
+      "nameTr": "Haydarabad",
+      "nameAr": "حيدر آباد",
+      "nameFa": "حیدرآباد"
     },
     {
       "name": "Bangalore",
@@ -683,7 +878,10 @@
       "county": "Karnataka",
       "countryTr": "Hindistan",
       "countryAr": "الهند",
-      "countryFa": "هند"
+      "countryFa": "هند",
+      "nameTr": "Bangalore",
+      "nameAr": "بنغالور",
+      "nameFa": "بنگلور"
     },
     {
       "name": "Dhaka",
@@ -694,7 +892,10 @@
       "county": "Dhaka",
       "countryTr": "Bangladeş",
       "countryAr": "بنغلاديش",
-      "countryFa": "بنگلادش"
+      "countryFa": "بنگلادش",
+      "nameTr": "Dakka",
+      "nameAr": "دكا",
+      "nameFa": "داکا"
     },
     {
       "name": "Chittagong",
@@ -705,7 +906,10 @@
       "county": "Chittagong",
       "countryTr": "Bangladeş",
       "countryAr": "بنغلاديش",
-      "countryFa": "بنگلادش"
+      "countryFa": "بنگلادش",
+      "nameTr": "Çitagong",
+      "nameAr": "شيتاغونغ",
+      "nameFa": "چیتاگونگ"
     },
     {
       "name": "Lagos",
@@ -716,7 +920,10 @@
       "county": "Lagos",
       "countryTr": "Nijerya",
       "countryAr": "نيجيريا",
-      "countryFa": "نیجریه"
+      "countryFa": "نیجریه",
+      "nameTr": "Lagos",
+      "nameAr": "لاغوس",
+      "nameFa": "لاگوس"
     },
     {
       "name": "Kano",
@@ -727,7 +934,10 @@
       "county": "Kano",
       "countryTr": "Nijerya",
       "countryAr": "نيجيريا",
-      "countryFa": "نیجریه"
+      "countryFa": "نیجریه",
+      "nameTr": "Kano",
+      "nameAr": "كانو",
+      "nameFa": "کانو"
     },
     {
       "name": "Casablanca",
@@ -738,7 +948,10 @@
       "county": "Casablanca-Settat",
       "countryTr": "Fas",
       "countryAr": "المغرب",
-      "countryFa": "مراکش"
+      "countryFa": "مراکش",
+      "nameTr": "Kazablanka",
+      "nameAr": "الدار البيضاء",
+      "nameFa": "کازابلانکا"
     },
     {
       "name": "Rabat",
@@ -749,7 +962,10 @@
       "county": "Rabat-Sale-Kenitra",
       "countryTr": "Fas",
       "countryAr": "المغرب",
-      "countryFa": "مراکش"
+      "countryFa": "مراکش",
+      "nameTr": "Rabat",
+      "nameAr": "الرباط",
+      "nameFa": "رباط"
     },
     {
       "name": "Marrakech",
@@ -759,7 +975,10 @@
       "timezone": "Africa/Casablanca",
       "countryTr": "Fas",
       "countryAr": "المغرب",
-      "countryFa": "مراکش"
+      "countryFa": "مراکش",
+      "nameTr": "Marakeş",
+      "nameAr": "مراكش",
+      "nameFa": "مراکش"
     },
     {
       "name": "Fes",
@@ -770,7 +989,10 @@
       "county": "Fes-Meknes",
       "countryTr": "Fas",
       "countryAr": "المغرب",
-      "countryFa": "مراکش"
+      "countryFa": "مراکش",
+      "nameTr": "Fes",
+      "nameAr": "فاس",
+      "nameFa": "فاس"
     },
     {
       "name": "Tangier",
@@ -780,7 +1002,10 @@
       "timezone": "Africa/Casablanca",
       "countryTr": "Fas",
       "countryAr": "المغرب",
-      "countryFa": "مراکش"
+      "countryFa": "مراکش",
+      "nameTr": "Tanca",
+      "nameAr": "طنجة",
+      "nameFa": "طنجه"
     },
     {
       "name": "Agadir",
@@ -790,7 +1015,10 @@
       "timezone": "Africa/Casablanca",
       "countryTr": "Fas",
       "countryAr": "المغرب",
-      "countryFa": "مراکش"
+      "countryFa": "مراکش",
+      "nameTr": "Agadir",
+      "nameAr": "أكادير",
+      "nameFa": "اگادیر"
     },
     {
       "name": "Algiers",
@@ -801,7 +1029,10 @@
       "county": "Algiers",
       "countryTr": "Cezayir",
       "countryAr": "الجزائر",
-      "countryFa": "الجزایر"
+      "countryFa": "الجزایر",
+      "nameTr": "Cezayir",
+      "nameAr": "الجزائر",
+      "nameFa": "الجزیره"
     },
     {
       "name": "Annaba",
@@ -811,7 +1042,10 @@
       "timezone": "Africa/Algiers",
       "countryTr": "Cezayir",
       "countryAr": "الجزائر",
-      "countryFa": "الجزایر"
+      "countryFa": "الجزایر",
+      "nameTr": "Annabe",
+      "nameAr": "عنابة",
+      "nameFa": "عنابه"
     },
     {
       "name": "Biskra",
@@ -821,7 +1055,10 @@
       "timezone": "Africa/Algiers",
       "countryTr": "Cezayir",
       "countryAr": "الجزائر",
-      "countryFa": "الجزایر"
+      "countryFa": "الجزایر",
+      "nameTr": "Biskra",
+      "nameAr": "بسكرة",
+      "nameFa": "بسکره"
     },
     {
       "name": "Constantine",
@@ -832,7 +1069,10 @@
       "county": "Constantine",
       "countryTr": "Cezayir",
       "countryAr": "الجزائر",
-      "countryFa": "الجزایر"
+      "countryFa": "الجزایر",
+      "nameTr": "Konstantin",
+      "nameAr": "قسنطينة",
+      "nameFa": "قسنطینه"
     },
     {
       "name": "Ghardaia",
@@ -842,7 +1082,10 @@
       "timezone": "Africa/Algiers",
       "countryTr": "Cezayir",
       "countryAr": "الجزائر",
-      "countryFa": "الجزایر"
+      "countryFa": "الجزایر",
+      "nameTr": "Gardaya",
+      "nameAr": "غرداية",
+      "nameFa": "غردایه"
     },
     {
       "name": "Oran",
@@ -853,7 +1096,10 @@
       "county": "Oran",
       "countryTr": "Cezayir",
       "countryAr": "الجزائر",
-      "countryFa": "الجزایر"
+      "countryFa": "الجزایر",
+      "nameTr": "Vahran",
+      "nameAr": "وهران",
+      "nameFa": "وهران"
     },
     {
       "name": "Ouargla",
@@ -863,7 +1109,10 @@
       "timezone": "Africa/Algiers",
       "countryTr": "Cezayir",
       "countryAr": "الجزائر",
-      "countryFa": "الجزایر"
+      "countryFa": "الجزایر",
+      "nameTr": "Vargla",
+      "nameAr": "ورقلة",
+      "nameFa": "ورقله"
     },
     {
       "name": "Kairouan",
@@ -873,7 +1122,10 @@
       "timezone": "Africa/Tunis",
       "countryTr": "Tunus",
       "countryAr": "تونس",
-      "countryFa": "تونس"
+      "countryFa": "تونس",
+      "nameTr": "Kayrevan",
+      "nameAr": "القيروان",
+      "nameFa": "قیروان"
     },
     {
       "name": "Sfax",
@@ -884,7 +1136,10 @@
       "county": "Sfax",
       "countryTr": "Tunus",
       "countryAr": "تونس",
-      "countryFa": "تونس"
+      "countryFa": "تونس",
+      "nameTr": "Safaks",
+      "nameAr": "صفاقس",
+      "nameFa": "صفاقس"
     },
     {
       "name": "Sousse",
@@ -895,7 +1150,10 @@
       "county": "Sousse",
       "countryTr": "Tunus",
       "countryAr": "تونس",
-      "countryFa": "تونس"
+      "countryFa": "تونس",
+      "nameTr": "Susa",
+      "nameAr": "سوسة",
+      "nameFa": "سوسه"
     },
     {
       "name": "Tunis",
@@ -906,7 +1164,10 @@
       "county": "Tunis",
       "countryTr": "Tunus",
       "countryAr": "تونس",
-      "countryFa": "تونس"
+      "countryFa": "تونس",
+      "nameTr": "Tunus",
+      "nameAr": "تونس",
+      "nameFa": "تونس"
     },
     {
       "name": "Amman",
@@ -917,7 +1178,10 @@
       "county": "Amman",
       "countryTr": "Ürdün",
       "countryAr": "الأردن",
-      "countryFa": "اردن"
+      "countryFa": "اردن",
+      "nameTr": "Amman",
+      "nameAr": "عمّان",
+      "nameFa": "امان"
     },
     {
       "name": "Aqaba",
@@ -927,7 +1191,10 @@
       "timezone": "Asia/Amman",
       "countryTr": "Ürdün",
       "countryAr": "الأردن",
-      "countryFa": "اردن"
+      "countryFa": "اردن",
+      "nameTr": "Akabe",
+      "nameAr": "العقبة",
+      "nameFa": "عقبه"
     },
     {
       "name": "Irbid",
@@ -938,7 +1205,10 @@
       "county": "Irbid",
       "countryTr": "Ürdün",
       "countryAr": "الأردن",
-      "countryFa": "اردن"
+      "countryFa": "اردن",
+      "nameTr": "İrbid",
+      "nameAr": "إربد",
+      "nameFa": "اربد"
     },
     {
       "name": "Zarqa",
@@ -949,7 +1219,10 @@
       "county": "Zarqa",
       "countryTr": "Ürdün",
       "countryAr": "الأردن",
-      "countryFa": "اردن"
+      "countryFa": "اردن",
+      "nameTr": "Zerka",
+      "nameAr": "الزرقاء",
+      "nameFa": "زرقاء"
     },
     {
       "name": "Dubai",
@@ -960,7 +1233,10 @@
       "county": "Dubai",
       "countryTr": "BAE",
       "countryAr": "الإمارات",
-      "countryFa": "امارات متحده عربی"
+      "countryFa": "امارات متحده عربی",
+      "nameTr": "Dubai",
+      "nameAr": "دبي",
+      "nameFa": "دبی"
     },
     {
       "name": "Abu Dhabi",
@@ -971,7 +1247,10 @@
       "county": "Abu Dhabi",
       "countryTr": "BAE",
       "countryAr": "الإمارات",
-      "countryFa": "امارات متحده عربی"
+      "countryFa": "امارات متحده عربی",
+      "nameTr": "Abu Dabi",
+      "nameAr": "أبو ظبي",
+      "nameFa": "ابوظبی"
     },
     {
       "name": "Sharjah",
@@ -982,7 +1261,10 @@
       "county": "Sharjah",
       "countryTr": "BAE",
       "countryAr": "الإمارات",
-      "countryFa": "امارات متحده عربی"
+      "countryFa": "امارات متحده عربی",
+      "nameTr": "Şarika",
+      "nameAr": "الشارقة",
+      "nameFa": "شارجه"
     },
     {
       "name": "Al Ain",
@@ -992,7 +1274,10 @@
       "timezone": "Asia/Dubai",
       "countryTr": "BAE",
       "countryAr": "الإمارات",
-      "countryFa": "امارات متحده عربی"
+      "countryFa": "امارات متحده عربی",
+      "nameTr": "El Ayn",
+      "nameAr": "العين",
+      "nameFa": "العین"
     },
     {
       "name": "Kuwait City",
@@ -1003,7 +1288,10 @@
       "county": "Capital",
       "countryTr": "Kuveyt",
       "countryAr": "الكويت",
-      "countryFa": "کویت"
+      "countryFa": "کویت",
+      "nameTr": "Kuveyt Şehri",
+      "nameAr": "مدينة الكويت",
+      "nameFa": "کویت"
     },
     {
       "name": "Al Ahmadi",
@@ -1013,7 +1301,10 @@
       "timezone": "Asia/Kuwait",
       "countryTr": "Kuveyt",
       "countryAr": "الكويت",
-      "countryFa": "کویت"
+      "countryFa": "کویت",
+      "nameTr": "El Ahmadi",
+      "nameAr": "الأحمدي",
+      "nameFa": "الاحمدی"
     },
     {
       "name": "Doha",
@@ -1024,7 +1315,10 @@
       "county": "Doha",
       "countryTr": "Katar",
       "countryAr": "قطر",
-      "countryFa": "قطر"
+      "countryFa": "قطر",
+      "nameTr": "Doha",
+      "nameAr": "الدوحة",
+      "nameFa": "دوحه"
     },
     {
       "name": "Al Rayyan",
@@ -1034,7 +1328,10 @@
       "timezone": "Asia/Qatar",
       "countryTr": "Katar",
       "countryAr": "قطر",
-      "countryFa": "قطر"
+      "countryFa": "قطر",
+      "nameTr": "Er Reyyan",
+      "nameAr": "الريان",
+      "nameFa": "الریان"
     },
     {
       "name": "Manama",
@@ -1045,7 +1342,10 @@
       "county": "Capital",
       "countryTr": "Bahreyn",
       "countryAr": "البحرين",
-      "countryFa": "بحرین"
+      "countryFa": "بحرین",
+      "nameTr": "Manama",
+      "nameAr": "المنامة",
+      "nameFa": "منامه"
     },
     {
       "name": "Muharraq",
@@ -1055,7 +1355,10 @@
       "timezone": "Asia/Bahrain",
       "countryTr": "Bahreyn",
       "countryAr": "البحرين",
-      "countryFa": "بحرین"
+      "countryFa": "بحرین",
+      "nameTr": "Muharrak",
+      "nameAr": "المحرق",
+      "nameFa": "محرق"
     },
     {
       "name": "Riffa",
@@ -1065,7 +1368,10 @@
       "timezone": "Asia/Bahrain",
       "countryTr": "Bahreyn",
       "countryAr": "البحرين",
-      "countryFa": "بحرین"
+      "countryFa": "بحرین",
+      "nameTr": "Rifa",
+      "nameAr": "الرفاع",
+      "nameFa": "رفاع"
     },
     {
       "name": "Muscat",
@@ -1076,7 +1382,10 @@
       "county": "Muscat",
       "countryTr": "Umman",
       "countryAr": "عمان",
-      "countryFa": "عمان"
+      "countryFa": "عمان",
+      "nameTr": "Maskat",
+      "nameAr": "مسقط",
+      "nameFa": "مسقط"
     },
     {
       "name": "Salalah",
@@ -1087,7 +1396,10 @@
       "county": "Dhofar",
       "countryTr": "Umman",
       "countryAr": "عمان",
-      "countryFa": "عمان"
+      "countryFa": "عمان",
+      "nameTr": "Salale",
+      "nameAr": "صلالة",
+      "nameFa": "صلاله"
     },
     {
       "name": "Sohar",
@@ -1097,7 +1409,10 @@
       "timezone": "Asia/Muscat",
       "countryTr": "Umman",
       "countryAr": "عمان",
-      "countryFa": "عمان"
+      "countryFa": "عمان",
+      "nameTr": "Suhar",
+      "nameAr": "صحار",
+      "nameFa": "صحار"
     },
     {
       "name": "Brisbane",
@@ -1107,7 +1422,10 @@
       "timezone": "Australia/Brisbane",
       "countryTr": "Avustralya",
       "countryAr": "أستراليا",
-      "countryFa": "استرالیا"
+      "countryFa": "استرالیا",
+      "nameTr": "Brisbane",
+      "nameAr": "بريزبن",
+      "nameFa": "بریزبن"
     },
     {
       "name": "Melbourne",
@@ -1117,7 +1435,10 @@
       "timezone": "Australia/Melbourne",
       "countryTr": "Avustralya",
       "countryAr": "أستراليا",
-      "countryFa": "استرالیا"
+      "countryFa": "استرالیا",
+      "nameTr": "Melbourne",
+      "nameAr": "ملبورن",
+      "nameFa": "ملبورن"
     },
     {
       "name": "Perth",
@@ -1127,7 +1448,10 @@
       "timezone": "Australia/Perth",
       "countryTr": "Avustralya",
       "countryAr": "أستراليا",
-      "countryFa": "استرالیا"
+      "countryFa": "استرالیا",
+      "nameTr": "Perth",
+      "nameAr": "بيرث",
+      "nameFa": "پرت"
     },
     {
       "name": "Sydney",
@@ -1137,7 +1461,10 @@
       "timezone": "Australia/Sydney",
       "countryTr": "Avustralya",
       "countryAr": "أستراليا",
-      "countryFa": "استرالیا"
+      "countryFa": "استرالیا",
+      "nameTr": "Sidney",
+      "nameAr": "سيدني",
+      "nameFa": "سیدنی"
     },
     {
       "name": "Vienna",
@@ -1147,7 +1474,10 @@
       "timezone": "Europe/Vienna",
       "countryTr": "Avusturya",
       "countryAr": "النمسا",
-      "countryFa": "اتریش"
+      "countryFa": "اتریش",
+      "nameTr": "Viyana",
+      "nameAr": "فيينا",
+      "nameFa": "وین"
     },
     {
       "name": "Brussels",
@@ -1157,7 +1487,10 @@
       "timezone": "Europe/Brussels",
       "countryTr": "Belçika",
       "countryAr": "بلجيكا",
-      "countryFa": "بلژیک"
+      "countryFa": "بلژیک",
+      "nameTr": "Brüksel",
+      "nameAr": "بروكسل",
+      "nameFa": "بروکسل"
     },
     {
       "name": "Phnom Penh",
@@ -1167,7 +1500,10 @@
       "timezone": "Asia/Phnom_Penh",
       "countryTr": "Kamboçya",
       "countryAr": "كمبوديا",
-      "countryFa": "کامبوج"
+      "countryFa": "کامبوج",
+      "nameTr": "Phnom Penh",
+      "nameAr": "بنوم بنه",
+      "nameFa": "پنومپن"
     },
     {
       "name": "Montreal",
@@ -1177,7 +1513,10 @@
       "timezone": "America/Montreal",
       "countryTr": "Kanada",
       "countryAr": "كندا",
-      "countryFa": "کانادا"
+      "countryFa": "کانادا",
+      "nameTr": "Montreal",
+      "nameAr": "مونتريال",
+      "nameFa": "مونترآل"
     },
     {
       "name": "Toronto",
@@ -1187,7 +1526,10 @@
       "timezone": "America/Toronto",
       "countryTr": "Kanada",
       "countryAr": "كندا",
-      "countryFa": "کانادا"
+      "countryFa": "کانادا",
+      "nameTr": "Toronto",
+      "nameAr": "تورونتو",
+      "nameFa": "تورنتو"
     },
     {
       "name": "Vancouver",
@@ -1197,7 +1539,10 @@
       "timezone": "America/Vancouver",
       "countryTr": "Kanada",
       "countryAr": "كندا",
-      "countryFa": "کانادا"
+      "countryFa": "کانادا",
+      "nameTr": "Vancouver",
+      "nameAr": "فانكوفر",
+      "nameFa": "ونکوور"
     },
     {
       "name": "Beijing",
@@ -1207,7 +1552,10 @@
       "timezone": "Asia/Shanghai",
       "countryTr": "Çin",
       "countryAr": "الصين",
-      "countryFa": "چین"
+      "countryFa": "چین",
+      "nameTr": "Pekin",
+      "nameAr": "بكين",
+      "nameFa": "پکن"
     },
     {
       "name": "Chengdu",
@@ -1217,7 +1565,10 @@
       "timezone": "Asia/Shanghai",
       "countryTr": "Çin",
       "countryAr": "الصين",
-      "countryFa": "چین"
+      "countryFa": "چین",
+      "nameTr": "Çengdu",
+      "nameAr": "تشنغدو",
+      "nameFa": "چنگدو"
     },
     {
       "name": "Guangzhou",
@@ -1227,7 +1578,10 @@
       "timezone": "Asia/Shanghai",
       "countryTr": "Çin",
       "countryAr": "الصين",
-      "countryFa": "چین"
+      "countryFa": "چین",
+      "nameTr": "Guangzhou",
+      "nameAr": "غوانزو",
+      "nameFa": "گوانگژو"
     },
     {
       "name": "Nanjing",
@@ -1237,7 +1591,10 @@
       "timezone": "Asia/Shanghai",
       "countryTr": "Çin",
       "countryAr": "الصين",
-      "countryFa": "چین"
+      "countryFa": "چین",
+      "nameTr": "Nankin",
+      "nameAr": "نانجينغ",
+      "nameFa": "نانجینگ"
     },
     {
       "name": "Shanghai",
@@ -1247,7 +1604,10 @@
       "timezone": "Asia/Shanghai",
       "countryTr": "Çin",
       "countryAr": "الصين",
-      "countryFa": "چین"
+      "countryFa": "چین",
+      "nameTr": "Şanghay",
+      "nameAr": "شنغهاي",
+      "nameFa": "شانگهای"
     },
     {
       "name": "Shenzhen",
@@ -1257,7 +1617,10 @@
       "timezone": "Asia/Shanghai",
       "countryTr": "Çin",
       "countryAr": "الصين",
-      "countryFa": "چین"
+      "countryFa": "چین",
+      "nameTr": "Şenzen",
+      "nameAr": "شنتشن",
+      "nameFa": "شنژن"
     },
     {
       "name": "Wuhan",
@@ -1267,7 +1630,10 @@
       "timezone": "Asia/Shanghai",
       "countryTr": "Çin",
       "countryAr": "الصين",
-      "countryFa": "چین"
+      "countryFa": "چین",
+      "nameTr": "Vuhan",
+      "nameAr": "ووهان",
+      "nameFa": "ووهان"
     },
     {
       "name": "Xian",
@@ -1277,7 +1643,10 @@
       "timezone": "Asia/Shanghai",
       "countryTr": "Çin",
       "countryAr": "الصين",
-      "countryFa": "چین"
+      "countryFa": "چین",
+      "nameTr": "Şian",
+      "nameAr": "شيان",
+      "nameFa": "شیان"
     },
     {
       "name": "Prague",
@@ -1287,7 +1656,10 @@
       "timezone": "Europe/Prague",
       "countryTr": "Çek Cumhuriyeti",
       "countryAr": "التشيك",
-      "countryFa": "جمهوری چک"
+      "countryFa": "جمهوری چک",
+      "nameTr": "Prag",
+      "nameAr": "براغ",
+      "nameFa": "پراگ"
     },
     {
       "name": "Copenhagen",
@@ -1297,7 +1669,10 @@
       "timezone": "Europe/Copenhagen",
       "countryTr": "Danimarka",
       "countryAr": "الدنمارك",
-      "countryFa": "دانمارک"
+      "countryFa": "دانمارک",
+      "nameTr": "Kopenhag",
+      "nameAr": "كوبنهاغن",
+      "nameFa": "کپنهاگ"
     },
     {
       "name": "Addis Ababa",
@@ -1307,7 +1682,10 @@
       "timezone": "Africa/Addis_Ababa",
       "countryTr": "Etiyopya",
       "countryAr": "إثيوبيا",
-      "countryFa": "اتیوپی"
+      "countryFa": "اتیوپی",
+      "nameTr": "Addis Ababa",
+      "nameAr": "أديس أبابا",
+      "nameFa": "آدیس آبابا"
     },
     {
       "name": "Helsinki",
@@ -1317,7 +1695,10 @@
       "timezone": "Europe/Helsinki",
       "countryTr": "Finlandiya",
       "countryAr": "فنلندا",
-      "countryFa": "فنلاند"
+      "countryFa": "فنلاند",
+      "nameTr": "Helsinki",
+      "nameAr": "هلسنكي",
+      "nameFa": "هلسینکی"
     },
     {
       "name": "Lyon",
@@ -1328,7 +1709,10 @@
       "county": "Auvergne-Rhone-Alpes",
       "countryTr": "Fransa",
       "countryAr": "فرنسا",
-      "countryFa": "فرانسه"
+      "countryFa": "فرانسه",
+      "nameTr": "Lyon",
+      "nameAr": "ليون",
+      "nameFa": "لیون"
     },
     {
       "name": "Marseille",
@@ -1339,7 +1723,10 @@
       "county": "Provence-Alpes-Cote d'Azur",
       "countryTr": "Fransa",
       "countryAr": "فرنسا",
-      "countryFa": "فرانسه"
+      "countryFa": "فرانسه",
+      "nameTr": "Marsilya",
+      "nameAr": "مارسيليا",
+      "nameFa": "مارسی"
     },
     {
       "name": "Paris",
@@ -1350,7 +1737,10 @@
       "county": "Ile-de-France",
       "countryTr": "Fransa",
       "countryAr": "فرنسا",
-      "countryFa": "فرانسه"
+      "countryFa": "فرانسه",
+      "nameTr": "Paris",
+      "nameAr": "باريس",
+      "nameFa": "پاریس"
     },
     {
       "name": "Berlin",
@@ -1361,7 +1751,10 @@
       "county": "Berlin",
       "countryTr": "Almanya",
       "countryAr": "ألمانيا",
-      "countryFa": "آلمان"
+      "countryFa": "آلمان",
+      "nameTr": "Berlin",
+      "nameAr": "برلين",
+      "nameFa": "برلین"
     },
     {
       "name": "Frankfurt",
@@ -1372,7 +1765,10 @@
       "county": "Hesse",
       "countryTr": "Almanya",
       "countryAr": "ألمانيا",
-      "countryFa": "آلمان"
+      "countryFa": "آلمان",
+      "nameTr": "Frankfurt",
+      "nameAr": "فرانكفورت",
+      "nameFa": "فرانکفورت"
     },
     {
       "name": "Hamburg",
@@ -1383,7 +1779,10 @@
       "county": "Hamburg",
       "countryTr": "Almanya",
       "countryAr": "ألمانيا",
-      "countryFa": "آلمان"
+      "countryFa": "آلمان",
+      "nameTr": "Hamburg",
+      "nameAr": "هامبورغ",
+      "nameFa": "هامبورگ"
     },
     {
       "name": "Munich",
@@ -1394,7 +1793,10 @@
       "county": "Bavaria",
       "countryTr": "Almanya",
       "countryAr": "ألمانيا",
-      "countryFa": "آلمان"
+      "countryFa": "آلمان",
+      "nameTr": "Münih",
+      "nameAr": "ميونخ",
+      "nameFa": "مونیخ"
     },
     {
       "name": "Accra",
@@ -1404,7 +1806,10 @@
       "timezone": "Africa/Accra",
       "countryTr": "Gana",
       "countryAr": "غانا",
-      "countryFa": "غنا"
+      "countryFa": "غنا",
+      "nameTr": "Akra",
+      "nameAr": "أكرا",
+      "nameFa": "آکرا"
     },
     {
       "name": "Athens",
@@ -1414,7 +1819,10 @@
       "timezone": "Europe/Athens",
       "countryTr": "Yunanistan",
       "countryAr": "اليونان",
-      "countryFa": "یونان"
+      "countryFa": "یونان",
+      "nameTr": "Atina",
+      "nameAr": "أثينا",
+      "nameFa": "آتن"
     },
     {
       "name": "Thessaloniki",
@@ -1424,7 +1832,10 @@
       "timezone": "Europe/Athens",
       "countryTr": "Yunanistan",
       "countryAr": "اليونان",
-      "countryFa": "یونان"
+      "countryFa": "یونان",
+      "nameTr": "Selanik",
+      "nameAr": "سالونيك",
+      "nameFa": "سالونیک"
     },
     {
       "name": "Hong Kong",
@@ -1434,7 +1845,10 @@
       "timezone": "Asia/Hong_Kong",
       "countryTr": "Hong Kong",
       "countryAr": "هونغ كونغ",
-      "countryFa": "هنگ کنگ"
+      "countryFa": "هنگ کنگ",
+      "nameTr": "Hong Kong",
+      "nameAr": "هونغ كونغ",
+      "nameFa": "هنگ کنگ"
     },
     {
       "name": "Budapest",
@@ -1444,7 +1858,10 @@
       "timezone": "Europe/Budapest",
       "countryTr": "Macaristan",
       "countryAr": "المجر",
-      "countryFa": "مجارستان"
+      "countryFa": "مجارستان",
+      "nameTr": "Budapeşte",
+      "nameAr": "بودابست",
+      "nameFa": "بوداپست"
     },
     {
       "name": "Ahvaz",
@@ -1454,7 +1871,10 @@
       "timezone": "Asia/Tehran",
       "countryTr": "İran",
       "countryAr": "إيران",
-      "countryFa": "ایران"
+      "countryFa": "ایران",
+      "nameTr": "Ahvaz",
+      "nameAr": "الأهواز",
+      "nameFa": "اهواز"
     },
     {
       "name": "Isfahan",
@@ -1464,7 +1884,10 @@
       "timezone": "Asia/Tehran",
       "countryTr": "İran",
       "countryAr": "إيران",
-      "countryFa": "ایران"
+      "countryFa": "ایران",
+      "nameTr": "İsfahan",
+      "nameAr": "أصفهان",
+      "nameFa": "اصفهان"
     },
     {
       "name": "Karaj",
@@ -1474,7 +1897,10 @@
       "timezone": "Asia/Tehran",
       "countryTr": "İran",
       "countryAr": "إيران",
-      "countryFa": "ایران"
+      "countryFa": "ایران",
+      "nameTr": "Kerec",
+      "nameAr": "كرج",
+      "nameFa": "کرج"
     },
     {
       "name": "Kermanshah",
@@ -1484,7 +1910,10 @@
       "timezone": "Asia/Tehran",
       "countryTr": "İran",
       "countryAr": "إيران",
-      "countryFa": "ایران"
+      "countryFa": "ایران",
+      "nameTr": "Kirmanşah",
+      "nameAr": "كرمانشاه",
+      "nameFa": "کرمانشاه"
     },
     {
       "name": "Mashhad",
@@ -1494,7 +1923,10 @@
       "timezone": "Asia/Tehran",
       "countryTr": "İran",
       "countryAr": "إيران",
-      "countryFa": "ایران"
+      "countryFa": "ایران",
+      "nameTr": "Meşhed",
+      "nameAr": "مشهد",
+      "nameFa": "مشهد"
     },
     {
       "name": "Qom",
@@ -1504,7 +1936,10 @@
       "timezone": "Asia/Tehran",
       "countryTr": "İran",
       "countryAr": "إيران",
-      "countryFa": "ایران"
+      "countryFa": "ایران",
+      "nameTr": "Kum",
+      "nameAr": "قم",
+      "nameFa": "قم"
     },
     {
       "name": "Shiraz",
@@ -1514,7 +1949,10 @@
       "timezone": "Asia/Tehran",
       "countryTr": "İran",
       "countryAr": "إيران",
-      "countryFa": "ایران"
+      "countryFa": "ایران",
+      "nameTr": "Şiraz",
+      "nameAr": "شيراز",
+      "nameFa": "شیراز"
     },
     {
       "name": "Tabriz",
@@ -1524,7 +1962,10 @@
       "timezone": "Asia/Tehran",
       "countryTr": "İran",
       "countryAr": "إيران",
-      "countryFa": "ایران"
+      "countryFa": "ایران",
+      "nameTr": "Tebriz",
+      "nameAr": "تبريز",
+      "nameFa": "تبریز"
     },
     {
       "name": "Tehran",
@@ -1534,7 +1975,10 @@
       "timezone": "Asia/Tehran",
       "countryTr": "İran",
       "countryAr": "إيران",
-      "countryFa": "ایران"
+      "countryFa": "ایران",
+      "nameTr": "Tahran",
+      "nameAr": "طهران",
+      "nameFa": "تهران"
     },
     {
       "name": "Baghdad",
@@ -1544,7 +1988,10 @@
       "timezone": "Asia/Baghdad",
       "countryTr": "Irak",
       "countryAr": "العراق",
-      "countryFa": "عراق"
+      "countryFa": "عراق",
+      "nameTr": "Bağdat",
+      "nameAr": "بغداد",
+      "nameFa": "بغداد"
     },
     {
       "name": "Basra",
@@ -1554,7 +2001,10 @@
       "timezone": "Asia/Baghdad",
       "countryTr": "Irak",
       "countryAr": "العراق",
-      "countryFa": "عراق"
+      "countryFa": "عراق",
+      "nameTr": "Basra",
+      "nameAr": "البصرة",
+      "nameFa": "بصره"
     },
     {
       "name": "Erbil",
@@ -1564,7 +2014,10 @@
       "timezone": "Asia/Baghdad",
       "countryTr": "Irak",
       "countryAr": "العراق",
-      "countryFa": "عراق"
+      "countryFa": "عراق",
+      "nameTr": "Erbil",
+      "nameAr": "أربيل",
+      "nameFa": "اربیل"
     },
     {
       "name": "Karbala",
@@ -1574,7 +2027,10 @@
       "timezone": "Asia/Baghdad",
       "countryTr": "Irak",
       "countryAr": "العراق",
-      "countryFa": "عراق"
+      "countryFa": "عراق",
+      "nameTr": "Kerbela",
+      "nameAr": "كربلاء",
+      "nameFa": "کربلا"
     },
     {
       "name": "Mosul",
@@ -1584,7 +2040,10 @@
       "timezone": "Asia/Baghdad",
       "countryTr": "Irak",
       "countryAr": "العراق",
-      "countryFa": "عراق"
+      "countryFa": "عراق",
+      "nameTr": "Musul",
+      "nameAr": "الموصل",
+      "nameFa": "موصل"
     },
     {
       "name": "Najaf",
@@ -1594,7 +2053,10 @@
       "timezone": "Asia/Baghdad",
       "countryTr": "Irak",
       "countryAr": "العراق",
-      "countryFa": "عراق"
+      "countryFa": "عراق",
+      "nameTr": "Necef",
+      "nameAr": "النجف",
+      "nameFa": "نجف"
     },
     {
       "name": "Dublin",
@@ -1604,7 +2066,10 @@
       "timezone": "Europe/Dublin",
       "countryTr": "İrlanda",
       "countryAr": "أيرلندا",
-      "countryFa": "ایرلند"
+      "countryFa": "ایرلند",
+      "nameTr": "Dublin",
+      "nameAr": "دبلن",
+      "nameFa": "دوبلین"
     },
     {
       "name": "Milan",
@@ -1614,7 +2079,10 @@
       "timezone": "Europe/Rome",
       "countryTr": "İtalya",
       "countryAr": "إيطاليا",
-      "countryFa": "ایتالیا"
+      "countryFa": "ایتالیا",
+      "nameTr": "Milano",
+      "nameAr": "ميلانو",
+      "nameFa": "میلان"
     },
     {
       "name": "Rome",
@@ -1624,7 +2092,10 @@
       "timezone": "Europe/Rome",
       "countryTr": "İtalya",
       "countryAr": "إيطاليا",
-      "countryFa": "ایتالیا"
+      "countryFa": "ایتالیا",
+      "nameTr": "Roma",
+      "nameAr": "روما",
+      "nameFa": "رم"
     },
     {
       "name": "Kyoto",
@@ -1634,7 +2105,10 @@
       "timezone": "Asia/Tokyo",
       "countryTr": "Japonya",
       "countryAr": "اليابان",
-      "countryFa": "ژاپن"
+      "countryFa": "ژاپن",
+      "nameTr": "Kyoto",
+      "nameAr": "كيوتو",
+      "nameFa": "کیوتو"
     },
     {
       "name": "Osaka",
@@ -1644,7 +2118,10 @@
       "timezone": "Asia/Tokyo",
       "countryTr": "Japonya",
       "countryAr": "اليابان",
-      "countryFa": "ژاپن"
+      "countryFa": "ژاپن",
+      "nameTr": "Osaka",
+      "nameAr": "أوساكا",
+      "nameFa": "اوساکا"
     },
     {
       "name": "Tokyo",
@@ -1654,7 +2131,10 @@
       "timezone": "Asia/Tokyo",
       "countryTr": "Japonya",
       "countryAr": "اليابان",
-      "countryFa": "ژاپن"
+      "countryFa": "ژاپن",
+      "nameTr": "Tokyo",
+      "nameAr": "طوكيو",
+      "nameFa": "توکیو"
     },
     {
       "name": "Nairobi",
@@ -1664,7 +2144,10 @@
       "timezone": "Africa/Nairobi",
       "countryTr": "Kenya",
       "countryAr": "كينيا",
-      "countryFa": "کنیا"
+      "countryFa": "کنیا",
+      "nameTr": "Nairobi",
+      "nameAr": "نيروبي",
+      "nameFa": "نایروبی"
     },
     {
       "name": "Beirut",
@@ -1674,7 +2157,10 @@
       "timezone": "Asia/Beirut",
       "countryTr": "Lübnan",
       "countryAr": "لبنان",
-      "countryFa": "لبنان"
+      "countryFa": "لبنان",
+      "nameTr": "Beyrut",
+      "nameAr": "بيروت",
+      "nameFa": "بیروت"
     },
     {
       "name": "Sidon",
@@ -1684,7 +2170,10 @@
       "timezone": "Asia/Beirut",
       "countryTr": "Lübnan",
       "countryAr": "لبنان",
-      "countryFa": "لبنان"
+      "countryFa": "لبنان",
+      "nameTr": "Sayda",
+      "nameAr": "صيدا",
+      "nameFa": "صیدا"
     },
     {
       "name": "Tripoli",
@@ -1694,7 +2183,10 @@
       "timezone": "Asia/Beirut",
       "countryTr": "Lübnan",
       "countryAr": "لبنان",
-      "countryFa": "لبنان"
+      "countryFa": "لبنان",
+      "nameTr": "Trablus",
+      "nameAr": "طرابلس",
+      "nameFa": "طرابلس"
     },
     {
       "name": "Benghazi",
@@ -1704,7 +2196,10 @@
       "timezone": "Africa/Tripoli",
       "countryTr": "Libya",
       "countryAr": "ليبيا",
-      "countryFa": "لیبی"
+      "countryFa": "لیبی",
+      "nameTr": "Bingazi",
+      "nameAr": "بنغازي",
+      "nameFa": "بنغازی"
     },
     {
       "name": "Tripoli",
@@ -1714,7 +2209,10 @@
       "timezone": "Africa/Tripoli",
       "countryTr": "Libya",
       "countryAr": "ليبيا",
-      "countryFa": "لیبی"
+      "countryFa": "لیبی",
+      "nameTr": "Trablus",
+      "nameAr": "طرابلس",
+      "nameFa": "طرابلس"
     },
     {
       "name": "Antananarivo",
@@ -1724,7 +2222,10 @@
       "timezone": "Indian/Antananarivo",
       "countryTr": "Madagaskar",
       "countryAr": "مدغشقر",
-      "countryFa": "ماداگاسکار"
+      "countryFa": "ماداگاسکار",
+      "nameTr": "Antananarivo",
+      "nameAr": "أنتاناناريفو",
+      "nameFa": "آنتاناناریوو"
     },
     {
       "name": "Kathmandu",
@@ -1734,7 +2235,10 @@
       "timezone": "Asia/Kathmandu",
       "countryTr": "Nepal",
       "countryAr": "نيبال",
-      "countryFa": "نپال"
+      "countryFa": "نپال",
+      "nameTr": "Katmandu",
+      "nameAr": "كاتماندو",
+      "nameFa": "کاتماندو"
     },
     {
       "name": "Amsterdam",
@@ -1745,7 +2249,10 @@
       "county": "North Holland",
       "countryTr": "Hollanda",
       "countryAr": "هولندا",
-      "countryFa": "هلند"
+      "countryFa": "هلند",
+      "nameTr": "Amsterdam",
+      "nameAr": "أمستردام",
+      "nameFa": "آمستردام"
     },
     {
       "name": "Rotterdam",
@@ -1756,7 +2263,10 @@
       "county": "South Holland",
       "countryTr": "Hollanda",
       "countryAr": "هولندا",
-      "countryFa": "هلند"
+      "countryFa": "هلند",
+      "nameTr": "Rotterdam",
+      "nameAr": "روتردام",
+      "nameFa": "روتردام"
     },
     {
       "name": "Oslo",
@@ -1766,7 +2276,10 @@
       "timezone": "Europe/Oslo",
       "countryTr": "Norveç",
       "countryAr": "النرويج",
-      "countryFa": "نروژ"
+      "countryFa": "نروژ",
+      "nameTr": "Oslo",
+      "nameAr": "أوسلو",
+      "nameFa": "اسلو"
     },
     {
       "name": "Manila",
@@ -1776,7 +2289,10 @@
       "timezone": "Asia/Manila",
       "countryTr": "Filipinler",
       "countryAr": "الفلبين",
-      "countryFa": "فیلیپین"
+      "countryFa": "فیلیپین",
+      "nameTr": "Manila",
+      "nameAr": "مانيلا",
+      "nameFa": "مانیل"
     },
     {
       "name": "Krakow",
@@ -1786,7 +2302,10 @@
       "timezone": "Europe/Warsaw",
       "countryTr": "Polonya",
       "countryAr": "بولندا",
-      "countryFa": "لهستان"
+      "countryFa": "لهستان",
+      "nameTr": "Kraków",
+      "nameAr": "كراكوف",
+      "nameFa": "کراکوف"
     },
     {
       "name": "Warsaw",
@@ -1796,7 +2315,10 @@
       "timezone": "Europe/Warsaw",
       "countryTr": "Polonya",
       "countryAr": "بولندا",
-      "countryFa": "لهستان"
+      "countryFa": "لهستان",
+      "nameTr": "Varşova",
+      "nameAr": "وارسو",
+      "nameFa": "ورشو"
     },
     {
       "name": "Lisbon",
@@ -1806,7 +2328,10 @@
       "timezone": "Europe/Lisbon",
       "countryTr": "Portekiz",
       "countryAr": "البرتغال",
-      "countryFa": "پرتغال"
+      "countryFa": "پرتغال",
+      "nameTr": "Lizbon",
+      "nameAr": "لشبونة",
+      "nameFa": "لیسبون"
     },
     {
       "name": "Porto",
@@ -1816,7 +2341,10 @@
       "timezone": "Europe/Lisbon",
       "countryTr": "Portekiz",
       "countryAr": "البرتغال",
-      "countryFa": "پرتغال"
+      "countryFa": "پرتغال",
+      "nameTr": "Porto",
+      "nameAr": "بورتو",
+      "nameFa": "پورتو"
     },
     {
       "name": "Bucharest",
@@ -1826,7 +2354,10 @@
       "timezone": "Europe/Bucharest",
       "countryTr": "Romanya",
       "countryAr": "رومانيا",
-      "countryFa": "رومانی"
+      "countryFa": "رومانی",
+      "nameTr": "Bükreş",
+      "nameAr": "بوخارست",
+      "nameFa": "بخارست"
     },
     {
       "name": "Kazan",
@@ -1836,7 +2367,10 @@
       "timezone": "Europe/Moscow",
       "countryTr": "Rusya",
       "countryAr": "روسيا",
-      "countryFa": "روسیه"
+      "countryFa": "روسیه",
+      "nameTr": "Kazan",
+      "nameAr": "قازان",
+      "nameFa": "قازان"
     },
     {
       "name": "Moscow",
@@ -1846,7 +2380,10 @@
       "timezone": "Europe/Moscow",
       "countryTr": "Rusya",
       "countryAr": "روسيا",
-      "countryFa": "روسیه"
+      "countryFa": "روسیه",
+      "nameTr": "Moskova",
+      "nameAr": "موسكو",
+      "nameFa": "مسکو"
     },
     {
       "name": "Novosibirsk",
@@ -1856,7 +2393,10 @@
       "timezone": "Asia/Novosibirsk",
       "countryTr": "Rusya",
       "countryAr": "روسيا",
-      "countryFa": "روسیه"
+      "countryFa": "روسیه",
+      "nameTr": "Novosibirsk",
+      "nameAr": "نوفوسيبيرسك",
+      "nameFa": "نووسیبیرسک"
     },
     {
       "name": "Saint Petersburg",
@@ -1866,7 +2406,10 @@
       "timezone": "Europe/Moscow",
       "countryTr": "Rusya",
       "countryAr": "روسيا",
-      "countryFa": "روسیه"
+      "countryFa": "روسیه",
+      "nameTr": "Sankt-Peterburg",
+      "nameAr": "سانت بطرسبرغ",
+      "nameFa": "سنپترزبورگ"
     },
     {
       "name": "Yekaterinburg",
@@ -1876,7 +2419,10 @@
       "timezone": "Asia/Yekaterinburg",
       "countryTr": "Rusya",
       "countryAr": "روسيا",
-      "countryFa": "روسیه"
+      "countryFa": "روسیه",
+      "nameTr": "Yekaterinburg",
+      "nameAr": "يكاترينبورغ",
+      "nameFa": "یکاترینبورگ"
     },
     {
       "name": "Singapore",
@@ -1886,7 +2432,10 @@
       "timezone": "Asia/Singapore",
       "countryTr": "Singapur",
       "countryAr": "سنغافورة",
-      "countryFa": "سنگاپور"
+      "countryFa": "سنگاپور",
+      "nameTr": "Singapur",
+      "nameAr": "سنغافورة",
+      "nameFa": "سنگاپور"
     },
     {
       "name": "Mogadishu",
@@ -1896,7 +2445,10 @@
       "timezone": "Africa/Mogadishu",
       "countryTr": "Somali",
       "countryAr": "الصومال",
-      "countryFa": "سومالی"
+      "countryFa": "سومالی",
+      "nameTr": "Mogadişu",
+      "nameAr": "مقديشو",
+      "nameFa": "موگادیشو"
     },
     {
       "name": "Cape Town",
@@ -1906,7 +2458,10 @@
       "timezone": "Africa/Johannesburg",
       "countryTr": "Güney Afrika",
       "countryAr": "جنوب أفريقيا",
-      "countryFa": "آفریقای جنوبی"
+      "countryFa": "آفریقای جنوبی",
+      "nameTr": "Cape Town",
+      "nameAr": "كيب تاون",
+      "nameFa": "کیپتاون"
     },
     {
       "name": "Durban",
@@ -1916,7 +2471,10 @@
       "timezone": "Africa/Johannesburg",
       "countryTr": "Güney Afrika",
       "countryAr": "جنوب أفريقيا",
-      "countryFa": "آفریقای جنوبی"
+      "countryFa": "آفریقای جنوبی",
+      "nameTr": "Durban",
+      "nameAr": "ديربان",
+      "nameFa": "دوربان"
     },
     {
       "name": "Johannesburg",
@@ -1926,7 +2484,10 @@
       "timezone": "Africa/Johannesburg",
       "countryTr": "Güney Afrika",
       "countryAr": "جنوب أفريقيا",
-      "countryFa": "آفریقای جنوبی"
+      "countryFa": "آفریقای جنوبی",
+      "nameTr": "Johannesburg",
+      "nameAr": "جوهانسبرغ",
+      "nameFa": "ژوهانسبورگ"
     },
     {
       "name": "Busan",
@@ -1936,7 +2497,10 @@
       "timezone": "Asia/Seoul",
       "countryTr": "Güney Kore",
       "countryAr": "كوريا الجنوبية",
-      "countryFa": "کره جنوبی"
+      "countryFa": "کره جنوبی",
+      "nameTr": "Busan",
+      "nameAr": "بوسان",
+      "nameFa": "بوسان"
     },
     {
       "name": "Seoul",
@@ -1946,7 +2510,10 @@
       "timezone": "Asia/Seoul",
       "countryTr": "Güney Kore",
       "countryAr": "كوريا الجنوبية",
-      "countryFa": "کره جنوبی"
+      "countryFa": "کره جنوبی",
+      "nameTr": "Seul",
+      "nameAr": "سيول",
+      "nameFa": "سئول"
     },
     {
       "name": "Barcelona",
@@ -1956,7 +2523,10 @@
       "timezone": "Europe/Madrid",
       "countryTr": "İspanya",
       "countryAr": "إسبانيا",
-      "countryFa": "اسپانیا"
+      "countryFa": "اسپانیا",
+      "nameTr": "Barselona",
+      "nameAr": "برشلونة",
+      "nameFa": "بارسلونا"
     },
     {
       "name": "Madrid",
@@ -1966,7 +2536,10 @@
       "timezone": "Europe/Madrid",
       "countryTr": "İspanya",
       "countryAr": "إسبانيا",
-      "countryFa": "اسپانیا"
+      "countryFa": "اسپانیا",
+      "nameTr": "Madrid",
+      "nameAr": "مدريد",
+      "nameFa": "مادرید"
     },
     {
       "name": "Colombo",
@@ -1976,7 +2549,10 @@
       "timezone": "Asia/Colombo",
       "countryTr": "Sri Lanka",
       "countryAr": "سريلانكا",
-      "countryFa": "سریلانکا"
+      "countryFa": "سریلانکا",
+      "nameTr": "Kolombo",
+      "nameAr": "كولومبو",
+      "nameFa": "کلمبو"
     },
     {
       "name": "Khartoum",
@@ -1986,7 +2562,10 @@
       "timezone": "Africa/Khartoum",
       "countryTr": "Sudan",
       "countryAr": "السودان",
-      "countryFa": "سودان"
+      "countryFa": "سودان",
+      "nameTr": "Hartum",
+      "nameAr": "الخرطوم",
+      "nameFa": "خارطوم"
     },
     {
       "name": "Stockholm",
@@ -1996,7 +2575,10 @@
       "timezone": "Europe/Stockholm",
       "countryTr": "İsveç",
       "countryAr": "السويد",
-      "countryFa": "سوئد"
+      "countryFa": "سوئد",
+      "nameTr": "Stockholm",
+      "nameAr": "ستوكهولم",
+      "nameFa": "استکهلم"
     },
     {
       "name": "Geneva",
@@ -2006,7 +2588,10 @@
       "timezone": "Europe/Zurich",
       "countryTr": "İsviçre",
       "countryAr": "سويسرا",
-      "countryFa": "سوئیس"
+      "countryFa": "سوئیس",
+      "nameTr": "Cenevre",
+      "nameAr": "جنيف",
+      "nameFa": "ژنو"
     },
     {
       "name": "Zurich",
@@ -2016,7 +2601,10 @@
       "timezone": "Europe/Zurich",
       "countryTr": "İsviçre",
       "countryAr": "سويسرا",
-      "countryFa": "سوئیس"
+      "countryFa": "سوئیس",
+      "nameTr": "Zürih",
+      "nameAr": "زيورخ",
+      "nameFa": "زوریخ"
     },
     {
       "name": "Aleppo",
@@ -2026,7 +2614,10 @@
       "timezone": "Asia/Damascus",
       "countryTr": "Suriye",
       "countryAr": "سوريا",
-      "countryFa": "سوریه"
+      "countryFa": "سوریه",
+      "nameTr": "Halep",
+      "nameAr": "حلب",
+      "nameFa": "حلب"
     },
     {
       "name": "Damascus",
@@ -2036,7 +2627,10 @@
       "timezone": "Asia/Damascus",
       "countryTr": "Suriye",
       "countryAr": "سوريا",
-      "countryFa": "سوریه"
+      "countryFa": "سوریه",
+      "nameTr": "Şam",
+      "nameAr": "دمشق",
+      "nameFa": "دمشق"
     },
     {
       "name": "Hama",
@@ -2046,7 +2640,10 @@
       "timezone": "Asia/Damascus",
       "countryTr": "Suriye",
       "countryAr": "سوريا",
-      "countryFa": "سوریه"
+      "countryFa": "سوریه",
+      "nameTr": "Hama",
+      "nameAr": "حماة",
+      "nameFa": "حماه"
     },
     {
       "name": "Homs",
@@ -2056,7 +2653,10 @@
       "timezone": "Asia/Damascus",
       "countryTr": "Suriye",
       "countryAr": "سوريا",
-      "countryFa": "سوریه"
+      "countryFa": "سوریه",
+      "nameTr": "Humus",
+      "nameAr": "حمص",
+      "nameFa": "حمص"
     },
     {
       "name": "Latakia",
@@ -2066,7 +2666,10 @@
       "timezone": "Asia/Damascus",
       "countryTr": "Suriye",
       "countryAr": "سوريا",
-      "countryFa": "سوریه"
+      "countryFa": "سوریه",
+      "nameTr": "Lazkiye",
+      "nameAr": "اللاذقية",
+      "nameFa": "لاذقیه"
     },
     {
       "name": "Taipei",
@@ -2076,7 +2679,10 @@
       "timezone": "Asia/Taipei",
       "countryTr": "Tayvan",
       "countryAr": "تايوان",
-      "countryFa": "تایوان"
+      "countryFa": "تایوان",
+      "nameTr": "Taipei",
+      "nameAr": "تايبيه",
+      "nameFa": "تایپه"
     },
     {
       "name": "Dar es Salaam",
@@ -2086,7 +2692,10 @@
       "timezone": "Africa/Dar_es_Salaam",
       "countryTr": "Tanzanya",
       "countryAr": "تنزانيا",
-      "countryFa": "تانزانیا"
+      "countryFa": "تانزانیا",
+      "nameTr": "Darüsselam",
+      "nameAr": "دار السلام",
+      "nameFa": "دارالسلام"
     },
     {
       "name": "Bangkok",
@@ -2096,7 +2705,10 @@
       "timezone": "Asia/Bangkok",
       "countryTr": "Tayland",
       "countryAr": "تايلاند",
-      "countryFa": "تایلند"
+      "countryFa": "تایلند",
+      "nameTr": "Bangkok",
+      "nameAr": "بانكوك",
+      "nameFa": "بانکوک"
     },
     {
       "name": "Chicago",
@@ -2107,7 +2719,10 @@
       "county": "Illinois",
       "countryTr": "ABD",
       "countryAr": "الولايات المتحدة",
-      "countryFa": "ایالات متحده آمریکا"
+      "countryFa": "ایالات متحده آمریکا",
+      "nameTr": "Şikago",
+      "nameAr": "شيكاغو",
+      "nameFa": "شیکاگو"
     },
     {
       "name": "Houston",
@@ -2118,7 +2733,10 @@
       "county": "Texas",
       "countryTr": "ABD",
       "countryAr": "الولايات المتحدة",
-      "countryFa": "ایالات متحده آمریکا"
+      "countryFa": "ایالات متحده آمریکا",
+      "nameTr": "Houston",
+      "nameAr": "هيوستن",
+      "nameFa": "هیوستون"
     },
     {
       "name": "Los Angeles",
@@ -2129,7 +2747,10 @@
       "county": "California",
       "countryTr": "ABD",
       "countryAr": "الولايات المتحدة",
-      "countryFa": "ایالات متحده آمریکا"
+      "countryFa": "ایالات متحده آمریکا",
+      "nameTr": "Los Angeles",
+      "nameAr": "لوس أنجلوس",
+      "nameFa": "لسآنجلس"
     },
     {
       "name": "New York",
@@ -2140,7 +2761,10 @@
       "county": "New York",
       "countryTr": "ABD",
       "countryAr": "الولايات المتحدة",
-      "countryFa": "ایالات متحده آمریکا"
+      "countryFa": "ایالات متحده آمریکا",
+      "nameTr": "New York",
+      "nameAr": "نيويورك",
+      "nameFa": "نیویورک"
     },
     {
       "name": "Phoenix",
@@ -2151,7 +2775,10 @@
       "county": "Arizona",
       "countryTr": "ABD",
       "countryAr": "الولايات المتحدة",
-      "countryFa": "ایالات متحده آمریکا"
+      "countryFa": "ایالات متحده آمریکا",
+      "nameTr": "Phoenix",
+      "nameAr": "فينيكس",
+      "nameFa": "فینیکس"
     },
     {
       "name": "Kampala",
@@ -2161,7 +2788,10 @@
       "timezone": "Africa/Kampala",
       "countryTr": "Uganda",
       "countryAr": "أوغندا",
-      "countryFa": "اوگاندا"
+      "countryFa": "اوگاندا",
+      "nameTr": "Kampala",
+      "nameAr": "كمبالا",
+      "nameFa": "کامپالا"
     },
     {
       "name": "Birmingham",
@@ -2172,7 +2802,10 @@
       "county": "England",
       "countryTr": "Birleşik Krallık",
       "countryAr": "المملكة المتحدة",
-      "countryFa": "بریتانیا"
+      "countryFa": "بریتانیا",
+      "nameTr": "Birmingham",
+      "nameAr": "برمنغهام",
+      "nameFa": "بیرمنگام"
     },
     {
       "name": "London",
@@ -2183,7 +2816,10 @@
       "county": "England",
       "countryTr": "Birleşik Krallık",
       "countryAr": "المملكة المتحدة",
-      "countryFa": "بریتانیا"
+      "countryFa": "بریتانیا",
+      "nameTr": "Londra",
+      "nameAr": "لندن",
+      "nameFa": "لندن"
     },
     {
       "name": "Manchester",
@@ -2194,7 +2830,10 @@
       "county": "England",
       "countryTr": "Birleşik Krallık",
       "countryAr": "المملكة المتحدة",
-      "countryFa": "بریتانیا"
+      "countryFa": "بریتانیا",
+      "nameTr": "Manchester",
+      "nameAr": "مانشستر",
+      "nameFa": "منچستر"
     },
     {
       "name": "Hanoi",
@@ -2204,7 +2843,10 @@
       "timezone": "Asia/Ho_Chi_Minh",
       "countryTr": "Vietnam",
       "countryAr": "فيتنام",
-      "countryFa": "ویتنام"
+      "countryFa": "ویتنام",
+      "nameTr": "Hanoi",
+      "nameAr": "هانوي",
+      "nameFa": "هانوی"
     },
     {
       "name": "Ho Chi Minh City",
@@ -2214,7 +2856,10 @@
       "timezone": "Asia/Ho_Chi_Minh",
       "countryTr": "Vietnam",
       "countryAr": "فيتنام",
-      "countryFa": "ویتنام"
+      "countryFa": "ویتنام",
+      "nameTr": "Ho Chi Minh Kenti",
+      "nameAr": "مدينة هو تشي منه",
+      "nameFa": "هوشیمین"
     },
     {
       "name": "Arnavutköy",
@@ -2788,7 +3433,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Ankara",
       "cityAr": "أنقرة",
-      "cityFa": "آنکارا"
+      "cityFa": "آنکارا",
+      "nameTr": "Ankara",
+      "nameAr": "أنقرة",
+      "nameFa": "آنکارا"
     },
     {
       "name": "Izmir",
@@ -2802,7 +3450,10 @@
       "countryFa": "ترکیه",
       "cityTr": "İzmir",
       "cityAr": "إزمير",
-      "cityFa": "ازمیر"
+      "cityFa": "ازمیر",
+      "nameTr": "İzmir",
+      "nameAr": "إزمير",
+      "nameFa": "ازمیر"
     },
     {
       "name": "Bursa",
@@ -2816,7 +3467,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Bursa",
       "cityAr": "بورصة",
-      "cityFa": "بورسا"
+      "cityFa": "بورسا",
+      "nameTr": "Bursa",
+      "nameAr": "بورصة",
+      "nameFa": "بورسا"
     },
     {
       "name": "Antalya",
@@ -2830,7 +3484,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Antalya",
       "cityAr": "أنطاليا",
-      "cityFa": "آنتالیا"
+      "cityFa": "آنتالیا",
+      "nameTr": "Antalya",
+      "nameAr": "أنطاليا",
+      "nameFa": "آنتالیا"
     },
     {
       "name": "Adana",
@@ -2844,7 +3501,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Adana",
       "cityAr": "أضنة",
-      "cityFa": "آدانا"
+      "cityFa": "آدانا",
+      "nameTr": "Adana",
+      "nameAr": "أضنة",
+      "nameFa": "آدانا"
     },
     {
       "name": "Gaziantep",
@@ -2858,7 +3518,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Gaziantep",
       "cityAr": "غازي عنتاب",
-      "cityFa": "غازیعینتاب"
+      "cityFa": "غازیعینتاب",
+      "nameTr": "Gaziantep",
+      "nameAr": "غازي عنتاب",
+      "nameFa": "غازیعینتاب"
     },
     {
       "name": "Konya",
@@ -2872,7 +3535,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Konya",
       "cityAr": "قونية",
-      "cityFa": "قونیه"
+      "cityFa": "قونیه",
+      "nameTr": "Konya",
+      "nameAr": "قونية",
+      "nameFa": "قونیه"
     },
     {
       "name": "Mersin",
@@ -2886,7 +3552,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Mersin",
       "cityAr": "مرسين",
-      "cityFa": "مرسین"
+      "cityFa": "مرسین",
+      "nameTr": "Mersin",
+      "nameAr": "مرسين",
+      "nameFa": "مرسین"
     },
     {
       "name": "Diyarbakir",
@@ -2900,7 +3569,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Diyarbakır",
       "cityAr": "ديار بكر",
-      "cityFa": "دیاربکر"
+      "cityFa": "دیاربکر",
+      "nameTr": "Diyarbakır",
+      "nameAr": "ديار بكر",
+      "nameFa": "دیاربکر"
     },
     {
       "name": "Eskisehir",
@@ -2914,7 +3586,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Eskişehir",
       "cityAr": "إسكي شهر",
-      "cityFa": "اسکیشهر"
+      "cityFa": "اسکیشهر",
+      "nameTr": "Eskişehir",
+      "nameAr": "إسكي شهر",
+      "nameFa": "اسکیشهر"
     },
     {
       "name": "Samsun",
@@ -2928,7 +3603,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Samsun",
       "cityAr": "سامسون",
-      "cityFa": "سامسون"
+      "cityFa": "سامسون",
+      "nameTr": "Samsun",
+      "nameAr": "سامسون",
+      "nameFa": "سامسون"
     },
     {
       "name": "Denizli",
@@ -2942,7 +3620,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Denizli",
       "cityAr": "دنيزلي",
-      "cityFa": "دنیزلی"
+      "cityFa": "دنیزلی",
+      "nameTr": "Denizli",
+      "nameAr": "دنيزلي",
+      "nameFa": "دنیزلی"
     },
     {
       "name": "Kahramanmaras",
@@ -2956,7 +3637,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Kahramanmaraş",
       "cityAr": "قهرمان مرعش",
-      "cityFa": "قهرمانمرعش"
+      "cityFa": "قهرمانمرعش",
+      "nameTr": "Kahramanmaraş",
+      "nameAr": "قهرمان مرعش",
+      "nameFa": "قهرمانمرعش"
     },
     {
       "name": "Malatya",
@@ -2970,7 +3654,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Malatya",
       "cityAr": "ملطية",
-      "cityFa": "ملطیه"
+      "cityFa": "ملطیه",
+      "nameTr": "Malatya",
+      "nameAr": "ملطية",
+      "nameFa": "ملطیه"
     },
     {
       "name": "Erzurum",
@@ -2984,7 +3671,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Erzurum",
       "cityAr": "أرضروم",
-      "cityFa": "ارزروم"
+      "cityFa": "ارزروم",
+      "nameTr": "Erzurum",
+      "nameAr": "أرضروم",
+      "nameFa": "ارزروم"
     },
     {
       "name": "Van",
@@ -2998,7 +3688,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Van",
       "cityAr": "وان",
-      "cityFa": "وان"
+      "cityFa": "وان",
+      "nameTr": "Van",
+      "nameAr": "وان",
+      "nameFa": "وان"
     },
     {
       "name": "Elazig",
@@ -3012,7 +3705,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Elazığ",
       "cityAr": "إلازيغ",
-      "cityFa": "الازیغ"
+      "cityFa": "الازیغ",
+      "nameTr": "Elazığ",
+      "nameAr": "إلازيغ",
+      "nameFa": "الازیغ"
     },
     {
       "name": "Zonguldak",
@@ -3026,7 +3722,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Zonguldak",
       "cityAr": "زونغولداك",
-      "cityFa": "زونگولداک"
+      "cityFa": "زونگولداک",
+      "nameTr": "Zonguldak",
+      "nameAr": "زونغولداك",
+      "nameFa": "زونگولداک"
     },
     {
       "name": "Manisa",
@@ -3040,7 +3739,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Manisa",
       "cityAr": "مانيسا",
-      "cityFa": "مانیسا"
+      "cityFa": "مانیسا",
+      "nameTr": "Manisa",
+      "nameAr": "مانيسا",
+      "nameFa": "مانیسا"
     },
     {
       "name": "Sakarya",
@@ -3054,7 +3756,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Sakarya",
       "cityAr": "سكاريا",
-      "cityFa": "ساکاریا"
+      "cityFa": "ساکاریا",
+      "nameTr": "Sakarya",
+      "nameAr": "سكاريا",
+      "nameFa": "ساکاریا"
     },
     {
       "name": "Kocaeli",
@@ -3068,7 +3773,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Kocaeli",
       "cityAr": "قوجه ايلي",
-      "cityFa": "قوجاایلی"
+      "cityFa": "قوجاایلی",
+      "nameTr": "Kocaeli",
+      "nameAr": "قوجه ايلي",
+      "nameFa": "قوجاایلی"
     },
     {
       "name": "Trabzon",
@@ -3082,7 +3790,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Trabzon",
       "cityAr": "طرابزون",
-      "cityFa": "ترابزون"
+      "cityFa": "ترابزون",
+      "nameTr": "Trabzon",
+      "nameAr": "طرابزون",
+      "nameFa": "ترابزون"
     },
     {
       "name": "Edirne",
@@ -3096,7 +3807,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Edirne",
       "cityAr": "أدرنة",
-      "cityFa": "ادرنه"
+      "cityFa": "ادرنه",
+      "nameTr": "Edirne",
+      "nameAr": "أدرنة",
+      "nameFa": "ادرنه"
     },
     {
       "name": "Kirikkale",
@@ -3110,7 +3824,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Kırıkkale",
       "cityAr": "قيريق قلعة",
-      "cityFa": "قیریققلعه"
+      "cityFa": "قیریققلعه",
+      "nameTr": "Kırıkkale",
+      "nameAr": "قيريق قلعة",
+      "nameFa": "قیریققلعه"
     },
     {
       "name": "Aydin",
@@ -3124,7 +3841,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Aydın",
       "cityAr": "أيدين",
-      "cityFa": "آیدین"
+      "cityFa": "آیدین",
+      "nameTr": "Aydın",
+      "nameAr": "أيدين",
+      "nameFa": "آیدین"
     },
     {
       "name": "Usak",
@@ -3138,7 +3858,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Uşak",
       "cityAr": "أوشاك",
-      "cityFa": "اوشاک"
+      "cityFa": "اوشاک",
+      "nameTr": "Uşak",
+      "nameAr": "أوشاك",
+      "nameFa": "اوشاک"
     },
     {
       "name": "Aksaray",
@@ -3152,7 +3875,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Aksaray",
       "cityAr": "أقصراي",
-      "cityFa": "آقسرای"
+      "cityFa": "آقسرای",
+      "nameTr": "Aksaray",
+      "nameAr": "أقصراي",
+      "nameFa": "آقسرای"
     },
     {
       "name": "Nigde",
@@ -3166,7 +3892,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Niğde",
       "cityAr": "نيدا",
-      "cityFa": "نیغده"
+      "cityFa": "نیغده",
+      "nameTr": "Niğde",
+      "nameAr": "نيدا",
+      "nameFa": "نیغده"
     },
     {
       "name": "Tokat",
@@ -3180,7 +3909,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Tokat",
       "cityAr": "توقات",
-      "cityFa": "توقات"
+      "cityFa": "توقات",
+      "nameTr": "Tokat",
+      "nameAr": "توقات",
+      "nameFa": "توقات"
     },
     {
       "name": "Tekirdag",
@@ -3194,7 +3926,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Tekirdağ",
       "cityAr": "تكيرداغ",
-      "cityFa": "تکیرداغ"
+      "cityFa": "تکیرداغ",
+      "nameTr": "Tekirdağ",
+      "nameAr": "تكيرداغ",
+      "nameFa": "تکیرداغ"
     },
     {
       "name": "Karabuk",
@@ -3208,7 +3943,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Karabük",
       "cityAr": "كارابوك",
-      "cityFa": "کارابوک"
+      "cityFa": "کارابوک",
+      "nameTr": "Karabük",
+      "nameAr": "كارابوك",
+      "nameFa": "کارابوک"
     },
     {
       "name": "Kastamonu",
@@ -3222,7 +3960,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Kastamonu",
       "cityAr": "قسطموني",
-      "cityFa": "کاستامونو"
+      "cityFa": "کاستامونو",
+      "nameTr": "Kastamonu",
+      "nameAr": "قسطموني",
+      "nameFa": "کاستامونو"
     },
     {
       "name": "Sivas",
@@ -3236,7 +3977,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Sivas",
       "cityAr": "سيواس",
-      "cityFa": "سیواس"
+      "cityFa": "سیواس",
+      "nameTr": "Sivas",
+      "nameAr": "سيواس",
+      "nameFa": "سیواس"
     },
     {
       "name": "Yalova",
@@ -3250,7 +3994,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Yalova",
       "cityAr": "يالوفا",
-      "cityFa": "یالووا"
+      "cityFa": "یالووا",
+      "nameTr": "Yalova",
+      "nameAr": "يالوفا",
+      "nameFa": "یالووا"
     },
     {
       "name": "Kirsehir",
@@ -3264,7 +4011,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Kırşehir",
       "cityAr": "قير شهير",
-      "cityFa": "قرشهر"
+      "cityFa": "قرشهر",
+      "nameTr": "Kırşehir",
+      "nameAr": "قير شهير",
+      "nameFa": "قرشهر"
     },
     {
       "name": "Nevsehir",
@@ -3278,7 +4028,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Nevşehir",
       "cityAr": "نوشهر",
-      "cityFa": "نوشهر"
+      "cityFa": "نوشهر",
+      "nameTr": "Nevşehir",
+      "nameAr": "نوشهر",
+      "nameFa": "نوشهر"
     },
     {
       "name": "Cankiri",
@@ -3292,7 +4045,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Çankırı",
       "cityAr": "جانقري",
-      "cityFa": "چانقری"
+      "cityFa": "چانقری",
+      "nameTr": "Çankırı",
+      "nameAr": "جانقري",
+      "nameFa": "چانقری"
     },
     {
       "name": "Bartin",
@@ -3306,7 +4062,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Bartın",
       "cityAr": "بارتين",
-      "cityFa": "بارتین"
+      "cityFa": "بارتین",
+      "nameTr": "Bartın",
+      "nameAr": "بارتين",
+      "nameFa": "بارتین"
     },
     {
       "name": "Duzce",
@@ -3320,7 +4079,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Düzce",
       "cityAr": "دوزجه",
-      "cityFa": "دوزجه"
+      "cityFa": "دوزجه",
+      "nameTr": "Düzce",
+      "nameAr": "دوزجه",
+      "nameFa": "دوزجه"
     },
     {
       "name": "Bolu",
@@ -3334,7 +4096,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Bolu",
       "cityAr": "بولو",
-      "cityFa": "بولو"
+      "cityFa": "بولو",
+      "nameTr": "Bolu",
+      "nameAr": "بولو",
+      "nameFa": "بولو"
     },
     {
       "name": "Karaman",
@@ -3348,7 +4113,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Karaman",
       "cityAr": "قرة مان",
-      "cityFa": "کارامان"
+      "cityFa": "کارامان",
+      "nameTr": "Karaman",
+      "nameAr": "قرة مان",
+      "nameFa": "کارامان"
     },
     {
       "name": "Kirklareli",
@@ -3362,7 +4130,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Kırklareli",
       "cityAr": "قرقلر ايلي",
-      "cityFa": "قرقلرایلی"
+      "cityFa": "قرقلرایلی",
+      "nameTr": "Kırklareli",
+      "nameAr": "قرقلر ايلي",
+      "nameFa": "قرقلرایلی"
     },
     {
       "name": "Mus",
@@ -3376,7 +4147,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Muş",
       "cityAr": "موش",
-      "cityFa": "موش"
+      "cityFa": "موش",
+      "nameTr": "Muş",
+      "nameAr": "موش",
+      "nameFa": "موش"
     },
     {
       "name": "Bingol",
@@ -3390,7 +4164,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Bingöl",
       "cityAr": "بينغول",
-      "cityFa": "بینگول"
+      "cityFa": "بینگول",
+      "nameTr": "Bingöl",
+      "nameAr": "بينغول",
+      "nameFa": "بینگول"
     },
     {
       "name": "Tunceli",
@@ -3404,7 +4181,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Tunceli",
       "cityAr": "تونجلي",
-      "cityFa": "تونجلی"
+      "cityFa": "تونجلی",
+      "nameTr": "Tunceli",
+      "nameAr": "تونجلي",
+      "nameFa": "تونجلی"
     },
     {
       "name": "Hakkari",
@@ -3418,7 +4198,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Hakkâri",
       "cityAr": "هكاري",
-      "cityFa": "حکاری"
+      "cityFa": "حکاری",
+      "nameTr": "Hakkâri",
+      "nameAr": "هكاري",
+      "nameFa": "حکاری"
     },
     {
       "name": "Sanliurfa",
@@ -3432,7 +4215,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Şanlıurfa",
       "cityAr": "شانلي أورفة",
-      "cityFa": "شانلیاورفا"
+      "cityFa": "شانلیاورفا",
+      "nameTr": "Şanlıurfa",
+      "nameAr": "شانلي أورفة",
+      "nameFa": "شانلیاورفا"
     },
     {
       "name": "Sirnak",
@@ -3446,7 +4232,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Şırnak",
       "cityAr": "شرناق",
-      "cityFa": "شرناق"
+      "cityFa": "شرناق",
+      "nameTr": "Şırnak",
+      "nameAr": "شرناق",
+      "nameFa": "شرناق"
     },
     {
       "name": "Siirt",
@@ -3460,7 +4249,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Siirt",
       "cityAr": "سعرد",
-      "cityFa": "سعرد"
+      "cityFa": "سعرد",
+      "nameTr": "Siirt",
+      "nameAr": "سعرد",
+      "nameFa": "سعرد"
     },
     {
       "name": "Bitlis",
@@ -3474,7 +4266,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Bitlis",
       "cityAr": "بدليس",
-      "cityFa": "بتلیس"
+      "cityFa": "بتلیس",
+      "nameTr": "Bitlis",
+      "nameAr": "بدليس",
+      "nameFa": "بتلیس"
     },
     {
       "name": "Kilis",
@@ -3488,7 +4283,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Kilis",
       "cityAr": "كلس",
-      "cityFa": "کیلیس"
+      "cityFa": "کیلیس",
+      "nameTr": "Kilis",
+      "nameAr": "كلس",
+      "nameFa": "کیلیس"
     },
     {
       "name": "Mardin",
@@ -3502,7 +4300,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Mardin",
       "cityAr": "ماردين",
-      "cityFa": "ماردین"
+      "cityFa": "ماردین",
+      "nameTr": "Mardin",
+      "nameAr": "ماردين",
+      "nameFa": "ماردین"
     },
     {
       "name": "Batman",
@@ -3516,7 +4317,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Batman",
       "cityAr": "بطمان",
-      "cityFa": "باطمان"
+      "cityFa": "باطمان",
+      "nameTr": "Batman",
+      "nameAr": "بطمان",
+      "nameFa": "باطمان"
     },
     {
       "name": "Igdir",
@@ -3530,7 +4334,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Iğdır",
       "cityAr": "إغدير",
-      "cityFa": "ایغدیر"
+      "cityFa": "ایغدیر",
+      "nameTr": "Iğdır",
+      "nameAr": "إغدير",
+      "nameFa": "ایغدیر"
     },
     {
       "name": "Ardahan",
@@ -3544,7 +4351,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Ardahan",
       "cityAr": "أردهان",
-      "cityFa": "اردهان"
+      "cityFa": "اردهان",
+      "nameTr": "Ardahan",
+      "nameAr": "أردهان",
+      "nameFa": "اردهان"
     },
     {
       "name": "Artvin",
@@ -3558,7 +4368,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Artvin",
       "cityAr": "أرتوين",
-      "cityFa": "آرتوین"
+      "cityFa": "آرتوین",
+      "nameTr": "Artvin",
+      "nameAr": "أرتوين",
+      "nameFa": "آرتوین"
     },
     {
       "name": "Gumushane",
@@ -3572,7 +4385,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Gümüşhane",
       "cityAr": "كوموش خانة",
-      "cityFa": "گوموشخانه"
+      "cityFa": "گوموشخانه",
+      "nameTr": "Gümüşhane",
+      "nameAr": "كوموش خانة",
+      "nameFa": "گوموشخانه"
     },
     {
       "name": "Bayburt",
@@ -3586,7 +4402,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Bayburt",
       "cityAr": "بايبورت",
-      "cityFa": "بایبورت"
+      "cityFa": "بایبورت",
+      "nameTr": "Bayburt",
+      "nameAr": "بايبورت",
+      "nameFa": "بایبورت"
     },
     {
       "name": "Amasya",
@@ -3600,7 +4419,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Amasya",
       "cityAr": "أماسيا",
-      "cityFa": "آماسیه"
+      "cityFa": "آماسیه",
+      "nameTr": "Amasya",
+      "nameAr": "أماسيا",
+      "nameFa": "آماسیه"
     },
     {
       "name": "Ordu",
@@ -3614,7 +4436,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Ordu",
       "cityAr": "أوردو",
-      "cityFa": "اردو"
+      "cityFa": "اردو",
+      "nameTr": "Ordu",
+      "nameAr": "أوردو",
+      "nameFa": "اردو"
     },
     {
       "name": "Giresun",
@@ -3628,7 +4453,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Giresun",
       "cityAr": "غيرسون",
-      "cityFa": "گیرسون"
+      "cityFa": "گیرسون",
+      "nameTr": "Giresun",
+      "nameAr": "غيرسون",
+      "nameFa": "گیرسون"
     },
     {
       "name": "Rize",
@@ -3642,7 +4470,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Rize",
       "cityAr": "ريزه",
-      "cityFa": "ریزه"
+      "cityFa": "ریزه",
+      "nameTr": "Rize",
+      "nameAr": "ريزه",
+      "nameFa": "ریزه"
     },
     {
       "name": "Sinop",
@@ -3656,7 +4487,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Sinop",
       "cityAr": "سينوب",
-      "cityFa": "سینوپ"
+      "cityFa": "سینوپ",
+      "nameTr": "Sinop",
+      "nameAr": "سينوب",
+      "nameFa": "سینوپ"
     },
     {
       "name": "Kayseri",
@@ -3670,7 +4504,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Kayseri",
       "cityAr": "قيصرية",
-      "cityFa": "قیصریه"
+      "cityFa": "قیصریه",
+      "nameTr": "Kayseri",
+      "nameAr": "قيصرية",
+      "nameFa": "قیصریه"
     },
     {
       "name": "Isparta",
@@ -3684,7 +4521,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Isparta",
       "cityAr": "إسبرطة",
-      "cityFa": "اسپارتا"
+      "cityFa": "اسپارتا",
+      "nameTr": "Isparta",
+      "nameAr": "إسبرطة",
+      "nameFa": "اسپارتا"
     },
     {
       "name": "Bilecik",
@@ -3698,7 +4538,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Bilecik",
       "cityAr": "بيله جك",
-      "cityFa": "بیلهجیک"
+      "cityFa": "بیلهجیک",
+      "nameTr": "Bilecik",
+      "nameAr": "بيله جك",
+      "nameFa": "بیلهجیک"
     },
     {
       "name": "Burdur",
@@ -3712,7 +4555,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Burdur",
       "cityAr": "بوردور",
-      "cityFa": "بوردور"
+      "cityFa": "بوردور",
+      "nameTr": "Burdur",
+      "nameAr": "بوردور",
+      "nameFa": "بوردور"
     },
     {
       "name": "Kutahya",
@@ -3726,7 +4572,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Kütahya",
       "cityAr": "كوتاهية",
-      "cityFa": "کوتاهیه"
+      "cityFa": "کوتاهیه",
+      "nameTr": "Kütahya",
+      "nameAr": "كوتاهية",
+      "nameFa": "کوتاهیه"
     },
     {
       "name": "Afyon",
@@ -3740,7 +4589,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Afyonkarahisar",
       "cityAr": "أفيون قره حصار",
-      "cityFa": "افیون قرهحصار"
+      "cityFa": "افیون قرهحصار",
+      "nameTr": "Afyonkarahisar",
+      "nameAr": "أفيون قره حصار",
+      "nameFa": "افیون قرهحصار"
     },
     {
       "name": "Canakkale",
@@ -3754,7 +4606,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Çanakkale",
       "cityAr": "جناق قلعة",
-      "cityFa": "چاناققلعه"
+      "cityFa": "چاناققلعه",
+      "nameTr": "Çanakkale",
+      "nameAr": "جناق قلعة",
+      "nameFa": "چاناققلعه"
     },
     {
       "name": "Balikesir",
@@ -3768,7 +4623,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Balıkesir",
       "cityAr": "باليكسير",
-      "cityFa": "بالیکسیر"
+      "cityFa": "بالیکسیر",
+      "nameTr": "Balıkesir",
+      "nameAr": "باليكسير",
+      "nameFa": "بالیکسیر"
     },
     {
       "name": "Yozgat",
@@ -3782,7 +4640,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Yozgat",
       "cityAr": "يوزغات",
-      "cityFa": "یوزگات"
+      "cityFa": "یوزگات",
+      "nameTr": "Yozgat",
+      "nameAr": "يوزغات",
+      "nameFa": "یوزگات"
     },
     {
       "name": "Hatay",
@@ -3796,7 +4657,10 @@
       "countryFa": "ترکیه",
       "cityTr": "Hatay",
       "cityAr": "هاتاي",
-      "cityFa": "هاتای"
+      "cityFa": "هاتای",
+      "nameTr": "Hatay",
+      "nameAr": "هاتاي",
+      "nameFa": "هاتای"
     }
   ]
 }
