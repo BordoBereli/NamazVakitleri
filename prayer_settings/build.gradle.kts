@@ -27,6 +27,11 @@ android {
             )
         }
     }
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -71,6 +76,7 @@ dependencies {
     
     // Robolectric and MockWebServer for integration tests
     testImplementation(libs.robolectric)
+    testImplementation(libs.junit.vintage.engine)
     testImplementation(libs.okhttp.mockwebserver)
     testImplementation(libs.mockk)
     testImplementation(libs.truth)
