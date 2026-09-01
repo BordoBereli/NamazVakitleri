@@ -89,6 +89,14 @@ class SavedVersesViewModel(
 
     private fun reorderGroups(groups: List<SavedVerseGroup>) {
         viewModelScope.launch {
+            val current = _uiState.value as? SavedVersesUiState.Success ?: return@launch
+            val currentSurahs = current.groups.map { it.surah.number }.toSet()
+            val incomingSurahs = groups.map { it.surah.number }.toSet()
+            if (incomingSurahs != currentSurahs) {
+                Log.e("SavedVersesViewModel", "Ignoring group reorder while a search filter is active")
+                loadSavedVerses()
+                return@launch
+            }
             reorderSavedVersesUseCase(groups)
                 .onSuccess { updateGroups(groups) }
                 .onFailure {
@@ -101,6 +109,14 @@ class SavedVersesViewModel(
     private fun reorderWithinGroup(surahNumber: Int, verses: List<AyahData>) {
         viewModelScope.launch {
             val current = _uiState.value as? SavedVersesUiState.Success ?: return@launch
+            val currentGroup = current.groups.firstOrNull { it.surah.number == surahNumber } ?: return@launch
+            val currentNumbers = currentGroup.verses.map { it.numberInSurah }.toSet()
+            val incomingNumbers = verses.map { it.numberInSurah }.toSet()
+            if (incomingNumbers != currentNumbers) {
+                Log.e("SavedVersesViewModel", "Ignoring within-group reorder while a search filter is active")
+                loadSavedVerses()
+                return@launch
+            }
             val groups = current.groups.map { group ->
                 if (group.surah.number == surahNumber) group.copy(verses = verses) else group
             }
@@ -122,7 +138,8 @@ class SavedVersesViewModel(
                 current.collapsedSurahs + surahNumber
             }
             _uiState.value = current.copy(collapsedSurahs = collapsed)
-            setCollapsedSurahsUseCase(collapsed)
+            runCatching { setCollapsedSurahsUseCase(collapsed) }
+                .onFailure { Log.e("SavedVersesViewModel", "Failed to persist collapse state -> ${it.message}") }
         }
     }
 

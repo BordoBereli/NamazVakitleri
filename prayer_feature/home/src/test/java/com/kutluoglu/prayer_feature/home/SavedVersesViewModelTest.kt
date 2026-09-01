@@ -152,6 +152,40 @@ class SavedVersesViewModelTest {
     }
 
     @Test
+    fun `group reorder with a filtered subset is ignored`() = runTest {
+        val groups = listOf(group(1, 1), group(36, 1))
+        coEvery { getSavedVersesUseCase("tr") } returns Result.success(groups)
+        coEvery { reorderSavedVersesUseCase(any()) } returns Result.success(Unit)
+
+        val vm = viewModel()
+        advanceUntilIdle()
+        // Simulate the screen passing a filtered subset (only surah 36) while searching
+        vm.onEvent(SavedVersesEvent.OnReorderGroups(listOf(group(36, 1))))
+        advanceUntilIdle()
+
+        coVerify(exactly = 0) { reorderSavedVersesUseCase(any()) }
+        val state = vm.uiState.value as SavedVersesUiState.Success
+        assertThat(state.groups.map { it.surah.number }).containsExactly(1, 36).inOrder()
+    }
+
+    @Test
+    fun `within-group reorder with a filtered subset is ignored`() = runTest {
+        val groups = listOf(group(1, 1, 2, 3))
+        coEvery { getSavedVersesUseCase("tr") } returns Result.success(groups)
+        coEvery { reorderSavedVersesUseCase(any()) } returns Result.success(Unit)
+
+        val vm = viewModel()
+        advanceUntilIdle()
+        // Simulate passing only a subset of the surah's verses
+        vm.onEvent(SavedVersesEvent.OnReorderWithinGroup(1, listOf(verse(1, 2), verse(1, 1))))
+        advanceUntilIdle()
+
+        coVerify(exactly = 0) { reorderSavedVersesUseCase(any()) }
+        val state = vm.uiState.value as SavedVersesUiState.Success
+        assertThat(state.groups[0].verses.map { it.numberInSurah }).containsExactly(1, 2, 3).inOrder()
+    }
+
+    @Test
     fun `remove toggles the verse and reloads`() = runTest {
         coEvery { getSavedVersesUseCase("tr") } returnsMany listOf(
             Result.success(listOf(group(1, 1, 2))),
