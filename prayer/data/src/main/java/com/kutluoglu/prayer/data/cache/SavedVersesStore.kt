@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import com.kutluoglu.prayer.model.quran.AyahData
 import com.kutluoglu.prayer.model.quran.SavedVerseGroup
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
@@ -85,14 +86,16 @@ class SavedVersesStore(
     }
 
     private suspend fun migrateIfNeeded() {
-        dataStore.edit { prefs ->
-            if (prefs[keyGroups] != null) return@edit
-            val raw = prefs[keyLegacy] ?: return@edit
-            if (raw.isBlank()) return@edit
+        val prefs = dataStore.data.first()
+        if (prefs[keyGroups] != null) return
+        val raw = prefs[keyLegacy] ?: return
+        if (raw.isBlank()) return
+        dataStore.edit { editable ->
+            if (editable[keyGroups] != null) return@edit
             val flat = runCatching { json.decodeFromString<List<AyahData>>(raw) }.getOrDefault(emptyList())
             val groups = groupBySurah(flat)
-            prefs[keyGroups] = withContext(Dispatchers.Default) { json.encodeToString(groups) }
-            prefs.remove(keyLegacy)
+            editable[keyGroups] = withContext(Dispatchers.Default) { json.encodeToString(groups) }
+            editable.remove(keyLegacy)
         }
     }
 
