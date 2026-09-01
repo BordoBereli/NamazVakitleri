@@ -16,4 +16,5 @@
     <string name="permission_grant_message">Namaz vakitlerini bulunduğunuz yere göre doğru bir şekilde hesaplamak için konum izninize ihtiyacımız var.</string>
     <string name="grant_permission">İzin Ver</string>
     <string name="choose_location">Konum Seç</string>
+    <string name="select_country_hint">Bir ülke seçin</string>
 </resources>
