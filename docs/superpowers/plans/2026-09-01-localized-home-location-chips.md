@@ -386,82 +386,30 @@ git commit -m "feat(settings): persist localized display names when saving locat
 **Files:**
 - Modify: `prayer_feature/home/src/main/java/com/kutluoglu/prayer_feature/home/components/LocationChipsRow.kt:109`
 - Modify: `prayer_feature/home/src/main/java/com/kutluoglu/prayer_feature/home/LocationPager.kt`
-- Test: `prayer_feature/home/src/test/java/com/kutluoglu/prayer_feature/home/LocationPagerCountdownTest.kt`
+- Modify: `prayer_feature/home/src/main/java/com/kutluoglu/prayer_feature/home/HomeScreen.kt`
+- Modify: `prayer_feature/home/src/main/java/com/kutluoglu/prayer_feature/home/navigation/HomeRoute.kt`
+- Test: `prayer_feature/home/src/test/java/com/kutluoglu/prayer_feature/home/LocationPagerCountdownTest.kt` (add `languageCode`)
+- Create: `prayer_feature/home/src/test/java/com/kutluoglu/prayer_feature/home/LocationChipsLocalizationTest.kt`
 
-Context: `LocationChipsRow` renders `text = entry.displayName`. We resolve the active language via the existing `LanguageProvider` (Koin singleton in `core:designsystem`, already a dependency of `prayer_location` and transitively available to home via `prayer_feature:common`/`core:designsystem`) and pass the localized name into the chip.
+Context: `LocationChipsRow` renders `text = entry.displayName`. We thread the active language code as an explicit `languageCode: String` parameter from the top: `HomeRoute` resolves the existing `LanguageProvider` (Koin singleton in `core:designsystem`) via the module's established `org.koin.compose.koinInject` pattern and passes `languageCode` down through `HomeScreen → LocationPager → LocationChipsRow`. Every composable in that chain stays pure/testable (takes `languageCode` as a plain required param). This follows the existing home convention (`HomeRoute` already uses `koinInject` for `QuranVerseFormatter`, `PrayerLogicEngine`, `PrayerFormatter`) and keeps `LocationPagerCountdownTest`/Robolectric tests DI-free.
 
-- [ ] **Step 1: Wire `LanguageProvider` into the chips row**
+**Decision (fixed):** resolve `LanguageProvider.getLanguageCode()` in `HomeRoute` ONLY via `koinInject`; do NOT add language state to `HomeViewModel` (larger blast radius, unnecessary since language changes trigger activity recreation per the language-agnostic plan). Pass `languageCode` as required (non-defaulted) params through `HomeScreen`, `LocationPager`, and `LocationChipsRow` so callers are forced to be explicit.
 
-Modify `LocationChipsRow.kt` — add the `LanguageProvider` parameter and use `LocationNameLocalizer`:
+- [ ] **Step 1: Write the failing localization test (before wiring)**
 
-```kotlin
-// inside LocationChipsRow, replace the chip text line:
-LocationChip(
-    text = LocationNameLocalizer.localized(entry, languageCode),
-    ...
-)
-```
-
-Add the `languageCode` parameter to `LocationChipsRow`:
-
-```kotlin
-@Composable
-fun LocationChipsRow(
-    entries: List<LocationEntry>,
-    selectedId: String?,
-    pagerState: PagerState,
-    onLocationSelected: (String) -> Unit,
-    onAddLocation: () -> Unit,
-    languageCode: String,
-    modifier: Modifier = Modifier
-)
-```
-
-Add imports:
-```kotlin
-import com.kutluoglu.prayer.model.location.LocationNameLocalizer
-```
-
-In `LocationPager.kt`, resolve the language code and pass it down:
-
-```kotlin
-val languageProvider = koinInject<LanguageProvider>()
-val languageCode = languageProvider.getLanguageCode()
-...
-LocationChipsRow(
-    entries = entries,
-    selectedId = activeLocationId,
-    pagerState = pagerState,
-    onLocationSelected = onLocationSelected,
-    onAddLocation = onAddLocation,
-    languageCode = languageCode
-)
-```
-
-Add imports to `LocationPager.kt`:
-```kotlin
-import androidx.lifecycle.compose.collectAsStateWithLifecycle // if not already present, or use koinInject per module convention
-import org.koin.compose.koinInject if using Koin Compose
-import com.kutluoglu.core.designsystem.utils.LanguageProvider
-```
-
-Verify which DI/compose-injection style the home module uses (it already uses Koin Compose in `HomeRoute`/`SavedVersesScreen`). Use the existing convention — if the module uses `org.koin.compose.koinInject`, use it here; otherwise thread `languageCode` from the ViewModel state (preferred, as it is testable without DI). **Preferred approach for testability:** have `HomeViewModel` expose the language code in its ui state (or a dedicated StateFlow) and pass it through `LocationPager` → `LocationChipsRow` as a plain parameter. Follow whichever pattern `HomeViewModel` already uses for `LocationsState`. If that is too invasive, inject `LanguageProvider` in the composable.
-
-- [ ] **Step 2: Write/update the rendering test**
-
-In `LocationPagerCountdownTest.kt` (or a new focused `LocationChipsLocalizationTest.kt` in `prayer_feature/home/src/test/java/com/kutluoglu/prayer_feature/home/`), add a test that renders `LocationChipsRow` with a localized `LocationEntry` and asserts the chip shows the localized name for a given `languageCode`:
+Create `prayer_feature/home/src/test/java/com/kutluoglu/prayer_feature/home/LocationChipsLocalizationTest.kt`, mirroring `LocationPagerCountdownTest`'s Robolectric harness (`@RunWith(RobolectricTestRunner::class)`, `@Config(sdk = [35])`, `createAndroidComposeRule<ComponentActivity>()`):
 
 ```kotlin
 @Test
 fun `chip renders localized name for turkish`() {
     val entry = LocationEntry(
-        id = "x",
-        location = LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", null),
+        id = "loc-1",
+        location = LocationData(41.0082, 28.9784, "Turkey", "TR", "Istanbul", null),
         displayName = "Istanbul, Turkey",
         displayNameTr = "İstanbul, Türkiye",
         displayNameAr = "إسطنبول، تركيا"
     )
-    setContent {
+    composeTestRule.setContent {
         LocationChipsRow(
             entries = listOf(entry),
             selectedId = null,
@@ -471,33 +419,51 @@ fun `chip renders localized name for turkish`() {
             languageCode = "tr"
         )
     }
+    composeTestRule.waitForIdle()
     composeTestRule.onNodeWithText("İstanbul, Türkiye").assertIsDisplayed()
 }
 ```
 
-Follow the existing `LocationPagerCountdownTest`'s `setContent`/rule setup conventions exactly (it already sets up a `PagerState`). Adjust the test to match how that file renders chips (it may render via `LocationPager`, not `LocationChipsRow` directly — mirror whatever is simplest and already works).
+Also add a test asserting the ENGLISH fallback when `languageCode = "en"` shows `"Istanbul, Turkey"` (guards the else branch).
+This test will NOT compile yet (no `languageCode` param) — that is the expected RED.
 
-- [ ] **Step 3: Run test to verify it fails (before wiring)**
+- [ ] **Step 2: Apply the render wiring**
+
+`LocationChipsRow.kt` — add required param + use the localizer:
+- Signature: add `languageCode: String,` before `modifier`
+- Line 109: `text = LocationNameLocalizer.localized(entry, languageCode)`
+- Import: `import com.kutluoglu.prayer.model.location.LocationNameLocalizer`
+
+`LocationPager.kt` — add required `languageCode: String` param; pass to `LocationChipsRow` at line 112 and to `LocationPlaceholder(entry, languageCode)` at line 143. Update `LocationPlaceholder` (private composable line 149-157) to take `languageCode` and render `LocationNameLocalizer.localized(entry, languageCode)`. Import the localizer.
+
+`HomeScreen.kt` — add required `languageCode: String` param; pass to `LocationPager` at line 99.
+
+`HomeRoute.kt` — resolve and pass:
+```kotlin
+val languageProvider = koinInject<LanguageProvider>()
+val languageCode = languageProvider.getLanguageCode()
+```
+Add `languageCode = languageCode` to the `HomeScreen(...)` call. Import `com.kutluoglu.core.designsystem.utils.LanguageProvider` (already a home dependency via `core:designsystem` — it's already used in `SavedVersesViewModel`/`QuranVerseLoader`).
+
+`LocationPagerCountdownTest.kt` — add `languageCode = "en"` to the existing `LocationPager(...)` call (line 71).
+
+- [ ] **Step 3: Run tests to verify GREEN**
 
 Run: `./gradlew :prayer_feature:home:testDebugUnitTest --tests="com.kutluoglu.prayer_feature.home.LocationChipsLocalizationTest"`
-Expected: FAIL — chip shows "Istanbul, Turkey" not "İstanbul, Türkiye" (or compile error if signature changed first). Write the test before changing the render logic so it demonstrates the behavior.
-
-- [ ] **Step 4: Implement the render wiring**
-
-Apply the `LocationChipsRow` + `LocationPager` changes from Step 1 that route `languageCode` through `LocationNameLocalizer.localized(entry, languageCode)`.
-
-- [ ] **Step 5: Run test to verify it passes**
-
-Run: `./gradlew :prayer_feature:home:testDebugUnitTest --tests="com.kutluoglu.prayer_feature.home.LocationChipsLocalizationTest"`
-Expected: PASS. Then run the full home module tests:
+Expected: PASS (both tests).
+Then run the full home module test suite:
 `./gradlew :prayer_feature:home:testDebugUnitTest`
+Expected: PASS (no regressions).
 
-- [ ] **Step 6: Commit**
+- [ ] **Step 4: Commit**
 
 ```bash
 git add prayer_feature/home/src/main/java/com/kutluoglu/prayer_feature/home/LocationPager.kt \
         prayer_feature/home/src/main/java/com/kutluoglu/prayer_feature/home/components/LocationChipsRow.kt \
-        prayer_feature/home/src/test/java/com/kutluoglu/prayer_feature/home/LocationChipsLocalizationTest.kt
+        prayer_feature/home/src/main/java/com/kutluoglu/prayer_feature/home/HomeScreen.kt \
+        prayer_feature/home/src/main/java/com/kutluoglu/prayer_feature/home/navigation/HomeRoute.kt \
+        prayer_feature/home/src/test/java/com/kutluoglu/prayer_feature/home/LocationChipsLocalizationTest.kt \
+        prayer_feature/home/src/test/java/com/kutluoglu/prayer_feature/home/LocationPagerCountdownTest.kt
 git commit -m "feat(home): render localized location chip names"
 ```
 
