@@ -154,6 +154,20 @@ class QuranRepositoryTest {
     }
 
     @Test
+    fun `getSavedVerses falls back to stored text when re-fetch fails`() = runTest {
+        val stored = listOf(SavedVerseGroup(verse(1, 1).surah, listOf(verse(1, 1).copy(text = "Türkçe metin"))))
+        coEvery { savedVersesStore.getSavedVerseGroups() } returns stored
+        coEvery { quranSurahCache.getSurah(any(), any()) } returns null
+        coEvery { quranDataSource.getSurah(any(), any()) } returns Result.failure(RuntimeException("network"))
+
+        val repository = QuranRepository(quranDataSource, quranSurahCache, savedVersesStore)
+        val result = repository.getSavedVerses("tr")
+
+        assertThat(result.isSuccess).isTrue()
+        assertThat(result.getOrThrow()[0].verses).isEqualTo(stored[0].verses)
+    }
+
+    @Test
     fun `reorderSavedVerses persists the nested groups`() = runTest {
         val groups = listOf(SavedVerseGroup(verse(1, 1).surah, listOf(verse(1, 2), verse(1, 1))))
         coEvery { savedVersesStore.saveGroups(groups) } returns Unit
