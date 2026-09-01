@@ -66,6 +66,6 @@ class QuranSavedVersesKoinTest {
         repository.toggleSavedVerse(verse)
 
         val saved = repository.getSavedVerses("tr").getOrThrow()
-        assertThat(saved).contains(verse)
+        assertThat(saved.flatMap { it.verses }).contains(verse)
     }
 }

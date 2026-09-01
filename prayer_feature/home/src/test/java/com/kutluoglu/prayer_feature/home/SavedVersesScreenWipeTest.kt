@@ -12,8 +12,10 @@ import com.kutluoglu.prayer.di.PrayerDomainModule
 import com.kutluoglu.prayer.model.quran.AyahData
 import com.kutluoglu.prayer.model.quran.SurahInfo
 import com.kutluoglu.prayer.repository.IQuranRepository
+import com.kutluoglu.prayer.usecases.quran.GetCollapsedSurahsUseCase
 import com.kutluoglu.prayer.usecases.quran.GetSavedVersesUseCase
 import com.kutluoglu.prayer.usecases.quran.ReorderSavedVersesUseCase
+import com.kutluoglu.prayer.usecases.quran.SetCollapsedSurahsUseCase
 import com.kutluoglu.prayer.usecases.quran.ToggleSavedVerseUseCase
 import com.kutluoglu.prayer_remote.di.PrayerRemoteModule
 import com.kutluoglu.prayer_remote.quran.QuranDataSource
@@ -84,11 +86,15 @@ class SavedVersesScreenWipeTest {
         val getSavedVersesUseCase: GetSavedVersesUseCase = GlobalContext.get().get()
         val reorderSavedVersesUseCase: ReorderSavedVersesUseCase = GlobalContext.get().get()
         val toggleSavedVerseUseCase: ToggleSavedVerseUseCase = GlobalContext.get().get()
+        val getCollapsedSurahsUseCase: GetCollapsedSurahsUseCase = GlobalContext.get().get()
+        val setCollapsedSurahsUseCase: SetCollapsedSurahsUseCase = GlobalContext.get().get()
         val languageProvider = LanguageProvider()
         val vm = SavedVersesViewModel(
             getSavedVersesUseCase,
             reorderSavedVersesUseCase,
             toggleSavedVerseUseCase,
+            getCollapsedSurahsUseCase,
+            setCollapsedSurahsUseCase,
             languageProvider
         )
 
@@ -106,7 +112,7 @@ class SavedVersesScreenWipeTest {
         runBlocking {
             val repository: IQuranRepository = GlobalContext.get().get()
             val after = repository.getSavedVerses("tr").getOrThrow()
-            assertThat(after).contains(verse)
+            assertThat(after.flatMap { it.verses }).contains(verse)
         }
     }
 }

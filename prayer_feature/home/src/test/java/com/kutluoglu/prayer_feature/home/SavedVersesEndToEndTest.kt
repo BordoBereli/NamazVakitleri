@@ -14,8 +14,10 @@ import com.kutluoglu.prayer.di.PrayerDomainModule
 import com.kutluoglu.prayer.model.quran.AyahData
 import com.kutluoglu.prayer.model.quran.SurahInfo
 import com.kutluoglu.prayer.repository.IQuranRepository
+import com.kutluoglu.prayer.usecases.quran.GetCollapsedSurahsUseCase
 import com.kutluoglu.prayer.usecases.quran.GetSavedVersesUseCase
 import com.kutluoglu.prayer.usecases.quran.ReorderSavedVersesUseCase
+import com.kutluoglu.prayer.usecases.quran.SetCollapsedSurahsUseCase
 import com.kutluoglu.prayer.usecases.quran.ToggleSavedVerseUseCase
 import com.kutluoglu.prayer_remote.di.PrayerRemoteModule
 import com.kutluoglu.prayer_remote.quran.QuranDataSource
@@ -83,12 +85,14 @@ class SavedVersesEndToEndTest {
             val repository: IQuranRepository = GlobalContext.get().get()
             repository.toggleSavedVerse(verse)
             val saved = repository.getSavedVerses("tr").getOrThrow()
-            assertThat(saved).contains(verse)
+            assertThat(saved.flatMap { it.verses }).contains(verse)
         }
 
         val getSavedVersesUseCase: GetSavedVersesUseCase = GlobalContext.get().get()
         val reorderSavedVersesUseCase: ReorderSavedVersesUseCase = GlobalContext.get().get()
         val toggleSavedVerseUseCase: ToggleSavedVerseUseCase = GlobalContext.get().get()
+        val getCollapsedSurahsUseCase: GetCollapsedSurahsUseCase = GlobalContext.get().get()
+        val setCollapsedSurahsUseCase: SetCollapsedSurahsUseCase = GlobalContext.get().get()
         val languageProvider = LanguageProvider()
         val repo1: IQuranRepository = GlobalContext.get().get()
         val repo2: IQuranRepository = GlobalContext.get().get()
@@ -99,13 +103,15 @@ class SavedVersesEndToEndTest {
         runBlocking {
             val direct = repo1.getSavedVerses("tr").getOrThrow()
             val viaUseCase = getSavedVersesUseCase("tr").getOrThrow()
-            assertThat(direct).contains(verse)
-            assertThat(viaUseCase).contains(verse)
+            assertThat(direct.flatMap { it.verses }).contains(verse)
+            assertThat(viaUseCase.flatMap { it.verses }).contains(verse)
         }
         val vm = SavedVersesViewModel(
             getSavedVersesUseCase,
             reorderSavedVersesUseCase,
             toggleSavedVerseUseCase,
+            getCollapsedSurahsUseCase,
+            setCollapsedSurahsUseCase,
             languageProvider
         )
 
@@ -119,7 +125,9 @@ class SavedVersesEndToEndTest {
             )
         }
         composeTestRule.waitForIdle()
-        assertThat(vm.uiState.value).isEqualTo(SavedVersesUiState.Success(listOf(verse)))
+        val state = vm.uiState.value as SavedVersesUiState.Success
+        assertThat(state.groups).hasSize(1)
+        assertThat(state.groups[0].verses).contains(verse)
         composeTestRule.onNodeWithText("Bismillah").assertIsDisplayed()
     }
 }
