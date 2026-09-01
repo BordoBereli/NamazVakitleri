@@ -18,4 +18,11 @@
     <string name="add_location">Ajouter une localisation</string>
     <string name="use_my_location">Utiliser ma localisation</string>
     <string name="permission_denied_hint">L\'autorisation de localisation est désactivée. Utiliser ma localisation ouvrira les paramètres.</string>
+    <string name="saved_verses">Versets enregistrés</string>
+    <string name="no_saved_verses">Aucun verset enregistré pour le moment. Ajoutez un verset en favori depuis l\'écran d\'accueil.</string>
+    <string name="back">Retour</string>
+    <string name="delete">Supprimer</string>
+    <string name="reorder">Réorganiser</string>
+    <string name="save_verse">Enregistrer le verset</string>
+    <string name="unsave_verse">Retirer le verset enregistré</string>
 </resources>

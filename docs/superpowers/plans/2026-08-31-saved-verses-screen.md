@@ -239,7 +239,7 @@ class ReorderSavedVersesUseCase(
 
 - [ ] **Step 3: Verify compilation**
 
-Run: `./gradlew :prayer:domain:compileDebugKotlin`
+Run: `./gradlew :prayer:domain:compileKotlin` (the domain module is pure Kotlin; `compileDebugKotlin` does not exist there)
 Expected: BUILD SUCCESSFUL.
 
 - [ ] **Step 4: Commit**

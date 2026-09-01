@@ -35,7 +35,7 @@ class SavedVersesStore(
         return decoded
     }
 
-    suspend fun isSaved(verse: AyahData): Boolean = getSavedVerses().any { it == verse }
+    suspend fun isSaved(verse: AyahData): Boolean = getSavedVerses().any { it.sameVerse(verse) }
 
     suspend fun toggle(verse: AyahData): Unit {
         dataStore.edit { prefs ->
@@ -45,8 +45,8 @@ class SavedVersesStore(
             } else {
                 runCatching { json.decodeFromString<List<AyahData>>(raw) }.getOrDefault(emptyList())
             }
-            val updated = if (current.any { it == verse }) {
-                current.filterNot { it == verse }
+            val updated = if (current.any { it.sameVerse(verse) }) {
+                current.filterNot { it.sameVerse(verse) }
             } else {
                 listOf(verse) + current
             }
@@ -59,4 +59,12 @@ class SavedVersesStore(
             prefs[key] = withContext(Dispatchers.Default) { json.encodeToString(verses) }
         }
     }
+
+    /**
+     * Verses are identified by their stable position (surah number + number in
+     * surah), not by their translated text, so a verse saved in one language is
+     * still recognized after the app language changes.
+     */
+    private fun AyahData.sameVerse(other: AyahData): Boolean =
+        surah.number == other.surah.number && numberInSurah == other.numberInSurah
 }

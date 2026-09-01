@@ -63,6 +63,18 @@ class SavedVersesStoreTest {
     }
 
     @Test
+    fun `verse is recognized across languages by its position`() = runBlocking {
+        val savedInTurkish = verse(1).copy(text = "Türkçe metin")
+        store.toggle(savedInTurkish)
+
+        val reFetchedInEnglish = verse(1).copy(text = "English text")
+        assertThat(store.isSaved(reFetchedInEnglish)).isTrue()
+
+        store.toggle(reFetchedInEnglish)
+        assertThat(store.isSaved(reFetchedInEnglish)).isFalse()
+    }
+
+    @Test
     fun `saved verses persist across store instances`() = runBlocking {
         val v = verse(2)
         store.toggle(v)

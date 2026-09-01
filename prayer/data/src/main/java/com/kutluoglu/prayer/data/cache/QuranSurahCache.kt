@@ -14,8 +14,9 @@ import org.koin.core.annotation.Named
 import org.koin.core.annotation.Single
 
 /**
- * Persists fetched surahs (as lists of ayahs) keyed by surah number so random
- * verses can be served without a network call. Backed by Preferences DataStore.
+ * Persists fetched surahs (as lists of ayahs) keyed by surah number and language
+ * so random verses and saved-verse re-fetches can be served without a network
+ * call while respecting the active language. Backed by Preferences DataStore.
  */
 @Single
 class QuranSurahCache(
@@ -23,8 +24,8 @@ class QuranSurahCache(
 ) {
     private val json = Json { ignoreUnknownKeys = true }
 
-    suspend fun getSurah(surahNumber: Int): List<AyahData>? {
-        val key = stringPreferencesKey("quran_surah_$surahNumber")
+    suspend fun getSurah(surahNumber: Int, langCode: String): List<AyahData>? {
+        val key = stringPreferencesKey("quran_surah_${surahNumber}_$langCode")
         val raw = dataStore.data.map { it[key] }.firstOrNull()
         if (raw.isNullOrBlank()) return null
         return withContext(Dispatchers.Default) {
@@ -32,8 +33,8 @@ class QuranSurahCache(
         }
     }
 
-    suspend fun putSurah(surahNumber: Int, ayahs: List<AyahData>) {
-        val key = stringPreferencesKey("quran_surah_$surahNumber")
+    suspend fun putSurah(surahNumber: Int, langCode: String, ayahs: List<AyahData>) {
+        val key = stringPreferencesKey("quran_surah_${surahNumber}_$langCode")
         val raw = withContext(Dispatchers.Default) { json.encodeToString(ayahs) }
         dataStore.edit { it[key] = raw }
     }

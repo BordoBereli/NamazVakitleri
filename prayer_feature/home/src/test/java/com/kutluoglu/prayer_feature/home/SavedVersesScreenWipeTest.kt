@@ -6,6 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
+import com.kutluoglu.core.designsystem.utils.LanguageProvider
 import com.kutluoglu.prayer.data.di.PrayerDataModule
 import com.kutluoglu.prayer.di.PrayerDomainModule
 import com.kutluoglu.prayer.model.quran.AyahData
@@ -15,8 +16,11 @@ import com.kutluoglu.prayer.usecases.quran.GetSavedVersesUseCase
 import com.kutluoglu.prayer.usecases.quran.ReorderSavedVersesUseCase
 import com.kutluoglu.prayer.usecases.quran.ToggleSavedVerseUseCase
 import com.kutluoglu.prayer_remote.di.PrayerRemoteModule
+import com.kutluoglu.prayer_remote.quran.QuranDataSource
 import com.kutluoglu.prayer_feature.home.common.QuranVerseFormatter
 import com.kutluoglu.prayer_feature.home.di.PrayerFeatureHomeModule
+import io.mockk.coEvery
+import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
@@ -27,6 +31,7 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.GlobalContext
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
+import org.koin.dsl.module
 import org.koin.ksp.generated.module
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
@@ -46,7 +51,15 @@ class SavedVersesScreenWipeTest {
                 PrayerDataModule.module,
                 PrayerDomainModule.module,
                 PrayerRemoteModule.module,
-                PrayerFeatureHomeModule.module
+                PrayerFeatureHomeModule.module,
+                module {
+                    single<QuranDataSource> {
+                        mockk<QuranDataSource>(relaxed = true).apply {
+                            coEvery { getSurah(any(), any()) } returns
+                                Result.failure(RuntimeException("no network"))
+                        }
+                    }
+                }
             )
         }
     }
@@ -71,7 +84,13 @@ class SavedVersesScreenWipeTest {
         val getSavedVersesUseCase: GetSavedVersesUseCase = GlobalContext.get().get()
         val reorderSavedVersesUseCase: ReorderSavedVersesUseCase = GlobalContext.get().get()
         val toggleSavedVerseUseCase: ToggleSavedVerseUseCase = GlobalContext.get().get()
-        val vm = SavedVersesViewModel(getSavedVersesUseCase, reorderSavedVersesUseCase, toggleSavedVerseUseCase)
+        val languageProvider = LanguageProvider()
+        val vm = SavedVersesViewModel(
+            getSavedVersesUseCase,
+            reorderSavedVersesUseCase,
+            toggleSavedVerseUseCase,
+            languageProvider
+        )
 
         composeTestRule.setContent {
             val state by vm.uiState.collectAsState()
@@ -86,7 +105,7 @@ class SavedVersesScreenWipeTest {
 
         runBlocking {
             val repository: IQuranRepository = GlobalContext.get().get()
-            val after = repository.getSavedVerses().getOrThrow()
+            val after = repository.getSavedVerses("tr").getOrThrow()
             assertThat(after).contains(verse)
         }
     }

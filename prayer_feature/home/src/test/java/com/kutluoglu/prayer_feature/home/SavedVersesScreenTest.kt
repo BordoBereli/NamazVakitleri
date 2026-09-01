@@ -14,6 +14,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeLeft
+import androidx.compose.ui.test.swipeRight
 import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.prayer.model.quran.AyahData
 import com.kutluoglu.prayer.model.quran.SurahInfo
@@ -92,7 +93,25 @@ class SavedVersesScreenTest {
     }
 
     @Test
-    fun `swiping a verse left fires OnRemove`() {
+    fun `swiping a verse right fires OnRemove`() {
+        val events = mutableListOf<SavedVersesEvent>()
+        composeTestRule.setContent {
+            SavedVersesScreen(
+                state = SavedVersesUiState.Success(listOf(verse(1))),
+                verseFormatter = mockk<QuranVerseFormatter>(relaxed = true),
+                onNavigateBack = {},
+                onEvent = { events.add(it) }
+            )
+        }
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText("Text 1").performTouchInput { swipeRight() }
+        composeTestRule.mainClock.advanceTimeBy(1_000)
+        composeTestRule.waitForIdle()
+        assertThat(events).contains(SavedVersesEvent.OnRemove(verse(1)))
+    }
+
+    @Test
+    fun `swiping a verse left does not fire OnRemove`() {
         val events = mutableListOf<SavedVersesEvent>()
         composeTestRule.setContent {
             SavedVersesScreen(
@@ -106,7 +125,7 @@ class SavedVersesScreenTest {
         composeTestRule.onNodeWithText("Text 1").performTouchInput { swipeLeft() }
         composeTestRule.mainClock.advanceTimeBy(1_000)
         composeTestRule.waitForIdle()
-        assertThat(events).contains(SavedVersesEvent.OnRemove(verse(1)))
+        assertThat(events).doesNotContain(SavedVersesEvent.OnRemove(verse(1)))
     }
 
     @Test

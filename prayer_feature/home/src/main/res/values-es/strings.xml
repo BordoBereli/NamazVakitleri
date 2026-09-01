@@ -18,4 +18,11 @@
     <string name="add_location">Añadir ubicación</string>
     <string name="use_my_location">Usar mi ubicación</string>
     <string name="permission_denied_hint">El permiso de ubicación está desactivado. Usar mi ubicación abrirá la configuración.</string>
+    <string name="saved_verses">Versículos guardados</string>
+    <string name="no_saved_verses">Aún no hay versículos guardados. Marca un versículo desde la pantalla de inicio.</string>
+    <string name="back">Atrás</string>
+    <string name="delete">Eliminar</string>
+    <string name="reorder">Reordenar</string>
+    <string name="save_verse">Guardar versículo</string>
+    <string name="unsave_verse">Quitar versículo guardado</string>
 </resources>

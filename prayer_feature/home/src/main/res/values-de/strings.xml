@@ -18,4 +18,11 @@
     <string name="add_location">Standort hinzufügen</string>
     <string name="use_my_location">Meinen Standort verwenden</string>
     <string name="permission_denied_hint">Standortberechtigung ist deaktiviert. Meinen Standort verwenden öffnet die Einstellungen.</string>
+    <string name="saved_verses">Gespeicherte Verse</string>
+    <string name="no_saved_verses">Noch keine gespeicherten Verse. Markiere einen Vers auf dem Startbildschirm als Lesezeichen.</string>
+    <string name="back">Zurück</string>
+    <string name="delete">Löschen</string>
+    <string name="reorder">Neu anordnen</string>
+    <string name="save_verse">Vers speichern</string>
+    <string name="unsave_verse">Vers-Speicherung aufheben</string>
 </resources>

@@ -18,4 +18,11 @@
     <string name="add_location">Tambah lokasi</string>
     <string name="use_my_location">Gunakan Lokasi Saya</string>
     <string name="permission_denied_hint">Izin lokasi nonaktif. Gunakan Lokasi Saya akan membuka pengaturan.</string>
+    <string name="saved_verses">Ayat Tersimpan</string>
+    <string name="no_saved_verses">Belum ada ayat tersimpan. Tandai ayat dari layar utama.</string>
+    <string name="back">Kembali</string>
+    <string name="delete">Hapus</string>
+    <string name="reorder">Urutkan ulang</string>
+    <string name="save_verse">Simpan Ayat</string>
+    <string name="unsave_verse">Batalkan Simpan Ayat</string>
 </resources>

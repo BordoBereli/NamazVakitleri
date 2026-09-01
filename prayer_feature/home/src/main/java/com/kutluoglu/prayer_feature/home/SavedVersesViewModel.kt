@@ -3,6 +3,7 @@ package com.kutluoglu.prayer_feature.home
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kutluoglu.core.designsystem.utils.LanguageProvider
 import com.kutluoglu.prayer.model.quran.AyahData
 import com.kutluoglu.prayer.usecases.quran.GetSavedVersesUseCase
 import com.kutluoglu.prayer.usecases.quran.ReorderSavedVersesUseCase
@@ -18,7 +19,8 @@ import org.koin.android.annotation.KoinViewModel
 class SavedVersesViewModel(
     private val getSavedVersesUseCase: GetSavedVersesUseCase,
     private val reorderSavedVersesUseCase: ReorderSavedVersesUseCase,
-    private val toggleSavedVerseUseCase: ToggleSavedVerseUseCase
+    private val toggleSavedVerseUseCase: ToggleSavedVerseUseCase,
+    private val languageProvider: LanguageProvider
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<SavedVersesUiState>(SavedVersesUiState.Loading)
@@ -49,7 +51,8 @@ class SavedVersesViewModel(
     private fun loadSavedVerses() {
         viewModelScope.launch {
             _uiState.value = SavedVersesUiState.Loading
-            getSavedVersesUseCase()
+            val language = languageProvider.getLanguageCode()
+            getSavedVersesUseCase(language)
                 .onSuccess { verses ->
                     Log.d("SavedVersesViewModel", "Loaded ${verses.size} saved verses")
                     _uiState.value = SavedVersesUiState.Success(verses)

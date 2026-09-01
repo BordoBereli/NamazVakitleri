@@ -18,4 +18,11 @@
     <string name="add_location">เพิ่มตำแหน่ง</string>
     <string name="use_my_location">ใช้ตำแหน่งของฉัน</string>
     <string name="permission_denied_hint">ปิดสิทธิ์ตำแหน่งแล้ว การใช้ตำแหน่งของฉันจะเปิดการตั้งค่า</string>
+    <string name="saved_verses">โองการที่บันทึกไว้</string>
+    <string name="no_saved_verses">ยังไม่มีโองการที่บันทึกไว้ บุ๊กมาร์กโองการจากหน้าหลัก</string>
+    <string name="back">กลับ</string>
+    <string name="delete">ลบ</string>
+    <string name="reorder">จัดเรียงใหม่</string>
+    <string name="save_verse">บันทึกโองการ</string>
+    <string name="unsave_verse">ยกเลิกการบันทึกโองการ</string>
 </resources>

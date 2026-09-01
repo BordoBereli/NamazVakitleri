@@ -18,4 +18,11 @@
     <string name="add_location">स्थान जोड़ें</string>
     <string name="use_my_location">मेरा स्थान उपयोग करें</string>
     <string name="permission_denied_hint">स्थान अनुमति बंद है। मेरा स्थान उपयोग करें से सेटिंग्स खुलेंगी।</string>
+    <string name="saved_verses">सहेजी गई आयतें</string>
+    <string name="no_saved_verses">अभी कोई सहेजी गई आयत नहीं है। होम स्क्रीन से किसी आयत को बुकमार्क करें।</string>
+    <string name="back">वापस</string>
+    <string name="delete">हटाएं</string>
+    <string name="reorder">पुनः क्रमबद्ध करें</string>
+    <string name="save_verse">आयत सहेजें</string>
+    <string name="unsave_verse">आयत सहेजना हटाएं</string>
 </resources>

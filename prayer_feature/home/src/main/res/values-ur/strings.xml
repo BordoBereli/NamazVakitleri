@@ -18,4 +18,11 @@
     <string name="add_location">مقام شامل کریں</string>
     <string name="use_my_location">میرا مقام استعمال کریں</string>
     <string name="permission_denied_hint">مقام کی اجازت بند ہے۔ میرا مقام استعمال کریں سیٹنگز کھولے گا۔</string>
+    <string name="saved_verses">محفوظ شدہ آیات</string>
+    <string name="no_saved_verses">ابھی کوئی محفوظ شدہ آیت نہیں۔ ہوم اسکرین سے کسی آیت کو بک مارک کریں۔</string>
+    <string name="back">واپس</string>
+    <string name="delete">حذف کریں</string>
+    <string name="reorder">دوبارہ ترتیب دیں</string>
+    <string name="save_verse">آیت محفوظ کریں</string>
+    <string name="unsave_verse">آیت کی حفاظت ختم کریں</string>
 </resources>

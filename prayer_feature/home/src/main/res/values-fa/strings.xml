@@ -18,4 +18,11 @@
     <string name="add_location">افزودن موقعیت</string>
     <string name="use_my_location">استفاده از موقعیت من</string>
     <string name="permission_denied_hint">مجوز موقعیت غیرفعال است. استفاده از موقعیت من تنظیمات را باز میکند.</string>
+    <string name="saved_verses">آیه‌های ذخیره‌شده</string>
+    <string name="no_saved_verses">هنوز آیه‌ای ذخیره نشده است. از صفحه اصلی یک آیه را نشانه‌گذاری کنید.</string>
+    <string name="back">بازگشت</string>
+    <string name="delete">حذف</string>
+    <string name="reorder">مرتب‌سازی مجدد</string>
+    <string name="save_verse">ذخیره آیه</string>
+    <string name="unsave_verse">لغو ذخیره آیه</string>
 </resources>

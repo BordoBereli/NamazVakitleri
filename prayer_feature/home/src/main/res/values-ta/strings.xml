@@ -18,4 +18,11 @@
     <string name="add_location">இருப்பிடம் சேர்</string>
     <string name="use_my_location">என் இருப்பிடத்தைப் பயன்படுத்து</string>
     <string name="permission_denied_hint">இருப்பிட அனுமதி முடக்கப்பட்டுள்ளது. என் இருப்பிடத்தைப் பயன்படுத்து அமைப்புகளைத் திறக்கும்.</string>
+    <string name="saved_verses">சேமித்த வசனங்கள்</string>
+    <string name="no_saved_verses">இன்னும் சேமித்த வசனங்கள் இல்லை. முகப்புத் திரையில் இருந்து ஒரு வசனத்தை புக்மார்க் செய்யவும்.</string>
+    <string name="back">பின்</string>
+    <string name="delete">நீக்கு</string>
+    <string name="reorder">மறுவரிசைப்படுத்து</string>
+    <string name="save_verse">வசனத்தைச் சேமி</string>
+    <string name="unsave_verse">வசனச் சேமிப்பை நீக்கு</string>
 </resources>

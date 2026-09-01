@@ -8,8 +8,9 @@ import com.kutluoglu.prayer.model.quran.AyahData
  */
 interface IQuranRepository {
     suspend fun getRandomVerse(language: String): Result<AyahData>
+    suspend fun getVerse(surahNumber: Int, numberInSurah: Int, language: String): Result<AyahData>
     suspend fun isVerseSaved(verse: AyahData): Boolean
     suspend fun toggleSavedVerse(verse: AyahData): Result<Unit>
-    suspend fun getSavedVerses(): Result<List<AyahData>>
+    suspend fun getSavedVerses(language: String): Result<List<AyahData>>
     suspend fun reorderSavedVerses(verses: List<AyahData>): Result<Unit>
 }

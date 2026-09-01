@@ -8,6 +8,7 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
+import com.kutluoglu.core.designsystem.utils.LanguageProvider
 import com.kutluoglu.prayer.data.di.PrayerDataModule
 import com.kutluoglu.prayer.di.PrayerDomainModule
 import com.kutluoglu.prayer.model.quran.AyahData
@@ -17,9 +18,12 @@ import com.kutluoglu.prayer.usecases.quran.GetSavedVersesUseCase
 import com.kutluoglu.prayer.usecases.quran.ReorderSavedVersesUseCase
 import com.kutluoglu.prayer.usecases.quran.ToggleSavedVerseUseCase
 import com.kutluoglu.prayer_remote.di.PrayerRemoteModule
+import com.kutluoglu.prayer_remote.quran.QuranDataSource
 import com.kutluoglu.prayer_feature.home.common.QuranVerseFormatter
 import com.kutluoglu.prayer_feature.home.di.PrayerFeatureHomeModule
 import com.kutluoglu.prayer_feature.home.state.SavedVersesUiState
+import io.mockk.coEvery
+import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
@@ -30,6 +34,7 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.GlobalContext
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
+import org.koin.dsl.module
 import org.koin.ksp.generated.module
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
@@ -49,7 +54,15 @@ class SavedVersesEndToEndTest {
                 PrayerDataModule.module,
                 PrayerDomainModule.module,
                 PrayerRemoteModule.module,
-                PrayerFeatureHomeModule.module
+                PrayerFeatureHomeModule.module,
+                module {
+                    single<QuranDataSource> {
+                        mockk<QuranDataSource>(relaxed = true).apply {
+                            coEvery { getSurah(any(), any()) } returns
+                                Result.failure(RuntimeException("no network"))
+                        }
+                    }
+                }
             )
         }
     }
@@ -69,13 +82,14 @@ class SavedVersesEndToEndTest {
         runBlocking {
             val repository: IQuranRepository = GlobalContext.get().get()
             repository.toggleSavedVerse(verse)
-            val saved = repository.getSavedVerses().getOrThrow()
+            val saved = repository.getSavedVerses("tr").getOrThrow()
             assertThat(saved).contains(verse)
         }
 
         val getSavedVersesUseCase: GetSavedVersesUseCase = GlobalContext.get().get()
         val reorderSavedVersesUseCase: ReorderSavedVersesUseCase = GlobalContext.get().get()
         val toggleSavedVerseUseCase: ToggleSavedVerseUseCase = GlobalContext.get().get()
+        val languageProvider = LanguageProvider()
         val repo1: IQuranRepository = GlobalContext.get().get()
         val repo2: IQuranRepository = GlobalContext.get().get()
         val store1: com.kutluoglu.prayer.data.cache.SavedVersesStore = GlobalContext.get().get()
@@ -83,12 +97,17 @@ class SavedVersesEndToEndTest {
         assertThat(repo1 === repo2).isTrue()
         assertThat(store1 === store2).isTrue()
         runBlocking {
-            val direct = repo1.getSavedVerses().getOrThrow()
-            val viaUseCase = getSavedVersesUseCase().getOrThrow()
+            val direct = repo1.getSavedVerses("tr").getOrThrow()
+            val viaUseCase = getSavedVersesUseCase("tr").getOrThrow()
             assertThat(direct).contains(verse)
             assertThat(viaUseCase).contains(verse)
         }
-        val vm = SavedVersesViewModel(getSavedVersesUseCase, reorderSavedVersesUseCase, toggleSavedVerseUseCase)
+        val vm = SavedVersesViewModel(
+            getSavedVersesUseCase,
+            reorderSavedVersesUseCase,
+            toggleSavedVerseUseCase,
+            languageProvider
+        )
 
         composeTestRule.setContent {
             val state by vm.uiState.collectAsState()

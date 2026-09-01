@@ -49,23 +49,35 @@ class QuranSurahCacheTest {
 
     @Test
     fun `getSurah returns null for a missing surah`() = runBlocking {
-        assertThat(cache.getSurah(1)).isNull()
+        assertThat(cache.getSurah(1, "tr")).isNull()
     }
 
     @Test
     fun `putSurah then getSurah returns the cached ayahs`() = runBlocking {
         val ayahs = listOf(verse(1), verse(2))
 
-        cache.putSurah(1, ayahs)
+        cache.putSurah(1, "tr", ayahs)
 
-        assertThat(cache.getSurah(1)).isEqualTo(ayahs)
+        assertThat(cache.getSurah(1, "tr")).isEqualTo(ayahs)
     }
 
     @Test
     fun `getSurah returns null for corrupt json`() = runBlocking {
-        val key = androidx.datastore.preferences.core.stringPreferencesKey("quran_surah_1")
+        val key = androidx.datastore.preferences.core.stringPreferencesKey("quran_surah_1_tr")
         dataStore.edit { it[key] = "not-json" }
 
-        assertThat(cache.getSurah(1)).isNull()
+        assertThat(cache.getSurah(1, "tr")).isNull()
+    }
+
+    @Test
+    fun `surahs cached under different languages are kept separate`() = runBlocking {
+        val tr = listOf(verse(1))
+        val en = listOf(verse(1).copy(text = "English text"))
+
+        cache.putSurah(1, "tr", tr)
+        cache.putSurah(1, "en", en)
+
+        assertThat(cache.getSurah(1, "tr")).isEqualTo(tr)
+        assertThat(cache.getSurah(1, "en")).isEqualTo(en)
     }
 }

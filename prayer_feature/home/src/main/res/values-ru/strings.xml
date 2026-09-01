@@ -18,4 +18,11 @@
     <string name="add_location">Добавить местоположение</string>
     <string name="use_my_location">Использовать моё местоположение</string>
     <string name="permission_denied_hint">Разрешение на местоположение отключено. Использовать моё местоположение откроет настройки.</string>
+    <string name="saved_verses">Сохранённые аяты</string>
+    <string name="no_saved_verses">Пока нет сохранённых аятов. Добавьте аят в закладки с главного экрана.</string>
+    <string name="back">Назад</string>
+    <string name="delete">Удалить</string>
+    <string name="reorder">Изменить порядок</string>
+    <string name="save_verse">Сохранить аят</string>
+    <string name="unsave_verse">Убрать из сохранённых</string>
 </resources>

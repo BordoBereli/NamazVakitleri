@@ -18,4 +18,11 @@
     <string name="add_location">অবস্থান যোগ করুন</string>
     <string name="use_my_location">আমার অবস্থান ব্যবহার করুন</string>
     <string name="permission_denied_hint">অবস্থানের অনুমতি বন্ধ। আমার অবস্থান ব্যবহার করলে সেটিংস খুলবে।</string>
+    <string name="saved_verses">সংরক্ষিত আয়াত</string>
+    <string name="no_saved_verses">এখনও কোনো সংরক্ষিত আয়াত নেই। হোম স্ক্রিন থেকে একটি আয়াত বুকমার্ক করুন।</string>
+    <string name="back">ফিরে যান</string>
+    <string name="delete">মুছুন</string>
+    <string name="reorder">পুনরায় সাজান</string>
+    <string name="save_verse">আয়াত সংরক্ষণ করুন</string>
+    <string name="unsave_verse">আয়াত সংরক্ষণ বাতিল করুন</string>
 </resources>

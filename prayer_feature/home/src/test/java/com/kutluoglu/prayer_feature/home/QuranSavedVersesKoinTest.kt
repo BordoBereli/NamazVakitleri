@@ -8,6 +8,9 @@ import com.kutluoglu.prayer.model.quran.AyahData
 import com.kutluoglu.prayer.model.quran.SurahInfo
 import com.kutluoglu.prayer.repository.IQuranRepository
 import com.kutluoglu.prayer_remote.di.PrayerRemoteModule
+import com.kutluoglu.prayer_remote.quran.QuranDataSource
+import io.mockk.coEvery
+import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
@@ -17,6 +20,7 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.GlobalContext
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
+import org.koin.dsl.module
 import org.koin.ksp.generated.module
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
@@ -32,7 +36,15 @@ class QuranSavedVersesKoinTest {
             modules(
                 PrayerDataModule.module,
                 PrayerDomainModule.module,
-                PrayerRemoteModule.module
+                PrayerRemoteModule.module,
+                module {
+                    single<QuranDataSource> {
+                        mockk<QuranDataSource>(relaxed = true).apply {
+                            coEvery { getSurah(any(), any()) } returns
+                                Result.failure(RuntimeException("no network"))
+                        }
+                    }
+                }
             )
         }
     }
@@ -53,7 +65,7 @@ class QuranSavedVersesKoinTest {
 
         repository.toggleSavedVerse(verse)
 
-        val saved = repository.getSavedVerses().getOrThrow()
+        val saved = repository.getSavedVerses("tr").getOrThrow()
         assertThat(saved).contains(verse)
     }
 }

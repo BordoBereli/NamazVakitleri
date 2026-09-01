@@ -136,4 +136,11 @@
     <string name="add_location">Konum ekle</string>
     <string name="use_my_location">Konumumu Kullan</string>
     <string name="permission_denied_hint">Konum izni kapalı. Konumumu Kullan ayarları açacak.</string>
+    <string name="saved_verses">Kaydedilen Ayetler</string>
+    <string name="no_saved_verses">Henüz kaydedilmiş ayet yok. Ana ekrandan bir ayeti kaydedin.</string>
+    <string name="back">Geri</string>
+    <string name="delete">Sil</string>
+    <string name="reorder">Yeniden sırala</string>
+    <string name="save_verse">Ayeti Kaydet</string>
+    <string name="unsave_verse">Kaydı Kaldır</string>
 </resources>
