@@ -3,7 +3,6 @@ package com.kutluoglu.prayer_settings.data.repository
 import android.content.Context
 import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.prayer.model.location.CityList
-import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import org.junit.Before
 import org.junit.Test
