@@ -62,6 +62,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.kutluoglu.core.designsystem.components.LoadingIndicator
 import com.kutluoglu.prayer_feature.settings.BuildConfig
 import com.kutluoglu.prayer_feature.settings.R
+import com.kutluoglu.prayer_notifications.domain.AdhanStyle
 import com.kutluoglu.prayer_notifications.domain.NotificationSettings
 import org.koin.androidx.compose.koinViewModel
 
@@ -320,6 +321,14 @@ private fun NotificationsContent(
                 volume = settings.adhanVolume,
                 onVolumeChange = { onEvent(NotificationsEvent.SetAdhanVolume(it)) }
             )
+            if (AdhanStyle.entries.size > 1) {
+                AdhanStylePickers(
+                    adhanStyles = settings.adhanStyles,
+                    onStyleSelected = { prayerKey, styleId ->
+                        onEvent(NotificationsEvent.SetAdhanStyle(prayerKey, styleId))
+                    }
+                )
+            }
         }
         ToggleRow(
             title = stringResource(R.string.countdown),
@@ -569,6 +578,42 @@ private fun AdhanVolumeSlider(
             onValueChange = { onVolumeChange(it.toInt()) },
             valueRange = 0f..100f
         )
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun AdhanStylePickers(
+    adhanStyles: Map<String, String>,
+    onStyleSelected: (String, String) -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        NotificationSettings.PRAYER_KEYS.forEach { prayerKey ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = prayerNameRes(prayerKey),
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.weight(1f)
+                )
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    AdhanStyle.entries.forEach { style ->
+                        FilterChip(
+                            selected = (adhanStyles[prayerKey] ?: AdhanStyle.DEFAULT.id) == style.id,
+                            onClick = { onStyleSelected(prayerKey, style.id) },
+                            label = { Text(style.id) }
+                        )
+                    }
+                }
+            }
+        }
     }
 }
 

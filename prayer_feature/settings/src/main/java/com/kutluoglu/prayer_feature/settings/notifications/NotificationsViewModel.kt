@@ -37,6 +37,9 @@ class NotificationsViewModel(
             }
             is NotificationsEvent.SetAdhanEnabled -> update { it.copy(adhanEnabled = event.enabled) }
             is NotificationsEvent.SetAdhanVolume -> update { it.copy(adhanVolume = event.volume) }
+            is NotificationsEvent.SetAdhanStyle -> update {
+                it.copy(adhanStyles = it.adhanStyles + (event.prayerKey to event.styleId))
+            }
             is NotificationsEvent.SetCountdownEnabled -> update { it.copy(countdownEnabled = event.enabled) }
             is NotificationsEvent.SetPrePrayerReminder -> update {
                 it.copy(prePrayerReminderEnabled = event.enabled, prePrayerMinutes = event.minutes)
