@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="prayers">
+        <item>ইমসাক</item>
         <item>ফজর</item>
         <item>সূর্যোদয়</item>
         <item>যোহর</item>

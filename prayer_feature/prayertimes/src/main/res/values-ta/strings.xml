@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="page_title">தொழுகை நேரங்கள்</string>
-    <string name="prayer_imsak">இம்சாக்</string>
     <string name="page_sub_title">மாதாந்திர தொழுகை அட்டவணை</string>
     <string name="image_desc">கும்பிடு</string>
     <string name="today">இன்று</string>

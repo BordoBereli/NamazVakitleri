@@ -8,7 +8,6 @@
     <string name="time_until_prayer_format">%1$s तक का समय</string>
     <string name="time_until_sunrise">सूर्योदय तक का समय</string>
     <string name="prayer_jumuah">जुमुआ</string>
-    <string name="prayer_imsak">इमसाक</string>
     <string name="unknown_error_message">अज्ञात त्रुटि</string>
     <string name="share_verse">आयत साझा करें</string>
     <string name="no_verse_available">(कोई आयत उपलब्ध नहीं।)</string>

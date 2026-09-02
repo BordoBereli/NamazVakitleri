@@ -613,4 +613,20 @@ class PrayerNotificationSchedulerTest {
 
         assertThat(shadowOf(alarmManager).scheduledAlarms).isEmpty()
     }
+
+    @Test
+    fun `buildDailySummary excludes imsak`() {
+        val scheduler = scheduler(CoroutineScope(UnconfinedTestDispatcher()))
+        val prayers = listOf(
+            Prayer("Imsak", "الإمساك", LocalTime(4, 50), LocalDate(2026, 9, 2), isImsak = true),
+            Prayer("Fajr", "الفجر", LocalTime(5, 0), LocalDate(2026, 9, 2)),
+            Prayer("Dhuhr", "الظهر", LocalTime(12, 30), LocalDate(2026, 9, 2))
+        )
+
+        val summary = scheduler.buildDailySummary(prayers)
+
+        assertThat(summary).doesNotContain("Imsak")
+        assertThat(summary).contains("Fajr 05:00")
+        assertThat(summary).contains("Dhuhr 12:30")
+    }
 }

@@ -8,7 +8,6 @@
     <string name="time_until_prayer_format">Temps avant %1$s</string>
     <string name="time_until_sunrise">Temps avant le lever du soleil</string>
     <string name="prayer_jumuah">Jumu\'ah</string>
-    <string name="prayer_imsak">Imsak</string>
     <string name="unknown_error_message">Erreur inconnue</string>
     <string name="share_verse">Partager le verset</string>
     <string name="no_verse_available">(Aucun verset disponible.)</string>

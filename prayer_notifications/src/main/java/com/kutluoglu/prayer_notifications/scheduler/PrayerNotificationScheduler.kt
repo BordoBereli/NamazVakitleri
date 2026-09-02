@@ -333,8 +333,8 @@ class PrayerNotificationScheduler(
         )
     }
 
-    private fun buildDailySummary(prayers: List<Prayer>): String =
-        prayers.joinToString(" · ") { prayer ->
+    internal fun buildDailySummary(prayers: List<Prayer>): String =
+        prayers.filterNot { it.isImsak }.joinToString(" · ") { prayer ->
             val time = "${prayer.time.hour.toString().padStart(2, '0')}:" +
                 prayer.time.minute.toString().padStart(2, '0')
             "${prayer.name} $time"

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="page_title">Waktu Solat</string>
-    <string name="prayer_imsak">Imsak</string>
     <string name="page_sub_title">Jadual Solat Bulanan</string>
     <string name="image_desc">Kubah</string>
     <string name="today">Hari Ini</string>

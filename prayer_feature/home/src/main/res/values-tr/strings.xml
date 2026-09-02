@@ -8,7 +8,6 @@
     <string name="time_until_prayer_format">%1$s namazına kalan süre: </string>
     <string name="time_until_sunrise">Güneş\'in doğmasına kalan süre: </string>
     <string name="prayer_jumuah">Cuma</string>
-    <string name="prayer_imsak">İmsak</string>
     <string name="unknown_error_message">Bilinmeyen bir hata oluştu.</string>
     <string name="share_verse">Paylaş</string>
 

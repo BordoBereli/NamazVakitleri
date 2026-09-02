@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="prayers">
+        <item>இம்சாக்</item>
         <item>ஃபஜ்ர்</item>
         <item>சூரிய உதயம்</item>
         <item>ஜுஹர்</item>

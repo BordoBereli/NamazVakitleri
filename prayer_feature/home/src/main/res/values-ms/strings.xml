@@ -8,7 +8,6 @@
     <string name="time_until_prayer_format">Masa sehingga %1$s</string>
     <string name="time_until_sunrise">Masa sehingga matahari terbit</string>
     <string name="prayer_jumuah">Jumaat</string>
-    <string name="prayer_imsak">Imsak</string>
     <string name="unknown_error_message">Ralat tidak diketahui</string>
     <string name="share_verse">Kongsi Ayat</string>
     <string name="no_verse_available">(Tiada ayat tersedia.)</string>

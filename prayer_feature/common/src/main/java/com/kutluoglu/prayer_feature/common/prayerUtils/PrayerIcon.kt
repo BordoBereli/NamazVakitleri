@@ -8,16 +8,17 @@ import com.kutluoglu.prayer_feature.common.R as AppR
 
 
 internal fun buildPrayerIconMap(prayerNames: List<String>): Map<String, Int> =
-    if (prayerNames.size < 6) {
+    if (prayerNames.size < 7) {
         emptyMap()
     } else {
         mapOf(
             prayerNames[0] to AppR.drawable.facr,
-            prayerNames[1] to AppR.drawable.sunrise,
-            prayerNames[2] to AppR.drawable.dhuhr,
-            prayerNames[3] to AppR.drawable.asr,
-            prayerNames[4] to AppR.drawable.magrip,
-            prayerNames[5] to AppR.drawable.isha
+            prayerNames[1] to AppR.drawable.facr,
+            prayerNames[2] to AppR.drawable.sunrise,
+            prayerNames[3] to AppR.drawable.dhuhr,
+            prayerNames[4] to AppR.drawable.asr,
+            prayerNames[5] to AppR.drawable.magrip,
+            prayerNames[6] to AppR.drawable.isha
         )
     }
 

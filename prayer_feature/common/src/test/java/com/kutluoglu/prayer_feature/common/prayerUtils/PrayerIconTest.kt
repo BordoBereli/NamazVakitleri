@@ -6,12 +6,13 @@ import org.junit.jupiter.api.Test
 
 class PrayerIconTest {
 
-    private val sixNames = listOf("Fajr", "Sunrise", "Dhuhr", "Asr", "Maghrib", "Isha")
+    private val sevenNames = listOf("Imsak", "Fajr", "Sunrise", "Dhuhr", "Asr", "Maghrib", "Isha")
 
     @Test
-    fun `builds a map for six localized prayer names`() {
-        val map = buildPrayerIconMap(sixNames)
-        assertThat(map).hasSize(6)
+    fun `builds a map for seven localized prayer names`() {
+        val map = buildPrayerIconMap(sevenNames)
+        assertThat(map).hasSize(7)
+        assertThat(map["Imsak"]).isEqualTo(AppR.drawable.facr)
         assertThat(map["Fajr"]).isEqualTo(AppR.drawable.facr)
         assertThat(map["Sunrise"]).isEqualTo(AppR.drawable.sunrise)
         assertThat(map["Dhuhr"]).isEqualTo(AppR.drawable.dhuhr)
@@ -21,7 +22,7 @@ class PrayerIconTest {
     }
 
     @Test
-    fun `returns an empty map when fewer than six names are provided`() {
+    fun `returns an empty map when fewer than seven names are provided`() {
         assertThat(buildPrayerIconMap(listOf("Fajr", "Sunrise"))).isEmpty()
     }
 

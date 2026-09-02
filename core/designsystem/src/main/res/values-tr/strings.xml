@@ -2,6 +2,7 @@
 <resources>
     <string-array name="prayers">
         <item>İmsak</item>
+        <item>Fecir</item>
         <item>Güneş</item>
         <item>Öğle</item>
         <item>İkindi</item>
