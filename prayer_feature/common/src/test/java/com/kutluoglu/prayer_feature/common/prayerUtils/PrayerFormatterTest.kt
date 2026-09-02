@@ -17,14 +17,13 @@ class PrayerFormatterTest {
     private val today = LocalDate.of(2026, 8, 19)
 
     @Test
-    fun `withLocalizedNames localizes seven prayers including imsak`() {
+    fun `withLocalizedNames localizes six prayers including imsak`() {
         val resourcesProvider = mockk<ResourcesProvider>(relaxed = true)
         every { resourcesProvider.getStringArray(any()) } returns
-            arrayOf("Imsak", "Fajr", "Sunrise", "Dhuhr", "Asr", "Maghrib", "Isha")
+            arrayOf("Imsak", "Sunrise", "Dhuhr", "Asr", "Maghrib", "Isha")
         val formatter = PrayerFormatter(resourcesProvider)
         val prayers = listOf(
             Prayer("Imsak", "الإمساك", kotlinx.datetime.LocalTime(4, 50), kotlinx.datetime.LocalDate(2026, 9, 2), isImsak = true),
-            Prayer("Fajr", "الفجر", kotlinx.datetime.LocalTime(5, 0), kotlinx.datetime.LocalDate(2026, 9, 2)),
             Prayer("Sunrise", "الشروق", kotlinx.datetime.LocalTime(6, 30), kotlinx.datetime.LocalDate(2026, 9, 2)),
             Prayer("Dhuhr", "الظهر", kotlinx.datetime.LocalTime(12, 30), kotlinx.datetime.LocalDate(2026, 9, 2)),
             Prayer("Asr", "العصر", kotlinx.datetime.LocalTime(15, 30), kotlinx.datetime.LocalDate(2026, 9, 2)),
@@ -35,7 +34,7 @@ class PrayerFormatterTest {
         val localized = formatter.withLocalizedNames(prayers)
 
         assertThat(localized.map { it.name })
-            .containsExactly("Imsak", "Fajr", "Sunrise", "Dhuhr", "Asr", "Maghrib", "Isha")
+            .containsExactly("Imsak", "Sunrise", "Dhuhr", "Asr", "Maghrib", "Isha")
             .inOrder()
     }
 

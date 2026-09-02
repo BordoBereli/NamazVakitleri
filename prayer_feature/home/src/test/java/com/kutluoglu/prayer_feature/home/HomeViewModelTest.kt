@@ -452,54 +452,22 @@ class HomeViewModelTest {
         coEvery { getSettingsUseCase() } returns Settings(calculationMethod = "TURKEY_DIYANET", juristicMethod = "STANDARD")
         every { settingsRepository.observeSettings() } returns settingsFlow
         coEvery {
-            prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET, any(), any(), JuristicMethod.STANDARD)
+            prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET, any(), JuristicMethod.STANDARD)
         } returns success(loadedData())
 
         val vm = viewModel()
         coVerify(exactly = 1) {
-            prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET, any(), any(), JuristicMethod.STANDARD)
+            prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET, any(), JuristicMethod.STANDARD)
         }
 
         coEvery { getSettingsUseCase() } returns Settings(calculationMethod = "TURKEY_DIYANET", juristicMethod = "HANAFI")
         coEvery {
-            prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET, any(), any(), JuristicMethod.HANAFI)
+            prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET, any(), JuristicMethod.HANAFI)
         } returns success(loadedData())
         settingsFlow.value = Settings(calculationMethod = "TURKEY_DIYANET", juristicMethod = "HANAFI")
 
         coVerify {
-            prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET, any(), any(), JuristicMethod.HANAFI)
-        }
-    }
-
-    @Test
-    fun `imsak offset change clears cache and reloads with new offset`() = runTest {
-        val settingsFlow = MutableStateFlow(
-            Settings(calculationMethod = "TURKEY_DIYANET", imsakOffsetMinutes = 10)
-        )
-        coEvery { locationsCoordinator.observeState() } returns flowOf(
-            LocationsState(entries = listOf(entry), selectedId = "loc-1")
-        )
-        coEvery { locationsCoordinator.resolveInitial() } returns location
-        coEvery { locationsCoordinator.resolveSelected() } returns location
-        coEvery { getSettingsUseCase() } returns Settings(calculationMethod = "TURKEY_DIYANET", imsakOffsetMinutes = 10)
-        every { settingsRepository.observeSettings() } returns settingsFlow
-        coEvery {
-            prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET, any(), 10, any())
-        } returns success(loadedData())
-
-        val vm = viewModel()
-        coVerify(exactly = 1) {
-            prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET, any(), 10, any())
-        }
-
-        coEvery { getSettingsUseCase() } returns Settings(calculationMethod = "TURKEY_DIYANET", imsakOffsetMinutes = 20)
-        coEvery {
-            prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET, any(), 20, any())
-        } returns success(loadedData())
-        settingsFlow.value = Settings(calculationMethod = "TURKEY_DIYANET", imsakOffsetMinutes = 20)
-
-        coVerify {
-            prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET, any(), 20, any())
+            prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET, any(), JuristicMethod.HANAFI)
         }
     }
 

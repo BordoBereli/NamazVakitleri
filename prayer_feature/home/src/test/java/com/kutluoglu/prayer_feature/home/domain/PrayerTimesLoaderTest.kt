@@ -86,21 +86,6 @@ class PrayerTimesLoaderTest {
     }
 
     @Test
-    fun `load forwards imsak offset to use case`() = runTest {
-        val date = LocalDate(2026, 8, 2)
-        val fajr = Prayer(name = "İmsak", arabicName = "الفجر", time = LocalTime(5, 0), date = date)
-        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any(), any(), 15) } returns success(listOf(fajr))
-        every { formatter.withLocalizedNames(any()) } returns listOf(fajr)
-        every { formatter.locationInfo(any()) } returns "Istanbul, TR"
-        every { calculator.findCurrentAndNextPrayer(any(), any()) } returns Pair(fajr, null)
-
-        val loader = PrayerTimesLoader(getPrayerTimesUseCase, calculator, formatter)
-        loader.load(location, CalculationMethod.TURKEY_DIYANET, imsakOffsetMinutes = 15)
-
-        coVerify { getPrayerTimesUseCase.invoke(any(), any(), any(), any(), any(), 15) }
-    }
-
-    @Test
     fun `computePrayerState marks only the current prayer as isCurrent`() = runTest {
         val date = LocalDate(2026, 8, 2)
         val fajr = Prayer(name = "İmsak", arabicName = "الفجر", time = LocalTime(5, 0), date = date)

@@ -21,7 +21,7 @@ class PrayerTimesLoaderJuristicTest {
 
     @Test
     fun `load forwards juristic method to use case`() = runTest {
-        coEvery { useCase.invoke(any(), any(), any(), any(), any(), any(), any(), any()) } returns Result.success(emptyList())
+        coEvery { useCase.invoke(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(emptyList())
         every { formatter.withLocalizedNames(any()) } returns emptyList()
         every { calculator.findCurrentAndNextPrayer(any(), any()) } returns Pair(null, null)
         val loader = PrayerTimesLoader(useCase, calculator, formatter)
@@ -30,6 +30,6 @@ class PrayerTimesLoaderJuristicTest {
             calculationMethod = CalculationMethod.TURKEY_DIYANET,
             juristicMethod = JuristicMethod.HANAFI
         )
-        coVerify { useCase.invoke(any(), any(), any(), any(), any(), any(), juristicMethod = JuristicMethod.HANAFI, any()) }
+        coVerify { useCase.invoke(any(), any(), any(), any(), any(), juristicMethod = JuristicMethod.HANAFI, any()) }
     }
 }

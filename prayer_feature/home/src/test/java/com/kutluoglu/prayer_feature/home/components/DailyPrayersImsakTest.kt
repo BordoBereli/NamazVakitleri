@@ -22,10 +22,10 @@ class DailyPrayersImsakTest {
     @Test
     fun `renders imsak card with imsak time`() {
         val imsak = Prayer("Imsak", "الإمساك", LocalTime(4, 50), LocalDate(2026, 9, 2), isImsak = true)
-        val fajr = Prayer("Fajr", "الفجر", LocalTime(5, 0), LocalDate(2026, 9, 2))
+        val sunrise = Prayer("Sunrise", "الشروق", LocalTime(6, 0), LocalDate(2026, 9, 2))
         composeRule.setContent {
             DailyPrayers(
-                prayerState = PrayerUiState(prayers = listOf(imsak, fajr)),
+                prayerState = PrayerUiState(prayers = listOf(imsak, sunrise)),
                 isRefreshing = false,
                 onRefresh = {},
                 onViewAllClicked = {}

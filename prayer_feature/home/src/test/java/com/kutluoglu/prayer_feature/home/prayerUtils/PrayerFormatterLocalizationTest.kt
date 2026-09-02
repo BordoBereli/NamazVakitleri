@@ -19,7 +19,7 @@ class PrayerFormatterLocalizationTest {
         val formatter = PrayerFormatter(ResourcesProvider(RuntimeEnvironment.getApplication()))
         val prayers = listOf(
             Prayer("Imsak", "الإمساك", kotlinx.datetime.LocalTime(4, 50), kotlinx.datetime.LocalDate(2026, 9, 2), isImsak = true),
-            Prayer("Fajr", "الفجر", kotlinx.datetime.LocalTime(5, 0), kotlinx.datetime.LocalDate(2026, 9, 2)),
+            Prayer("Imsak", "الإمساك", kotlinx.datetime.LocalTime(5, 0), kotlinx.datetime.LocalDate(2026, 9, 2)),
             Prayer("Sunrise", "الشروق", kotlinx.datetime.LocalTime(6, 30), kotlinx.datetime.LocalDate(2026, 9, 2)),
             Prayer("Dhuhr", "الظهر", kotlinx.datetime.LocalTime(12, 30), kotlinx.datetime.LocalDate(2026, 9, 2)),
             Prayer("Asr", "العصر", kotlinx.datetime.LocalTime(15, 30), kotlinx.datetime.LocalDate(2026, 9, 2)),
