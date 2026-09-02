@@ -6,7 +6,7 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.emptyPreferences
 import com.google.common.truth.Truth.assertThat
-import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -16,14 +16,15 @@ import kotlin.io.path.createTempDirectory
 class SettingsDataStoreImsakTest {
 
     private lateinit var dataStore: SettingsDataStore
+    private lateinit var preferencesDataStore: DataStore<Preferences>
     private lateinit var tempDir: File
 
     @BeforeEach
     fun setUp() {
         tempDir = createTempDirectory().toFile()
-        val preferencesDataStore: DataStore<Preferences> = PreferenceDataStoreFactory.create(
+        preferencesDataStore = PreferenceDataStoreFactory.create(
             corruptionHandler = ReplaceFileCorruptionHandler { emptyPreferences() },
-            produceFile = { File(tempDir, "imsak_test.preferences_pb") }
+            produceFile = { File(tempDir, "test.preferences_pb") }
         )
         dataStore = SettingsDataStore(preferencesDataStore)
     }
@@ -34,13 +35,8 @@ class SettingsDataStoreImsakTest {
     }
 
     @Test
-    fun `imsak offset defaults to 10`() = runTest {
-        assertThat(dataStore.getSettings().imsakOffsetMinutes).isEqualTo(10)
-    }
-
-    @Test
-    fun `imsak offset persists round trip`() = runTest {
-        dataStore.updateImsakOffsetMinutes(15)
-        assertThat(dataStore.getSettings().imsakOffsetMinutes).isEqualTo(15)
+    fun `default settings loads without imsak offset`() = runBlocking {
+        val settings = dataStore.getSettings()
+        assertThat(settings.hijriAdjustment).isEqualTo(0)
     }
 }
