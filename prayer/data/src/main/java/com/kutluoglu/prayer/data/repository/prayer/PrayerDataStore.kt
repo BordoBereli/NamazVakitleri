@@ -26,7 +26,6 @@ interface PrayerDataStore {
         longitude: Double,
         zoneId: ZoneId,
         calculationMethod: CalculationMethod = CalculationMethod.TURKEY_DIYANET,
-        imsakOffsetMinutes: Int = 10,
         juristicMethod: JuristicMethod = JuristicMethod.STANDARD,
         persistDailyCache: Boolean = true,
     ): List<Prayer>
@@ -37,7 +36,6 @@ interface PrayerDataStore {
         longitude: Double,
         zoneId: ZoneId,
         calculationMethod: CalculationMethod = CalculationMethod.TURKEY_DIYANET,
-        imsakOffsetMinutes: Int = 10,
         juristicMethod: JuristicMethod = JuristicMethod.STANDARD,
     ): List<DailyPrayer>?
 
@@ -47,7 +45,6 @@ interface PrayerDataStore {
         longitude: Double,
         zoneId: ZoneId,
         calculationMethod: CalculationMethod = CalculationMethod.TURKEY_DIYANET,
-        imsakOffsetMinutes: Int = 10,
         juristicMethod: JuristicMethod = JuristicMethod.STANDARD,
         prayers: List<DailyPrayer>,
     )

@@ -22,7 +22,6 @@ class GetMonthlyPrayerTimesUseCase(
         longitude: Double,
         zoneId: ZoneId,
         calculationMethod: CalculationMethod = CalculationMethod.TURKEY_DIYANET,
-        imsakOffsetMinutes: Int = 10,
         juristicMethod: JuristicMethod = JuristicMethod.STANDARD,
     ): List<DailyPrayer>? = prayerRepository.getMonthlyPrayerTimes(
         month = month,
@@ -30,7 +29,6 @@ class GetMonthlyPrayerTimesUseCase(
         longitude = longitude,
         zoneId = zoneId,
         calculationMethod = calculationMethod,
-        imsakOffsetMinutes = imsakOffsetMinutes,
         juristicMethod = juristicMethod
     )
 }

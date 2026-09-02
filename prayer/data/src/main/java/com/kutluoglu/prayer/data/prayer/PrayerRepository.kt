@@ -21,7 +21,6 @@ class PrayerRepository(
         longitude: Double,
         zoneId: ZoneId,
         calculationMethod: CalculationMethod,
-        imsakOffsetMinutes: Int,
         juristicMethod: JuristicMethod,
         persistDailyCache: Boolean,
     ): List<Prayer> = prayerDataStore.getPrayerTimes(
@@ -30,7 +29,6 @@ class PrayerRepository(
         longitude = longitude,
         zoneId = zoneId,
         calculationMethod = calculationMethod,
-        imsakOffsetMinutes = imsakOffsetMinutes,
         juristicMethod = juristicMethod,
         persistDailyCache = persistDailyCache
     )
@@ -41,7 +39,6 @@ class PrayerRepository(
         longitude: Double,
         zoneId: ZoneId,
         calculationMethod: CalculationMethod,
-        imsakOffsetMinutes: Int,
         juristicMethod: JuristicMethod,
     ): List<DailyPrayer>? = prayerDataStore.getMonthlyPrayerTimes(
         month = month,
@@ -49,7 +46,6 @@ class PrayerRepository(
         longitude = longitude,
         zoneId = zoneId,
         calculationMethod = calculationMethod,
-        imsakOffsetMinutes = imsakOffsetMinutes,
         juristicMethod = juristicMethod
     )
 
@@ -59,7 +55,6 @@ class PrayerRepository(
         longitude: Double,
         zoneId: ZoneId,
         calculationMethod: CalculationMethod,
-        imsakOffsetMinutes: Int,
         juristicMethod: JuristicMethod,
         prayers: List<DailyPrayer>,
     ) {
@@ -69,7 +64,6 @@ class PrayerRepository(
             longitude = longitude,
             zoneId = zoneId,
             calculationMethod = calculationMethod,
-            imsakOffsetMinutes = imsakOffsetMinutes,
             juristicMethod = juristicMethod,
             prayers = prayers
         )

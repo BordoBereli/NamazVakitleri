@@ -22,7 +22,6 @@ class SaveMonthlyPrayerTimesUseCase(
         longitude: Double,
         zoneId: ZoneId,
         calculationMethod: CalculationMethod = CalculationMethod.TURKEY_DIYANET,
-        imsakOffsetMinutes: Int = 10,
         juristicMethod: JuristicMethod = JuristicMethod.STANDARD,
         prayers: List<DailyPrayer>,
     ) {
@@ -32,7 +31,6 @@ class SaveMonthlyPrayerTimesUseCase(
             longitude = longitude,
             zoneId = zoneId,
             calculationMethod = calculationMethod,
-            imsakOffsetMinutes = imsakOffsetMinutes,
             juristicMethod = juristicMethod,
             prayers = prayers
         )
