@@ -8,6 +8,7 @@
     <string name="time_until_prayer_format">%1$s வரை நேரம்</string>
     <string name="time_until_sunrise">சூரிய உதயம் வரை நேரம்</string>
     <string name="prayer_jumuah">ஜுமுஆ</string>
+    <string name="prayer_imsak">இம்சாக்</string>
     <string name="unknown_error_message">அறியப்படாத பிழை</string>
     <string name="share_verse">வசனத்தைப் பகிர்</string>
     <string name="no_verse_available">(வசனம் கிடைக்கவில்லை.)</string>
