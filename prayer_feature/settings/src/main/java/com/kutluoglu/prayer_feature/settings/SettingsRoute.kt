@@ -7,6 +7,7 @@ fun SettingsRoute(
     onNavigateToMyLocations: () -> Unit,
     onNavigateToCalculationMethod: () -> Unit,
     onNavigateToHijriAdjustment: () -> Unit,
+    onNavigateToImsakOffset: () -> Unit,
     onNavigateToLanguage: () -> Unit,
     onNavigateToNotifications: () -> Unit
 ) {
@@ -14,6 +15,7 @@ fun SettingsRoute(
         onNavigateToMyLocations = onNavigateToMyLocations,
         onNavigateToCalculationMethod = onNavigateToCalculationMethod,
         onNavigateToHijriAdjustment = onNavigateToHijriAdjustment,
+        onNavigateToImsakOffset = onNavigateToImsakOffset,
         onNavigateToLanguage = onNavigateToLanguage,
         onNavigateToNotifications = onNavigateToNotifications
     )

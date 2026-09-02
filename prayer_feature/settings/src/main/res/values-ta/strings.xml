@@ -11,6 +11,11 @@
     <string name="calculation_method_makkah">உம் அல்-குரா பல்கலைக்கழகம்</string>
     <string name="calculation_method_karachi">கராச்சி பல்கலைக்கழகம்</string>
     <string name="hijri_adjustment">ஹிஜ்ரி சரிசெய்தல்</string>
+    <string name="imsak_offset">இம்சாக் இடைவெளி</string>
+    <string name="imsak_offset_description">ஃபஜ்ருக்கு எத்தனை நிமிடங்களுக்கு முன் இம்சாக் தொடங்கும் என்பதை அமைக்கவும்</string>
+    <string name="imsak_offset_range">வரம்பு: 5 முதல் 20 நிமிடங்கள்</string>
+    <string name="minutes">நிமிடங்கள்</string>
+    <string name="no_changes">மாற்றங்கள் இல்லை</string>
     <string name="select_language">மொழியைத் தேர்ந்தெடுக்கவும்</string>
     <string name="language">மொழி</string>
     <string name="location">இருப்பிடம்</string>

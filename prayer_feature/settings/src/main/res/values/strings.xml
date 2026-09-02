@@ -11,6 +11,11 @@
     <string name="calculation_method_makkah">Umm Al-Qura University</string>
     <string name="calculation_method_karachi">University of Karachi</string>
     <string name="hijri_adjustment">Hijri Adjustment</string>
+    <string name="imsak_offset">Imsak Offset</string>
+    <string name="imsak_offset_description">Set how many minutes before Fajr Imsak begins</string>
+    <string name="imsak_offset_range">Range: 5 to 20 minutes</string>
+    <string name="minutes">minutes</string>
+    <string name="no_changes">No changes</string>
     <string name="select_language">Select Language</string>
     <string name="language">Language</string>
     <string name="location">Location</string>

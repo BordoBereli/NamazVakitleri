@@ -5,6 +5,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.kutluoglu.prayer_feature.settings.calculation.CalculationMethodRoute
 import com.kutluoglu.prayer_feature.settings.hijri.HijriAdjustmentRoute
+import com.kutluoglu.prayer_feature.settings.imsak.ImsakOffsetRoute
 import com.kutluoglu.prayer_feature.settings.language.LanguageSelectionRoute
 import com.kutluoglu.prayer_feature.settings.location.LocationSelectionRoute
 import com.kutluoglu.prayer_feature.settings.location.MyLocationsRoute
@@ -26,6 +27,9 @@ fun NavGraphBuilder.settingsGraph(
             },
             onNavigateToHijriAdjustment = {
                 navController.navigate(Screen.HijriAdjustmentScreen.route)
+            },
+            onNavigateToImsakOffset = {
+                navController.navigate(Screen.ImsakOffsetScreen.route)
             },
             onNavigateToLanguage = {
                 navController.navigate(Screen.LanguageSelectionScreen.route)
@@ -67,6 +71,12 @@ fun NavGraphBuilder.settingsGraph(
             onAdjustmentSelected = { adjustment ->
                 navController.popBackStack()
             }
+        )
+    }
+
+    composable(Screen.ImsakOffsetScreen.route) {
+        ImsakOffsetRoute(
+            onNavigateBack = { navController.popBackStack() }
         )
     }
 

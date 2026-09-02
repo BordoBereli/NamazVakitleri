@@ -11,6 +11,11 @@
     <string name="calculation_method_makkah">Universiti Umm Al-Qura</string>
     <string name="calculation_method_karachi">Universiti Karachi</string>
     <string name="hijri_adjustment">Pelarasan Hijri</string>
+    <string name="imsak_offset">Perbezaan Imsak</string>
+    <string name="imsak_offset_description">Tetapkan berapa minit sebelum Fajr Imsak bermula</string>
+    <string name="imsak_offset_range">Julat: 5 hingga 20 minit</string>
+    <string name="minutes">minit</string>
+    <string name="no_changes">Tiada perubahan</string>
     <string name="select_language">Pilih Bahasa</string>
     <string name="language">Bahasa</string>
     <string name="location">Lokasi</string>

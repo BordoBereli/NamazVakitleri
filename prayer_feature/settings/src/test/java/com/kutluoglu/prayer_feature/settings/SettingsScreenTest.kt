@@ -57,6 +57,7 @@ class SettingsScreenTest {
                 onNavigateToMyLocations = {},
                 onNavigateToCalculationMethod = {},
                 onNavigateToHijriAdjustment = {},
+                onNavigateToImsakOffset = {},
                 onNavigateToLanguage = {},
                 onNavigateToNotifications = {},
                 viewModel = viewModel
@@ -72,6 +73,7 @@ class SettingsScreenTest {
         composeTestRule.onNodeWithText("Location").assertIsDisplayed()
         composeTestRule.onNodeWithText("Calculation Method").assertIsDisplayed()
         composeTestRule.onNodeWithText("Hijri Adjustment").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Imsak Offset").assertIsDisplayed()
         composeTestRule.onNodeWithText("Language").assertIsDisplayed()
         composeTestRule.onNodeWithText("Notifications").assertIsDisplayed()
     }

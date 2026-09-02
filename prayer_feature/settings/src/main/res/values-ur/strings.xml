@@ -11,6 +11,11 @@
     <string name="calculation_method_makkah">جامعہ ام القری</string>
     <string name="calculation_method_karachi">جامعہ کراچی</string>
     <string name="hijri_adjustment">ہجری ایڈجسٹمنٹ</string>
+    <string name="imsak_offset">امساک کا فرق</string>
+    <string name="imsak_offset_description">طے کریں کہ فجر سے کتنے منٹ پہلے امساک شروع ہو</string>
+    <string name="imsak_offset_range">حدود: 5 سے 20 منٹ</string>
+    <string name="minutes">منٹ</string>
+    <string name="no_changes">کوئی تبدیلی نہیں</string>
     <string name="select_language">زبان منتخب کریں</string>
     <string name="language">زبان</string>
     <string name="location">مقام</string>

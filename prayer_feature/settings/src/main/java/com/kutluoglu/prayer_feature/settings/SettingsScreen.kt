@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.Functions
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Translate
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.AlertDialog
@@ -65,6 +66,7 @@ fun SettingsScreen(
     onNavigateToMyLocations: () -> Unit,
     onNavigateToCalculationMethod: () -> Unit,
     onNavigateToHijriAdjustment: () -> Unit,
+    onNavigateToImsakOffset: () -> Unit,
     onNavigateToLanguage: () -> Unit,
     onNavigateToNotifications: () -> Unit,
     viewModel: SettingsViewModel = koinViewModel()
@@ -110,6 +112,7 @@ fun SettingsScreen(
                         onNavigateToMyLocations = onNavigateToMyLocations,
                         onNavigateToCalculationMethod = onNavigateToCalculationMethod,
                         onNavigateToHijriAdjustment = onNavigateToHijriAdjustment,
+                        onNavigateToImsakOffset = onNavigateToImsakOffset,
                         onNavigateToLanguage = onNavigateToLanguage,
                         onNavigateToNotifications = onNavigateToNotifications
                     )
@@ -137,6 +140,7 @@ private fun SettingsContent(
     onNavigateToMyLocations: () -> Unit,
     onNavigateToCalculationMethod: () -> Unit,
     onNavigateToHijriAdjustment: () -> Unit,
+    onNavigateToImsakOffset: () -> Unit,
     onNavigateToLanguage: () -> Unit,
     onNavigateToNotifications: () -> Unit
 ) {
@@ -189,6 +193,15 @@ private fun SettingsContent(
                         "${settings.hijriAdjustment} ${stringResource(R.string.days)}"
                     },
                     onClick = onNavigateToHijriAdjustment
+                )
+                
+                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+                
+                SettingsItem(
+                    icon = Icons.Filled.Schedule,
+                    title = stringResource(SettingsR.string.imsak_offset),
+                    subtitle = "${settings.imsakOffsetMinutes} ${stringResource(SettingsR.string.minutes)}",
+                    onClick = onNavigateToImsakOffset
                 )
                 
                 HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
