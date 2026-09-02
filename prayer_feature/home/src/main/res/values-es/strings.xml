@@ -8,6 +8,9 @@
     <string name="time_until_prayer_format">Tiempo hasta %1$s</string>
     <string name="time_until_sunrise">Tiempo hasta el amanecer</string>
     <string name="prayer_jumuah">Yumu\'ah</string>
+    <string name="ramadan_day_format">Día de Ramadán %1$d</string>
+    <string name="ramadan_sahur_ends_in">Sahur termina en</string>
+    <string name="ramadan_iftar_in">Iftar en</string>
     <string name="unknown_error_message">Error desconocido</string>
     <string name="share_verse">Compartir versículo</string>
     <string name="no_verse_available">(No hay versículo disponible.)</string>

@@ -30,6 +30,8 @@
     <string name="notification_special_day_body">วันนี้คือ %1$s</string>
     <string name="notification_pre_special_day_title">พรุ่งนี้</string>
     <string name="notification_pre_special_day_body">พรุ่งนี้คือ %1$s</string>
+    <string name="notification_sahur_ended">ซาฮูรสิ้นสุด</string>
+    <string name="notification_iftar_time">เวลาอิฟตาร์</string>
     <string name="special_day_ramadan_start">เริ่มต้นเดือนรอมฎอน</string>
     <string name="special_day_eid_al_fitr">อีดิลฟิฏรี</string>
     <string name="special_day_eid_al_adha">อีดิลอัฎฮา</string>

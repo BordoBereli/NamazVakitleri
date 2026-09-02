@@ -93,6 +93,7 @@
     <string name="daily_reminder">Daily reminder</string>
     <string name="jumuah">Jumu\'ah</string>
     <string name="special_days">Special days</string>
+    <string name="ramadan">Ramadan</string>
     <string name="sound">Sound</string>
     <string name="vibration">Vibration</string>
     <string name="send_test_notification">Send test notification</string>

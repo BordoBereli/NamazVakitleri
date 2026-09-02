@@ -91,6 +91,7 @@
     <string name="daily_reminder">Tägliche Erinnerung</string>
     <string name="jumuah">Dschumua</string>
     <string name="special_days">Besondere Tage</string>
+    <string name="ramadan">Ramadan</string>
     <string name="sound">Ton</string>
     <string name="vibration">Vibration</string>
     <string name="send_test_notification">Testbenachrichtigung senden</string>

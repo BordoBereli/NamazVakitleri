@@ -30,6 +30,8 @@
     <string name="notification_special_day_body">Bugün %1$s</string>
     <string name="notification_pre_special_day_title">Yarın</string>
     <string name="notification_pre_special_day_body">Yarın %1$s</string>
+    <string name="notification_sahur_ended">Sahur bitti</string>
+    <string name="notification_iftar_time">İftar vakti</string>
     <string name="special_day_ramadan_start">Ramazan başlangıcı</string>
     <string name="special_day_eid_al_fitr">Ramazan Bayramı</string>
     <string name="special_day_eid_al_adha">Kurban Bayramı</string>

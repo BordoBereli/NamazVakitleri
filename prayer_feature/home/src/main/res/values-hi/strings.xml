@@ -8,6 +8,9 @@
     <string name="time_until_prayer_format">%1$s तक का समय</string>
     <string name="time_until_sunrise">सूर्योदय तक का समय</string>
     <string name="prayer_jumuah">जुमुआ</string>
+    <string name="ramadan_day_format">रमज़ान दिवस %1$d</string>
+    <string name="ramadan_sahur_ends_in">सहरी समाप्त होने में</string>
+    <string name="ramadan_iftar_in">इफ्तार में</string>
     <string name="unknown_error_message">अज्ञात त्रुटि</string>
     <string name="share_verse">आयत साझा करें</string>
     <string name="no_verse_available">(कोई आयत उपलब्ध नहीं।)</string>

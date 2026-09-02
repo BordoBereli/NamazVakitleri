@@ -383,6 +383,11 @@ private fun NotificationsContent(
             onCheckedChange = { onEvent(NotificationsEvent.SetSpecialDaysEnabled(it)) }
         )
         ToggleRow(
+            title = stringResource(R.string.ramadan),
+            checked = settings.ramadanEnabled,
+            onCheckedChange = { onEvent(NotificationsEvent.SetRamadanEnabled(it)) }
+        )
+        ToggleRow(
             title = stringResource(R.string.sound),
             checked = settings.soundEnabled,
             onCheckedChange = { onEvent(NotificationsEvent.SetSoundEnabled(it)) }

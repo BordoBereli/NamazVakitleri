@@ -44,6 +44,7 @@ class NotificationSettingsDataStore(
         val PRE_PRAYER_MINUTES = intPreferencesKey("pre_prayer_minutes")
         val JUMUAH_ENABLED = booleanPreferencesKey("jumuah_enabled")
         val SPECIAL_DAYS_ENABLED = booleanPreferencesKey("special_days_enabled")
+        val RAMADAN_ENABLED = booleanPreferencesKey("ramadan_enabled")
         val SOUND_ENABLED = booleanPreferencesKey("sound_enabled")
         val VIBRATION_ENABLED = booleanPreferencesKey("vibration_enabled")
     }
@@ -80,6 +81,7 @@ class NotificationSettingsDataStore(
     }
     suspend fun updateJumuahEnabled(enabled: Boolean) = dataStore.edit { it[Keys.JUMUAH_ENABLED] = enabled }
     suspend fun updateSpecialDaysEnabled(enabled: Boolean) = dataStore.edit { it[Keys.SPECIAL_DAYS_ENABLED] = enabled }
+    suspend fun updateRamadanEnabled(enabled: Boolean) = dataStore.edit { it[Keys.RAMADAN_ENABLED] = enabled }
     suspend fun updateSoundEnabled(enabled: Boolean) = dataStore.edit { it[Keys.SOUND_ENABLED] = enabled }
     suspend fun updateVibrationEnabled(enabled: Boolean) = dataStore.edit { it[Keys.VIBRATION_ENABLED] = enabled }
 
@@ -101,6 +103,7 @@ class NotificationSettingsDataStore(
             prePrayerMinutes = this[Keys.PRE_PRAYER_MINUTES] ?: 15,
             jumuahEnabled = this[Keys.JUMUAH_ENABLED] ?: true,
             specialDaysEnabled = this[Keys.SPECIAL_DAYS_ENABLED] ?: true,
+            ramadanEnabled = this[Keys.RAMADAN_ENABLED] ?: true,
             soundEnabled = this[Keys.SOUND_ENABLED] ?: true,
             vibrationEnabled = this[Keys.VIBRATION_ENABLED] ?: true
         )

@@ -8,6 +8,9 @@
     <string name="time_until_prayer_format">زمان تا %1$s</string>
     <string name="time_until_sunrise">زمان تا طلوع آفتاب</string>
     <string name="prayer_jumuah">جمعه</string>
+    <string name="ramadan_day_format">روز رمضان %1$d</string>
+    <string name="ramadan_sahur_ends_in">پایان سحری در</string>
+    <string name="ramadan_iftar_in">افطار در</string>
     <string name="unknown_error_message">خطای ناشناخته</string>
     <string name="share_verse">اشتراک‌گذاری آیه</string>
     <string name="no_verse_available">(آیه‌ای در دسترس نیست.)</string>

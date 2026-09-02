@@ -30,6 +30,8 @@
     <string name="notification_special_day_body">امروز %1$s است</string>
     <string name="notification_pre_special_day_title">فردا</string>
     <string name="notification_pre_special_day_body">فردا %1$s است</string>
+    <string name="notification_sahur_ended">سحری تمام شد</string>
+    <string name="notification_iftar_time">وقت افطار</string>
     <string name="special_day_ramadan_start">آغاز رمضان</string>
     <string name="special_day_eid_al_fitr">عید فطر</string>
     <string name="special_day_eid_al_adha">عید قربان</string>

@@ -118,6 +118,8 @@ class AlarmReceiver : BroadcastReceiver(), KoinComponent {
                     ?: return
                 notificationDisplayer.showPreSpecialDayNotification(day)
             }
+            AlarmType.SAHUR_END -> notificationDisplayer.showSahurEndNotification()
+            AlarmType.IFTAR -> notificationDisplayer.showIftarNotification()
             AlarmType.COUNTDOWN_TICK -> Unit
         }
     }

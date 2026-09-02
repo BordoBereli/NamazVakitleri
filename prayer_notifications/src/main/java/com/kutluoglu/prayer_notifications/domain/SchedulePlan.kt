@@ -6,6 +6,9 @@ import java.time.DayOfWeek
 import java.time.Instant
 import java.time.LocalTime
 import java.time.ZoneId
+import java.time.chrono.HijrahDate
+import java.time.temporal.ChronoField
+import java.time.temporal.ChronoUnit
 
 data class ScheduledAlarm(
     val prayerKey: String,
@@ -29,6 +32,8 @@ class SchedulePlan {
         const val REQUEST_CODE_DAILY_REMINDER = 2001
         const val REQUEST_CODE_SPECIAL_DAY = 2002
         const val REQUEST_CODE_PRE_SPECIAL_DAY = 2003
+        const val REQUEST_CODE_SAHUR_END = 2004
+        const val REQUEST_CODE_IFTAR = 2005
     }
 
     fun buildDailyAlarms(
@@ -45,7 +50,9 @@ class SchedulePlan {
         dailySummary: String = "",
         specialDayToday: SpecialDay? = null,
         specialDayTomorrow: SpecialDay? = null,
-        jumuahEnabled: Boolean = true
+        jumuahEnabled: Boolean = true,
+        ramadanEnabled: Boolean = true,
+        hijriAdjustment: Int = 0
     ): List<ScheduledAlarm> {
         val nowZoned = now.atZone(zoneId)
         val today = nowZoned.toLocalDate()
@@ -185,6 +192,38 @@ class SchedulePlan {
             )
         }
 
+        if (ramadanEnabled && isRamadan(today, hijriAdjustment)) {
+            val imsakPrayer = prayers.firstOrNull { it.isImsak }
+            if (imsakPrayer != null) {
+                val sahurTrigger = triggerFor(imsakPrayer, today)
+                if (sahurTrigger.isAfter(now)) {
+                    result += ScheduledAlarm(
+                        prayerKey = "sahur_end",
+                        triggerAtMillis = sahurTrigger.toEpochMilli(),
+                        requestCode = REQUEST_CODE_SAHUR_END,
+                        type = AlarmType.SAHUR_END
+                    )
+                }
+                val maghribPrayer = prayers.firstOrNull { it.name == "Maghrib" }
+                if (maghribPrayer != null) {
+                    val iftarTrigger = triggerFor(maghribPrayer, today)
+                    if (iftarTrigger.isAfter(now)) {
+                        result += ScheduledAlarm(
+                            prayerKey = "iftar",
+                            triggerAtMillis = iftarTrigger.toEpochMilli(),
+                            requestCode = REQUEST_CODE_IFTAR,
+                            type = AlarmType.IFTAR
+                        )
+                    }
+                }
+            }
+        }
+
         return result
+    }
+
+    private fun isRamadan(date: java.time.LocalDate, hijriAdjustment: Int): Boolean {
+        val hijrah = HijrahDate.from(date).plus(hijriAdjustment.toLong(), ChronoUnit.DAYS)
+        return hijrah.get(ChronoField.MONTH_OF_YEAR) == 9
     }
 }

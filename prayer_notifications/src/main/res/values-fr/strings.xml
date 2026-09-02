@@ -30,6 +30,8 @@
     <string name="notification_special_day_body">Aujourd\'hui c\'est %1$s</string>
     <string name="notification_pre_special_day_title">Demain</string>
     <string name="notification_pre_special_day_body">Demain c\'est %1$s</string>
+    <string name="notification_sahur_ended">Sahour terminé</string>
+    <string name="notification_iftar_time">Heure de l\'iftar</string>
     <string name="special_day_ramadan_start">Début du Ramadan</string>
     <string name="special_day_eid_al_fitr">Aïd al-Fitr</string>
     <string name="special_day_eid_al_adha">Aïd al-Adha</string>

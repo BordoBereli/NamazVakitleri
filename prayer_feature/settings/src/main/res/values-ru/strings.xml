@@ -91,6 +91,7 @@
     <string name="daily_reminder">Ежедневное напоминание</string>
     <string name="jumuah">Джума</string>
     <string name="special_days">Особые дни</string>
+    <string name="ramadan">Рамадан</string>
     <string name="sound">Звук</string>
     <string name="vibration">Вибрация</string>
     <string name="send_test_notification">Отправить тестовое уведомление</string>

@@ -30,6 +30,8 @@
     <string name="notification_special_day_body">இன்று %1$s</string>
     <string name="notification_pre_special_day_title">நாளை</string>
     <string name="notification_pre_special_day_body">நாளை %1$s</string>
+    <string name="notification_sahur_ended">சஹூர் முடிந்தது</string>
+    <string name="notification_iftar_time">இப்தார் நேரம்</string>
     <string name="special_day_ramadan_start">ரமலான் தொடக்கம்</string>
     <string name="special_day_eid_al_fitr">ஈத் அல்-பித்ர்</string>
     <string name="special_day_eid_al_adha">ஈத் அல்-அத்ஹா</string>

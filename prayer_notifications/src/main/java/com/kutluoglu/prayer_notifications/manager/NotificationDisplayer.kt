@@ -43,4 +43,8 @@ interface NotificationDisplayer {
     fun showSpecialDayNotification(day: SpecialDay)
 
     fun showPreSpecialDayNotification(day: SpecialDay)
+
+    fun showSahurEndNotification()
+
+    fun showIftarNotification()
 }

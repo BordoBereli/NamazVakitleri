@@ -30,6 +30,8 @@
     <string name="notification_special_day_body">Hari ini %1$s</string>
     <string name="notification_pre_special_day_title">Besok</string>
     <string name="notification_pre_special_day_body">Besok %1$s</string>
+    <string name="notification_sahur_ended">Sahur selesai</string>
+    <string name="notification_iftar_time">Waktu iftar</string>
     <string name="special_day_ramadan_start">Awal Ramadan</string>
     <string name="special_day_eid_al_fitr">Idulfitri</string>
     <string name="special_day_eid_al_adha">Iduladha</string>

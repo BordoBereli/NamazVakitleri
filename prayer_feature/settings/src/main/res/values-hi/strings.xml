@@ -91,6 +91,7 @@
     <string name="daily_reminder">दैनिक अनुस्मारक</string>
     <string name="jumuah">जुमुआ</string>
     <string name="special_days">विशेष दिन</string>
+    <string name="ramadan">रमज़ान</string>
     <string name="sound">ध्वनि</string>
     <string name="vibration">कंपन</string>
     <string name="send_test_notification">परीक्षण सूचना भेजें</string>

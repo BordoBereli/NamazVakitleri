@@ -8,6 +8,9 @@
     <string name="time_until_prayer_format">Время до %1$s</string>
     <string name="time_until_sunrise">Время до восхода</string>
     <string name="prayer_jumuah">Джума</string>
+    <string name="ramadan_day_format">День Рамадана %1$d</string>
+    <string name="ramadan_sahur_ends_in">Сухур заканчивается через</string>
+    <string name="ramadan_iftar_in">Ифтар через</string>
     <string name="unknown_error_message">Неизвестная ошибка</string>
     <string name="share_verse">Поделиться аятом</string>
     <string name="no_verse_available">(Аят недоступен.)</string>
