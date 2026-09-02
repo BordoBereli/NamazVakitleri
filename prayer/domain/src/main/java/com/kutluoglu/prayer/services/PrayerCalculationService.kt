@@ -17,6 +17,7 @@ interface PrayerCalculationService {
             zoneId: ZoneId,
             date: LocalDateTime,
             calculationMethod: CalculationMethod,
-            juristicMethod: JuristicMethod
+            juristicMethod: JuristicMethod,
+            imsakOffsetMinutes: Int = 10
     ): List<Prayer>
 }

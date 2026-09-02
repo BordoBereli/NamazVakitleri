@@ -9,6 +9,9 @@ import com.kutluoglu.prayer.model.prayer.JuristicMethod
 import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer.services.PrayerCalculationService
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.toJavaLocalTime
+import kotlinx.datetime.toKotlinLocalTime
 import kotlinx.datetime.toKotlinTimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.koin.core.annotation.Factory
@@ -24,7 +27,8 @@ class PrayerTimeEngine : PrayerCalculationService {
         zoneId: ZoneId,
         date: LocalDateTime,
         calculationMethod: CalculationMethod,
-        juristicMethod: JuristicMethod
+        juristicMethod: JuristicMethod,
+        imsakOffsetMinutes: Int
     ): List<Prayer> {
         val coordinates = Coordinates(latitude, longitude)
         val dateComponents = DateComponents.fromLocalDateTime(date)
@@ -33,12 +37,21 @@ class PrayerTimeEngine : PrayerCalculationService {
 
         // Use the provided zoneId for conversion
         val kotlinTimeZone = zoneId.toKotlinTimeZone()
+        val fajr = prayerTimes.fajr.toLocalDateTime(kotlinTimeZone).time
+        val imsak = imsakFromFajr(fajr, imsakOffsetMinutes)
 
         return listOf(
             Prayer(
+                name = "Imsak",
+                arabicName = "الإمساك",
+                time = imsak,
+                date = date.date,
+                isImsak = true
+            ),
+            Prayer(
                 name = "Fajr",
                 arabicName = "الفجر",
-                time = prayerTimes.fajr.toLocalDateTime(kotlinTimeZone).time,
+                time = fajr,
                 date = date.date
             ),
             Prayer(
@@ -72,6 +85,13 @@ class PrayerTimeEngine : PrayerCalculationService {
                 date = date.date
             )
         )
+    }
+
+    private fun imsakFromFajr(fajr: LocalTime, offsetMinutes: Int): LocalTime {
+        val clamped = offsetMinutes.coerceIn(0, 60)
+        val javaFajr = fajr.toJavaLocalTime()
+        val imsak = javaFajr.minusMinutes(clamped.toLong())
+        return if (imsak.isAfter(javaFajr)) LocalTime(0, 0) else imsak.toKotlinLocalTime()
     }
 
     private fun getCalculationParameters(
