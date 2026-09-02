@@ -5,6 +5,7 @@ data class NotificationSettings(
     val prayerToggles: Map<String, Boolean> = defaultPrayerToggles(),
     val adhanEnabled: Boolean = false,
     val adhanVolume: Int = 100,
+    val adhanStyles: Map<String, String> = emptyMap(),
     val countdownEnabled: Boolean = true,
     val dailyReminderEnabled: Boolean = false,
     val dailyReminderHour: Int = 8,
