@@ -37,7 +37,6 @@ class PrayerTimesLoader(
         location: LocationData,
         calculationMethod: CalculationMethod,
         hijriAdjustment: Int = 0,
-        imsakOffsetMinutes: Int = 10,
         juristicMethod: JuristicMethod = JuristicMethod.STANDARD
     ): Result<LoadedPrayerData> {
         val zoneId = getZoneIdFromLocation(location.countryCode)
@@ -48,7 +47,6 @@ class PrayerTimesLoader(
             longitude = location.longitude,
             zoneId = zoneId,
             calculationMethod = calculationMethod,
-            imsakOffsetMinutes = imsakOffsetMinutes,
             juristicMethod = juristicMethod
         ).map { prayerTimes ->
             val localized = formatter.withLocalizedNames(prayerTimes)

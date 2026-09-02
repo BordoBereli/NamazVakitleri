@@ -88,7 +88,7 @@ class HomeViewModel(
         }
         settingsObserverJob = viewModelScope.launch {
             settingsRepository.observeSettings()
-                .map { SettingsKey(it.calculationMethod, it.language, it.juristicMethod, it.imsakOffsetMinutes) }
+                .map { SettingsKey(it.calculationMethod, it.language, it.juristicMethod) }
                 .distinctUntilChanged()
                 .drop(1)
                 .collect {
@@ -203,7 +203,6 @@ class HomeViewModel(
                         location,
                         settings.method,
                         settings.hijriAdjustment,
-                        settings.imsakOffsetMinutes,
                         settings.juristicMethod
                     )
                     if (result.isSuccess) {
@@ -285,7 +284,6 @@ class HomeViewModel(
             entry.location,
             settings.method,
             settings.hijriAdjustment,
-            settings.imsakOffsetMinutes,
             settings.juristicMethod
         )
             .onSuccess { loaded ->
@@ -312,7 +310,6 @@ class HomeViewModel(
                                 entry.location,
                                 settings.method,
                                 settings.hijriAdjustment,
-                                settings.imsakOffsetMinutes,
                                 settings.juristicMethod
                             )
                                 .onSuccess { loaded ->
@@ -362,14 +359,12 @@ class HomeViewModel(
     private data class SettingsKey(
         val calculationMethod: String,
         val language: String,
-        val juristicMethod: String,
-        val imsakOffsetMinutes: Int
+        val juristicMethod: String
     )
 
     private data class HomeSettings(
         val method: CalculationMethod,
         val hijriAdjustment: Int,
-        val imsakOffsetMinutes: Int,
         val juristicMethod: JuristicMethod
     )
 
@@ -378,7 +373,6 @@ class HomeViewModel(
         return HomeSettings(
             method = CalculationMethod.fromSettingsId(settings.calculationMethod),
             hijriAdjustment = settings.hijriAdjustment,
-            imsakOffsetMinutes = settings.imsakOffsetMinutes,
             juristicMethod = JuristicMethod.fromSettingsId(settings.juristicMethod)
         )
     }
