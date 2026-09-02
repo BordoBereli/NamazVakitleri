@@ -145,6 +145,41 @@ class PrayerNotificationSchedulerTest {
     }
 
     @Test
+    fun `scheduleAll forwards imsak offset from settings to use case`() = runTest {
+        coEvery { dataStore.getSettings() } returns NotificationSettings(enabled = true)
+        coEvery { locationsCoordinator.resolveSelected() } returns LocationData(
+            latitude = 41.0082,
+            longitude = 28.9784,
+            country = "Turkey",
+            countryCode = "TR",
+            city = "Istanbul",
+            county = null
+        )
+        coEvery { getSettingsUseCase() } returns Settings(
+            location = LocationSettings(timeZone = "Europe/Istanbul"),
+            calculationMethod = "TURKEY_DIYANET",
+            imsakOffsetMinutes = 20
+        )
+        coEvery { getPrayerTimesUseCase(any(), any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
+            listOf(
+                Prayer(
+                    name = "Fajr",
+                    arabicName = "الفجر",
+                    time = LocalTime(23, 59),
+                    date = LocalDate(2026, 8, 22)
+                )
+            )
+        )
+
+        val scheduler = scheduler(CoroutineScope(UnconfinedTestDispatcher(testScheduler)))
+        scheduler.scheduleAll()
+
+        coVerify(atLeast = 1) {
+            getPrayerTimesUseCase(any(), any(), any(), any(), any(), eq(20), any(), any())
+        }
+    }
+
+    @Test
     fun `scheduleAll with invalid timezone does not crash`() = runTest {
         coEvery { dataStore.getSettings() } returns NotificationSettings(enabled = true)
         coEvery { locationsCoordinator.resolveSelected() } returns LocationData(

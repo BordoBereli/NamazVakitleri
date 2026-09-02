@@ -99,6 +99,7 @@ class PrayerNotificationScheduler(
             longitude = location.longitude,
             zoneId = zoneId,
             calculationMethod = method,
+            imsakOffsetMinutes = appSettings.imsakOffsetMinutes,
             juristicMethod = juristicMethod
         ).getOrNull() ?: run {
             cancelAll()
@@ -113,6 +114,7 @@ class PrayerNotificationScheduler(
             longitude = location.longitude,
             zoneId = zoneId,
             calculationMethod = method,
+            imsakOffsetMinutes = appSettings.imsakOffsetMinutes,
             juristicMethod = juristicMethod,
             persistDailyCache = false
         ).getOrNull() ?: run {
@@ -326,6 +328,7 @@ class PrayerNotificationScheduler(
             longitude = location.longitude,
             zoneId = zoneId,
             calculationMethod = method,
+            imsakOffsetMinutes = appSettings.imsakOffsetMinutes,
             juristicMethod = juristicMethod
         ).getOrNull() ?: return
         val trigger = LocalTime.of(settings.dailyReminderHour, settings.dailyReminderMinute)

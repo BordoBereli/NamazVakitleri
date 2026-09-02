@@ -33,11 +33,13 @@ class WidgetDataProvider(
             longitude = location.longitude,
             zoneId = zoneId,
             calculationMethod = method,
+            imsakOffsetMinutes = settings.imsakOffsetMinutes,
             juristicMethod = juristicMethod,
             persistDailyCache = false
         ).getOrNull() ?: return WidgetResult.Error
+        val localizedPrayers = formatter.withLocalizedNames(prayers)
 
-        val (_, next) = calculator.findCurrentAndNextPrayer(prayers, zoneId)
+        val (_, next) = calculator.findCurrentAndNextPrayer(localizedPrayers, zoneId)
         val nextPrayer = next ?: return WidgetResult.Error
         val timeRemaining = formatter.formatTimeRemaining(
             calculator.calculateTimeRemaining(nextPrayer.time, zoneId)
@@ -51,7 +53,7 @@ class WidgetDataProvider(
                 locationName = location.city ?: "",
                 gregorianDate = timeInfo.gregorianFullDate,
                 hijriDate = timeInfo.hijriDate,
-                prayers = prayers.map { p ->
+                prayers = localizedPrayers.map { p ->
                     WidgetPrayer(
                         name = p.name,
                         time = formatClockTime(p.time),

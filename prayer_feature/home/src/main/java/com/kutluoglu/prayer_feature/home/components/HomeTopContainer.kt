@@ -164,7 +164,6 @@ private fun NextPrayerInfo(prayerState: PrayerUiState, timeRemaining: String) {
 
     val nextPrayerDisplayName = when {
         prayerState.isJumuahCountdown() -> stringResource(id = R.string.prayer_jumuah)
-        nextPrayerNameRaw == "İmsak" -> "Sabah"
         else -> nextPrayerNameRaw
     }
 

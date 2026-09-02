@@ -88,7 +88,7 @@ class HomeViewModel(
         }
         settingsObserverJob = viewModelScope.launch {
             settingsRepository.observeSettings()
-                .map { Triple(it.calculationMethod, it.language, it.juristicMethod) }
+                .map { SettingsKey(it.calculationMethod, it.language, it.juristicMethod, it.imsakOffsetMinutes) }
                 .distinctUntilChanged()
                 .drop(1)
                 .collect {
@@ -358,6 +358,13 @@ class HomeViewModel(
     private fun setVerseSheetVisibility(isVisible: Boolean) {
         quranVerseLoader.setSheetVisible(isVisible)
     }
+
+    private data class SettingsKey(
+        val calculationMethod: String,
+        val language: String,
+        val juristicMethod: String,
+        val imsakOffsetMinutes: Int
+    )
 
     private data class HomeSettings(
         val method: CalculationMethod,
