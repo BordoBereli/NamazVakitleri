@@ -34,4 +34,10 @@
     <string name="special_day_eid_al_fitr">ईद-उल-फितर</string>
     <string name="special_day_eid_al_adha">ईद-उल-अज़हा</string>
     <string name="special_day_laylat_al_qadr">शब-ए-क़द्र</string>
+    <string name="special_day_islamic_new_year">इस्लामी नव वर्ष</string>
+    <string name="special_day_ashura">आशूरा</string>
+    <string name="special_day_isra_miraj">इसरा और मिराज</string>
+    <string name="special_day_mid_shaban">शब-ए-बारात</string>
+    <string name="special_day_arafah">अराफ़ा का दिन</string>
+    <string name="special_day_mawlid">मीलाद उन-नबी</string>
 </resources>

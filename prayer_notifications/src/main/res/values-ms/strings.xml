@@ -34,4 +34,10 @@
     <string name="special_day_eid_al_fitr">Aidilfitri</string>
     <string name="special_day_eid_al_adha">Aidiladha</string>
     <string name="special_day_laylat_al_qadr">Lailatulqadar</string>
+    <string name="special_day_islamic_new_year">Tahun Baru Islam</string>
+    <string name="special_day_ashura">Asyura</string>
+    <string name="special_day_isra_miraj">Israk Mikraj</string>
+    <string name="special_day_mid_shaban">Nisfu Syaaban</string>
+    <string name="special_day_arafah">Hari Arafah</string>
+    <string name="special_day_mawlid">Maulidur Rasul</string>
 </resources>

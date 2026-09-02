@@ -34,4 +34,10 @@
     <string name="special_day_eid_al_fitr">عيد الفطر</string>
     <string name="special_day_eid_al_adha">عيد الأضحى</string>
     <string name="special_day_laylat_al_qadr">ليلة القدر</string>
+    <string name="special_day_islamic_new_year">رأس السنة الهجرية</string>
+    <string name="special_day_ashura">عاشوراء</string>
+    <string name="special_day_isra_miraj">الإسراء والمعراج</string>
+    <string name="special_day_mid_shaban">منتصف شعبان</string>
+    <string name="special_day_arafah">يوم عرفة</string>
+    <string name="special_day_mawlid">المولد النبوي</string>
 </resources>

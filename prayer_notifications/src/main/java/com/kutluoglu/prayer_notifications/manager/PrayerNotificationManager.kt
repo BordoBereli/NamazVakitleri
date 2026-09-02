@@ -213,7 +213,7 @@ class PrayerNotificationManager(
             .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(localizedString(R.string.notification_special_day_title))
             .setContentText(
-                localizedString(R.string.notification_special_day_body, localizedSpecialDay(day))
+                localizedString(R.string.notification_special_day_body, specialDayTitle(day))
             )
             .setAutoCancel(true)
             .build()
@@ -225,7 +225,7 @@ class PrayerNotificationManager(
             .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(localizedString(R.string.notification_pre_special_day_title))
             .setContentText(
-                localizedString(R.string.notification_pre_special_day_body, localizedSpecialDay(day))
+                localizedString(R.string.notification_pre_special_day_body, specialDayTitle(day))
             )
             .setAutoCancel(true)
             .build()
@@ -270,11 +270,17 @@ class PrayerNotificationManager(
             .toLocalDate()
             .dayOfWeek == DayOfWeek.FRIDAY
 
-    private fun localizedSpecialDay(day: SpecialDay): String = when (day) {
+    fun specialDayTitle(day: SpecialDay): String = when (day) {
+        SpecialDay.ISLAMIC_NEW_YEAR -> localizedString(R.string.special_day_islamic_new_year)
+        SpecialDay.ASHURA -> localizedString(R.string.special_day_ashura)
+        SpecialDay.ISRA_MIRAJ -> localizedString(R.string.special_day_isra_miraj)
+        SpecialDay.MID_SHABAN -> localizedString(R.string.special_day_mid_shaban)
         SpecialDay.RAMADAN_START -> localizedString(R.string.special_day_ramadan_start)
-        SpecialDay.EID_AL_FITR -> localizedString(R.string.special_day_eid_al_fitr)
-        SpecialDay.EID_AL_ADHA -> localizedString(R.string.special_day_eid_al_adha)
         SpecialDay.LAYLAT_AL_QADIR -> localizedString(R.string.special_day_laylat_al_qadr)
+        SpecialDay.EID_AL_FITR -> localizedString(R.string.special_day_eid_al_fitr)
+        SpecialDay.ARAFAH -> localizedString(R.string.special_day_arafah)
+        SpecialDay.EID_AL_ADHA -> localizedString(R.string.special_day_eid_al_adha)
+        SpecialDay.MAWLID_AL_NABI -> localizedString(R.string.special_day_mawlid)
     }
 
     private fun localizedString(resId: Int, vararg args: Any): String {

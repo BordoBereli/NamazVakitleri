@@ -34,4 +34,10 @@
     <string name="special_day_eid_al_fitr">Eid al-Fitr</string>
     <string name="special_day_eid_al_adha">Eid al-Adha</string>
     <string name="special_day_laylat_al_qadr">Laylat al-Qadr</string>
+    <string name="special_day_islamic_new_year">Islamisches Neujahr</string>
+    <string name="special_day_ashura">Aschura</string>
+    <string name="special_day_isra_miraj">Isra und Mi\'radsch</string>
+    <string name="special_day_mid_shaban">Mitte des Scha\'ban</string>
+    <string name="special_day_arafah">Arafat-Tag</string>
+    <string name="special_day_mawlid">Maulid an-Nabi</string>
 </resources>
