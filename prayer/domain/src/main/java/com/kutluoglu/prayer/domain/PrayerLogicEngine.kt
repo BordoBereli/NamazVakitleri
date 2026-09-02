@@ -27,17 +27,18 @@ class PrayerLogicEngine(
             prayers: List<Prayer>,
             zoneId: ZoneId
     ): Pair<Prayer?, Prayer?> {
-        val currentPrayer = findCurrentPrayer(prayers, zoneId)
+        val prayerTimes = prayers.filterNot { it.isImsak }
+        val currentPrayer = findCurrentPrayer(prayerTimes, zoneId)
         // Handle period before the first prayer (Fajr)
         if (currentPrayer == null) {
-            return Pair(prayers.lastOrNull(), prayers.firstOrNull())
+            return Pair(prayerTimes.lastOrNull(), prayerTimes.firstOrNull())
         }
-        val currentIndex = prayers.indexOf(currentPrayer)
-        val nextPrayer = prayers.getOrNull(currentIndex + 1)
+        val currentIndex = prayerTimes.indexOf(currentPrayer)
+        val nextPrayer = prayerTimes.getOrNull(currentIndex + 1)
 
         // Handle period after the last prayer (Isha)
         return if (nextPrayer == null) {
-            val nextPrayer = prayers.firstOrNull()?.let {
+            val nextPrayer = prayerTimes.firstOrNull()?.let {
                 it.copy(
                     date = it.date.plus(1, DateTimeUnit.DAY)
                 )
