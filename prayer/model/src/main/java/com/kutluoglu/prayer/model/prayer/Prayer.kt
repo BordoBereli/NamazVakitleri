@@ -10,5 +10,6 @@ data class Prayer (
     val time: LocalTime,
     val date: LocalDate,
     val isCurrent: Boolean = false,
-    val notificationEnabled: Boolean = false
+    val notificationEnabled: Boolean = false,
+    val isImsak: Boolean = false
 )
