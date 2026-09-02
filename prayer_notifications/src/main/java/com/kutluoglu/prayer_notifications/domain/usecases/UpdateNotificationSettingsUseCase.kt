@@ -16,6 +16,9 @@ class UpdateNotificationSettingsUseCase(
         dataStore.updateEnabled(settings.enabled)
         dataStore.updateAdhanEnabled(settings.adhanEnabled)
         dataStore.updateAdhanVolume(settings.adhanVolume)
+        settings.adhanStyles.forEach { (key, styleId) ->
+            dataStore.updateAdhanStyle(key, styleId)
+        }
         dataStore.updateCountdownEnabled(settings.countdownEnabled)
         dataStore.updateDailyReminder(
             settings.dailyReminderEnabled,

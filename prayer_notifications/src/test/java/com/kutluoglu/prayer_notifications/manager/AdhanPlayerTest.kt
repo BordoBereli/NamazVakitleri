@@ -32,7 +32,7 @@ class AdhanPlayerTest {
     }
 
     private fun adhanPlayer(fakePlayer: Player = FakePlayer(bufferingDelayMs = 0)) =
-        AdhanPlayer(context, fakePlayer)
+        AdhanPlayer(context, fakePlayer, AdhanResIdResolver())
 
     @After
     fun flushPendingSessionWork() {
@@ -41,6 +41,9 @@ class AdhanPlayerTest {
 
     private fun fajrUri(): Uri =
         Uri.parse("android.resource://${context.packageName}/${R.raw.adhan_fajr}")
+
+    private fun ishaUri(): Uri =
+        Uri.parse("android.resource://${context.packageName}/${R.raw.adhan_isha}")
 
     private fun audioManager(): AudioManager =
         context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
@@ -79,6 +82,26 @@ class AdhanPlayerTest {
         assertThat(fakePlayer.volume).isEqualTo(0.3f)
         assertThat(fakePlayer.playWhenReady).isTrue()
         assertThat(fakePlayer.playbackState).isEqualTo(Player.STATE_READY)
+        player.stop()
+    }
+
+    @Test
+    fun `play with default style uses default resource`() {
+        val fakePlayer = FakePlayer(bufferingDelayMs = 0)
+        val player = adhanPlayer(fakePlayer)
+        player.play("Isha", 30, "default")
+        idleMainLooper()
+        assertThat(fakePlayer.currentMediaItem?.localConfiguration?.uri).isEqualTo(ishaUri())
+        player.stop()
+    }
+
+    @Test
+    fun `play with unknown style falls back to default resource`() {
+        val fakePlayer = FakePlayer(bufferingDelayMs = 0)
+        val player = adhanPlayer(fakePlayer)
+        player.play("Fajr", 30, "bogus_style")
+        idleMainLooper()
+        assertThat(fakePlayer.currentMediaItem?.localConfiguration?.uri).isEqualTo(fajrUri())
         player.stop()
     }
 
