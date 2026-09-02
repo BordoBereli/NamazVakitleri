@@ -88,6 +88,7 @@
     <string name="daily_reminder">Recordatorio diario</string>
     <string name="jumuah">Yumu\'a</string>
     <string name="special_days">Días especiales</string>
+    <string name="ramadan">Ramadán</string>
     <string name="sound">Sonido</string>
     <string name="vibration">Vibración</string>
     <string name="send_test_notification">Enviar notificación de prueba</string>

@@ -14,6 +14,7 @@ data class NotificationSettings(
     val prePrayerMinutes: Int = 15,
     val jumuahEnabled: Boolean = true,
     val specialDaysEnabled: Boolean = true,
+    val ramadanEnabled: Boolean = true,
     val soundEnabled: Boolean = true,
     val vibrationEnabled: Boolean = true
 ) {

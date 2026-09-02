@@ -31,6 +31,7 @@ class UpdateNotificationSettingsUseCase(
         )
         dataStore.updateJumuahEnabled(settings.jumuahEnabled)
         dataStore.updateSpecialDaysEnabled(settings.specialDaysEnabled)
+        dataStore.updateRamadanEnabled(settings.ramadanEnabled)
         dataStore.updateSoundEnabled(settings.soundEnabled)
         dataStore.updateVibrationEnabled(settings.vibrationEnabled)
         settings.prayerToggles.forEach { (key, enabled) ->

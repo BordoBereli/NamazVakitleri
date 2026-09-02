@@ -88,6 +88,7 @@
     <string name="daily_reminder">تذكير يومي</string>
     <string name="jumuah">الجمعة</string>
     <string name="special_days">الأيام الخاصة</string>
+    <string name="ramadan">رمضان</string>
     <string name="sound">الصوت</string>
     <string name="vibration">الاهتزاز</string>
     <string name="send_test_notification">إرسال إشعار تجريبي</string>

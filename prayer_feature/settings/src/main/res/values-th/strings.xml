@@ -88,6 +88,7 @@
     <string name="daily_reminder">การเตือนรายวัน</string>
     <string name="jumuah">ญุมุอะฮ์</string>
     <string name="special_days">วันพิเศษ</string>
+    <string name="ramadan">รอมฎอน</string>
     <string name="sound">เสียง</string>
     <string name="vibration">การสั่น</string>
     <string name="send_test_notification">ส่งการแจ้งเตือนทดสอบ</string>

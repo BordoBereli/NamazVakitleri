@@ -53,6 +53,7 @@ class NotificationsViewModel(
             }
             is NotificationsEvent.SetJumuahEnabled -> update { it.copy(jumuahEnabled = event.enabled) }
             is NotificationsEvent.SetSpecialDaysEnabled -> update { it.copy(specialDaysEnabled = event.enabled) }
+            is NotificationsEvent.SetRamadanEnabled -> update { it.copy(ramadanEnabled = event.enabled) }
             is NotificationsEvent.SetSoundEnabled -> update { it.copy(soundEnabled = event.enabled) }
             is NotificationsEvent.SetVibrationEnabled -> update { it.copy(vibrationEnabled = event.enabled) }
             NotificationsEvent.SendTest -> sendTestNotification()

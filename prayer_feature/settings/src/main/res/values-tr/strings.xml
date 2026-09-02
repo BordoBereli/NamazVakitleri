@@ -90,6 +90,7 @@
     <string name="daily_reminder">Günlük hatırlatma</string>
     <string name="jumuah">Cuma</string>
     <string name="special_days">Özel günler</string>
+    <string name="ramadan">Ramazan</string>
     <string name="sound">Ses</string>
     <string name="vibration">Titreşim</string>
     <string name="send_test_notification">Test bildirimi gönder</string>

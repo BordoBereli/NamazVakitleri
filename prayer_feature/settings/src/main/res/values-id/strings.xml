@@ -88,6 +88,7 @@
     <string name="daily_reminder">Pengingat harian</string>
     <string name="jumuah">Jumat</string>
     <string name="special_days">Hari-hari khusus</string>
+    <string name="ramadan">Ramadan</string>
     <string name="sound">Suara</string>
     <string name="vibration">Getaran</string>
     <string name="send_test_notification">Kirim notifikasi uji</string>

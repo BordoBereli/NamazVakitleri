@@ -20,6 +20,7 @@ sealed class NotificationsEvent {
     data class SetDailyReminder(val enabled: Boolean, val hour: Int, val minute: Int) : NotificationsEvent()
     data class SetJumuahEnabled(val enabled: Boolean) : NotificationsEvent()
     data class SetSpecialDaysEnabled(val enabled: Boolean) : NotificationsEvent()
+    data class SetRamadanEnabled(val enabled: Boolean) : NotificationsEvent()
     data class SetSoundEnabled(val enabled: Boolean) : NotificationsEvent()
     data class SetVibrationEnabled(val enabled: Boolean) : NotificationsEvent()
     data object SendTest : NotificationsEvent()
