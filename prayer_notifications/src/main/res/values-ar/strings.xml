@@ -16,7 +16,6 @@
     <string name="notification_remaining_hours_minutes">%1$d س %2$d د</string>
     <string name="notification_remaining_minutes">%1$d د</string>
 
-    <string name="prayer_fajr">الفجر</string>
     <string name="prayer_dhuhr">الظهر</string>
     <string name="prayer_asr">العصر</string>
     <string name="prayer_maghrib">المغرب</string>

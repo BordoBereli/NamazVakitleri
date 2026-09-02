@@ -11,16 +11,9 @@
     <string name="calculation_method_makkah">جامعة أم القرى</string>
     <string name="calculation_method_karachi">جامعة كراتشي</string>
     <string name="hijri_adjustment">تعديل الهجري</string>
-    <string name="imsak_offset">فارق الإمساك</string>
-    <string name="imsak_offset_description">حدد عدد الدقائق قبل الفجر التي يبدأ فيها الإمساك</string>
-    <string name="imsak_offset_range">النطاق: من 5 إلى 20 دقيقة</string>
     <string name="asr_calculation">حساب العصر</string>
     <string name="juristic_standard">قياسي (شافعي)</string>
     <string name="juristic_hanafi">حنفي</string>
-    <string name="minutes">دقائق</string>
-    <string name="no_changes">لا تغييرات</string>
-    <string name="decrease">إنقاص</string>
-    <string name="increase">زيادة</string>
     <string name="select_language">اختر اللغة</string>
     <string name="language">اللغة</string>
     <string name="location">الموقع</string>
@@ -79,7 +72,6 @@
     <string name="language_ur">الأردية</string>
     <string name="notifications">الإشعارات</string>
     <string name="notifications_enabled">تفعيل الإشعارات</string>
-    <string name="prayer_fajr">الفجر</string>
     <string name="prayer_dhuhr">الظهر</string>
     <string name="prayer_asr">العصر</string>
     <string name="prayer_maghrib">المغرب</string>

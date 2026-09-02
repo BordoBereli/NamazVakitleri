@@ -11,16 +11,9 @@
     <string name="calculation_method_makkah">Université Umm Al-Qura</string>
     <string name="calculation_method_karachi">Université de Karachi</string>
     <string name="hijri_adjustment">Ajustement hijri</string>
-    <string name="imsak_offset">Décalage Imsak</string>
-    <string name="imsak_offset_description">Définissez combien de minutes avant Fajr commence l\'Imsak</string>
-    <string name="imsak_offset_range">Plage : 5 à 20 minutes</string>
     <string name="asr_calculation">Calcul du Asr</string>
     <string name="juristic_standard">Standard (Chaféite)</string>
     <string name="juristic_hanafi">Hanafite</string>
-    <string name="minutes">minutes</string>
-    <string name="no_changes">Aucun changement</string>
-    <string name="decrease">Diminuer</string>
-    <string name="increase">Augmenter</string>
     <string name="select_language">Sélectionner la langue</string>
     <string name="language">Langue</string>
     <string name="location">Localisation</string>
@@ -79,7 +72,6 @@
     <string name="language_ur">Ourdou</string>
     <string name="notifications">Notifications</string>
     <string name="notifications_enabled">Activer les notifications</string>
-    <string name="prayer_fajr">Fajr</string>
     <string name="prayer_dhuhr">Dhuhr</string>
     <string name="prayer_asr">Asr</string>
     <string name="prayer_maghrib">Maghrib</string>

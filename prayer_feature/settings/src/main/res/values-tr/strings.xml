@@ -11,16 +11,9 @@
     <string name="calculation_method_makkah">Ümmü\'l-Kura Üniversitesi</string>
     <string name="calculation_method_karachi">Karaçi Üniversitesi</string>
     <string name="hijri_adjustment">Hicri Ayarlama</string>
-    <string name="imsak_offset">İmsak Farkı</string>
-    <string name="imsak_offset_description">İmsak, Fecirden kaç dakika önce başlar</string>
-    <string name="imsak_offset_range">Aralık: 5 ila 20 dakika</string>
     <string name="asr_calculation">İkindi Hesabı</string>
     <string name="juristic_standard">Standart (Şafii)</string>
     <string name="juristic_hanafi">Hanefi</string>
-    <string name="minutes">dakika</string>
-    <string name="no_changes">Değişiklik yok</string>
-    <string name="decrease">Azalt</string>
-    <string name="increase">Artır</string>
     <string name="select_language">Dil Seç</string>
     <string name="language">Dil</string>
     <string name="location">Konum</string>
@@ -81,7 +74,6 @@
     <string name="language_ur">Urduca</string>
     <string name="notifications">Bildirimler</string>
     <string name="notifications_enabled">Bildirimleri etkinleştir</string>
-    <string name="prayer_fajr">İmsak</string>
     <string name="prayer_dhuhr">Öğle</string>
     <string name="prayer_asr">İkindi</string>
     <string name="prayer_maghrib">Akşam</string>

@@ -16,7 +16,6 @@
     <string name="notification_remaining_hours_minutes">%1$d ঘ %2$d মি</string>
     <string name="notification_remaining_minutes">%1$d মি</string>
 
-    <string name="prayer_fajr">ফজর</string>
     <string name="prayer_dhuhr">যোহর</string>
     <string name="prayer_asr">আসর</string>
     <string name="prayer_maghrib">মাগরিব</string>

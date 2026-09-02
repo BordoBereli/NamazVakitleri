@@ -11,16 +11,9 @@
     <string name="calculation_method_makkah">دانشگاه ام القری</string>
     <string name="calculation_method_karachi">دانشگاه کراچی</string>
     <string name="hijri_adjustment">تنظیم هجری</string>
-    <string name="imsak_offset">اختلاف امساک</string>
-    <string name="imsak_offset_description">تعیین کنید امساک چند دقیقه قبل از فجر آغاز شود</string>
-    <string name="imsak_offset_range">محدوده: ۵ تا ۲۰ دقیقه</string>
     <string name="asr_calculation">محاسبه عصر</string>
     <string name="juristic_standard">استاندارد (شافعی)</string>
     <string name="juristic_hanafi">حنفی</string>
-    <string name="minutes">دقیقه</string>
-    <string name="no_changes">بدون تغییر</string>
-    <string name="decrease">کاهش</string>
-    <string name="increase">افزایش</string>
     <string name="select_language">انتخاب زبان</string>
     <string name="language">زبان</string>
     <string name="location">موقعیت</string>
@@ -79,7 +72,6 @@
     <string name="language_ur">اردو</string>
     <string name="notifications">اعلان‌ها</string>
     <string name="notifications_enabled">فعال‌سازی اعلان‌ها</string>
-    <string name="prayer_fajr">فجر</string>
     <string name="prayer_dhuhr">ظهر</string>
     <string name="prayer_asr">عصر</string>
     <string name="prayer_maghrib">مغرب</string>

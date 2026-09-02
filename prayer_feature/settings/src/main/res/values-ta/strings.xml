@@ -11,16 +11,9 @@
     <string name="calculation_method_makkah">உம் அல்-குரா பல்கலைக்கழகம்</string>
     <string name="calculation_method_karachi">கராச்சி பல்கலைக்கழகம்</string>
     <string name="hijri_adjustment">ஹிஜ்ரி சரிசெய்தல்</string>
-    <string name="imsak_offset">இம்சாக் இடைவெளி</string>
-    <string name="imsak_offset_description">ஃபஜ்ருக்கு எத்தனை நிமிடங்களுக்கு முன் இம்சாக் தொடங்கும் என்பதை அமைக்கவும்</string>
-    <string name="imsak_offset_range">வரம்பு: 5 முதல் 20 நிமிடங்கள்</string>
     <string name="asr_calculation">அஸர் கணக்கீடு</string>
     <string name="juristic_standard">நிலையான (ஷாஃபி)</string>
     <string name="juristic_hanafi">ஹனஃபி</string>
-    <string name="minutes">நிமிடங்கள்</string>
-    <string name="no_changes">மாற்றங்கள் இல்லை</string>
-    <string name="decrease">குறை</string>
-    <string name="increase">அதிகரி</string>
     <string name="select_language">மொழியைத் தேர்ந்தெடுக்கவும்</string>
     <string name="language">மொழி</string>
     <string name="location">இருப்பிடம்</string>
@@ -79,7 +72,6 @@
     <string name="language_ur">உருது</string>
     <string name="notifications">அறிவிப்புகள்</string>
     <string name="notifications_enabled">அறிவிப்புகளை இயக்கு</string>
-    <string name="prayer_fajr">ஃபஜ்ர்</string>
     <string name="prayer_dhuhr">ஜுஹ்ர்</string>
     <string name="prayer_asr">அஸ்ர்</string>
     <string name="prayer_maghrib">மக்ரிப்</string>

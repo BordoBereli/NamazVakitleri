@@ -16,7 +16,6 @@
     <string name="notification_remaining_hours_minutes">%1$d sa %2$d dk</string>
     <string name="notification_remaining_minutes">%1$d dk</string>
 
-    <string name="prayer_fajr">İmsak</string>
     <string name="prayer_dhuhr">Öğle</string>
     <string name="prayer_asr">İkindi</string>
     <string name="prayer_maghrib">Akşam</string>

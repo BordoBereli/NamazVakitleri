@@ -11,16 +11,9 @@
     <string name="calculation_method_makkah">उम्म अल-कुरा विश्वविद्यालय</string>
     <string name="calculation_method_karachi">कराची विश्वविद्यालय</string>
     <string name="hijri_adjustment">हिजरी समायोजन</string>
-    <string name="imsak_offset">इमसाक अंतर</string>
-    <string name="imsak_offset_description">निर्धारित करें कि फज्र से कितने मिनट पहले इमसाक शुरू हो</string>
-    <string name="imsak_offset_range">सीमा: 5 से 20 मिनट</string>
     <string name="asr_calculation">असर गणना</string>
     <string name="juristic_standard">मानक (शाफी)</string>
     <string name="juristic_hanafi">हनफी</string>
-    <string name="minutes">मिनट</string>
-    <string name="no_changes">कोई बदलाव नहीं</string>
-    <string name="decrease">घटाएँ</string>
-    <string name="increase">बढ़ाएँ</string>
     <string name="select_language">भाषा चुनें</string>
     <string name="language">भाषा</string>
     <string name="location">स्थान</string>
@@ -79,7 +72,6 @@
     <string name="language_ur">उर्दू</string>
     <string name="notifications">सूचनाएं</string>
     <string name="notifications_enabled">सूचनाएं सक्षम करें</string>
-    <string name="prayer_fajr">फज्र</string>
     <string name="prayer_dhuhr">ज़ुहर</string>
     <string name="prayer_asr">अस्र</string>
     <string name="prayer_maghrib">मग़रिब</string>

@@ -11,16 +11,9 @@
     <string name="calculation_method_makkah">Университет Умм аль-Кура</string>
     <string name="calculation_method_karachi">Университет Карачи</string>
     <string name="hijri_adjustment">Корректировка хиджры</string>
-    <string name="imsak_offset">Смещение имсака</string>
-    <string name="imsak_offset_description">Укажите, за сколько минут до фаджра начинается имсак</string>
-    <string name="imsak_offset_range">Диапазон: от 5 до 20 минут</string>
     <string name="asr_calculation">Расчёт Асра</string>
     <string name="juristic_standard">Стандартный (Шафиит)</string>
     <string name="juristic_hanafi">Ханафит</string>
-    <string name="minutes">минут</string>
-    <string name="no_changes">Без изменений</string>
-    <string name="decrease">Уменьшить</string>
-    <string name="increase">Увеличить</string>
     <string name="select_language">Выберите язык</string>
     <string name="language">Язык</string>
     <string name="location">Местоположение</string>
@@ -79,7 +72,6 @@
     <string name="language_ur">Урду</string>
     <string name="notifications">Уведомления</string>
     <string name="notifications_enabled">Включить уведомления</string>
-    <string name="prayer_fajr">Фаджр</string>
     <string name="prayer_dhuhr">Зухр</string>
     <string name="prayer_asr">Аср</string>
     <string name="prayer_maghrib">Магриб</string>

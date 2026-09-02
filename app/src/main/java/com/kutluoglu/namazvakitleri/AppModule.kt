@@ -4,7 +4,6 @@ import com.kutluoglu.core.common.AppVersion
 import com.kutluoglu.prayer_feature.settings.SettingsViewModel
 import com.kutluoglu.prayer_feature.settings.calculation.CalculationMethodViewModel
 import com.kutluoglu.prayer_feature.settings.hijri.HijriAdjustmentViewModel
-import com.kutluoglu.prayer_feature.settings.imsak.ImsakOffsetViewModel
 import com.kutluoglu.prayer_feature.settings.juristic.JuristicMethodViewModel
 import com.kutluoglu.prayer_feature.settings.language.LanguageSelectionViewModel
 import com.kutluoglu.prayer_feature.settings.location.LocationSelectionViewModel
@@ -66,7 +65,6 @@ val appModule: Module = module {
     viewModel { MyLocationsViewModel(get(), get()) }
     factory { CalculationMethodViewModel(get(), get(), get()) }
     factory { HijriAdjustmentViewModel(get(), get(), get()) }
-    factory { ImsakOffsetViewModel(get(), get()) }
     factory { JuristicMethodViewModel(get(), get()) }
     factory { LanguageSelectionViewModel(get(), get(), get()) }
     viewModel { NotificationsViewModel(get(), get(), get(), get()) }

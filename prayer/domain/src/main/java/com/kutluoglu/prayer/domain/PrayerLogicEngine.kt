@@ -29,7 +29,7 @@ class PrayerLogicEngine(
     ): Pair<Prayer?, Prayer?> {
         val prayerTimes = prayers.filterNot { it.isImsak }
         val currentPrayer = findCurrentPrayer(prayerTimes, zoneId)
-        // Handle period before the first prayer (Fajr)
+        // Handle period before the first prayer (Sunrise)
         if (currentPrayer == null) {
             return Pair(prayerTimes.lastOrNull(), prayerTimes.firstOrNull())
         }

@@ -17,17 +17,16 @@ class AdhanResIdResolver {
     }
 
     private fun defaultResId(prayerKey: String): Int = when (prayerKey) {
-        "Fajr" -> R.raw.adhan_fajr
         "Dhuhr" -> R.raw.adhan_dhuhr
         "Asr" -> R.raw.adhan_asr
         "Maghrib" -> R.raw.adhan_maghrib
         "Isha" -> R.raw.adhan_isha
-        else -> R.raw.adhan_fajr
+        else -> R.raw.adhan_dhuhr
     }
 
     private fun styledResId(prayerKey: String, style: AdhanStyle): Int? = when (style) {
         // Future styles map to adhan_<prayer>_<style> resources, e.g.:
-        // "Fajr" -> R.raw.adhan_fajr_makkah
+        // "Dhuhr" -> R.raw.adhan_dhuhr_makkah
         else -> null
     }
 }

@@ -16,7 +16,6 @@
     <string name="notification_remaining_hours_minutes">%1$d மணி %2$d நிமி</string>
     <string name="notification_remaining_minutes">%1$d நிமி</string>
 
-    <string name="prayer_fajr">ஃபஜ்ர்</string>
     <string name="prayer_dhuhr">ஜுஹ்ர்</string>
     <string name="prayer_asr">அஸ்ர்</string>
     <string name="prayer_maghrib">மக்ரிப்</string>

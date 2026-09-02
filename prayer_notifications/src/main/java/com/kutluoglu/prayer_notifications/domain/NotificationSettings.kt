@@ -19,7 +19,7 @@ data class NotificationSettings(
     val vibrationEnabled: Boolean = true
 ) {
     companion object {
-        val PRAYER_KEYS = listOf("Fajr", "Dhuhr", "Asr", "Maghrib", "Isha")
+        val PRAYER_KEYS = listOf("Dhuhr", "Asr", "Maghrib", "Isha")
 
         fun defaultPrayerToggles(): Map<String, Boolean> =
             PRAYER_KEYS.associateWith { true }

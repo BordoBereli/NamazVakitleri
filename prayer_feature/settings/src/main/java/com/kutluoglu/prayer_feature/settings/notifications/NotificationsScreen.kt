@@ -785,7 +785,6 @@ private fun ErrorContent(
 
 @Composable
 private fun prayerNameRes(key: String): String = when (key) {
-    "Fajr" -> stringResource(R.string.prayer_fajr)
     "Dhuhr" -> stringResource(R.string.prayer_dhuhr)
     "Asr" -> stringResource(R.string.prayer_asr)
     "Maghrib" -> stringResource(R.string.prayer_maghrib)

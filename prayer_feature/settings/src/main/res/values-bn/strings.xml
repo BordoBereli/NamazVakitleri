@@ -11,16 +11,9 @@
     <string name="calculation_method_makkah">উম্ম আল-কুরা বিশ্ববিদ্যালয়</string>
     <string name="calculation_method_karachi">করাচি বিশ্ববিদ্যালয়</string>
     <string name="hijri_adjustment">হিজরি সমন্বয়</string>
-    <string name="imsak_offset">ইমসাক পার্থক্য</string>
-    <string name="imsak_offset_description">ফজরের কত মিনিট আগে ইমসাক শুরু হবে তা নির্ধারণ করুন</string>
-    <string name="imsak_offset_range">পরিসর: ৫ থেকে ২০ মিনিট</string>
     <string name="asr_calculation">আসর হিসাব</string>
     <string name="juristic_standard">স্ট্যান্ডার্ড (শাফি)</string>
     <string name="juristic_hanafi">হানাফি</string>
-    <string name="minutes">মিনিট</string>
-    <string name="no_changes">কোনো পরিবর্তন নেই</string>
-    <string name="decrease">কমান</string>
-    <string name="increase">বাড়ান</string>
     <string name="select_language">ভাষা নির্বাচন করুন</string>
     <string name="language">ভাষা</string>
     <string name="location">অবস্থান</string>
@@ -79,7 +72,6 @@
     <string name="language_ur">উর্দু</string>
     <string name="notifications">বিজ্ঞপ্তি</string>
     <string name="notifications_enabled">বিজ্ঞপ্তি সক্রিয় করুন</string>
-    <string name="prayer_fajr">ফজর</string>
     <string name="prayer_dhuhr">যোহর</string>
     <string name="prayer_asr">আসর</string>
     <string name="prayer_maghrib">মাগরিব</string>

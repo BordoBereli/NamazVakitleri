@@ -66,7 +66,6 @@ fun SettingsScreen(
     onNavigateToMyLocations: () -> Unit,
     onNavigateToCalculationMethod: () -> Unit,
     onNavigateToHijriAdjustment: () -> Unit,
-    onNavigateToImsakOffset: () -> Unit,
     onNavigateToJuristicMethod: () -> Unit,
     onNavigateToLanguage: () -> Unit,
     onNavigateToNotifications: () -> Unit,
@@ -113,7 +112,6 @@ fun SettingsScreen(
                         onNavigateToMyLocations = onNavigateToMyLocations,
                         onNavigateToCalculationMethod = onNavigateToCalculationMethod,
                         onNavigateToHijriAdjustment = onNavigateToHijriAdjustment,
-                        onNavigateToImsakOffset = onNavigateToImsakOffset,
                         onNavigateToJuristicMethod = onNavigateToJuristicMethod,
                         onNavigateToLanguage = onNavigateToLanguage,
                         onNavigateToNotifications = onNavigateToNotifications
@@ -142,7 +140,6 @@ private fun SettingsContent(
     onNavigateToMyLocations: () -> Unit,
     onNavigateToCalculationMethod: () -> Unit,
     onNavigateToHijriAdjustment: () -> Unit,
-    onNavigateToImsakOffset: () -> Unit,
     onNavigateToJuristicMethod: () -> Unit,
     onNavigateToLanguage: () -> Unit,
     onNavigateToNotifications: () -> Unit
@@ -199,16 +196,7 @@ private fun SettingsContent(
                 )
                 
                 HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
-                
-                SettingsItem(
-                    icon = Icons.Filled.Schedule,
-                    title = stringResource(SettingsR.string.imsak_offset),
-                    subtitle = "${settings.imsakOffsetMinutes} ${stringResource(SettingsR.string.minutes)}",
-                    onClick = onNavigateToImsakOffset
-                )
-                
-                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
-                
+
                 SettingsItem(
                     icon = Icons.Filled.Functions,
                     title = stringResource(SettingsR.string.asr_calculation),
