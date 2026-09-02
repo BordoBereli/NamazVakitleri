@@ -115,7 +115,7 @@ class PrayerTimesViewModel(
         }
         settingsObserverJob = viewModelScope.launch {
             settingsRepository.observeSettings()
-                .map { SettingsKey(it.calculationMethod, it.hijriAdjustment, it.language, it.imsakOffsetMinutes, it.juristicMethod) }
+                .map { SettingsKey(it.calculationMethod, it.hijriAdjustment, it.language, it.juristicMethod) }
                 .distinctUntilChanged()
                 .drop(1)
                 .collect {
@@ -212,7 +212,6 @@ class PrayerTimesViewModel(
             val settings = getSettingsUseCase()
             val calculationMethod = CalculationMethod.fromSettingsId(settings.calculationMethod)
             val hijriAdjustment = settings.hijriAdjustment
-            val imsakOffsetMinutes = settings.imsakOffsetMinutes
             val juristicMethod = JuristicMethod.fromSettingsId(settings.juristicMethod)
             try {
                 val locationCache = monthCache.getOrPut(locationId) { mutableMapOf() }
@@ -227,7 +226,6 @@ class PrayerTimesViewModel(
                     longitude = location.longitude,
                     zoneId = resolvedZoneId,
                     calculationMethod = calculationMethod,
-                    imsakOffsetMinutes = imsakOffsetMinutes,
                     juristicMethod = juristicMethod
                 )
                 if (persistedMonth != null) {
@@ -260,7 +258,7 @@ class PrayerTimesViewModel(
                         orderedDays.map { day ->
                             async(computationDispatcher) {
                                 val computed = computeDailyPrayer(
-                                    day, month, location, resolvedZoneId, today, calculationMethod, hijriAdjustment, imsakOffsetMinutes, juristicMethod
+                                    day, month, location, resolvedZoneId, today, calculationMethod, hijriAdjustment, juristicMethod
                                 )
                                 mutex.withLock {
                                     results[day - 1] = computed
@@ -292,7 +290,6 @@ class PrayerTimesViewModel(
                             longitude = location.longitude,
                             zoneId = resolvedZoneId,
                             calculationMethod = calculationMethod,
-                            imsakOffsetMinutes = imsakOffsetMinutes,
                             juristicMethod = juristicMethod,
                             prayers = monthlyPrayers
                         )
@@ -322,7 +319,6 @@ class PrayerTimesViewModel(
         today: LocalDateTime,
         calculationMethod: CalculationMethod,
         hijriAdjustment: Int,
-        imsakOffsetMinutes: Int,
         juristicMethod: JuristicMethod
     ): DailyPrayer {
         val date = month.onDay(day)
@@ -332,7 +328,6 @@ class PrayerTimesViewModel(
             longitude = location.longitude,
             zoneId = resolvedZoneId,
             calculationMethod = calculationMethod,
-            imsakOffsetMinutes = imsakOffsetMinutes,
             juristicMethod = juristicMethod,
             persistDailyCache = false
         ).getOrElse { throw it }
@@ -370,7 +365,6 @@ class PrayerTimesViewModel(
         val calculationMethod: String,
         val hijriAdjustment: Int,
         val language: String,
-        val imsakOffsetMinutes: Int,
         val juristicMethod: String
     )
 

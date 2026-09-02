@@ -33,7 +33,6 @@ class WidgetDataProvider(
             longitude = location.longitude,
             zoneId = zoneId,
             calculationMethod = method,
-            imsakOffsetMinutes = settings.imsakOffsetMinutes,
             juristicMethod = juristicMethod,
             persistDailyCache = false
         ).getOrNull() ?: return WidgetResult.Error
