@@ -5,6 +5,7 @@ import com.kutluoglu.core.common.now
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.prayer.CalculationMethod
+import com.kutluoglu.prayer.model.prayer.JuristicMethod
 import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer.usecases.prayer.GetPrayerTimesUseCase
 import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
@@ -36,7 +37,8 @@ class PrayerTimesLoader(
         location: LocationData,
         calculationMethod: CalculationMethod,
         hijriAdjustment: Int = 0,
-        imsakOffsetMinutes: Int = 10
+        imsakOffsetMinutes: Int = 10,
+        juristicMethod: JuristicMethod = JuristicMethod.STANDARD
     ): Result<LoadedPrayerData> {
         val zoneId = getZoneIdFromLocation(location.countryCode)
         val locationDateTime = LocalDateTime.now(zoneId)
@@ -46,7 +48,8 @@ class PrayerTimesLoader(
             longitude = location.longitude,
             zoneId = zoneId,
             calculationMethod = calculationMethod,
-            imsakOffsetMinutes = imsakOffsetMinutes
+            imsakOffsetMinutes = imsakOffsetMinutes,
+            juristicMethod = juristicMethod
         ).map { prayerTimes ->
             val localized = formatter.withLocalizedNames(prayerTimes)
             LoadedPrayerData(

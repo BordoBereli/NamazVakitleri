@@ -11,6 +11,7 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.kutluoglu.core.common.now
 import com.kutluoglu.prayer.model.prayer.CalculationMethod
+import com.kutluoglu.prayer.model.prayer.JuristicMethod
 import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer.usecases.prayer.GetPrayerTimesUseCase
 import com.kutluoglu.prayer_location.LocationsCoordinator
@@ -91,12 +92,14 @@ class PrayerNotificationScheduler(
             .getOrDefault(ZoneId.systemDefault())
         val today = LocalDate.now(zoneId)
         val method = CalculationMethod.fromSettingsId(appSettings.calculationMethod)
+        val juristicMethod = JuristicMethod.fromSettingsId(appSettings.juristicMethod)
         val prayers = getPrayerTimesUseCase(
             date = LocalDateTime.now(zoneId),
             latitude = location.latitude,
             longitude = location.longitude,
             zoneId = zoneId,
-            calculationMethod = method
+            calculationMethod = method,
+            juristicMethod = juristicMethod
         ).getOrNull() ?: run {
             cancelAll()
             cancelDailyReschedule()
@@ -110,6 +113,7 @@ class PrayerNotificationScheduler(
             longitude = location.longitude,
             zoneId = zoneId,
             calculationMethod = method,
+            juristicMethod = juristicMethod,
             persistDailyCache = false
         ).getOrNull() ?: run {
             cancelAll()
@@ -311,12 +315,14 @@ class PrayerNotificationScheduler(
             .getOrDefault(ZoneId.systemDefault())
         val tomorrow = LocalDate.now(zoneId).plusDays(1)
         val method = CalculationMethod.fromSettingsId(appSettings.calculationMethod)
+        val juristicMethod = JuristicMethod.fromSettingsId(appSettings.juristicMethod)
         val prayers = getPrayerTimesUseCase(
             date = LocalDateTime(tomorrow.year, tomorrow.monthValue, tomorrow.dayOfMonth, 0, 0),
             latitude = location.latitude,
             longitude = location.longitude,
             zoneId = zoneId,
-            calculationMethod = method
+            calculationMethod = method,
+            juristicMethod = juristicMethod
         ).getOrNull() ?: return
         val trigger = LocalTime.of(settings.dailyReminderHour, settings.dailyReminderMinute)
             .atDate(tomorrow)
