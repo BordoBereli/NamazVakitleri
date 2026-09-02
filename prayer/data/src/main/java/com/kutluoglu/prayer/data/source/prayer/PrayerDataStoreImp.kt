@@ -38,12 +38,13 @@ class PrayerDataStoreImp(
             longitude: Double,
             zoneId: ZoneId,
             calculationMethod: CalculationMethod,
+            imsakOffsetMinutes: Int,
             persistDailyCache: Boolean,
     ): List<Prayer> {
-        val cacheKey = buildCacheKey(date, latitude, longitude, zoneId, calculationMethod)
+        val cacheKey = buildCacheKey(date, latitude, longitude, zoneId, calculationMethod, imsakOffsetMinutes)
         val cached = prayerTimesCache.get(cacheKey)
         if (cached != null) {
-            if (persistDailyCache) preCacheTomorrow(date, latitude, longitude, zoneId, calculationMethod)
+            if (persistDailyCache) preCacheTomorrow(date, latitude, longitude, zoneId, calculationMethod, imsakOffsetMinutes)
             return cached
         }
 
@@ -54,12 +55,13 @@ class PrayerDataStoreImp(
                 zoneId = zoneId,
                 date = date,
                 calculationMethod = calculationMethod,
-                juristicMethod = JuristicMethod.STANDARD
+                juristicMethod = JuristicMethod.STANDARD,
+                imsakOffsetMinutes = imsakOffsetMinutes
             )
         }
         if (persistDailyCache) {
             prayerTimesCache.put(cacheKey, calculated)
-            preCacheTomorrow(date, latitude, longitude, zoneId, calculationMethod)
+            preCacheTomorrow(date, latitude, longitude, zoneId, calculationMethod, imsakOffsetMinutes)
         }
         return calculated
     }
@@ -69,13 +71,14 @@ class PrayerDataStoreImp(
             latitude: Double,
             longitude: Double,
             zoneId: ZoneId,
-            calculationMethod: CalculationMethod
+            calculationMethod: CalculationMethod,
+            imsakOffsetMinutes: Int
     ) {
         preCacheScope.launch {
             runCatching {
                 val tomorrow = date.date.plus(1, DateTimeUnit.DAY)
                     .atTime(date.hour, date.minute, date.second, date.nanosecond)
-                val tomorrowKey = buildCacheKey(tomorrow, latitude, longitude, zoneId, calculationMethod)
+                val tomorrowKey = buildCacheKey(tomorrow, latitude, longitude, zoneId, calculationMethod, imsakOffsetMinutes)
                 if (prayerTimesCache.get(tomorrowKey) != null) return@runCatching
                 val tomorrowPrayers = prayerCalculationService.calculateDailyPrayerTimes(
                     latitude = latitude,
@@ -83,7 +86,8 @@ class PrayerDataStoreImp(
                     zoneId = zoneId,
                     date = tomorrow,
                     calculationMethod = calculationMethod,
-                    juristicMethod = JuristicMethod.STANDARD
+                    juristicMethod = JuristicMethod.STANDARD,
+                    imsakOffsetMinutes = imsakOffsetMinutes
                 )
                 prayerTimesCache.put(tomorrowKey, tomorrowPrayers)
             }.onFailure { error ->
@@ -124,8 +128,9 @@ class PrayerDataStoreImp(
             latitude: Double,
             longitude: Double,
             zoneId: ZoneId,
-            calculationMethod: CalculationMethod
-    ): String = "${date.date}|$latitude|$longitude|${zoneId.id}|$calculationMethod"
+            calculationMethod: CalculationMethod,
+            imsakOffsetMinutes: Int
+    ): String = "${date.date}|$latitude|$longitude|${zoneId.id}|$calculationMethod|$imsakOffsetMinutes"
 
     private fun buildMonthCacheKey(
             month: YearMonth,

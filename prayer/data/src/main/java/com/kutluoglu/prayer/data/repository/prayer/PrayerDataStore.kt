@@ -25,6 +25,7 @@ interface PrayerDataStore {
         longitude: Double,
         zoneId: ZoneId,
         calculationMethod: CalculationMethod = CalculationMethod.TURKEY_DIYANET,
+        imsakOffsetMinutes: Int = 10,
         persistDailyCache: Boolean = true,
     ): List<Prayer>
 

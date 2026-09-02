@@ -78,7 +78,7 @@ class GetPrayerTimesUseCaseTest {
         coVerify(exactly = 1) {
             prayerRepository.getPrayerTimes(
                 testDate, 41.0, 29.0, zoneId,
-                CalculationMethod.TURKEY_DIYANET, false
+                CalculationMethod.TURKEY_DIYANET, 10, false
             )
         }
     }
@@ -94,7 +94,7 @@ class GetPrayerTimesUseCaseTest {
         coVerify(exactly = 1) {
             prayerRepository.getPrayerTimes(
                 testDate, 41.0, 29.0, zoneId,
-                CalculationMethod.TURKEY_DIYANET, true
+                CalculationMethod.TURKEY_DIYANET, 10, true
             )
         }
     }

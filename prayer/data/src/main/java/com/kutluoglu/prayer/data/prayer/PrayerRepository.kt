@@ -20,6 +20,7 @@ class PrayerRepository(
         longitude: Double,
         zoneId: ZoneId,
         calculationMethod: CalculationMethod,
+        imsakOffsetMinutes: Int,
         persistDailyCache: Boolean,
     ): List<Prayer> = prayerDataStore.getPrayerTimes(
         date = date,
@@ -27,6 +28,7 @@ class PrayerRepository(
         longitude = longitude,
         zoneId = zoneId,
         calculationMethod = calculationMethod,
+        imsakOffsetMinutes = imsakOffsetMinutes,
         persistDailyCache = persistDailyCache
     )
 
