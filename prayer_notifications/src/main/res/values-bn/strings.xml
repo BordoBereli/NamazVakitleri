@@ -30,6 +30,8 @@
     <string name="notification_special_day_body">আজ %1$s</string>
     <string name="notification_pre_special_day_title">আগামীকাল</string>
     <string name="notification_pre_special_day_body">আগামীকাল %1$s</string>
+    <string name="notification_sahur_ended">সাহরি শেষ</string>
+    <string name="notification_iftar_time">ইফতারের সময়</string>
     <string name="special_day_ramadan_start">রমজান শুরু</string>
     <string name="special_day_eid_al_fitr">ঈদুল ফিতর</string>
     <string name="special_day_eid_al_adha">ঈদুল আজহা</string>

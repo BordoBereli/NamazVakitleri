@@ -30,6 +30,8 @@
     <string name="notification_special_day_body">आज %1$s है</string>
     <string name="notification_pre_special_day_title">कल</string>
     <string name="notification_pre_special_day_body">कल %1$s है</string>
+    <string name="notification_sahur_ended">सहरी समाप्त</string>
+    <string name="notification_iftar_time">इफ्तार का समय</string>
     <string name="special_day_ramadan_start">रमज़ान की शुरुआत</string>
     <string name="special_day_eid_al_fitr">ईद-उल-फितर</string>
     <string name="special_day_eid_al_adha">ईद-उल-अज़हा</string>

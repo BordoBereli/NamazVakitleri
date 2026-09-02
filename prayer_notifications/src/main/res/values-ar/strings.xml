@@ -30,6 +30,8 @@
     <string name="notification_special_day_body">اليوم هو %1$s</string>
     <string name="notification_pre_special_day_title">غدًا</string>
     <string name="notification_pre_special_day_body">غدًا هو %1$s</string>
+    <string name="notification_sahur_ended">انتهى السحور</string>
+    <string name="notification_iftar_time">وقت الإفطار</string>
     <string name="special_day_ramadan_start">بداية رمضان</string>
     <string name="special_day_eid_al_fitr">عيد الفطر</string>
     <string name="special_day_eid_al_adha">عيد الأضحى</string>

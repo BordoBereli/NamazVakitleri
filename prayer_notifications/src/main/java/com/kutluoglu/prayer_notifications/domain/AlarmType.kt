@@ -6,5 +6,7 @@ enum class AlarmType {
     COUNTDOWN_TICK,
     DAILY_REMINDER,
     SPECIAL_DAY,
-    PRE_SPECIAL_DAY
+    PRE_SPECIAL_DAY,
+    SAHUR_END,
+    IFTAR
 }

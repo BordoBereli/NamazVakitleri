@@ -29,6 +29,8 @@ class SchedulePlan {
         const val REQUEST_CODE_DAILY_REMINDER = 2001
         const val REQUEST_CODE_SPECIAL_DAY = 2002
         const val REQUEST_CODE_PRE_SPECIAL_DAY = 2003
+        const val REQUEST_CODE_SAHUR_END = 2004
+        const val REQUEST_CODE_IFTAR = 2005
     }
 
     fun buildDailyAlarms(
@@ -45,7 +47,8 @@ class SchedulePlan {
         dailySummary: String = "",
         specialDayToday: SpecialDay? = null,
         specialDayTomorrow: SpecialDay? = null,
-        jumuahEnabled: Boolean = true
+        jumuahEnabled: Boolean = true,
+        ramadanEnabled: Boolean = true
     ): List<ScheduledAlarm> {
         val nowZoned = now.atZone(zoneId)
         val today = nowZoned.toLocalDate()
@@ -183,6 +186,33 @@ class SchedulePlan {
                 type = AlarmType.PRE_SPECIAL_DAY,
                 specialDay = day
             )
+        }
+
+        if (ramadanEnabled) {
+            val imsakPrayer = prayers.firstOrNull { it.isImsak }
+            if (imsakPrayer != null) {
+                val sahurTrigger = triggerFor(imsakPrayer, today)
+                if (sahurTrigger.isAfter(now)) {
+                    result += ScheduledAlarm(
+                        prayerKey = "sahur_end",
+                        triggerAtMillis = sahurTrigger.toEpochMilli(),
+                        requestCode = REQUEST_CODE_SAHUR_END,
+                        type = AlarmType.SAHUR_END
+                    )
+                }
+                val maghribPrayer = prayers.firstOrNull { it.name == "Maghrib" }
+                if (maghribPrayer != null) {
+                    val iftarTrigger = triggerFor(maghribPrayer, today)
+                    if (iftarTrigger.isAfter(now)) {
+                        result += ScheduledAlarm(
+                            prayerKey = "iftar",
+                            triggerAtMillis = iftarTrigger.toEpochMilli(),
+                            requestCode = REQUEST_CODE_IFTAR,
+                            type = AlarmType.IFTAR
+                        )
+                    }
+                }
+            }
         }
 
         return result

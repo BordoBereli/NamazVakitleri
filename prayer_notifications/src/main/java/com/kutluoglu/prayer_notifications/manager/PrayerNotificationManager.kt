@@ -37,6 +37,8 @@ class PrayerNotificationManager(
         const val NOTIFICATION_ID_SPECIAL_DAY = 1007
         const val NOTIFICATION_ID_PRE_SPECIAL_DAY = 1008
         const val NOTIFICATION_ID_ADHAN = 1009
+        const val NOTIFICATION_ID_SAHUR_END = 1010
+        const val NOTIFICATION_ID_IFTAR = 1011
     }
 
     private val notificationManager: NotificationManager =
@@ -230,6 +232,26 @@ class PrayerNotificationManager(
             .setAutoCancel(true)
             .build()
         notificationManager.notify(NOTIFICATION_ID_PRE_SPECIAL_DAY, notification)
+    }
+
+    override fun showSahurEndNotification() {
+        val notification = NotificationCompat.Builder(context, CHANNEL_REMINDERS)
+            .setSmallIcon(R.drawable.ic_notification)
+            .setContentTitle(localizedString(R.string.notification_sahur_ended))
+            .setContentText(localizedString(R.string.notification_sahur_ended))
+            .setAutoCancel(true)
+            .build()
+        notificationManager.notify(NOTIFICATION_ID_SAHUR_END, notification)
+    }
+
+    override fun showIftarNotification() {
+        val notification = NotificationCompat.Builder(context, CHANNEL_REMINDERS)
+            .setSmallIcon(R.drawable.ic_notification)
+            .setContentTitle(localizedString(R.string.notification_iftar_time))
+            .setContentText(localizedString(R.string.notification_iftar_time))
+            .setAutoCancel(true)
+            .build()
+        notificationManager.notify(NOTIFICATION_ID_IFTAR, notification)
     }
 
     private fun formatRemaining(millis: Long): String {

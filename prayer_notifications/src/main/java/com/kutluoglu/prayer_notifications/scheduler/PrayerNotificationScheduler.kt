@@ -143,7 +143,8 @@ class PrayerNotificationScheduler(
             dailySummary = summary,
             specialDayToday = specialDayToday,
             specialDayTomorrow = specialDayTomorrow,
-            jumuahEnabled = settings.jumuahEnabled
+            jumuahEnabled = settings.jumuahEnabled,
+            ramadanEnabled = settings.ramadanEnabled
         )
         cancelAll(stopAdhan = false)
         alarms.forEach { scheduleAlarm(it) }
@@ -199,7 +200,9 @@ class PrayerNotificationScheduler(
         listOf(
             SchedulePlan.REQUEST_CODE_DAILY_REMINDER,
             SchedulePlan.REQUEST_CODE_SPECIAL_DAY,
-            SchedulePlan.REQUEST_CODE_PRE_SPECIAL_DAY
+            SchedulePlan.REQUEST_CODE_PRE_SPECIAL_DAY,
+            SchedulePlan.REQUEST_CODE_SAHUR_END,
+            SchedulePlan.REQUEST_CODE_IFTAR
         ).forEach { code ->
             val intent = Intent(context, AlarmReceiver::class.java)
             val pendingIntent = PendingIntent.getBroadcast(
