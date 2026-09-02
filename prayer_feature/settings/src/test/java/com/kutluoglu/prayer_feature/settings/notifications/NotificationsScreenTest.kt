@@ -13,6 +13,7 @@ import androidx.compose.ui.test.isToggleable
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performSemanticsAction
 import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ApplicationProvider
@@ -433,8 +434,8 @@ class NotificationsScreenTest {
             )
         )
 
-        composeTestRule.onNodeWithText("Test Adhan").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Schedule Adhan test").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Test Adhan").performScrollTo().assertIsDisplayed()
+        composeTestRule.onNodeWithText("Schedule Adhan test").performScrollTo().assertIsDisplayed()
     }
 
     @Test
@@ -478,8 +479,8 @@ class NotificationsScreenTest {
             )
         )
 
-        composeTestRule.onNodeWithText("10m").performClick()
-        composeTestRule.onNodeWithText("Schedule Adhan test").performClick()
+        composeTestRule.onNodeWithText("10m").performScrollTo().performClick()
+        composeTestRule.onNodeWithText("Schedule Adhan test").performScrollTo().performClick()
 
         verify { alarmScheduler.scheduleTestAdhan(10) }
     }
