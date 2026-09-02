@@ -43,30 +43,31 @@ class PrayerRepositoryTest {
         val zoneId = ZoneId.systemDefault()
         val mockPrayerList = listOf(
             Prayer(
-                name = "Fajr",
-                arabicName = "الفجر",
+                name = "Imsak",
+                arabicName = "الإمساك",
                 time = LocalTime.parse("05:00"),
                 date = testDate.date,
                 isCurrent = false,
-                notificationEnabled = false
+                notificationEnabled = false,
+                isImsak = true
             )
         )
 
         // Stub the mock: When prayerDataStore.getPrayerTimes is called with ANY arguments,
         // it should return our mockPrayerList.
-        coEvery { prayerDataStore.getPrayerTimes(any(), any(), any(), any(), any()) } returns mockPrayerList
+        coEvery { prayerDataStore.getPrayerTimes(any(), any(), any(), any(), any(), any(), any()) } returns mockPrayerList
 
         // Act (When)
         val result = repository.getPrayerTimes(testDate, testLatitude, testLongitude, zoneId, CalculationMethod.TURKEY_DIYANET)
 
         // Assert (Then)
         // Verify that the data store was called exactly once.
-        coVerify(exactly = 1) { prayerDataStore.getPrayerTimes(testDate, testLatitude, testLongitude, zoneId, CalculationMethod.TURKEY_DIYANET) }
+        coVerify(exactly = 1) { prayerDataStore.getPrayerTimes(testDate, testLatitude, testLongitude, zoneId, CalculationMethod.TURKEY_DIYANET, JuristicMethod.STANDARD, true) }
 
         // Verify that the result from the repository is the same as the one we told the mock to return.
         assertThat(result).isEqualTo(mockPrayerList)
         assertThat(result).hasSize(1)
-        assertThat(result.first().name).isEqualTo("Fajr")
+        assertThat(result.first().name).isEqualTo("Imsak")
     }
 
     @Test
@@ -88,16 +89,16 @@ class PrayerRepositoryTest {
                 gregorianDate = "1 Monday",
                 hijriDate = "1 Muharram 1448",
                 prayers = listOf(
-                    Prayer("Fajr", "الفجر", LocalTime.parse("05:00"), LocalDate(2024, 1, 1))
+                    Prayer("Imsak", "الإمساك", LocalTime.parse("05:00"), LocalDate(2024, 1, 1), isImsak = true)
                 )
             )
         )
-        coEvery { prayerDataStore.getMonthlyPrayerTimes(any(), any(), any(), any(), any(), any(), any()) } returns mockMonth
+        coEvery { prayerDataStore.getMonthlyPrayerTimes(any(), any(), any(), any(), any(), any()) } returns mockMonth
 
         val result = repository.getMonthlyPrayerTimes(month, 41.0, 29.0, zoneId, CalculationMethod.TURKEY_DIYANET)
 
         coVerify(exactly = 1) {
-            prayerDataStore.getMonthlyPrayerTimes(month, 41.0, 29.0, zoneId, CalculationMethod.TURKEY_DIYANET, 10, JuristicMethod.STANDARD)
+            prayerDataStore.getMonthlyPrayerTimes(month, 41.0, 29.0, zoneId, CalculationMethod.TURKEY_DIYANET, JuristicMethod.STANDARD)
         }
         assertThat(result).isEqualTo(mockMonth)
     }
@@ -112,16 +113,16 @@ class PrayerRepositoryTest {
                 gregorianDate = "1 Monday",
                 hijriDate = "1 Muharram 1448",
                 prayers = listOf(
-                    Prayer("Fajr", "الفجر", LocalTime.parse("05:00"), LocalDate(2024, 1, 1))
+                    Prayer("Imsak", "الإمساك", LocalTime.parse("05:00"), LocalDate(2024, 1, 1), isImsak = true)
                 )
             )
         )
-        coEvery { prayerDataStore.saveMonthlyPrayerTimes(any(), any(), any(), any(), any(), any(), any(), any()) } returns Unit
+        coEvery { prayerDataStore.saveMonthlyPrayerTimes(any(), any(), any(), any(), any(), any(), any()) } returns Unit
 
-        repository.saveMonthlyPrayerTimes(month, 41.0, 29.0, zoneId, CalculationMethod.TURKEY_DIYANET, 10, JuristicMethod.STANDARD, monthToSave)
+        repository.saveMonthlyPrayerTimes(month, 41.0, 29.0, zoneId, CalculationMethod.TURKEY_DIYANET, JuristicMethod.STANDARD, monthToSave)
 
         coVerify(exactly = 1) {
-            prayerDataStore.saveMonthlyPrayerTimes(month, 41.0, 29.0, zoneId, CalculationMethod.TURKEY_DIYANET, 10, JuristicMethod.STANDARD, monthToSave)
+            prayerDataStore.saveMonthlyPrayerTimes(month, 41.0, 29.0, zoneId, CalculationMethod.TURKEY_DIYANET, JuristicMethod.STANDARD, monthToSave)
         }
     }
 }

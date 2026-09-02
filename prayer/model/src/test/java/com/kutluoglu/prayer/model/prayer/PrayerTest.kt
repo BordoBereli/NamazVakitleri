@@ -10,7 +10,7 @@ class PrayerTest {
 
     @Test
     fun `prayer defaults to isImsak false`() {
-        val prayer = Prayer("Fajr", "الفجر", LocalTime(5, 0), LocalDate(2026, 9, 2))
+        val prayer = Prayer("Imsak", "الإمساك", LocalTime(5, 0), LocalDate(2026, 9, 2))
         assertFalse(prayer.isImsak)
     }
 

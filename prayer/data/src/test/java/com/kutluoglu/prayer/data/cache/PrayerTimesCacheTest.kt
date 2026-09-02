@@ -47,7 +47,7 @@ class PrayerTimesCacheTest {
     @Test
     fun `put then get returns the cached prayers`() = runBlocking {
         val prayers = listOf(
-            Prayer("Fajr", "الفجر", LocalTime.parse("05:00"), LocalDate(2024, 1, 1)),
+            Prayer("Imsak", "الإمساك", LocalTime.parse("05:00"), LocalDate(2024, 1, 1)),
             Prayer("Isha", "العشاء", LocalTime.parse("20:42"), LocalDate(2024, 1, 1))
         )
 
@@ -59,7 +59,7 @@ class PrayerTimesCacheTest {
 
     @Test
     fun `clear removes all cached prayers`() = runBlocking {
-        cache.put("key-1", listOf(Prayer("Fajr", "الفجر", LocalTime.parse("05:00"), LocalDate(2024, 1, 1))))
+        cache.put("key-1", listOf(Prayer("Imsak", "الإمساك", LocalTime.parse("05:00"), LocalDate(2024, 1, 1))))
         cache.put("key-2", listOf(Prayer("Isha", "العشاء", LocalTime.parse("20:42"), LocalDate(2024, 1, 1))))
 
         cache.clear()
@@ -83,7 +83,7 @@ class PrayerTimesCacheTest {
                 gregorianDate = "1 Monday",
                 hijriDate = "1 Muharram 1448",
                 prayers = listOf(
-                    Prayer("Fajr", "الفجر", LocalTime.parse("05:00"), LocalDate(2024, 1, 1)),
+                    Prayer("Imsak", "الإمساك", LocalTime.parse("05:00"), LocalDate(2024, 1, 1)),
                     Prayer("Isha", "العشاء", LocalTime.parse("20:42"), LocalDate(2024, 1, 1))
                 )
             ),
@@ -92,7 +92,7 @@ class PrayerTimesCacheTest {
                 gregorianDate = "2 Tuesday",
                 hijriDate = "2 Muharram 1448",
                 prayers = listOf(
-                    Prayer("Fajr", "الفجر", LocalTime.parse("05:01"), LocalDate(2024, 1, 2)),
+                    Prayer("Imsak", "الإمساك", LocalTime.parse("05:01"), LocalDate(2024, 1, 2)),
                     Prayer("Isha", "العشاء", LocalTime.parse("20:41"), LocalDate(2024, 1, 2))
                 )
             )
@@ -114,7 +114,7 @@ class PrayerTimesCacheTest {
                     gregorianDate = "1 Monday",
                     hijriDate = "1 Muharram 1448",
                     prayers = listOf(
-                        Prayer("Fajr", "الفجر", LocalTime.parse("05:00"), LocalDate(2024, 1, 1))
+                        Prayer("Imsak", "الإمساك", LocalTime.parse("05:00"), LocalDate(2024, 1, 1))
                     )
                 )
             )

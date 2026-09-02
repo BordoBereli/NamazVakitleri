@@ -4,12 +4,16 @@ import com.kutluoglu.prayer.data.cache.PrayerTimesCache
 import com.kutluoglu.prayer.data.repository.prayer.PrayerDataStore
 import com.kutluoglu.prayer.data.source.prayer.PrayerDataStoreImp
 import com.kutluoglu.prayer.model.prayer.CalculationMethod
+import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer.services.PrayerCalculationService
 import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.time.ZoneId
 
@@ -21,20 +25,19 @@ class PrayerDataStoreImsakTest {
     private val store: PrayerDataStore = PrayerDataStoreImp(service, cache, scope)
 
     @Test
-    fun `forwards imsak offset to calculation service`() = runTest {
+    fun `returns imsak as first prayer from calculation`() = runTest {
         val date = LocalDateTime(2026, 9, 2, 0, 0)
         coEvery { cache.get(any()) } returns null
-        coEvery { service.calculateDailyPrayerTimes(any(), any(), any(), any(), any(), any(), any()) } returns emptyList()
-        store.getPrayerTimes(
+        coEvery { service.calculateDailyPrayerTimes(any(), any(), any(), any(), any(), any()) } returns listOf(
+            Prayer("Imsak", "الإمساك", LocalTime(4, 50), LocalDate(2026, 9, 2), isImsak = true),
+            Prayer("Sunrise", "الشروق", LocalTime(6, 0), LocalDate(2026, 9, 2))
+        )
+        val prayers = store.getPrayerTimes(
             date = date, latitude = 41.0, longitude = 29.0,
             zoneId = ZoneId.of("Europe/Istanbul"),
-            calculationMethod = CalculationMethod.TURKEY_DIYANET,
-            imsakOffsetMinutes = 15
+            calculationMethod = CalculationMethod.TURKEY_DIYANET
         )
-        coVerify {
-            service.calculateDailyPrayerTimes(
-                any(), any(), any(), any(), any(), any(), imsakOffsetMinutes = 15
-            )
-        }
+        assertEquals("Imsak", prayers.first().name)
+        assertTrue(prayers.first().isImsak)
     }
 }
