@@ -27,7 +27,7 @@ class PrayerWidgetRenderTest {
         gregorianDate = "2026-09-02",
         hijriDate = "20 Safer 1448",
         prayers = listOf(
-            WidgetPrayer("Fajr", "05:00", false),
+            WidgetPrayer("Asr", "16:00", false),
             WidgetPrayer("Dhuhr", "12:30", true)
         )
     )
@@ -72,7 +72,7 @@ class PrayerWidgetRenderTest {
             setAppWidgetSize(PrayerWidgetSizes.LARGE)
             provideComposable { WidgetContent(data) }
             awaitIdle()
-            onNode(hasText("Fajr")).assertExists()
+            onNode(hasText("Dhuhr")).assertExists()
         }
     }
 
@@ -84,7 +84,7 @@ class PrayerWidgetRenderTest {
             provideComposable { WidgetContent(data) }
             awaitIdle()
             onNode(hasTextWithFontWeight("Dhuhr", FontWeight.Bold)).assertExists()
-            onNode(hasTextWithFontWeight("Fajr", FontWeight.Normal)).assertExists()
+            onNode(hasTextWithFontWeight("Asr", FontWeight.Normal)).assertExists()
         }
     }
 

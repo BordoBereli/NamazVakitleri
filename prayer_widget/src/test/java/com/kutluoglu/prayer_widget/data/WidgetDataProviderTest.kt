@@ -51,16 +51,16 @@ class WidgetDataProviderTest {
 
             coEvery { locations.resolveSelected() } returns LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", null)
             coEvery { settings() } returns Settings()
-            coEvery { useCase.invoke(any(), any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
+            coEvery { useCase.invoke(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
                 listOf(
-                    prayer("Fajr", LocalTime(5, 0)),
                     prayer("Dhuhr", LocalTime(12, 30)),
+                    prayer("Maghrib", LocalTime(19, 30)),
                     prayer("Asr", LocalTime(16, 0))
                 )
             )
             coEvery { formatter.withLocalizedNames(any()) } returns listOf(
-                prayer("Fajr", LocalTime(5, 0)),
                 prayer("Dhuhr", LocalTime(12, 30)),
+                prayer("Maghrib", LocalTime(19, 30)),
                 prayer("Asr", LocalTime(16, 0))
             )
 
@@ -99,14 +99,14 @@ class WidgetDataProviderTest {
 
             coEvery { locations.resolveSelected() } returns LocationData(41.0, 29.0, "United States", "US", "New York", null)
             coEvery { settings() } returns Settings()
-            coEvery { useCase.invoke(any(), any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
-                listOf(prayer("Fajr", LocalTime(5, 0)))
+            coEvery { useCase.invoke(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
+                listOf(prayer("Dhuhr", LocalTime(12, 30)))
             )
             coEvery { calculator.findCurrentAndNextPrayer(any(), any()) } returns Pair(
-                prayer("Fajr", LocalTime(5, 0)),
+                prayer("Dhuhr", LocalTime(12, 30)),
                 prayer("Dhuhr", LocalTime(12, 30))
             )
-            coEvery { formatter.withLocalizedNames(any()) } returns listOf(prayer("Fajr", LocalTime(5, 0)))
+            coEvery { formatter.withLocalizedNames(any()) } returns listOf(prayer("Dhuhr", LocalTime(12, 30)))
 
             val provider = WidgetDataProvider(useCase, locations, settings, calculator, formatter)
             provider.load()
@@ -114,7 +114,7 @@ class WidgetDataProviderTest {
             val expectedZone = getZoneIdFromLocation("US")
             assertNotEquals(ZoneId.of("Europe/Berlin"), expectedZone)
             coVerify {
-                useCase.invoke(any(), any(), any(), eq(expectedZone), any(), any(), any(), eq(false))
+                useCase.invoke(any(), any(), any(), eq(expectedZone), any(), any(), eq(false))
             }
         }
     }
@@ -130,49 +130,20 @@ class WidgetDataProviderTest {
 
             coEvery { locations.resolveSelected() } returns LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", null)
             coEvery { settings() } returns Settings(juristicMethod = "HANAFI")
-            coEvery { useCase.invoke(any(), any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
-                listOf(prayer("Fajr", LocalTime(5, 0)))
+            coEvery { useCase.invoke(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
+                listOf(prayer("Dhuhr", LocalTime(12, 30)))
             )
             coEvery { calculator.findCurrentAndNextPrayer(any(), any()) } returns Pair(
-                prayer("Fajr", LocalTime(5, 0)),
+                prayer("Dhuhr", LocalTime(12, 30)),
                 prayer("Dhuhr", LocalTime(12, 30))
             )
-            coEvery { formatter.withLocalizedNames(any()) } returns listOf(prayer("Fajr", LocalTime(5, 0)))
+            coEvery { formatter.withLocalizedNames(any()) } returns listOf(prayer("Dhuhr", LocalTime(12, 30)))
 
             val provider = WidgetDataProvider(useCase, locations, settings, calculator, formatter)
             provider.load()
 
             coVerify {
-                useCase.invoke(any(), any(), any(), any(), any(), any(), JuristicMethod.HANAFI, any())
-            }
-        }
-    }
-
-    @Test
-    fun `load forwards imsak offset from settings to use case`() = runTest {
-        withSystemDefaultZone("Europe/Istanbul") {
-            val useCase = mockk<GetPrayerTimesUseCase>(relaxed = true)
-            val locations = mockk<LocationsCoordinator>(relaxed = true)
-            val settings = mockk<GetSettingsUseCase>(relaxed = true)
-            val calculator = mockk<PrayerLogicEngine>(relaxed = true)
-            val formatter = mockk<com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter>(relaxed = true)
-
-            coEvery { locations.resolveSelected() } returns LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", null)
-            coEvery { settings() } returns Settings(imsakOffsetMinutes = 20)
-            coEvery { useCase.invoke(any(), any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
-                listOf(prayer("Fajr", LocalTime(5, 0)))
-            )
-            coEvery { calculator.findCurrentAndNextPrayer(any(), any()) } returns Pair(
-                prayer("Fajr", LocalTime(5, 0)),
-                prayer("Dhuhr", LocalTime(12, 30))
-            )
-            coEvery { formatter.withLocalizedNames(any()) } returns listOf(prayer("Fajr", LocalTime(5, 0)))
-
-            val provider = WidgetDataProvider(useCase, locations, settings, calculator, formatter)
-            provider.load()
-
-            coVerify {
-                useCase.invoke(any(), any(), any(), any(), any(), eq(20), any(), any())
+                useCase.invoke(any(), any(), any(), any(), any(), JuristicMethod.HANAFI, any())
             }
         }
     }
