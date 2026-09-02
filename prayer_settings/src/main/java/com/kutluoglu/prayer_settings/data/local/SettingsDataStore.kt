@@ -44,6 +44,7 @@ class SettingsDataStore(
         val LANGUAGE = stringPreferencesKey("language")
         val HIJRI_ADJUSTMENT = intPreferencesKey("hijri_adjustment")
         val IMSAK_OFFSET_MINUTES = intPreferencesKey("imsak_offset_minutes")
+        val JURISTIC_METHOD = stringPreferencesKey("juristic_method")
         val CRASHLYTICS_ENABLED = booleanPreferencesKey("crashlytics_enabled")
     }
     
@@ -61,6 +62,7 @@ class SettingsDataStore(
             language = preferences[PreferencesKeys.LANGUAGE] ?: "system",
             hijriAdjustment = preferences[PreferencesKeys.HIJRI_ADJUSTMENT] ?: 0,
             imsakOffsetMinutes = preferences[PreferencesKeys.IMSAK_OFFSET_MINUTES] ?: 10,
+            juristicMethod = preferences[PreferencesKeys.JURISTIC_METHOD] ?: "STANDARD",
             crashlyticsEnabled = preferences[PreferencesKeys.CRASHLYTICS_ENABLED] ?: true
         )
     }
@@ -80,6 +82,7 @@ class SettingsDataStore(
                 language = preferences[PreferencesKeys.LANGUAGE] ?: "system",
                 hijriAdjustment = preferences[PreferencesKeys.HIJRI_ADJUSTMENT] ?: 0,
                 imsakOffsetMinutes = preferences[PreferencesKeys.IMSAK_OFFSET_MINUTES] ?: 10,
+                juristicMethod = preferences[PreferencesKeys.JURISTIC_METHOD] ?: "STANDARD",
                 crashlyticsEnabled = preferences[PreferencesKeys.CRASHLYTICS_ENABLED] ?: true
             )
         }
@@ -121,6 +124,12 @@ class SettingsDataStore(
     suspend fun updateImsakOffsetMinutes(minutes: Int) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.IMSAK_OFFSET_MINUTES] = minutes
+        }
+    }
+
+    suspend fun updateJuristicMethod(method: String) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.JURISTIC_METHOD] = method
         }
     }
 

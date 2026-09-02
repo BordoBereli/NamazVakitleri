@@ -6,6 +6,7 @@ data class Settings(
     val language: String = "system",
     val hijriAdjustment: Int = 0,
     val imsakOffsetMinutes: Int = 10,
+    val juristicMethod: String = "STANDARD",
     val crashlyticsEnabled: Boolean = true
 )
 
