@@ -4,6 +4,7 @@ import com.kutluoglu.core.common.getZoneIdFromLocation
 import com.kutluoglu.core.common.now
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
 import com.kutluoglu.prayer.model.prayer.CalculationMethod
+import com.kutluoglu.prayer.model.prayer.JuristicMethod
 import com.kutluoglu.prayer.usecases.prayer.GetPrayerTimesUseCase
 import com.kutluoglu.prayer_location.LocationsCoordinator
 import com.kutluoglu.prayer_settings.domain.usecase.GetSettingsUseCase
@@ -25,12 +26,14 @@ class WidgetDataProvider(
         val zoneId = getZoneIdFromLocation(location.countryCode)
         val settings = runCatching { getSettingsUseCase() }.getOrNull() ?: return WidgetResult.Error
         val method = CalculationMethod.fromSettingsId(settings.calculationMethod)
+        val juristicMethod = JuristicMethod.fromSettingsId(settings.juristicMethod)
         val prayers = getPrayerTimesUseCase(
             date = LocalDateTime.now(zoneId),
             latitude = location.latitude,
             longitude = location.longitude,
             zoneId = zoneId,
             calculationMethod = method,
+            juristicMethod = juristicMethod,
             persistDailyCache = false
         ).getOrNull() ?: return WidgetResult.Error
 

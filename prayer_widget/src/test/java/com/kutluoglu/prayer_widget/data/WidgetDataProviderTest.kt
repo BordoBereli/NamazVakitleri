@@ -3,6 +3,7 @@ package com.kutluoglu.prayer_widget.data
 import com.kutluoglu.core.common.getZoneIdFromLocation
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
 import com.kutluoglu.prayer.model.location.LocationData
+import com.kutluoglu.prayer.model.prayer.JuristicMethod
 import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer.usecases.prayer.GetPrayerTimesUseCase
 import com.kutluoglu.prayer_location.LocationsCoordinator
@@ -108,6 +109,34 @@ class WidgetDataProviderTest {
             assertNotEquals(ZoneId.of("Europe/Berlin"), expectedZone)
             coVerify {
                 useCase.invoke(any(), any(), any(), eq(expectedZone), any(), any(), any(), eq(false))
+            }
+        }
+    }
+
+    @Test
+    fun `load forwards juristic method from settings to use case`() = runTest {
+        withSystemDefaultZone("Europe/Istanbul") {
+            val useCase = mockk<GetPrayerTimesUseCase>(relaxed = true)
+            val locations = mockk<LocationsCoordinator>(relaxed = true)
+            val settings = mockk<GetSettingsUseCase>(relaxed = true)
+            val calculator = mockk<PrayerLogicEngine>(relaxed = true)
+            val formatter = mockk<com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter>(relaxed = true)
+
+            coEvery { locations.resolveSelected() } returns LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", null)
+            coEvery { settings() } returns Settings(juristicMethod = "HANAFI")
+            coEvery { useCase.invoke(any(), any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
+                listOf(prayer("Fajr", LocalTime(5, 0)))
+            )
+            coEvery { calculator.findCurrentAndNextPrayer(any(), any()) } returns Pair(
+                prayer("Fajr", LocalTime(5, 0)),
+                prayer("Dhuhr", LocalTime(12, 30))
+            )
+
+            val provider = WidgetDataProvider(useCase, locations, settings, calculator, formatter)
+            provider.load()
+
+            coVerify {
+                useCase.invoke(any(), any(), any(), any(), any(), any(), JuristicMethod.HANAFI, any())
             }
         }
     }

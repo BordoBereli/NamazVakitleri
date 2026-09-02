@@ -1,5 +1,6 @@
 package com.kutluoglu.prayer_feature.settings.juristic
 
+import app.cash.turbine.test
 import com.kutluoglu.prayer_feature.settings.MainCoroutineRule
 import com.kutluoglu.prayer_settings.domain.model.Settings
 import com.kutluoglu.prayer_settings.domain.usecase.GetSettingsUseCase
@@ -33,5 +34,24 @@ class JuristicMethodViewModelTest {
         val vm = JuristicMethodViewModel(getSettings, updateMethod)
         vm.onEvent(JuristicMethodEvent.SelectMethod("HANAFI"))
         coVerify { updateMethod("HANAFI") }
+    }
+
+    @Test
+    fun `load does not emit selection event`() = runTest {
+        coEvery { getSettings() } returns Settings(juristicMethod = "HANAFI")
+        val vm = JuristicMethodViewModel(getSettings, updateMethod)
+        vm.load()
+        vm.selectedMethod.test {
+            expectNoEvents()
+        }
+    }
+
+    @Test
+    fun `selecting method emits selection event`() = runTest {
+        val vm = JuristicMethodViewModel(getSettings, updateMethod)
+        vm.selectedMethod.test {
+            vm.onEvent(JuristicMethodEvent.SelectMethod("HANAFI"))
+            assertEquals("HANAFI", awaitItem())
+        }
     }
 }

@@ -34,6 +34,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.kutluoglu.core.designsystem.R
 import com.kutluoglu.prayer_feature.settings.R as SettingsR
+import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -45,8 +46,12 @@ fun JuristicMethodRoute(
 ) {
     val currentMethod by viewModel.currentMethod.collectAsState()
 
+    LaunchedEffect(Unit) {
+        viewModel.selectedMethod.collectLatest { method ->
+            onMethodSelected(method)
+        }
+    }
     LaunchedEffect(Unit) { viewModel.load() }
-    LaunchedEffect(currentMethod) { onMethodSelected(currentMethod) }
 
     Scaffold(
         topBar = {

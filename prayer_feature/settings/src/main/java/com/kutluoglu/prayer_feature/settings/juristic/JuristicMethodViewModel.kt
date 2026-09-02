@@ -5,8 +5,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kutluoglu.prayer_settings.domain.usecase.GetSettingsUseCase
 import com.kutluoglu.prayer_settings.domain.usecase.UpdateJuristicMethodUseCase
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
@@ -19,6 +22,9 @@ class JuristicMethodViewModel(
 
     private val _currentMethod = MutableStateFlow("STANDARD")
     val currentMethod: StateFlow<String> = _currentMethod.asStateFlow()
+
+    private val _selectedMethod = MutableSharedFlow<String>()
+    val selectedMethod: SharedFlow<String> = _selectedMethod.asSharedFlow()
 
     fun load() {
         viewModelScope.launch {
@@ -34,7 +40,10 @@ class JuristicMethodViewModel(
         when (event) {
             is JuristicMethodEvent.SelectMethod -> {
                 _currentMethod.value = event.method
-                viewModelScope.launch { updateJuristicMethodUseCase(event.method) }
+                viewModelScope.launch {
+                    updateJuristicMethodUseCase(event.method)
+                    _selectedMethod.emit(event.method)
+                }
             }
         }
     }
