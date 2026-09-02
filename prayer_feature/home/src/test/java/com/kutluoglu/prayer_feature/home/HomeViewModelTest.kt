@@ -7,6 +7,7 @@ import com.kutluoglu.core.common.analytics.AnalyticsTracker
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.location.LocationEntry
 import com.kutluoglu.prayer.model.prayer.CalculationMethod
+import com.kutluoglu.prayer.model.prayer.JuristicMethod
 import com.kutluoglu.prayer_location.LocationsCoordinator
 import com.kutluoglu.prayer_location.data.LocationsState
 import com.kutluoglu.prayer_settings.domain.model.Settings
@@ -436,6 +437,38 @@ class HomeViewModelTest {
         settingsFlow.value = Settings(calculationMethod = "MWL")
 
         coVerify { prayerTimesLoader.load(location, CalculationMethod.MWL, any()) }
+    }
+
+    @Test
+    fun `juristic method change clears cache and reloads with new method`() = runTest {
+        val settingsFlow = MutableStateFlow(
+            Settings(calculationMethod = "TURKEY_DIYANET", juristicMethod = "STANDARD")
+        )
+        coEvery { locationsCoordinator.observeState() } returns flowOf(
+            LocationsState(entries = listOf(entry), selectedId = "loc-1")
+        )
+        coEvery { locationsCoordinator.resolveInitial() } returns location
+        coEvery { locationsCoordinator.resolveSelected() } returns location
+        coEvery { getSettingsUseCase() } returns Settings(calculationMethod = "TURKEY_DIYANET", juristicMethod = "STANDARD")
+        every { settingsRepository.observeSettings() } returns settingsFlow
+        coEvery {
+            prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET, any(), any(), JuristicMethod.STANDARD)
+        } returns success(loadedData())
+
+        val vm = viewModel()
+        coVerify(exactly = 1) {
+            prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET, any(), any(), JuristicMethod.STANDARD)
+        }
+
+        coEvery { getSettingsUseCase() } returns Settings(calculationMethod = "TURKEY_DIYANET", juristicMethod = "HANAFI")
+        coEvery {
+            prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET, any(), any(), JuristicMethod.HANAFI)
+        } returns success(loadedData())
+        settingsFlow.value = Settings(calculationMethod = "TURKEY_DIYANET", juristicMethod = "HANAFI")
+
+        coVerify {
+            prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET, any(), any(), JuristicMethod.HANAFI)
+        }
     }
 
     @Test

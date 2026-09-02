@@ -9,6 +9,7 @@ import com.kutluoglu.core.common.analytics.AnalyticsTracker
 import com.kutluoglu.prayer_location.LocationsCoordinator
 import com.kutluoglu.prayer_location.data.LocationsState
 import com.kutluoglu.prayer.model.prayer.CalculationMethod
+import com.kutluoglu.prayer.model.prayer.JuristicMethod
 import com.kutluoglu.prayer_settings.domain.repository.SettingsRepository
 import com.kutluoglu.prayer_settings.domain.usecase.GetSettingsUseCase
 import com.kutluoglu.prayer_feature.home.domain.CountdownEngine
@@ -87,7 +88,7 @@ class HomeViewModel(
         }
         settingsObserverJob = viewModelScope.launch {
             settingsRepository.observeSettings()
-                .map { it.calculationMethod to it.language }
+                .map { Triple(it.calculationMethod, it.language, it.juristicMethod) }
                 .distinctUntilChanged()
                 .drop(1)
                 .collect {
@@ -129,7 +130,7 @@ class HomeViewModel(
         val state = _locationsState.value
         val activeId = state.selectedId ?: state.entries.firstOrNull()?.id
         val activeEntry = state.entries.firstOrNull { it.id == activeId }
-        val method = currentSettings().first
+        val method = currentSettings().method
         analyticsTracker.logEvent(
             AnalyticsEvents.HOME_LOADED,
             mapOf(
@@ -197,8 +198,14 @@ class HomeViewModel(
                 _locationsState.value = state
                 val activeId = state.selectedId ?: state.entries.firstOrNull()?.id
                 if (activeId != null) {
-                    val (method, adjustment, imsakOffset) = currentSettings()
-                    val result = prayerTimesLoader.load(location, method, adjustment, imsakOffset)
+                    val settings = currentSettings()
+                    val result = prayerTimesLoader.load(
+                        location,
+                        settings.method,
+                        settings.hijriAdjustment,
+                        settings.imsakOffsetMinutes,
+                        settings.juristicMethod
+                    )
                     if (result.isSuccess) {
                         val loaded = result.getOrThrow()
                         stateMutex.withLock {
@@ -273,8 +280,14 @@ class HomeViewModel(
         val cached = _prayerDataByLocation.value[activeId]
         val locationChanged = cached?.locationState?.locationData != entry.location
         if (cached != null && !locationChanged) return cached
-        val (method, adjustment, imsakOffset) = currentSettings()
-        return prayerTimesLoader.load(entry.location, method, adjustment, imsakOffset)
+        val settings = currentSettings()
+        return prayerTimesLoader.load(
+            entry.location,
+            settings.method,
+            settings.hijriAdjustment,
+            settings.imsakOffsetMinutes,
+            settings.juristicMethod
+        )
             .onSuccess { loaded ->
                 _prayerDataByLocation.value = _prayerDataByLocation.value + (activeId to loaded)
             }
@@ -294,8 +307,14 @@ class HomeViewModel(
                         val cached = _prayerDataByLocation.value[entry.id]
                         val locationChanged = cached?.locationState?.locationData != entry.location
                         if (cached == null || locationChanged) {
-                            val (method, adjustment, imsakOffset) = currentSettings()
-                            prayerTimesLoader.load(entry.location, method, adjustment, imsakOffset)
+                            val settings = currentSettings()
+                            prayerTimesLoader.load(
+                                entry.location,
+                                settings.method,
+                                settings.hijriAdjustment,
+                                settings.imsakOffsetMinutes,
+                                settings.juristicMethod
+                            )
                                 .onSuccess { loaded ->
                                     stateMutex.withLock {
                                         _prayerDataByLocation.value = _prayerDataByLocation.value + (entry.id to loaded)
@@ -340,12 +359,20 @@ class HomeViewModel(
         quranVerseLoader.setSheetVisible(isVisible)
     }
 
-    private suspend fun currentSettings(): Triple<CalculationMethod, Int, Int> {
+    private data class HomeSettings(
+        val method: CalculationMethod,
+        val hijriAdjustment: Int,
+        val imsakOffsetMinutes: Int,
+        val juristicMethod: JuristicMethod
+    )
+
+    private suspend fun currentSettings(): HomeSettings {
         val settings = getSettingsUseCase()
-        return Triple(
-            CalculationMethod.fromSettingsId(settings.calculationMethod),
-            settings.hijriAdjustment,
-            settings.imsakOffsetMinutes
+        return HomeSettings(
+            method = CalculationMethod.fromSettingsId(settings.calculationMethod),
+            hijriAdjustment = settings.hijriAdjustment,
+            imsakOffsetMinutes = settings.imsakOffsetMinutes,
+            juristicMethod = JuristicMethod.fromSettingsId(settings.juristicMethod)
         )
     }
 
