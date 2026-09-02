@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="page_title">اوقات شرعی</string>
+    <string name="prayer_imsak">امساک</string>
     <string name="page_sub_title">برنامه ماهانه نماز</string>
     <string name="image_desc">گنبد</string>
     <string name="today">امروز</string>
