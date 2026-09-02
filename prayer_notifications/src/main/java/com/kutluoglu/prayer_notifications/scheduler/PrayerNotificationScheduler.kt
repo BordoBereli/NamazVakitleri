@@ -144,7 +144,8 @@ class PrayerNotificationScheduler(
             specialDayToday = specialDayToday,
             specialDayTomorrow = specialDayTomorrow,
             jumuahEnabled = settings.jumuahEnabled,
-            ramadanEnabled = settings.ramadanEnabled
+            ramadanEnabled = settings.ramadanEnabled,
+            hijriAdjustment = appSettings.hijriAdjustment
         )
         cancelAll(stopAdhan = false)
         alarms.forEach { scheduleAlarm(it) }

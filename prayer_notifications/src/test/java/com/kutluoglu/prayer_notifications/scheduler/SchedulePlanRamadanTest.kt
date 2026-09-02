@@ -29,7 +29,7 @@ class SchedulePlanRamadanTest {
             prayers = prayers,
             tomorrowPrayers = prayers,
             zoneId = zoneId,
-            now = Instant.parse("2026-09-02T00:00:00Z"),
+            now = Instant.parse("2026-02-18T00:00:00Z"),
             enabledPrayers = setOf("Fajr", "Maghrib"),
             prePrayerMinutes = 15,
             prePrayerEnabled = false,
@@ -37,6 +37,26 @@ class SchedulePlanRamadanTest {
         )
         assertTrue(alarms.any { it.type == AlarmType.SAHUR_END })
         assertTrue(alarms.any { it.type == AlarmType.IFTAR })
+    }
+
+    @Test
+    fun `does not build ramadan alarms outside ramadan even when enabled`() {
+        val prayers = listOf(
+            prayer("Imsak", LocalTime(4, 50)).copy(isImsak = true),
+            prayer("Fajr", LocalTime(5, 0)),
+            prayer("Maghrib", LocalTime(19, 30))
+        )
+        val alarms = plan.buildDailyAlarms(
+            prayers = prayers,
+            tomorrowPrayers = prayers,
+            zoneId = zoneId,
+            now = Instant.parse("2026-09-02T00:00:00Z"),
+            enabledPrayers = setOf("Fajr", "Maghrib"),
+            prePrayerMinutes = 15,
+            prePrayerEnabled = false,
+            ramadanEnabled = true
+        )
+        assertTrue(alarms.none { it.type == AlarmType.SAHUR_END || it.type == AlarmType.IFTAR })
     }
 
     @Test
@@ -50,7 +70,7 @@ class SchedulePlanRamadanTest {
             prayers = prayers,
             tomorrowPrayers = prayers,
             zoneId = zoneId,
-            now = Instant.parse("2026-09-02T00:00:00Z"),
+            now = Instant.parse("2026-02-18T00:00:00Z"),
             enabledPrayers = setOf("Fajr", "Maghrib"),
             prePrayerMinutes = 15,
             prePrayerEnabled = false,

@@ -6,6 +6,9 @@ import java.time.DayOfWeek
 import java.time.Instant
 import java.time.LocalTime
 import java.time.ZoneId
+import java.time.chrono.HijrahDate
+import java.time.temporal.ChronoField
+import java.time.temporal.ChronoUnit
 
 data class ScheduledAlarm(
     val prayerKey: String,
@@ -48,7 +51,8 @@ class SchedulePlan {
         specialDayToday: SpecialDay? = null,
         specialDayTomorrow: SpecialDay? = null,
         jumuahEnabled: Boolean = true,
-        ramadanEnabled: Boolean = true
+        ramadanEnabled: Boolean = true,
+        hijriAdjustment: Int = 0
     ): List<ScheduledAlarm> {
         val nowZoned = now.atZone(zoneId)
         val today = nowZoned.toLocalDate()
@@ -188,7 +192,7 @@ class SchedulePlan {
             )
         }
 
-        if (ramadanEnabled) {
+        if (ramadanEnabled && isRamadan(today, hijriAdjustment)) {
             val imsakPrayer = prayers.firstOrNull { it.isImsak }
             if (imsakPrayer != null) {
                 val sahurTrigger = triggerFor(imsakPrayer, today)
@@ -216,5 +220,10 @@ class SchedulePlan {
         }
 
         return result
+    }
+
+    private fun isRamadan(date: java.time.LocalDate, hijriAdjustment: Int): Boolean {
+        val hijrah = HijrahDate.from(date).plus(hijriAdjustment.toLong(), ChronoUnit.DAYS)
+        return hijrah.get(ChronoField.MONTH_OF_YEAR) == 9
     }
 }
