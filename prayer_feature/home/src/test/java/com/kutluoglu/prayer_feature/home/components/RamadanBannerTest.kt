@@ -28,4 +28,16 @@ class RamadanBannerTest {
         composeRule.onNodeWithText("Ramadan Day 5").assertExists()
         composeRule.onNodeWithText("Iftar in 02:00:00").assertExists()
     }
+
+    @Test
+    fun `renders sahur countdown`() {
+        composeRule.setContent {
+            RamadanBanner(
+                ramadanDay = 5,
+                countdown = RamadanCountdownState.SahurEndsIn(Duration.ofMinutes(50))
+            )
+        }
+        composeRule.onNodeWithText("Ramadan Day 5").assertExists()
+        composeRule.onNodeWithText("Sahur ends in 00:50:00").assertExists()
+    }
 }

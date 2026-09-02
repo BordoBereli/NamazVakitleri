@@ -38,7 +38,8 @@ class PrayerFormatter(
             gregorianShortDate = today.format(gregorianShortFormatter()),
             gregorianDayAndName = today.format(gregorianDayAndNameFormatter()),
             currentTime = getFormattedCurrentTime(zoneId),
-            hijriAdjustment = hijriAdjustment
+            hijriAdjustment = hijriAdjustment,
+            zoneId = zoneId
         )
     }
 

@@ -41,13 +41,15 @@ import com.kutluoglu.prayer_feature.home.state.PrayerUiState
 import kotlinx.coroutines.delay
 import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.toKotlinLocalTime
+import java.time.ZoneId
 
 @Composable
 fun HomeTopContainer(
         successState: HomeUiState.Success?,
         painter: Painter,
-        ramadanDateResolver: RamadanDateResolver = RamadanDateResolver()
+        ramadanDateResolver: RamadanDateResolver? = null
 ) {
+    val resolver = ramadanDateResolver ?: remember { RamadanDateResolver() }
     val locationState by remember(successState) {
         derivedStateOf { successState?.locationState }
     }
@@ -66,14 +68,15 @@ fun HomeTopContainer(
     val maghrib = prayers.firstOrNull { it.arabicName == "المغرب" }
     val today = prayers.firstOrNull()?.date?.toJavaLocalDate()
     val hijriAdjustment = successState?.timeState?.hijriAdjustment ?: 0
+    val zoneId = successState?.timeState?.zoneId ?: ZoneId.systemDefault()
     val ramadanDay = remember(today, hijriAdjustment) {
-        today?.let { ramadanDateResolver.ramadanDayFor(it, hijriAdjustment) }
+        today?.let { resolver.ramadanDayFor(it, hijriAdjustment) }
     }
     var ramadanCountdown by remember { mutableStateOf<RamadanCountdownState?>(null) }
-    LaunchedEffect(ramadanDay, imsak, maghrib) {
+    LaunchedEffect(ramadanDay, imsak, maghrib, zoneId) {
         if (ramadanDay != null && imsak != null && maghrib != null) {
             while (true) {
-                val now = java.time.LocalTime.now().toKotlinLocalTime()
+                val now = java.time.LocalTime.now(zoneId).toKotlinLocalTime()
                 ramadanCountdown = computeRamadanCountdown(now, imsak.time, maghrib.time, imsak.time)
                 delay(1_000)
             }
