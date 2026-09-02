@@ -65,7 +65,7 @@ class AdhanServiceTest {
         stopKoin()
     }
 
-    private fun startService(prayerKey: String = "Fajr"): ServiceController<AdhanService> {
+    private fun startService(prayerKey: String = "Dhuhr"): ServiceController<AdhanService> {
         val intent = Intent(context, AdhanService::class.java)
             .putExtra(AlarmReceiver.EXTRA_PRAYER_KEY, prayerKey)
         return Robolectric.buildService(AdhanService::class.java)
@@ -75,8 +75,8 @@ class AdhanServiceTest {
 
     @Test
     fun `onStartCommand plays adhan and shows foreground notification`() {
-        startService("Fajr")
-        verify { adhanPlayer.play("Fajr", 50, null) }
+        startService("Dhuhr")
+        verify { adhanPlayer.play("Dhuhr", 50, null) }
         val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         assertThat(shadowOf(nm).allNotifications).isNotEmpty()
     }
@@ -86,7 +86,7 @@ class AdhanServiceTest {
         val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         audioManager.setStreamVolume(AudioManager.STREAM_ALARM, 5, 0)
         audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 5, 0)
-        val controller = startService("Fajr")
+        val controller = startService("Dhuhr")
         audioManager.setStreamVolume(AudioManager.STREAM_ALARM, 4, 0)
         val uri = Settings.System.getUriFor("volume_alarm_sound")
         shadowOf(context.contentResolver).getContentObservers(uri).forEach { it.onChange(false) }
@@ -100,7 +100,7 @@ class AdhanServiceTest {
         val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         audioManager.setStreamVolume(AudioManager.STREAM_ALARM, 5, 0)
         audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 5, 0)
-        val controller = startService("Fajr")
+        val controller = startService("Dhuhr")
         audioManager.setStreamVolume(AudioManager.STREAM_ALARM, 0, 0)
         val uri = Settings.System.getUriFor("volume_alarm_sound")
         shadowOf(context.contentResolver).getContentObservers(uri).forEach { it.onChange(false) }
@@ -114,7 +114,7 @@ class AdhanServiceTest {
         val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         audioManager.setStreamVolume(AudioManager.STREAM_ALARM, 0, 0)
         audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 5, 0)
-        val controller = startService("Fajr")
+        val controller = startService("Dhuhr")
         audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 4, 0)
         val uri = Settings.System.getUriFor("volume_music_sound")
         shadowOf(context.contentResolver).getContentObservers(uri).forEach { it.onChange(false) }
@@ -127,7 +127,7 @@ class AdhanServiceTest {
         val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         audioManager.setStreamVolume(AudioManager.STREAM_ALARM, 0, 0)
         audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 5, 0)
-        val controller = startService("Fajr")
+        val controller = startService("Dhuhr")
         audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0)
         val uri = Settings.System.getUriFor("volume_music_sound")
         shadowOf(context.contentResolver).getContentObservers(uri).forEach { it.onChange(false) }
@@ -179,7 +179,7 @@ class AdhanServiceTest {
     fun `music volume at minimum stops the service`() {
         val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 5, 0)
-        val controller = startService("Fajr")
+        val controller = startService("Dhuhr")
         audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0)
         val uri = Settings.System.getUriFor("volume_music_sound")
         shadowOf(context.contentResolver).getContentObservers(uri).forEach { it.onChange(false) }
@@ -193,7 +193,7 @@ class AdhanServiceTest {
         val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         audioManager.setStreamVolume(AudioManager.STREAM_ALARM, 0, 0)
         audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 5, 0)
-        val controller = startService("Fajr")
+        val controller = startService("Dhuhr")
         shadowOf(Looper.getMainLooper()).idle()
         Thread.sleep(100)
         shadowOf(Looper.getMainLooper()).idle()
@@ -229,7 +229,7 @@ class AdhanServiceTest {
     fun `completion callback stops the service`() {
         val completionSlot = slot<() -> Unit>()
         every { adhanPlayer.setOnCompletionListener(capture(completionSlot)) } answers { }
-        val controller = startService("Fajr")
+        val controller = startService("Dhuhr")
         completionSlot.captured.invoke()
         assertThat(shadowOf(controller.get()).isStoppedBySelf()).isTrue()
         controller.destroy()
@@ -240,7 +240,7 @@ class AdhanServiceTest {
     fun `focus loss callback stops the service`() {
         val focusLossSlot = slot<() -> Unit>()
         every { adhanPlayer.setOnFocusLossListener(capture(focusLossSlot)) } answers { }
-        val controller = startService("Fajr")
+        val controller = startService("Dhuhr")
         focusLossSlot.captured.invoke()
         assertThat(shadowOf(controller.get()).isStoppedBySelf()).isTrue()
         controller.destroy()

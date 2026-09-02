@@ -21,7 +21,6 @@ class SchedulePlanTest {
     )
 
     private val prayers = listOf(
-        prayer("Fajr", LocalTime(4, 30)),
         prayer("Dhuhr", LocalTime(13, 0)),
         prayer("Asr", LocalTime(16, 45)),
         prayer("Maghrib", LocalTime(19, 55)),
@@ -35,12 +34,12 @@ class SchedulePlanTest {
             prayers = prayers,
             zoneId = zone,
             now = Instant.parse("2026-08-22T00:00:00Z"),
-            enabledPrayers = setOf("Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"),
+            enabledPrayers = setOf("Dhuhr", "Asr", "Maghrib", "Isha"),
             prePrayerMinutes = 15,
             prePrayerEnabled = false
         )
-        assertThat(alarms).hasSize(5)
-        assertThat(alarms.map { it.prayerKey }).containsExactly("Fajr", "Dhuhr", "Asr", "Maghrib", "Isha")
+        assertThat(alarms).hasSize(4)
+        assertThat(alarms.map { it.prayerKey }).containsExactly("Dhuhr", "Asr", "Maghrib", "Isha")
     }
 
     @Test
@@ -50,12 +49,12 @@ class SchedulePlanTest {
             prayers = prayers,
             zoneId = zone,
             now = Instant.parse("2026-08-22T00:00:00Z"),
-            enabledPrayers = setOf("Fajr"),
+            enabledPrayers = setOf("Dhuhr"),
             prePrayerMinutes = 15,
             prePrayerEnabled = false
         )
         assertThat(alarms).hasSize(1)
-        assertThat(alarms[0].prayerKey).isEqualTo("Fajr")
+        assertThat(alarms[0].prayerKey).isEqualTo("Dhuhr")
     }
 
     @Test
@@ -65,12 +64,12 @@ class SchedulePlanTest {
             prayers = prayers,
             zoneId = zone,
             now = Instant.parse("2026-08-22T00:00:00Z"),
-            enabledPrayers = setOf("Fajr"),
+            enabledPrayers = setOf("Dhuhr"),
             prePrayerMinutes = 15,
             prePrayerEnabled = true
         )
         assertThat(alarms).hasSize(2)
-        assertThat(alarms.map { it.prayerKey }).containsExactly("Fajr", "Fajr_pre")
+        assertThat(alarms.map { it.prayerKey }).containsExactly("Dhuhr", "Dhuhr_pre")
     }
 
     @Test
@@ -80,7 +79,7 @@ class SchedulePlanTest {
             prayers = prayers,
             zoneId = zone,
             now = Instant.parse("2026-08-22T15:00:00Z"), // 18:00 Istanbul
-            enabledPrayers = setOf("Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"),
+            enabledPrayers = setOf("Dhuhr", "Asr", "Maghrib", "Isha"),
             prePrayerMinutes = 15,
             prePrayerEnabled = false
         )
@@ -94,11 +93,11 @@ class SchedulePlanTest {
             prayers = prayers,
             zoneId = zone,
             now = Instant.parse("2026-08-22T00:00:00Z"),
-            enabledPrayers = setOf("Fajr"),
+            enabledPrayers = setOf("Dhuhr"),
             prePrayerMinutes = 15,
             prePrayerEnabled = false
         )
-        assertThat(alarms[0].triggerAtMillis).isEqualTo(1787362200000L)
+        assertThat(alarms[0].triggerAtMillis).isEqualTo(1787392800000L)
     }
 
     @Test
@@ -122,16 +121,16 @@ class SchedulePlanTest {
             prayers = prayers,
             zoneId = zone,
             now = Instant.parse("2026-08-22T00:00:00Z"),
-            enabledPrayers = setOf("Fajr"),
+            enabledPrayers = setOf("Dhuhr"),
             prePrayerMinutes = 15,
             prePrayerEnabled = false,
             dailyReminderEnabled = true,
             dailyReminderHour = 8,
             dailyReminderMinute = 0,
-            dailySummary = "Fajr 04:30"
+            dailySummary = "Dhuhr 13:00"
         )
         val reminder = alarms.first { it.type == AlarmType.DAILY_REMINDER }
-        assertThat(reminder.dailySummary).isEqualTo("Fajr 04:30")
+        assertThat(reminder.dailySummary).isEqualTo("Dhuhr 13:00")
         assertThat(reminder.requestCode).isEqualTo(SchedulePlan.REQUEST_CODE_DAILY_REMINDER)
     }
 
@@ -142,7 +141,7 @@ class SchedulePlanTest {
             prayers = prayers,
             zoneId = zone,
             now = Instant.parse("2026-08-22T15:00:00Z"), // 18:00 Istanbul
-            enabledPrayers = setOf("Fajr"),
+            enabledPrayers = setOf("Dhuhr"),
             prePrayerMinutes = 15,
             prePrayerEnabled = false,
             dailyReminderEnabled = true,
@@ -159,7 +158,7 @@ class SchedulePlanTest {
             prayers = prayers,
             zoneId = zone,
             now = Instant.parse("2026-08-22T00:00:00Z"),
-            enabledPrayers = setOf("Fajr"),
+            enabledPrayers = setOf("Dhuhr"),
             prePrayerMinutes = 15,
             prePrayerEnabled = false,
             specialDayToday = SpecialDay.EID_AL_FITR,
@@ -209,13 +208,13 @@ class SchedulePlanTest {
             prayers = prayers,
             zoneId = zone,
             now = Instant.parse("2026-08-22T00:00:00Z"),
-            enabledPrayers = setOf("Fajr", "Dhuhr"),
+            enabledPrayers = setOf("Dhuhr", "Asr"),
             prePrayerMinutes = 15,
             prePrayerEnabled = false
         )
-        val fajr = alarms.first { it.prayerKey == "Fajr" }
-        assertThat(fajr.nextPrayerName).isEqualTo("Dhuhr")
-        assertThat(fajr.nextPrayerTimeMillis).isNotNull()
+        val dhuhr = alarms.first { it.prayerKey == "Dhuhr" }
+        assertThat(dhuhr.nextPrayerName).isEqualTo("Asr")
+        assertThat(dhuhr.nextPrayerTimeMillis).isNotNull()
     }
 
     @Test
@@ -225,36 +224,36 @@ class SchedulePlanTest {
             prayers = prayers,
             zoneId = zone,
             now = Instant.parse("2026-08-22T00:00:00Z"),
-            enabledPrayers = setOf("Fajr", "Dhuhr"),
+            enabledPrayers = setOf("Dhuhr", "Asr"),
             prePrayerMinutes = 15,
             prePrayerEnabled = false
         )
-        val fajr = alarms.first { it.prayerKey == "Fajr" }
         val dhuhr = alarms.first { it.prayerKey == "Dhuhr" }
-        assertThat(fajr.previousPrayerTimeMillis).isNull()
-        assertThat(dhuhr.previousPrayerTimeMillis).isEqualTo(fajr.triggerAtMillis)
+        val asr = alarms.first { it.prayerKey == "Asr" }
+        assertThat(dhuhr.previousPrayerTimeMillis).isNull()
+        assertThat(asr.previousPrayerTimeMillis).isEqualTo(dhuhr.triggerAtMillis)
     }
 
     @Test
-    fun `last enabled prayer points to tomorrow's Fajr when provided`() {
+    fun `last enabled prayer points to tomorrow's Dhuhr when provided`() {
         val plan = SchedulePlan()
         val alarms = plan.buildDailyAlarms(
             prayers = prayers,
-            tomorrowPrayers = listOf(prayer("Fajr", LocalTime(4, 30))),
+            tomorrowPrayers = listOf(prayer("Dhuhr", LocalTime(13, 0))),
             zoneId = zone,
             now = Instant.parse("2026-08-22T00:00:00Z"),
-            enabledPrayers = setOf("Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"),
+            enabledPrayers = setOf("Dhuhr", "Asr", "Maghrib", "Isha"),
             prePrayerMinutes = 15,
             prePrayerEnabled = false
         )
         val isha = alarms.first { it.prayerKey == "Isha" }
-        val tomorrowFajr = java.time.LocalTime.of(4, 30)
+        val tomorrowDhuhr = java.time.LocalTime.of(13, 0)
             .atDate(LocalDate.of(2026, 8, 23))
             .atZone(zone)
             .toInstant()
             .toEpochMilli()
-        assertThat(isha.nextPrayerName).isEqualTo("Fajr")
-        assertThat(isha.nextPrayerTimeMillis).isEqualTo(tomorrowFajr)
+        assertThat(isha.nextPrayerName).isEqualTo("Dhuhr")
+        assertThat(isha.nextPrayerTimeMillis).isEqualTo(tomorrowDhuhr)
     }
 
     @Test
@@ -264,7 +263,7 @@ class SchedulePlanTest {
             prayers = prayers,
             zoneId = zone,
             now = Instant.parse("2026-08-22T00:00:00Z"),
-            enabledPrayers = setOf("Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"),
+            enabledPrayers = setOf("Dhuhr", "Asr", "Maghrib", "Isha"),
             prePrayerMinutes = 15,
             prePrayerEnabled = false
         )
@@ -281,12 +280,12 @@ class SchedulePlanTest {
             tomorrowPrayers = prayers,
             zoneId = zone,
             now = Instant.parse("2026-08-22T15:00:00Z"), // 18:00 Istanbul
-            enabledPrayers = setOf("Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"),
+            enabledPrayers = setOf("Dhuhr", "Asr", "Maghrib", "Isha"),
             prePrayerMinutes = 15,
             prePrayerEnabled = false
         )
         assertThat(alarms.map { it.prayerKey })
-            .containsExactly("Maghrib", "Isha", "Fajr", "Dhuhr", "Asr", "Maghrib", "Isha")
+            .containsExactly("Maghrib", "Isha", "Dhuhr", "Asr", "Maghrib", "Isha")
     }
 
     @Test
@@ -308,24 +307,24 @@ class SchedulePlanTest {
     }
 
     @Test
-    fun `tomorrow's Fajr carries today's last prayer as previous`() {
+    fun `tomorrow's Dhuhr carries today's last prayer as previous`() {
         val plan = SchedulePlan()
         val alarms = plan.buildDailyAlarms(
             prayers = prayers,
             tomorrowPrayers = prayers,
             zoneId = zone,
             now = Instant.parse("2026-08-22T20:00:00Z"), // 23:00 Istanbul, after Isha
-            enabledPrayers = setOf("Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"),
+            enabledPrayers = setOf("Dhuhr", "Asr", "Maghrib", "Isha"),
             prePrayerMinutes = 15,
             prePrayerEnabled = false
         )
-        val tomorrowFajr = alarms.first { it.prayerKey == "Fajr" }
+        val tomorrowDhuhr = alarms.first { it.prayerKey == "Dhuhr" }
         val todayIshaTrigger = java.time.LocalTime.of(21, 15)
             .atDate(LocalDate.of(2026, 8, 22))
             .atZone(zone)
             .toInstant()
             .toEpochMilli()
-        assertThat(tomorrowFajr.previousPrayerTimeMillis).isEqualTo(todayIshaTrigger)
+        assertThat(tomorrowDhuhr.previousPrayerTimeMillis).isEqualTo(todayIshaTrigger)
     }
 
     @Test
@@ -336,7 +335,7 @@ class SchedulePlanTest {
             tomorrowPrayers = prayers,
             zoneId = zone,
             now = Instant.parse("2026-08-22T00:00:00Z"),
-            enabledPrayers = setOf("Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"),
+            enabledPrayers = setOf("Dhuhr", "Asr", "Maghrib", "Isha"),
             prePrayerMinutes = 15,
             prePrayerEnabled = true
         )

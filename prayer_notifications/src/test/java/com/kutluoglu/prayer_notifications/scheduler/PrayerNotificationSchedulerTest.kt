@@ -88,7 +88,7 @@ class PrayerNotificationSchedulerTest {
         val scheduler = scheduler(CoroutineScope(UnconfinedTestDispatcher(testScheduler)))
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(context, AlarmReceiver::class.java)
-            .putExtra(AlarmReceiver.EXTRA_PRAYER_KEY, "Fajr")
+            .putExtra(AlarmReceiver.EXTRA_PRAYER_KEY, "Dhuhr")
         val pendingIntent = PendingIntent.getBroadcast(
             context, PrayerNotificationScheduler.REQUEST_CODE_START, intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
@@ -120,14 +120,8 @@ class PrayerNotificationSchedulerTest {
             location = LocationSettings(timeZone = "Europe/Istanbul"),
             calculationMethod = "TURKEY_DIYANET"
         )
-        coEvery { getPrayerTimesUseCase(any(), any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
+        coEvery { getPrayerTimesUseCase(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
             listOf(
-                Prayer(
-                    name = "Fajr",
-                    arabicName = "الفجر",
-                    time = LocalTime(23, 59),
-                    date = LocalDate(2026, 8, 22)
-                ),
                 Prayer(
                     name = "Dhuhr",
                     arabicName = "الظهر",
@@ -145,41 +139,6 @@ class PrayerNotificationSchedulerTest {
     }
 
     @Test
-    fun `scheduleAll forwards imsak offset from settings to use case`() = runTest {
-        coEvery { dataStore.getSettings() } returns NotificationSettings(enabled = true)
-        coEvery { locationsCoordinator.resolveSelected() } returns LocationData(
-            latitude = 41.0082,
-            longitude = 28.9784,
-            country = "Turkey",
-            countryCode = "TR",
-            city = "Istanbul",
-            county = null
-        )
-        coEvery { getSettingsUseCase() } returns Settings(
-            location = LocationSettings(timeZone = "Europe/Istanbul"),
-            calculationMethod = "TURKEY_DIYANET",
-            imsakOffsetMinutes = 20
-        )
-        coEvery { getPrayerTimesUseCase(any(), any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
-            listOf(
-                Prayer(
-                    name = "Fajr",
-                    arabicName = "الفجر",
-                    time = LocalTime(23, 59),
-                    date = LocalDate(2026, 8, 22)
-                )
-            )
-        )
-
-        val scheduler = scheduler(CoroutineScope(UnconfinedTestDispatcher(testScheduler)))
-        scheduler.scheduleAll()
-
-        coVerify(atLeast = 1) {
-            getPrayerTimesUseCase(any(), any(), any(), any(), any(), eq(20), any(), any())
-        }
-    }
-
-    @Test
     fun `scheduleAll with invalid timezone does not crash`() = runTest {
         coEvery { dataStore.getSettings() } returns NotificationSettings(enabled = true)
         coEvery { locationsCoordinator.resolveSelected() } returns LocationData(
@@ -194,11 +153,11 @@ class PrayerNotificationSchedulerTest {
             location = LocationSettings(timeZone = "Not/AZone"),
             calculationMethod = "TURKEY_DIYANET"
         )
-        coEvery { getPrayerTimesUseCase(any(), any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
+        coEvery { getPrayerTimesUseCase(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
             listOf(
                 Prayer(
-                    name = "Fajr",
-                    arabicName = "الفجر",
+                    name = "Dhuhr",
+                    arabicName = "الظهر",
                     time = LocalTime(23, 59),
                     date = LocalDate(2026, 8, 22)
                 )
@@ -298,11 +257,11 @@ class PrayerNotificationSchedulerTest {
             location = LocationSettings(timeZone = "Europe/Istanbul"),
             calculationMethod = "TURKEY_DIYANET"
         )
-        coEvery { getPrayerTimesUseCase(any(), any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
+        coEvery { getPrayerTimesUseCase(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
             listOf(
                 Prayer(
-                    name = "Fajr",
-                    arabicName = "الفجر",
+                    name = "Dhuhr",
+                    arabicName = "الظهر",
                     time = LocalTime(23, 59),
                     date = LocalDate(2026, 8, 22)
                 )
@@ -343,11 +302,11 @@ class PrayerNotificationSchedulerTest {
             location = LocationSettings(timeZone = "Europe/Istanbul"),
             calculationMethod = "TURKEY_DIYANET"
         )
-        coEvery { getPrayerTimesUseCase(any(), any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
+        coEvery { getPrayerTimesUseCase(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
             listOf(
                 Prayer(
-                    name = "Fajr",
-                    arabicName = "الفجر",
+                    name = "Dhuhr",
+                    arabicName = "الظهر",
                     time = LocalTime(23, 59),
                     date = LocalDate(2026, 8, 22)
                 )
@@ -357,7 +316,7 @@ class PrayerNotificationSchedulerTest {
         val scheduler = scheduler(CoroutineScope(UnconfinedTestDispatcher(testScheduler)))
         scheduler.scheduleAll()
 
-        coVerify { notificationDisplayer.showCountdownNotification("Fajr", any(), any(), any()) }
+        coVerify { notificationDisplayer.showCountdownNotification("Dhuhr", any(), any(), any()) }
     }
 
     @Test
@@ -376,7 +335,7 @@ class PrayerNotificationSchedulerTest {
     }
 
     @Test
-    fun `scheduleAll after last prayer starts countdown to tomorrow's Fajr`() = runTest {
+    fun `scheduleAll after last prayer starts countdown to tomorrow's Dhuhr`() = runTest {
         coEvery { dataStore.getSettings() } returns NotificationSettings(
             enabled = true,
             countdownEnabled = true
@@ -393,11 +352,11 @@ class PrayerNotificationSchedulerTest {
             location = LocationSettings(timeZone = "Europe/Istanbul"),
             calculationMethod = "TURKEY_DIYANET"
         )
-        coEvery { getPrayerTimesUseCase(any(), any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
+        coEvery { getPrayerTimesUseCase(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
             listOf(
                 Prayer(
-                    name = "Fajr",
-                    arabicName = "الفجر",
+                    name = "Dhuhr",
+                    arabicName = "الظهر",
                     time = LocalTime(0, 1),
                     date = LocalDate(2026, 8, 22)
                 ),
@@ -416,12 +375,12 @@ class PrayerNotificationSchedulerTest {
         val zoneId = java.time.ZoneId.of("Europe/Istanbul")
         val today = java.time.LocalDate.now(zoneId)
         val tomorrow = today.plusDays(1)
-        val expectedFajr = java.time.LocalTime.of(0, 1)
+        val expectedDhuhr = java.time.LocalTime.of(0, 1)
             .atDate(tomorrow).atZone(zoneId).toInstant().toEpochMilli()
         val expectedLastTrigger = java.time.LocalTime.of(0, 2)
             .atDate(today).atZone(zoneId).toInstant().toEpochMilli()
         coVerify {
-            notificationDisplayer.showCountdownNotification("Fajr", expectedFajr, expectedLastTrigger, any())
+            notificationDisplayer.showCountdownNotification("Dhuhr", expectedDhuhr, expectedLastTrigger, any())
         }
     }
 
@@ -441,11 +400,11 @@ class PrayerNotificationSchedulerTest {
             location = LocationSettings(timeZone = "Europe/Istanbul"),
             calculationMethod = "TURKEY_DIYANET"
         )
-        coEvery { getPrayerTimesUseCase(any(), any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
+        coEvery { getPrayerTimesUseCase(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
             listOf(
                 Prayer(
-                    name = "Fajr",
-                    arabicName = "الفجر",
+                    name = "Dhuhr",
+                    arabicName = "الظهر",
                     time = LocalTime(23, 59),
                     date = LocalDate(2026, 8, 22)
                 )
@@ -474,11 +433,11 @@ class PrayerNotificationSchedulerTest {
             location = LocationSettings(timeZone = "Europe/Istanbul"),
             calculationMethod = "TURKEY_DIYANET"
         )
-        coEvery { getPrayerTimesUseCase(any(), any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
+        coEvery { getPrayerTimesUseCase(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
             listOf(
                 Prayer(
-                    name = "Fajr",
-                    arabicName = "الفجر",
+                    name = "Dhuhr",
+                    arabicName = "الظهر",
                     time = LocalTime(23, 59),
                     date = LocalDate(2026, 8, 22)
                 )
@@ -490,7 +449,7 @@ class PrayerNotificationSchedulerTest {
 
         val zoneId = java.time.ZoneId.of("Europe/Istanbul")
         val tomorrow = java.time.LocalDate.now(zoneId).plusDays(1)
-        val tomorrowFajr = java.time.LocalTime.of(23, 59)
+        val tomorrowDhuhr = java.time.LocalTime.of(23, 59)
             .atDate(tomorrow)
             .atZone(zoneId)
             .toInstant()
@@ -498,7 +457,7 @@ class PrayerNotificationSchedulerTest {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val tomorrowAlarms = shadowOf(alarmManager).scheduledAlarms.filter { alarm ->
             shadowOf(alarm.operation).savedIntent
-                .getLongExtra(AlarmReceiver.EXTRA_ALARM_TRIGGER_TIME, 0L) == tomorrowFajr
+                .getLongExtra(AlarmReceiver.EXTRA_ALARM_TRIGGER_TIME, 0L) == tomorrowDhuhr
         }
         assertThat(tomorrowAlarms).isNotEmpty()
     }
@@ -526,11 +485,11 @@ class PrayerNotificationSchedulerTest {
             location = LocationSettings(timeZone = "Europe/Istanbul"),
             calculationMethod = "TURKEY_DIYANET"
         )
-        coEvery { getPrayerTimesUseCase(any(), any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
+        coEvery { getPrayerTimesUseCase(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
             listOf(
                 Prayer(
-                    name = "Fajr",
-                    arabicName = "الفجر",
+                    name = "Dhuhr",
+                    arabicName = "الظهر",
                     time = LocalTime(23, 59),
                     date = LocalDate(2026, 8, 22)
                 )
@@ -563,7 +522,7 @@ class PrayerNotificationSchedulerTest {
         assertThat(alarm.triggerAtTime).isAtLeast(before + 300_000L)
         assertThat(alarm.triggerAtTime).isAtMost(after + 300_000L)
         val testIntent = shadowOf(alarm.operation).savedIntent
-        assertThat(testIntent.getStringExtra(AlarmReceiver.EXTRA_PRAYER_KEY)).isEqualTo("Fajr")
+        assertThat(testIntent.getStringExtra(AlarmReceiver.EXTRA_PRAYER_KEY)).isEqualTo("Dhuhr")
         assertThat(testIntent.getStringExtra(AlarmReceiver.EXTRA_ALARM_TYPE))
             .isEqualTo(AlarmType.PRAYER.name)
     }
@@ -654,14 +613,14 @@ class PrayerNotificationSchedulerTest {
         val scheduler = scheduler(CoroutineScope(UnconfinedTestDispatcher()))
         val prayers = listOf(
             Prayer("Imsak", "الإمساك", LocalTime(4, 50), LocalDate(2026, 9, 2), isImsak = true),
-            Prayer("Fajr", "الفجر", LocalTime(5, 0), LocalDate(2026, 9, 2)),
+            Prayer("Asr", "العصر", LocalTime(5, 0), LocalDate(2026, 9, 2)),
             Prayer("Dhuhr", "الظهر", LocalTime(12, 30), LocalDate(2026, 9, 2))
         )
 
         val summary = scheduler.buildDailySummary(prayers)
 
         assertThat(summary).doesNotContain("Imsak")
-        assertThat(summary).contains("Fajr 05:00")
+        assertThat(summary).contains("Asr 05:00")
         assertThat(summary).contains("Dhuhr 12:30")
     }
 }

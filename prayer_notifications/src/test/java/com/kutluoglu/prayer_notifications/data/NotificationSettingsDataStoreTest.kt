@@ -29,7 +29,7 @@ class NotificationSettingsDataStoreTest {
         val store = freshStore()
         val settings = store.getSettings()
         assertThat(settings.enabled).isFalse()
-        assertThat(settings.prayerToggles["Fajr"]).isTrue()
+        assertThat(settings.prayerToggles["Dhuhr"]).isTrue()
         assertThat(settings.prePrayerMinutes).isEqualTo(15)
         assertThat(settings.adhanEnabled).isFalse()
     }
@@ -57,22 +57,22 @@ class NotificationSettingsDataStoreTest {
     @Test
     fun `updatePrayerToggle persists per prayer`() = runTest {
         val store = freshStore()
-        store.updatePrayerToggle("Fajr", false)
+        store.updatePrayerToggle("Asr", false)
         val settings = store.getSettings()
-        assertThat(settings.prayerToggles["Fajr"]).isFalse()
+        assertThat(settings.prayerToggles["Asr"]).isFalse()
         assertThat(settings.prayerToggles["Dhuhr"]).isTrue()
     }
 
     @Test
     fun `updatePrayerToggle round-trips disable then re-enable`() = runTest {
         val store = freshStore()
-        store.updatePrayerToggle("Fajr", false)
-        assertThat(store.getSettings().prayerToggles["Fajr"]).isFalse()
+        store.updatePrayerToggle("Asr", false)
+        assertThat(store.getSettings().prayerToggles["Asr"]).isFalse()
         assertThat(store.getSettings().prayerToggles["Dhuhr"]).isTrue()
 
-        store.updatePrayerToggle("Fajr", true)
+        store.updatePrayerToggle("Asr", true)
         val settings = store.getSettings()
-        assertThat(settings.prayerToggles["Fajr"]).isTrue()
+        assertThat(settings.prayerToggles["Asr"]).isTrue()
         assertThat(settings.prayerToggles["Dhuhr"]).isTrue()
     }
 

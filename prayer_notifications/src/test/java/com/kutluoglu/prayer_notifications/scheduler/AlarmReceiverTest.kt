@@ -67,7 +67,7 @@ class AlarmReceiverTest {
         val receiver = AlarmReceiver()
         val intent = Intent(context, AlarmReceiver::class.java)
             .putExtra(AlarmReceiver.EXTRA_ALARM_TYPE, AlarmType.PRAYER.name)
-            .putExtra(AlarmReceiver.EXTRA_PRAYER_KEY, "Fajr")
+            .putExtra(AlarmReceiver.EXTRA_PRAYER_KEY, "Dhuhr")
         receiver.handleAlarm(context, intent)
         val started = shadowOf(context as Application).getNextStartedService()
         assertThat(started?.component?.className).isEqualTo(AdhanService::class.java.name)
@@ -82,7 +82,7 @@ class AlarmReceiverTest {
         val spyContext = spyk(context)
         val intent = Intent(context, AlarmReceiver::class.java)
             .putExtra(AlarmReceiver.EXTRA_ALARM_TYPE, AlarmType.PRAYER.name)
-            .putExtra(AlarmReceiver.EXTRA_PRAYER_KEY, "Fajr")
+            .putExtra(AlarmReceiver.EXTRA_PRAYER_KEY, "Dhuhr")
         receiver.handleAlarm(spyContext, intent)
         verify { spyContext.startForegroundService(any()) }
     }
@@ -93,9 +93,9 @@ class AlarmReceiverTest {
         val receiver = AlarmReceiver()
         val intent = Intent(context, AlarmReceiver::class.java)
             .putExtra(AlarmReceiver.EXTRA_ALARM_TYPE, AlarmType.PRAYER.name)
-            .putExtra(AlarmReceiver.EXTRA_PRAYER_KEY, "Fajr")
+            .putExtra(AlarmReceiver.EXTRA_PRAYER_KEY, "Dhuhr")
         receiver.handleAlarm(context, intent)
-        verify { notificationDisplayer.showPrayerNotification("Fajr", any()) }
+        verify { notificationDisplayer.showPrayerNotification("Dhuhr", any()) }
         verify(exactly = 0) { adhanPlayer.play(any(), any()) }
     }
 
@@ -118,10 +118,10 @@ class AlarmReceiverTest {
         val receiver = AlarmReceiver()
         val intent = Intent(context, AlarmReceiver::class.java)
             .putExtra(AlarmReceiver.EXTRA_ALARM_TYPE, AlarmType.PRE_PRAYER.name)
-            .putExtra(AlarmReceiver.EXTRA_PRAYER_KEY, "Fajr_pre")
+            .putExtra(AlarmReceiver.EXTRA_PRAYER_KEY, "Dhuhr_pre")
             .putExtra(AlarmReceiver.EXTRA_PRE_PRAYER_MINUTES, 15)
         receiver.handleAlarm(context, intent)
-        verify { notificationDisplayer.showPrePrayerNotification("Fajr", 15) }
+        verify { notificationDisplayer.showPrePrayerNotification("Dhuhr", 15) }
     }
 
     @Test
@@ -131,9 +131,9 @@ class AlarmReceiverTest {
         val receiver = AlarmReceiver()
         val intent = Intent(context, AlarmReceiver::class.java)
             .putExtra(AlarmReceiver.EXTRA_ALARM_TYPE, AlarmType.DAILY_REMINDER.name)
-            .putExtra(AlarmReceiver.EXTRA_DAILY_SUMMARY, "Fajr 04:30")
+            .putExtra(AlarmReceiver.EXTRA_DAILY_SUMMARY, "Dhuhr 12:30")
         receiver.handleAlarm(context, intent)
-        verify { notificationDisplayer.showDailyReminderNotification("Fajr 04:30") }
+        verify { notificationDisplayer.showDailyReminderNotification("Dhuhr 12:30") }
         coVerify { scheduler.scheduleDailyReminder() }
     }
 

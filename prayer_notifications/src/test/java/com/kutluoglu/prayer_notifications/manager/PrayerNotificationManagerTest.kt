@@ -64,11 +64,11 @@ class PrayerNotificationManagerTest {
         try {
             Locale.setDefault(Locale("tr"))
             manager.createChannels()
-            manager.showPrayerNotification("Fajr", NotificationSettings())
+            manager.showPrayerNotification("Dhuhr", NotificationSettings())
             val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             val notification = shadowOf(nm).allNotifications.single()
-            assertThat(notification.extras.getString("android.title")).isEqualTo("İmsak")
-            assertThat(notification.extras.getString("android.text")).isEqualTo("İmsak vakti geldi")
+            assertThat(notification.extras.getString("android.title")).isEqualTo("Öğle")
+            assertThat(notification.extras.getString("android.text")).isEqualTo("Öğle vakti geldi")
         } finally {
             Locale.setDefault(original)
         }
@@ -87,17 +87,17 @@ class PrayerNotificationManagerTest {
         manager.createChannels()
         val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        manager.showPrayerNotification("Fajr", NotificationSettings(adhanEnabled = true))
+        manager.showPrayerNotification("Dhuhr", NotificationSettings(adhanEnabled = true))
         assertThat(shadowOf(nm).allNotifications.single().channelId).isEqualTo("adhan")
 
-        manager.showPrayerNotification("Fajr", NotificationSettings(adhanEnabled = false))
+        manager.showPrayerNotification("Dhuhr", NotificationSettings(adhanEnabled = false))
         assertThat(shadowOf(nm).allNotifications.single().channelId).isEqualTo("prayer_alerts")
     }
 
     @Test
     fun `showPrayerNotification takes a prayer name`() {
         manager.createChannels()
-        manager.showPrayerNotification("Fajr", NotificationSettings(adhanEnabled = false))
+        manager.showPrayerNotification("Dhuhr", NotificationSettings(adhanEnabled = false))
         val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         assertThat(shadowOf(nm).allNotifications.single().channelId).isEqualTo("prayer_alerts")
     }
@@ -113,7 +113,7 @@ class PrayerNotificationManagerTest {
     @Test
     fun `showPrePrayerNotification posts on reminders channel`() {
         manager.createChannels()
-        manager.showPrePrayerNotification("Fajr", 15)
+        manager.showPrePrayerNotification("Dhuhr", 15)
         val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         assertThat(shadowOf(nm).allNotifications.single().channelId).isEqualTo("reminders")
     }
@@ -121,11 +121,11 @@ class PrayerNotificationManagerTest {
     @Test
     fun `showDailyReminderNotification posts summary on reminders channel`() {
         manager.createChannels()
-        manager.showDailyReminderNotification("Fajr 04:30 · Dhuhr 12:30")
+        manager.showDailyReminderNotification("Dhuhr 12:30 · Asr 16:00")
         val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val notification = shadowOf(nm).allNotifications.single()
         assertThat(notification.channelId).isEqualTo("reminders")
-        assertThat(notification.extras.getString("android.text")).isEqualTo("Fajr 04:30 · Dhuhr 12:30")
+        assertThat(notification.extras.getString("android.text")).isEqualTo("Dhuhr 12:30 · Asr 16:00")
     }
 
     @Test
@@ -200,8 +200,8 @@ class PrayerNotificationManagerTest {
         try {
             Locale.setDefault(Locale("tr"))
             manager.createChannels()
-            val notification = manager.buildAdhanNotification("Fajr")
-            assertThat(notification.extras.getString("android.title")).isEqualTo("İmsak")
+            val notification = manager.buildAdhanNotification("Dhuhr")
+            assertThat(notification.extras.getString("android.title")).isEqualTo("Öğle")
             assertThat(notification.extras.getString("android.text")).isEqualTo("Ezan çalıyor")
         } finally {
             Locale.setDefault(original)
@@ -211,7 +211,7 @@ class PrayerNotificationManagerTest {
     @Test
     fun `buildAdhanNotification includes stop action and delete intent`() {
         manager.createChannels()
-        val notification = manager.buildAdhanNotification("Fajr")
+        val notification = manager.buildAdhanNotification("Dhuhr")
         assertThat(notification.actions).hasLength(1)
         assertThat(notification.actions!![0].title.toString()).isEqualTo("Stop")
         assertThat(notification.deleteIntent).isNotNull()

@@ -39,8 +39,8 @@ class AdhanPlayerTest {
         idleMainLooper()
     }
 
-    private fun fajrUri(): Uri =
-        Uri.parse("android.resource://${context.packageName}/${R.raw.adhan_fajr}")
+    private fun dhuhrUri(): Uri =
+        Uri.parse("android.resource://${context.packageName}/${R.raw.adhan_dhuhr}")
 
     private fun ishaUri(): Uri =
         Uri.parse("android.resource://${context.packageName}/${R.raw.adhan_isha}")
@@ -51,7 +51,7 @@ class AdhanPlayerTest {
     @Test
     fun `play and stop do not throw`() {
         val player = adhanPlayer()
-        player.play("Fajr", 30)
+        player.play("Dhuhr", 30)
         player.stop()
     }
 
@@ -66,7 +66,7 @@ class AdhanPlayerTest {
     @Test
     fun `repeated play calls do not throw`() {
         val player = adhanPlayer()
-        player.play("Fajr", 30)
+        player.play("Dhuhr", 30)
         player.play("Isha", 30)
         player.stop()
     }
@@ -75,10 +75,10 @@ class AdhanPlayerTest {
     fun `play prepares a media item with alarm volume fraction`() {
         val fakePlayer = FakePlayer(bufferingDelayMs = 0)
         val player = adhanPlayer(fakePlayer)
-        player.play("Fajr", 30)
+        player.play("Dhuhr", 30)
         idleMainLooper()
         assertThat(fakePlayer.mediaItemCount).isEqualTo(1)
-        assertThat(fakePlayer.currentMediaItem?.localConfiguration?.uri).isEqualTo(fajrUri())
+        assertThat(fakePlayer.currentMediaItem?.localConfiguration?.uri).isEqualTo(dhuhrUri())
         assertThat(fakePlayer.volume).isEqualTo(0.3f)
         assertThat(fakePlayer.playWhenReady).isTrue()
         assertThat(fakePlayer.playbackState).isEqualTo(Player.STATE_READY)
@@ -99,16 +99,16 @@ class AdhanPlayerTest {
     fun `play with unknown style falls back to default resource`() {
         val fakePlayer = FakePlayer(bufferingDelayMs = 0)
         val player = adhanPlayer(fakePlayer)
-        player.play("Fajr", 30, "bogus_style")
+        player.play("Dhuhr", 30, "bogus_style")
         idleMainLooper()
-        assertThat(fakePlayer.currentMediaItem?.localConfiguration?.uri).isEqualTo(fajrUri())
+        assertThat(fakePlayer.currentMediaItem?.localConfiguration?.uri).isEqualTo(dhuhrUri())
         player.stop()
     }
 
     @Test
     fun `play requests audio focus on alarm stream`() {
         val player = adhanPlayer()
-        player.play("Fajr", 30)
+        player.play("Dhuhr", 30)
         val request = shadowOf(audioManager()).getLastAudioFocusRequest()
         assertThat(request).isNotNull()
         assertThat(request?.durationHint).isEqualTo(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT)
@@ -120,7 +120,7 @@ class AdhanPlayerTest {
     @Test
     fun `stop abandons audio focus`() {
         val player = adhanPlayer()
-        player.play("Fajr", 30)
+        player.play("Dhuhr", 30)
         player.stop()
         assertThat(shadowOf(audioManager()).getLastAbandonedAudioFocusRequest()).isNotNull()
     }
@@ -128,7 +128,7 @@ class AdhanPlayerTest {
     @Test
     fun `play activates media session and stop deactivates it`() {
         val player = adhanPlayer()
-        player.play("Fajr", 30)
+        player.play("Dhuhr", 30)
         assertThat(player.volumeController.mediaSession).isNotNull()
         player.stop()
         assertThat(player.volumeController.mediaSession).isNull()
@@ -140,7 +140,7 @@ class AdhanPlayerTest {
         val player = adhanPlayer(fakePlayer)
         var completed = false
         player.setOnCompletionListener { completed = true }
-        player.play("Fajr", 30)
+        player.play("Dhuhr", 30)
         fakePlayer.setPlaybackState(Player.STATE_ENDED)
         idleMainLooper()
         assertThat(completed).isTrue()
@@ -151,7 +151,7 @@ class AdhanPlayerTest {
     fun `playback error stops playback`() {
         val fakePlayer = FakePlayer(bufferingDelayMs = 0)
         val player = adhanPlayer(fakePlayer)
-        player.play("Fajr", 30)
+        player.play("Dhuhr", 30)
         fakePlayer.setPlayerError(
             PlaybackException("boom", null, PlaybackException.ERROR_CODE_IO_UNSPECIFIED)
         )
@@ -164,7 +164,7 @@ class AdhanPlayerTest {
         val player = adhanPlayer()
         var focusLost = false
         player.setOnFocusLossListener { focusLost = true }
-        player.play("Fajr", 30)
+        player.play("Dhuhr", 30)
         val request = shadowOf(audioManager()).getLastAudioFocusRequest()
             ?: error("no focus request")
         request.listener.onAudioFocusChange(AudioManager.AUDIOFOCUS_LOSS)
@@ -178,7 +178,7 @@ class AdhanPlayerTest {
         val player = adhanPlayer(fakePlayer)
         var focusLost = false
         player.setOnFocusLossListener { focusLost = true }
-        player.play("Fajr", 30)
+        player.play("Dhuhr", 30)
         val request = shadowOf(audioManager()).getLastAudioFocusRequest()
             ?: error("no focus request")
         request.listener.onAudioFocusChange(AudioManager.AUDIOFOCUS_LOSS_TRANSIENT)
@@ -193,7 +193,7 @@ class AdhanPlayerTest {
         val player = adhanPlayer(fakePlayer)
         var focusLost = false
         player.setOnFocusLossListener { focusLost = true }
-        player.play("Fajr", 30)
+        player.play("Dhuhr", 30)
         fakePlayer.setDeviceMuted(true, C.VOLUME_FLAG_SHOW_UI)
         idleMainLooper()
         assertThat(focusLost).isTrue()
@@ -206,7 +206,7 @@ class AdhanPlayerTest {
         val player = adhanPlayer(fakePlayer)
         var focusLost = false
         player.setOnFocusLossListener { focusLost = true }
-        player.play("Fajr", 30)
+        player.play("Dhuhr", 30)
         fakePlayer.setDeviceVolume(5, C.VOLUME_FLAG_SHOW_UI)
         idleMainLooper()
         fakePlayer.setDeviceVolume(0, C.VOLUME_FLAG_SHOW_UI)
@@ -221,7 +221,7 @@ class AdhanPlayerTest {
         val player = adhanPlayer(fakePlayer)
         var focusLost = false
         player.setOnFocusLossListener { focusLost = true }
-        player.play("Fajr", 30)
+        player.play("Dhuhr", 30)
         fakePlayer.setDeviceVolume(85, C.VOLUME_FLAG_SHOW_UI)
         idleMainLooper()
         assertThat(focusLost).isFalse()

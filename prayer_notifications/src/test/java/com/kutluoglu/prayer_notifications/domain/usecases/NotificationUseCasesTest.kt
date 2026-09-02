@@ -64,10 +64,10 @@ class NotificationUseCasesTest {
         useCase(
             NotificationSettings(
                 enabled = true,
-                prayerToggles = mapOf("Fajr" to false, "Dhuhr" to true)
+                prayerToggles = mapOf("Asr" to false, "Dhuhr" to true)
             )
         )
-        coVerify { dataStore.updatePrayerToggle("Fajr", false) }
+        coVerify { dataStore.updatePrayerToggle("Asr", false) }
         coVerify { dataStore.updatePrayerToggle("Dhuhr", true) }
     }
 

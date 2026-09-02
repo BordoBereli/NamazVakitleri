@@ -27,7 +27,7 @@ class NotificationSettingsDataStoreAdhanStyleTest {
     @Test
     fun `adhan style persists per prayer`() = runTest {
         val store = freshStore()
-        store.updateAdhanStyle("Fajr", "makkah")
-        assertThat(store.getSettings().adhanStyles).isEqualTo(mapOf("Fajr" to "makkah"))
+        store.updateAdhanStyle("Dhuhr", "makkah")
+        assertThat(store.getSettings().adhanStyles).isEqualTo(mapOf("Dhuhr" to "makkah"))
     }
 }
