@@ -43,6 +43,7 @@ class SettingsDataStore(
         val CALCULATION_METHOD = stringPreferencesKey("calculation_method")
         val LANGUAGE = stringPreferencesKey("language")
         val HIJRI_ADJUSTMENT = intPreferencesKey("hijri_adjustment")
+        val IMSAK_OFFSET_MINUTES = intPreferencesKey("imsak_offset_minutes")
         val CRASHLYTICS_ENABLED = booleanPreferencesKey("crashlytics_enabled")
     }
     
@@ -59,6 +60,7 @@ class SettingsDataStore(
             calculationMethod = preferences[PreferencesKeys.CALCULATION_METHOD] ?: "TURKEY_DIYANET",
             language = preferences[PreferencesKeys.LANGUAGE] ?: "system",
             hijriAdjustment = preferences[PreferencesKeys.HIJRI_ADJUSTMENT] ?: 0,
+            imsakOffsetMinutes = preferences[PreferencesKeys.IMSAK_OFFSET_MINUTES] ?: 10,
             crashlyticsEnabled = preferences[PreferencesKeys.CRASHLYTICS_ENABLED] ?: true
         )
     }
@@ -77,6 +79,7 @@ class SettingsDataStore(
                 calculationMethod = preferences[PreferencesKeys.CALCULATION_METHOD] ?: "TURKEY_DIYANET",
                 language = preferences[PreferencesKeys.LANGUAGE] ?: "system",
                 hijriAdjustment = preferences[PreferencesKeys.HIJRI_ADJUSTMENT] ?: 0,
+                imsakOffsetMinutes = preferences[PreferencesKeys.IMSAK_OFFSET_MINUTES] ?: 10,
                 crashlyticsEnabled = preferences[PreferencesKeys.CRASHLYTICS_ENABLED] ?: true
             )
         }
@@ -112,6 +115,12 @@ class SettingsDataStore(
     suspend fun updateHijriAdjustment(days: Int) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.HIJRI_ADJUSTMENT] = days
+        }
+    }
+
+    suspend fun updateImsakOffsetMinutes(minutes: Int) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.IMSAK_OFFSET_MINUTES] = minutes
         }
     }
 

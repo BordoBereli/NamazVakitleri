@@ -5,6 +5,7 @@ data class Settings(
     val calculationMethod: String = "TURKEY_DIYANET",
     val language: String = "system",
     val hijriAdjustment: Int = 0,
+    val imsakOffsetMinutes: Int = 10,
     val crashlyticsEnabled: Boolean = true
 )
 
