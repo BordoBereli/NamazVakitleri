@@ -14,6 +14,9 @@
     <string name="imsak_offset">Imsak Offset</string>
     <string name="imsak_offset_description">Set how many minutes before Fajr Imsak begins</string>
     <string name="imsak_offset_range">Range: 5 to 20 minutes</string>
+    <string name="asr_calculation">Asr Calculation</string>
+    <string name="juristic_standard">Standard (Shafi)</string>
+    <string name="juristic_hanafi">Hanafi</string>
     <string name="minutes">minutes</string>
     <string name="no_changes">No changes</string>
     <string name="decrease">Decrease</string>

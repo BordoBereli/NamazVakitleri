@@ -58,6 +58,7 @@ class SettingsScreenTest {
                 onNavigateToCalculationMethod = {},
                 onNavigateToHijriAdjustment = {},
                 onNavigateToImsakOffset = {},
+                onNavigateToJuristicMethod = {},
                 onNavigateToLanguage = {},
                 onNavigateToNotifications = {},
                 viewModel = viewModel
@@ -74,6 +75,7 @@ class SettingsScreenTest {
         composeTestRule.onNodeWithText("Calculation Method").assertIsDisplayed()
         composeTestRule.onNodeWithText("Hijri Adjustment").assertIsDisplayed()
         composeTestRule.onNodeWithText("Imsak Offset").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Asr Calculation").assertIsDisplayed()
         composeTestRule.onNodeWithText("Language").assertIsDisplayed()
         composeTestRule.onNodeWithText("Notifications").assertIsDisplayed()
     }

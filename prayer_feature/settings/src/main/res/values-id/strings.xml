@@ -14,6 +14,9 @@
     <string name="imsak_offset">Selisih Imsak</string>
     <string name="imsak_offset_description">Atur berapa menit sebelum Fajr Imsak dimulai</string>
     <string name="imsak_offset_range">Rentang: 5 hingga 20 menit</string>
+    <string name="asr_calculation">Perhitungan Asar</string>
+    <string name="juristic_standard">Standar (Syafi\'i)</string>
+    <string name="juristic_hanafi">Hanafi</string>
     <string name="minutes">menit</string>
     <string name="no_changes">Tidak ada perubahan</string>
     <string name="decrease">Kurangi</string>

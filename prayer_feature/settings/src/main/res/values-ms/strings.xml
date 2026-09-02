@@ -14,6 +14,9 @@
     <string name="imsak_offset">Perbezaan Imsak</string>
     <string name="imsak_offset_description">Tetapkan berapa minit sebelum Fajr Imsak bermula</string>
     <string name="imsak_offset_range">Julat: 5 hingga 20 minit</string>
+    <string name="asr_calculation">Pengiraan Asar</string>
+    <string name="juristic_standard">Standard (Syafii)</string>
+    <string name="juristic_hanafi">Hanafi</string>
     <string name="minutes">minit</string>
     <string name="no_changes">Tiada perubahan</string>
     <string name="decrease">Kurangkan</string>

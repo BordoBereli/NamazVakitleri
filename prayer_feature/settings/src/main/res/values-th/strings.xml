@@ -14,6 +14,9 @@
     <string name="imsak_offset">ช่วงเวลาอิมซัก</string>
     <string name="imsak_offset_description">กำหนดว่าอิมซักเริ่มก่อนฟัจญร์กี่นาที</string>
     <string name="imsak_offset_range">ช่วง: 5 ถึง 20 นาที</string>
+    <string name="asr_calculation">การคำนวณอัสร์</string>
+    <string name="juristic_standard">มาตรฐาน (ชาฟีอี)</string>
+    <string name="juristic_hanafi">ฮานาฟี</string>
     <string name="minutes">นาที</string>
     <string name="no_changes">ไม่มีการเปลี่ยนแปลง</string>
     <string name="decrease">ลดลง</string>

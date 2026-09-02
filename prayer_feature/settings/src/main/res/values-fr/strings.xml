@@ -14,6 +14,9 @@
     <string name="imsak_offset">Décalage Imsak</string>
     <string name="imsak_offset_description">Définissez combien de minutes avant Fajr commence l\'Imsak</string>
     <string name="imsak_offset_range">Plage : 5 à 20 minutes</string>
+    <string name="asr_calculation">Calcul du Asr</string>
+    <string name="juristic_standard">Standard (Chaféite)</string>
+    <string name="juristic_hanafi">Hanafite</string>
     <string name="minutes">minutes</string>
     <string name="no_changes">Aucun changement</string>
     <string name="decrease">Diminuer</string>

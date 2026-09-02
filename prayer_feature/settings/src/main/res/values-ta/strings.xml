@@ -14,6 +14,9 @@
     <string name="imsak_offset">இம்சாக் இடைவெளி</string>
     <string name="imsak_offset_description">ஃபஜ்ருக்கு எத்தனை நிமிடங்களுக்கு முன் இம்சாக் தொடங்கும் என்பதை அமைக்கவும்</string>
     <string name="imsak_offset_range">வரம்பு: 5 முதல் 20 நிமிடங்கள்</string>
+    <string name="asr_calculation">அஸர் கணக்கீடு</string>
+    <string name="juristic_standard">நிலையான (ஷாஃபி)</string>
+    <string name="juristic_hanafi">ஹனஃபி</string>
     <string name="minutes">நிமிடங்கள்</string>
     <string name="no_changes">மாற்றங்கள் இல்லை</string>
     <string name="decrease">குறை</string>

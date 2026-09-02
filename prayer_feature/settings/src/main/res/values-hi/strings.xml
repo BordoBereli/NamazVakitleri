@@ -14,6 +14,9 @@
     <string name="imsak_offset">इमसाक अंतर</string>
     <string name="imsak_offset_description">निर्धारित करें कि फज्र से कितने मिनट पहले इमसाक शुरू हो</string>
     <string name="imsak_offset_range">सीमा: 5 से 20 मिनट</string>
+    <string name="asr_calculation">असर गणना</string>
+    <string name="juristic_standard">मानक (शाफी)</string>
+    <string name="juristic_hanafi">हनफी</string>
     <string name="minutes">मिनट</string>
     <string name="no_changes">कोई बदलाव नहीं</string>
     <string name="decrease">घटाएँ</string>

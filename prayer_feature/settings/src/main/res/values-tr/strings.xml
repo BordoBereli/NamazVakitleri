@@ -14,6 +14,9 @@
     <string name="imsak_offset">İmsak Farkı</string>
     <string name="imsak_offset_description">İmsak, Fecirden kaç dakika önce başlar</string>
     <string name="imsak_offset_range">Aralık: 5 ila 20 dakika</string>
+    <string name="asr_calculation">İkindi Hesabı</string>
+    <string name="juristic_standard">Standart (Şafii)</string>
+    <string name="juristic_hanafi">Hanefi</string>
     <string name="minutes">dakika</string>
     <string name="no_changes">Değişiklik yok</string>
     <string name="decrease">Azalt</string>

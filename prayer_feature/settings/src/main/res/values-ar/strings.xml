@@ -14,6 +14,9 @@
     <string name="imsak_offset">فارق الإمساك</string>
     <string name="imsak_offset_description">حدد عدد الدقائق قبل الفجر التي يبدأ فيها الإمساك</string>
     <string name="imsak_offset_range">النطاق: من 5 إلى 20 دقيقة</string>
+    <string name="asr_calculation">حساب العصر</string>
+    <string name="juristic_standard">قياسي (شافعي)</string>
+    <string name="juristic_hanafi">حنفي</string>
     <string name="minutes">دقائق</string>
     <string name="no_changes">لا تغييرات</string>
     <string name="decrease">إنقاص</string>

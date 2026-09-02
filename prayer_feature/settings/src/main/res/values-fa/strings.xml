@@ -14,6 +14,9 @@
     <string name="imsak_offset">اختلاف امساک</string>
     <string name="imsak_offset_description">تعیین کنید امساک چند دقیقه قبل از فجر آغاز شود</string>
     <string name="imsak_offset_range">محدوده: ۵ تا ۲۰ دقیقه</string>
+    <string name="asr_calculation">محاسبه عصر</string>
+    <string name="juristic_standard">استاندارد (شافعی)</string>
+    <string name="juristic_hanafi">حنفی</string>
     <string name="minutes">دقیقه</string>
     <string name="no_changes">بدون تغییر</string>
     <string name="decrease">کاهش</string>

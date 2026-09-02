@@ -67,6 +67,7 @@ fun SettingsScreen(
     onNavigateToCalculationMethod: () -> Unit,
     onNavigateToHijriAdjustment: () -> Unit,
     onNavigateToImsakOffset: () -> Unit,
+    onNavigateToJuristicMethod: () -> Unit,
     onNavigateToLanguage: () -> Unit,
     onNavigateToNotifications: () -> Unit,
     viewModel: SettingsViewModel = koinViewModel()
@@ -113,6 +114,7 @@ fun SettingsScreen(
                         onNavigateToCalculationMethod = onNavigateToCalculationMethod,
                         onNavigateToHijriAdjustment = onNavigateToHijriAdjustment,
                         onNavigateToImsakOffset = onNavigateToImsakOffset,
+                        onNavigateToJuristicMethod = onNavigateToJuristicMethod,
                         onNavigateToLanguage = onNavigateToLanguage,
                         onNavigateToNotifications = onNavigateToNotifications
                     )
@@ -141,6 +143,7 @@ private fun SettingsContent(
     onNavigateToCalculationMethod: () -> Unit,
     onNavigateToHijriAdjustment: () -> Unit,
     onNavigateToImsakOffset: () -> Unit,
+    onNavigateToJuristicMethod: () -> Unit,
     onNavigateToLanguage: () -> Unit,
     onNavigateToNotifications: () -> Unit
 ) {
@@ -202,6 +205,15 @@ private fun SettingsContent(
                     title = stringResource(SettingsR.string.imsak_offset),
                     subtitle = "${settings.imsakOffsetMinutes} ${stringResource(SettingsR.string.minutes)}",
                     onClick = onNavigateToImsakOffset
+                )
+                
+                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+                
+                SettingsItem(
+                    icon = Icons.Filled.Functions,
+                    title = stringResource(SettingsR.string.asr_calculation),
+                    subtitle = getJuristicMethodName(settings.juristicMethod),
+                    onClick = onNavigateToJuristicMethod
                 )
                 
                 HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
@@ -354,6 +366,14 @@ private fun ClearCacheDialog(
 @Composable
 private fun getCalculationMethodName(method: String): String {
     return stringResource(CalculationMethod.fromSettingsId(method).displayNameRes())
+}
+
+@Composable
+private fun getJuristicMethodName(method: String): String {
+    return when (method) {
+        "HANAFI" -> stringResource(SettingsR.string.juristic_hanafi)
+        else -> stringResource(SettingsR.string.juristic_standard)
+    }
 }
 
 @Composable
