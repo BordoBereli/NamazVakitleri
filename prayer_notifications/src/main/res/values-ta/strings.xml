@@ -34,4 +34,10 @@
     <string name="special_day_eid_al_fitr">ஈத் அல்-பித்ர்</string>
     <string name="special_day_eid_al_adha">ஈத் அல்-அத்ஹா</string>
     <string name="special_day_laylat_al_qadr">லைலத்துல் கத்ர்</string>
+    <string name="special_day_islamic_new_year">இஸ்லாமிய புத்தாண்டு</string>
+    <string name="special_day_ashura">ஆஷூரா</string>
+    <string name="special_day_isra_miraj">இஸ்ரா மற்றும் மிஃராஜ்</string>
+    <string name="special_day_mid_shaban">ஷாபான் பாதி</string>
+    <string name="special_day_arafah">அரஃபா நாள்</string>
+    <string name="special_day_mawlid">மவ்லித் அன்-நபி</string>
 </resources>

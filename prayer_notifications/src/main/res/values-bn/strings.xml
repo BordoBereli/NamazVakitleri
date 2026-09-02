@@ -34,4 +34,10 @@
     <string name="special_day_eid_al_fitr">ঈদুল ফিতর</string>
     <string name="special_day_eid_al_adha">ঈদুল আজহা</string>
     <string name="special_day_laylat_al_qadr">লাইলাতুল কদর</string>
+    <string name="special_day_islamic_new_year">ইসলামিক নববর্ষ</string>
+    <string name="special_day_ashura">আশুরা</string>
+    <string name="special_day_isra_miraj">ইসরা ও মিরাজ</string>
+    <string name="special_day_mid_shaban">শবে বরাত</string>
+    <string name="special_day_arafah">আরাফার দিন</string>
+    <string name="special_day_mawlid">ঈদে মিলাদুন্নবী</string>
 </resources>
