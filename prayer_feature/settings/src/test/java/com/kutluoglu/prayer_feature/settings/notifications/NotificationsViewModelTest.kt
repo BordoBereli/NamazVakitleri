@@ -61,9 +61,9 @@ class NotificationsViewModelTest {
         coEvery { getUseCase() } returns NotificationSettings()
 
         val viewModel = NotificationsViewModel(getUseCase, updateUseCase, notificationManager, alarmScheduler)
-        viewModel.onEvent(NotificationsEvent.SetPrayerToggle("Fajr", false))
+        viewModel.onEvent(NotificationsEvent.SetPrayerToggle("Dhuhr", false))
 
-        coVerify { updateUseCase(match { it.prayerToggles["Fajr"] == false }) }
+        coVerify { updateUseCase(match { it.prayerToggles["Dhuhr"] == false }) }
     }
 
     @Test

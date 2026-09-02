@@ -29,7 +29,7 @@ class PrayerContainerTest {
     val composeRule = createComposeRule()
 
     private val prayers = listOf(
-        Prayer(name = "Fajr", arabicName = "الفجر", time = LocalTime(5, 0), date = LocalDate(2026, 8, 1)),
+        Prayer(name = "Imsak", arabicName = "الإمساك", time = LocalTime(5, 0), date = LocalDate(2026, 8, 1), isImsak = true),
         Prayer(name = "Sunrise", arabicName = "الشروق", time = LocalTime(7, 0), date = LocalDate(2026, 8, 1)),
         Prayer(name = "Dhuhr", arabicName = "الظهر", time = LocalTime(12, 30), date = LocalDate(2026, 8, 1)),
         Prayer(name = "Asr", arabicName = "العصر", time = LocalTime(15, 30), date = LocalDate(2026, 8, 1)),

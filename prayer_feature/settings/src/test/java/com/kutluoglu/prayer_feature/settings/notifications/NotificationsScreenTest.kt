@@ -134,7 +134,7 @@ class NotificationsScreenTest {
         shadowOf(composeTestRule.activity).denyPermissions(Manifest.permission.POST_NOTIFICATIONS)
         launchScreen(NotificationSettings(enabled = true, adhanEnabled = false))
 
-        composeTestRule.onAllNodes(isToggleable())[6].performClick()
+        composeTestRule.onAllNodes(isToggleable())[5].performClick()
         composeTestRule.waitForIdle()
 
         assertThat(shadowOf(composeTestRule.activity).lastRequestedPermission.requestedPermissions)

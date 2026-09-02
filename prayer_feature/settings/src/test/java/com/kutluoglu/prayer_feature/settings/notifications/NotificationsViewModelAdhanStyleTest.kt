@@ -30,7 +30,7 @@ class NotificationsViewModelAdhanStyleTest {
     fun `SetAdhanStyle persists style for prayer`() = runTest {
         coEvery { getSettings() } returns NotificationSettings()
         val vm = NotificationsViewModel(getSettings, updateSettings, notificationDisplayer, alarmScheduler)
-        vm.onEvent(NotificationsEvent.SetAdhanStyle("Fajr", "makkah"))
-        coVerify { updateSettings(match { it.adhanStyles["Fajr"] == "makkah" }) }
+        vm.onEvent(NotificationsEvent.SetAdhanStyle("Dhuhr", "makkah"))
+        coVerify { updateSettings(match { it.adhanStyles["Dhuhr"] == "makkah" }) }
     }
 }

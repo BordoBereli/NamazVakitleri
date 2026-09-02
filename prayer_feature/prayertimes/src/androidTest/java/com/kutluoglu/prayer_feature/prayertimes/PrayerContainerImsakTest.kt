@@ -22,8 +22,8 @@ class PrayerContainerImsakTest {
     @Test
     fun monthlyListShowsImsakColumnHeader() {
         val imsak = Prayer("Imsak", "الإمساك", LocalTime(4, 50), LocalDate(2026, 9, 2), isImsak = true)
-        val fajr = Prayer("Fajr", "الفجر", LocalTime(5, 0), LocalDate(2026, 9, 2))
-        val daily = DailyPrayer(2, "2026-09-02", "20 Safer 1448", listOf(imsak, fajr))
+        val sunrise = Prayer("Sunrise", "الشروق", LocalTime(6, 0), LocalDate(2026, 9, 2))
+        val daily = DailyPrayer(2, "2026-09-02", "20 Safer 1448", listOf(imsak, sunrise))
         rule.setContent {
             PrayerContainer(
                 uiState = PrayerTimesUiState.Success(
