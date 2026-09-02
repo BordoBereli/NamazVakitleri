@@ -9,13 +9,13 @@ import android.util.Log
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
-import com.kutluoglu.prayer_notifications.R
 import org.koin.core.annotation.Single
 
 @Single
 class AdhanPlayer(
     private val context: Context,
     private val player: Player,
+    private val resolver: AdhanResIdResolver,
 ) {
     private val audioManager: AudioManager =
         context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
@@ -64,17 +64,10 @@ class AdhanPlayer(
         onFocusLoss = listener
     }
 
-    fun play(prayerKey: String, volumePercent: Int) {
+    fun play(prayerKey: String, volumePercent: Int, styleId: String? = null) {
         stop()
         val volume = volumePercent.coerceIn(0, 100) / 100f
-        val resId = when (prayerKey) {
-            "Fajr" -> R.raw.adhan_fajr
-            "Dhuhr" -> R.raw.adhan_dhuhr
-            "Asr" -> R.raw.adhan_asr
-            "Maghrib" -> R.raw.adhan_maghrib
-            "Isha" -> R.raw.adhan_isha
-            else -> R.raw.adhan_fajr
-        }
+        val resId = resolver.resolve(prayerKey, styleId)
         try {
             player.setMediaItem(
                 MediaItem.fromUri(Uri.parse("android.resource://${context.packageName}/$resId"))
