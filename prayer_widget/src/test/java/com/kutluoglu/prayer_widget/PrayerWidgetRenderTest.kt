@@ -1,7 +1,12 @@
 package com.kutluoglu.prayer_widget
 
+import androidx.glance.EmittableWithText
 import androidx.glance.appwidget.testing.unit.runGlanceAppWidgetUnitTest
+import androidx.glance.testing.GlanceNodeMatcher
+import androidx.glance.testing.unit.MappedNode
+import androidx.glance.testing.unit.hasClickAction
 import androidx.glance.testing.unit.hasText
+import androidx.glance.text.FontWeight
 import androidx.test.core.app.ApplicationProvider
 import com.kutluoglu.prayer_widget.data.WidgetData
 import com.kutluoglu.prayer_widget.data.WidgetPrayer
@@ -69,5 +74,41 @@ class PrayerWidgetRenderTest {
             awaitIdle()
             onNode(hasText("Fajr")).assertExists()
         }
+    }
+
+    @Test
+    fun `renders next prayer in large layout with bold weight`() {
+        runGlanceAppWidgetUnitTest {
+            setContext(ApplicationProvider.getApplicationContext())
+            setAppWidgetSize(PrayerWidgetSizes.LARGE)
+            provideComposable { WidgetContent(data) }
+            awaitIdle()
+            onNode(hasTextWithFontWeight("Dhuhr", FontWeight.Bold)).assertExists()
+            onNode(hasTextWithFontWeight("Fajr", FontWeight.Normal)).assertExists()
+        }
+    }
+
+    @Test
+    fun `renders error content with open app text and click action`() {
+        runGlanceAppWidgetUnitTest {
+            setContext(ApplicationProvider.getApplicationContext())
+            setAppWidgetSize(PrayerWidgetSizes.SMALL)
+            provideComposable { ErrorContent() }
+            awaitIdle()
+            onNode(hasText("Open app")).assertExists()
+            onAllNodes(hasClickAction()).assertCountEquals(1)
+        }
+    }
+
+    private fun hasTextWithFontWeight(
+        text: String,
+        fontWeight: FontWeight
+    ): GlanceNodeMatcher<MappedNode> = GlanceNodeMatcher(
+        "has text '$text' with fontWeight $fontWeight"
+    ) { node ->
+        val emittable = node.value.emittable
+        emittable is EmittableWithText &&
+            emittable.text == text &&
+            emittable.style?.fontWeight == fontWeight
     }
 }

@@ -1,5 +1,6 @@
 package com.kutluoglu.prayer_widget.data
 
+import com.kutluoglu.core.common.getZoneIdFromLocation
 import com.kutluoglu.core.common.now
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
 import com.kutluoglu.prayer.model.prayer.CalculationMethod
@@ -10,7 +11,6 @@ import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import org.koin.core.annotation.Factory
-import java.time.ZoneId
 
 @Factory
 class WidgetDataProvider(
@@ -20,8 +20,9 @@ class WidgetDataProvider(
     private val calculator: PrayerLogicEngine,
     private val formatter: PrayerFormatter
 ) {
-    suspend fun load(zoneId: ZoneId): WidgetResult {
+    suspend fun load(): WidgetResult {
         val location = locationsCoordinator.resolveSelected() ?: return WidgetResult.Error
+        val zoneId = getZoneIdFromLocation(location.countryCode)
         val settings = runCatching { getSettingsUseCase() }.getOrNull() ?: return WidgetResult.Error
         val method = CalculationMethod.fromSettingsId(settings.calculationMethod)
         val prayers = getPrayerTimesUseCase(
@@ -29,7 +30,8 @@ class WidgetDataProvider(
             latitude = location.latitude,
             longitude = location.longitude,
             zoneId = zoneId,
-            calculationMethod = method
+            calculationMethod = method,
+            persistDailyCache = false
         ).getOrNull() ?: return WidgetResult.Error
 
         val (_, next) = calculator.findCurrentAndNextPrayer(prayers, zoneId)

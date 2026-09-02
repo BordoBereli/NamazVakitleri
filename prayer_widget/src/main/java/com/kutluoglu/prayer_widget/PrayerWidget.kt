@@ -1,6 +1,7 @@
 package com.kutluoglu.prayer_widget
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -22,12 +23,12 @@ import androidx.glance.layout.padding
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
+import com.kutluoglu.prayer_widget.R
 import com.kutluoglu.prayer_widget.data.WidgetData
 import com.kutluoglu.prayer_widget.data.WidgetDataProvider
 import com.kutluoglu.prayer_widget.data.WidgetResult
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import java.time.ZoneId
 
 class PrayerWidget(
     private val previewData: WidgetData? = null
@@ -45,12 +46,14 @@ class PrayerWidget(
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         val data = previewData ?: runCatching {
-            val zoneId = ZoneId.systemDefault()
-            when (val result = provider.load(zoneId)) {
+            when (val result = provider.load()) {
                 is WidgetResult.Success -> result.data
                 WidgetResult.Error -> null
             }
-        }.getOrNull()
+        }.getOrElse {
+            Log.e("PrayerWidget", "Failed to load widget data -> ${it.message}")
+            null
+        }
         provideContent {
             if (data == null) {
                 ErrorContent()
@@ -129,18 +132,28 @@ private fun LargeLayout(data: WidgetData) {
     ) {
         Text(data.locationName, style = TextStyle(fontWeight = FontWeight.Bold))
         data.prayers.forEach { p ->
+            val fontWeight = if (p.isNext) FontWeight.Bold else FontWeight.Normal
             Row(modifier = GlanceModifier.fillMaxWidth()) {
-                Text(p.name, modifier = GlanceModifier.defaultWeight())
-                Text(p.time)
+                Text(
+                    p.name,
+                    modifier = GlanceModifier.defaultWeight(),
+                    style = TextStyle(fontWeight = fontWeight)
+                )
+                Text(p.time, style = TextStyle(fontWeight = fontWeight))
             }
         }
     }
 }
 
 @Composable
-private fun ErrorContent() {
-    Box(modifier = GlanceModifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("Open app")
+internal fun ErrorContent() {
+    val context = LocalContext.current
+    Box(
+        modifier = GlanceModifier.fillMaxSize()
+            .clickable { openApp(context) },
+        contentAlignment = Alignment.Center
+    ) {
+        Text(context.getString(R.string.prayer_widget_open_app))
     }
 }
 
