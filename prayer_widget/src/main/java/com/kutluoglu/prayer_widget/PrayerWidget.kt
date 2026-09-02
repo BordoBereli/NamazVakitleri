@@ -71,7 +71,7 @@ object PrayerWidgetSizes {
 internal fun WidgetContent(data: WidgetData) {
     val size = LocalSize.current
     when {
-        size.width >= PrayerWidgetSizes.LARGE.width -> LargeLayout(data)
+        size.height >= PrayerWidgetSizes.LARGE.height -> LargeLayout(data)
         size.width >= PrayerWidgetSizes.MEDIUM.width -> MediumLayout(data)
         else -> SmallLayout(data)
     }

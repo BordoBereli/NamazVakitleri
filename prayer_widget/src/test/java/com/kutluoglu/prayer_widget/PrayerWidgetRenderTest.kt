@@ -50,6 +50,17 @@ class PrayerWidgetRenderTest {
     }
 
     @Test
+    fun `renders medium layout for medium size`() {
+        runGlanceAppWidgetUnitTest {
+            setContext(ApplicationProvider.getApplicationContext())
+            setAppWidgetSize(PrayerWidgetSizes.MEDIUM)
+            provideComposable { WidgetContent(data) }
+            awaitIdle()
+            onNode(hasText("2026-09-02")).assertExists()
+        }
+    }
+
+    @Test
     fun `renders large size without throwing`() {
         runGlanceAppWidgetUnitTest {
             setContext(ApplicationProvider.getApplicationContext())
