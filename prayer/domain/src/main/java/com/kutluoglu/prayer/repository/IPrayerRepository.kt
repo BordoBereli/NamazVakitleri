@@ -36,6 +36,7 @@ interface IPrayerRepository {
             longitude: Double,
             zoneId: ZoneId,
             calculationMethod: CalculationMethod = CalculationMethod.TURKEY_DIYANET,
+            imsakOffsetMinutes: Int = 10,
     ): List<DailyPrayer>?
 
     /**
@@ -48,6 +49,7 @@ interface IPrayerRepository {
             longitude: Double,
             zoneId: ZoneId,
             calculationMethod: CalculationMethod = CalculationMethod.TURKEY_DIYANET,
+            imsakOffsetMinutes: Int = 10,
             prayers: List<DailyPrayer>,
     )
 

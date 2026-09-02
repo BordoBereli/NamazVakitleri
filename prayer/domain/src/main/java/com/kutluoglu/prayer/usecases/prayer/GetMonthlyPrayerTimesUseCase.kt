@@ -21,11 +21,13 @@ class GetMonthlyPrayerTimesUseCase(
         longitude: Double,
         zoneId: ZoneId,
         calculationMethod: CalculationMethod = CalculationMethod.TURKEY_DIYANET,
+        imsakOffsetMinutes: Int = 10,
     ): List<DailyPrayer>? = prayerRepository.getMonthlyPrayerTimes(
         month = month,
         latitude = latitude,
         longitude = longitude,
         zoneId = zoneId,
-        calculationMethod = calculationMethod
+        calculationMethod = calculationMethod,
+        imsakOffsetMinutes = imsakOffsetMinutes
     )
 }

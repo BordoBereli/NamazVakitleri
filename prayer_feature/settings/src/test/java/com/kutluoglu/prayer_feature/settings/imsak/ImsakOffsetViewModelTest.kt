@@ -31,8 +31,7 @@ class ImsakOffsetViewModelTest {
     @Test
     fun `confirm persists offset`() = runTest {
         val vm = ImsakOffsetViewModel(getSettings, updateOffset)
-        vm.onEvent(ImsakOffsetEvent.OnOffsetChanged(20))
-        vm.onEvent(ImsakOffsetEvent.OnConfirm)
+        vm.onEvent(ImsakOffsetEvent.OnConfirm(20))
         coVerify { updateOffset(20) }
     }
 }

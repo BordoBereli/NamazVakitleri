@@ -63,7 +63,7 @@ class PrayerDataStoreImpTest {
         assertThat(result).isEqualTo(cachedPrayers)
         coVerify(exactly = 1) { prayerTimesCache.get("2024-01-01|41.0|29.0|Europe/Istanbul|TURKEY_DIYANET|10") }
         coVerify(exactly = 0) {
-            prayerCalculationService.calculateDailyPrayerTimes(any(), any(), any(), any(), any(), any())
+            prayerCalculationService.calculateDailyPrayerTimes(any(), any(), any(), any(), any(), any(), any())
         }
     }
 
@@ -76,7 +76,7 @@ class PrayerDataStoreImpTest {
         )
         coEvery { prayerTimesCache.get(any()) } returns null
         coEvery {
-            prayerCalculationService.calculateDailyPrayerTimes(any(), any(), any(), any(), any(), any())
+            prayerCalculationService.calculateDailyPrayerTimes(any(), any(), any(), any(), any(), any(), any())
         } returns calculatedPrayers
 
         val result = dataStore.getPrayerTimes(
@@ -88,7 +88,7 @@ class PrayerDataStoreImpTest {
         coVerify(exactly = 1) {
             prayerCalculationService.calculateDailyPrayerTimes(
                 41.0, 29.0, zoneId, testDate,
-                CalculationMethod.TURKEY_DIYANET, JuristicMethod.STANDARD
+                CalculationMethod.TURKEY_DIYANET, JuristicMethod.STANDARD, 10
             )
         }
         coVerify(exactly = 0) { prayerTimesCache.put(any(), any()) }
@@ -113,7 +113,7 @@ class PrayerDataStoreImpTest {
         assertThat(result).isEqualTo(cachedToday)
         coVerify(exactly = 0) { prayerTimesCache.put(any(), any()) }
         coVerify(exactly = 0) {
-            prayerCalculationService.calculateDailyPrayerTimes(any(), any(), any(), any(), any(), any())
+            prayerCalculationService.calculateDailyPrayerTimes(any(), any(), any(), any(), any(), any(), any())
         }
     }
 
@@ -127,7 +127,7 @@ class PrayerDataStoreImpTest {
         )
         coEvery { prayerTimesCache.get(any()) } returns null
         coEvery {
-            prayerCalculationService.calculateDailyPrayerTimes(any(), any(), any(), any(), any(), any())
+            prayerCalculationService.calculateDailyPrayerTimes(any(), any(), any(), any(), any(), any(), any())
         } returns calculatedPrayers
 
         // WHEN requesting prayer times
@@ -138,7 +138,7 @@ class PrayerDataStoreImpTest {
         coVerify(exactly = 1) {
             prayerCalculationService.calculateDailyPrayerTimes(
                 41.0, 29.0, zoneId, testDate,
-                CalculationMethod.TURKEY_DIYANET, JuristicMethod.STANDARD
+                CalculationMethod.TURKEY_DIYANET, JuristicMethod.STANDARD, 10
             )
         }
         coVerify(exactly = 1) {
@@ -159,7 +159,7 @@ class PrayerDataStoreImpTest {
         var calculationThread: String? = null
         var callCount = 0
         coEvery {
-            prayerCalculationService.calculateDailyPrayerTimes(any(), any(), any(), any(), any(), any())
+            prayerCalculationService.calculateDailyPrayerTimes(any(), any(), any(), any(), any(), any(), any())
         } answers {
             callCount++
             if (callCount == 1) calculationThread = Thread.currentThread().name
@@ -201,7 +201,7 @@ class PrayerDataStoreImpTest {
 
         assertThat(result).isEqualTo(cachedMonth)
         coVerify(exactly = 1) {
-            prayerTimesCache.getMonth("2024-01|41.0|29.0|Europe/Istanbul|TURKEY_DIYANET")
+            prayerTimesCache.getMonth("2024-01|41.0|29.0|Europe/Istanbul|TURKEY_DIYANET|10")
         }
     }
 
@@ -220,10 +220,10 @@ class PrayerDataStoreImpTest {
             )
         )
 
-        dataStore.saveMonthlyPrayerTimes(month, 41.0, 29.0, zoneId, CalculationMethod.TURKEY_DIYANET, monthToSave)
+        dataStore.saveMonthlyPrayerTimes(month, 41.0, 29.0, zoneId, CalculationMethod.TURKEY_DIYANET, 10, monthToSave)
 
         coVerify(exactly = 1) {
-            prayerTimesCache.putMonth("2024-01|41.0|29.0|Europe/Istanbul|TURKEY_DIYANET", monthToSave)
+            prayerTimesCache.putMonth("2024-01|41.0|29.0|Europe/Istanbul|TURKEY_DIYANET|10", monthToSave)
         }
     }
 
@@ -241,7 +241,7 @@ class PrayerDataStoreImpTest {
         )
         coEvery { prayerTimesCache.get(any()) } returns null
         coEvery {
-            prayerCalculationService.calculateDailyPrayerTimes(any(), any(), any(), any(), any(), any())
+            prayerCalculationService.calculateDailyPrayerTimes(any(), any(), any(), any(), any(), any(), any())
         } returnsMany listOf(todayPrayers, tomorrowPrayers)
 
         val result = dataStore.getPrayerTimes(testDate, 41.0, 29.0, zoneId, CalculationMethod.TURKEY_DIYANET)
@@ -250,13 +250,13 @@ class PrayerDataStoreImpTest {
         coVerify(exactly = 1) {
             prayerCalculationService.calculateDailyPrayerTimes(
                 41.0, 29.0, zoneId, testDate,
-                CalculationMethod.TURKEY_DIYANET, JuristicMethod.STANDARD
+                CalculationMethod.TURKEY_DIYANET, JuristicMethod.STANDARD, 10
             )
         }
         coVerify(exactly = 1) {
             prayerCalculationService.calculateDailyPrayerTimes(
                 41.0, 29.0, zoneId, tomorrow,
-                CalculationMethod.TURKEY_DIYANET, JuristicMethod.STANDARD
+                CalculationMethod.TURKEY_DIYANET, JuristicMethod.STANDARD, 10
             )
         }
         coVerify(exactly = 1) {
@@ -282,7 +282,7 @@ class PrayerDataStoreImpTest {
         coEvery { prayerTimesCache.get("2024-01-01|41.0|29.0|Europe/Istanbul|TURKEY_DIYANET|10") } returns null
         coEvery { prayerTimesCache.get("2024-01-02|41.0|29.0|Europe/Istanbul|TURKEY_DIYANET|10") } returns tomorrowPrayers
         coEvery {
-            prayerCalculationService.calculateDailyPrayerTimes(any(), any(), any(), any(), any(), any())
+            prayerCalculationService.calculateDailyPrayerTimes(any(), any(), any(), any(), any(), any(), any())
         } returns todayPrayers
 
         val result = dataStore.getPrayerTimes(testDate, 41.0, 29.0, zoneId, CalculationMethod.TURKEY_DIYANET)
@@ -291,13 +291,13 @@ class PrayerDataStoreImpTest {
         coVerify(exactly = 1) {
             prayerCalculationService.calculateDailyPrayerTimes(
                 41.0, 29.0, zoneId, testDate,
-                CalculationMethod.TURKEY_DIYANET, JuristicMethod.STANDARD
+                CalculationMethod.TURKEY_DIYANET, JuristicMethod.STANDARD, 10
             )
         }
         coVerify(exactly = 0) {
             prayerCalculationService.calculateDailyPrayerTimes(
                 41.0, 29.0, zoneId, tomorrow,
-                CalculationMethod.TURKEY_DIYANET, JuristicMethod.STANDARD
+                CalculationMethod.TURKEY_DIYANET, JuristicMethod.STANDARD, 10
             )
         }
         coVerify(exactly = 1) {
@@ -317,7 +317,7 @@ class PrayerDataStoreImpTest {
         )
         coEvery { prayerTimesCache.get(any()) } returns null
         coEvery {
-            prayerCalculationService.calculateDailyPrayerTimes(any(), any(), any(), any(), any(), any())
+            prayerCalculationService.calculateDailyPrayerTimes(any(), any(), any(), any(), any(), any(), any())
         } returns todayPrayers andThenThrows RuntimeException("pre-cache failed")
 
         val result = dataStore.getPrayerTimes(testDate, 41.0, 29.0, zoneId, CalculationMethod.TURKEY_DIYANET)
@@ -343,7 +343,7 @@ class PrayerDataStoreImpTest {
         coEvery { prayerTimesCache.get("2024-01-01|41.0|29.0|Europe/Istanbul|TURKEY_DIYANET|10") } returns cachedToday
         coEvery { prayerTimesCache.get("2024-01-02|41.0|29.0|Europe/Istanbul|TURKEY_DIYANET|10") } returns null
         coEvery {
-            prayerCalculationService.calculateDailyPrayerTimes(any(), any(), any(), any(), any(), any())
+            prayerCalculationService.calculateDailyPrayerTimes(any(), any(), any(), any(), any(), any(), any())
         } returns tomorrowPrayers
 
         val result = dataStore.getPrayerTimes(testDate, 41.0, 29.0, zoneId, CalculationMethod.TURKEY_DIYANET)
@@ -352,13 +352,13 @@ class PrayerDataStoreImpTest {
         coVerify(exactly = 0) {
             prayerCalculationService.calculateDailyPrayerTimes(
                 41.0, 29.0, zoneId, testDate,
-                CalculationMethod.TURKEY_DIYANET, JuristicMethod.STANDARD
+                CalculationMethod.TURKEY_DIYANET, JuristicMethod.STANDARD, 10
             )
         }
         coVerify(exactly = 1) {
             prayerCalculationService.calculateDailyPrayerTimes(
                 41.0, 29.0, zoneId, tomorrow,
-                CalculationMethod.TURKEY_DIYANET, JuristicMethod.STANDARD
+                CalculationMethod.TURKEY_DIYANET, JuristicMethod.STANDARD, 10
             )
         }
         coVerify(exactly = 1) {
@@ -375,7 +375,7 @@ class PrayerDataStoreImpTest {
         )
         coEvery { prayerTimesCache.get(any()) } returns null
         coEvery {
-            prayerCalculationService.calculateDailyPrayerTimes(any(), any(), any(), any(), any(), any())
+            prayerCalculationService.calculateDailyPrayerTimes(any(), any(), any(), any(), any(), any(), any())
         } returns calculatedPrayers
 
         dataStore.getPrayerTimes(testDate, 41.0, 29.0, zoneId, CalculationMethod.MWL)
@@ -383,7 +383,7 @@ class PrayerDataStoreImpTest {
         coVerify(exactly = 1) {
             prayerCalculationService.calculateDailyPrayerTimes(
                 41.0, 29.0, zoneId, testDate,
-                CalculationMethod.MWL, JuristicMethod.STANDARD
+                CalculationMethod.MWL, JuristicMethod.STANDARD, 10
             )
         }
         coVerify(exactly = 1) {

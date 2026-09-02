@@ -124,7 +124,7 @@ fun ImsakOffsetRoute(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Remove,
-                                contentDescription = "Decrease"
+                                contentDescription = stringResource(SettingsR.string.decrease)
                             )
                         }
 
@@ -158,7 +158,7 @@ fun ImsakOffsetRoute(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Add,
-                                contentDescription = "Increase"
+                                contentDescription = stringResource(SettingsR.string.increase)
                             )
                         }
                     }
@@ -176,8 +176,7 @@ fun ImsakOffsetRoute(
             if (offset != currentOffset) {
                 Button(
                     onClick = {
-                        viewModel.onEvent(ImsakOffsetEvent.OnOffsetChanged(offset))
-                        viewModel.onEvent(ImsakOffsetEvent.OnConfirm)
+                        viewModel.onEvent(ImsakOffsetEvent.OnConfirm(offset))
                         onNavigateBack()
                     },
                     modifier = Modifier.fillMaxWidth()

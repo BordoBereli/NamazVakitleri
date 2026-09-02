@@ -102,8 +102,9 @@ class PrayerDataStoreImp(
             longitude: Double,
             zoneId: ZoneId,
             calculationMethod: CalculationMethod,
+            imsakOffsetMinutes: Int,
     ): List<DailyPrayer>? {
-        val cacheKey = buildMonthCacheKey(month, latitude, longitude, zoneId, calculationMethod)
+        val cacheKey = buildMonthCacheKey(month, latitude, longitude, zoneId, calculationMethod, imsakOffsetMinutes)
         return prayerTimesCache.getMonth(cacheKey)
     }
 
@@ -113,9 +114,10 @@ class PrayerDataStoreImp(
             longitude: Double,
             zoneId: ZoneId,
             calculationMethod: CalculationMethod,
+            imsakOffsetMinutes: Int,
             prayers: List<DailyPrayer>
     ) {
-        val cacheKey = buildMonthCacheKey(month, latitude, longitude, zoneId, calculationMethod)
+        val cacheKey = buildMonthCacheKey(month, latitude, longitude, zoneId, calculationMethod, imsakOffsetMinutes)
         prayerTimesCache.putMonth(cacheKey, prayers)
     }
 
@@ -137,6 +139,7 @@ class PrayerDataStoreImp(
             latitude: Double,
             longitude: Double,
             zoneId: ZoneId,
-            calculationMethod: CalculationMethod
-    ): String = "$month|$latitude|$longitude|${zoneId.id}|$calculationMethod"
+            calculationMethod: CalculationMethod,
+            imsakOffsetMinutes: Int
+    ): String = "$month|$latitude|$longitude|${zoneId.id}|$calculationMethod|$imsakOffsetMinutes"
 }

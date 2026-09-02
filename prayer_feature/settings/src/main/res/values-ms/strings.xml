@@ -16,6 +16,8 @@
     <string name="imsak_offset_range">Julat: 5 hingga 20 minit</string>
     <string name="minutes">minit</string>
     <string name="no_changes">Tiada perubahan</string>
+    <string name="decrease">Kurangkan</string>
+    <string name="increase">Tambah</string>
     <string name="select_language">Pilih Bahasa</string>
     <string name="language">Bahasa</string>
     <string name="location">Lokasi</string>

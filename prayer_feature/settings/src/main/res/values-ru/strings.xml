@@ -16,6 +16,8 @@
     <string name="imsak_offset_range">Диапазон: от 5 до 20 минут</string>
     <string name="minutes">минут</string>
     <string name="no_changes">Без изменений</string>
+    <string name="decrease">Уменьшить</string>
+    <string name="increase">Увеличить</string>
     <string name="select_language">Выберите язык</string>
     <string name="language">Язык</string>
     <string name="location">Местоположение</string>

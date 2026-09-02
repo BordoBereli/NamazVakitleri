@@ -32,9 +32,8 @@ class ImsakOffsetViewModel(
 
     fun onEvent(event: ImsakOffsetEvent) {
         when (event) {
-            is ImsakOffsetEvent.OnOffsetChanged -> _currentOffset.value = event.minutes.coerceIn(5, 20)
-            ImsakOffsetEvent.OnConfirm -> viewModelScope.launch {
-                updateImsakOffsetUseCase(_currentOffset.value)
+            is ImsakOffsetEvent.OnConfirm -> viewModelScope.launch {
+                updateImsakOffsetUseCase(event.minutes.coerceIn(5, 20))
             }
         }
     }

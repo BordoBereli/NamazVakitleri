@@ -114,7 +114,7 @@ class PrayerTimesViewModel(
         }
         settingsObserverJob = viewModelScope.launch {
             settingsRepository.observeSettings()
-                .map { Triple(it.calculationMethod, it.hijriAdjustment, it.language) }
+                .map { SettingsKey(it.calculationMethod, it.hijriAdjustment, it.language, it.imsakOffsetMinutes) }
                 .distinctUntilChanged()
                 .drop(1)
                 .collect {
@@ -211,6 +211,7 @@ class PrayerTimesViewModel(
             val settings = getSettingsUseCase()
             val calculationMethod = CalculationMethod.fromSettingsId(settings.calculationMethod)
             val hijriAdjustment = settings.hijriAdjustment
+            val imsakOffsetMinutes = settings.imsakOffsetMinutes
             try {
                 val locationCache = monthCache.getOrPut(locationId) { mutableMapOf() }
                 val cached = locationCache[month]
@@ -223,7 +224,8 @@ class PrayerTimesViewModel(
                     latitude = location.latitude,
                     longitude = location.longitude,
                     zoneId = resolvedZoneId,
-                    calculationMethod = calculationMethod
+                    calculationMethod = calculationMethod,
+                    imsakOffsetMinutes = imsakOffsetMinutes
                 )
                 if (persistedMonth != null) {
                     val today = LocalDateTime.now(resolvedZoneId).date
@@ -255,7 +257,7 @@ class PrayerTimesViewModel(
                         orderedDays.map { day ->
                             async(computationDispatcher) {
                                 val computed = computeDailyPrayer(
-                                    day, month, location, resolvedZoneId, today, calculationMethod, hijriAdjustment
+                                    day, month, location, resolvedZoneId, today, calculationMethod, hijriAdjustment, imsakOffsetMinutes
                                 )
                                 mutex.withLock {
                                     results[day - 1] = computed
@@ -287,6 +289,7 @@ class PrayerTimesViewModel(
                             longitude = location.longitude,
                             zoneId = resolvedZoneId,
                             calculationMethod = calculationMethod,
+                            imsakOffsetMinutes = imsakOffsetMinutes,
                             prayers = monthlyPrayers
                         )
                     }.onFailure {
@@ -314,7 +317,8 @@ class PrayerTimesViewModel(
         resolvedZoneId: ZoneId,
         today: LocalDateTime,
         calculationMethod: CalculationMethod,
-        hijriAdjustment: Int
+        hijriAdjustment: Int,
+        imsakOffsetMinutes: Int
     ): DailyPrayer {
         val date = month.onDay(day)
         val prayerTimes = getPrayerTimesUseCase(
@@ -323,6 +327,7 @@ class PrayerTimesViewModel(
             longitude = location.longitude,
             zoneId = resolvedZoneId,
             calculationMethod = calculationMethod,
+            imsakOffsetMinutes = imsakOffsetMinutes,
             persistDailyCache = false
         ).getOrElse { throw it }
         val langDetectedPrayerTimes = formatter.withLocalizedNames(prayerTimes)
@@ -353,6 +358,13 @@ class PrayerTimesViewModel(
         val locationId: String,
         val timeState: TimeUiState,
         val locationState: LocationUiState
+    )
+
+    private data class SettingsKey(
+        val calculationMethod: String,
+        val hijriAdjustment: Int,
+        val language: String,
+        val imsakOffsetMinutes: Int
     )
 
     private suspend fun buildPayload(

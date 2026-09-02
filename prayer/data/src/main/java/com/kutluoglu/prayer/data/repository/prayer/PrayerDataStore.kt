@@ -35,6 +35,7 @@ interface PrayerDataStore {
         longitude: Double,
         zoneId: ZoneId,
         calculationMethod: CalculationMethod = CalculationMethod.TURKEY_DIYANET,
+        imsakOffsetMinutes: Int = 10,
     ): List<DailyPrayer>?
 
     suspend fun saveMonthlyPrayerTimes(
@@ -43,6 +44,7 @@ interface PrayerDataStore {
         longitude: Double,
         zoneId: ZoneId,
         calculationMethod: CalculationMethod = CalculationMethod.TURKEY_DIYANET,
+        imsakOffsetMinutes: Int = 10,
         prayers: List<DailyPrayer>,
     )
 

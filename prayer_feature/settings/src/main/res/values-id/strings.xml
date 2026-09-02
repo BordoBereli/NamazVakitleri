@@ -16,6 +16,8 @@
     <string name="imsak_offset_range">Rentang: 5 hingga 20 menit</string>
     <string name="minutes">menit</string>
     <string name="no_changes">Tidak ada perubahan</string>
+    <string name="decrease">Kurangi</string>
+    <string name="increase">Tambah</string>
     <string name="select_language">Pilih Bahasa</string>
     <string name="language">Bahasa</string>
     <string name="location">Lokasi</string>

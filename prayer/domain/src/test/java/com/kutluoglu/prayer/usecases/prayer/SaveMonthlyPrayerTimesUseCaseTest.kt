@@ -20,7 +20,7 @@ class SaveMonthlyPrayerTimesUseCaseTest {
     fun `invoke persists the month via the repository`() = runTest {
         // GIVEN a repository
         val repository = mockk<IPrayerRepository>()
-        coEvery { repository.saveMonthlyPrayerTimes(any(), any(), any(), any(), any(), any()) } returns Unit
+        coEvery { repository.saveMonthlyPrayerTimes(any(), any(), any(), any(), any(), any(), any()) } returns Unit
         val useCase = SaveMonthlyPrayerTimesUseCase(repository)
         val month = YearMonth(2024, 1)
         val zoneId = ZoneId.of("Europe/Istanbul")
@@ -40,7 +40,7 @@ class SaveMonthlyPrayerTimesUseCaseTest {
 
         // THEN the repository's saveMonthlyPrayerTimes is called exactly once
         coVerify(exactly = 1) {
-            repository.saveMonthlyPrayerTimes(month, 41.0, 29.0, zoneId, CalculationMethod.TURKEY_DIYANET, monthToSave)
+            repository.saveMonthlyPrayerTimes(month, 41.0, 29.0, zoneId, CalculationMethod.TURKEY_DIYANET, 10, monthToSave)
         }
     }
 }

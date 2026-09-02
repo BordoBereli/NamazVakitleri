@@ -91,12 +91,12 @@ class PrayerRepositoryTest {
                 )
             )
         )
-        coEvery { prayerDataStore.getMonthlyPrayerTimes(any(), any(), any(), any(), any()) } returns mockMonth
+        coEvery { prayerDataStore.getMonthlyPrayerTimes(any(), any(), any(), any(), any(), any()) } returns mockMonth
 
         val result = repository.getMonthlyPrayerTimes(month, 41.0, 29.0, zoneId, CalculationMethod.TURKEY_DIYANET)
 
         coVerify(exactly = 1) {
-            prayerDataStore.getMonthlyPrayerTimes(month, 41.0, 29.0, zoneId, CalculationMethod.TURKEY_DIYANET)
+            prayerDataStore.getMonthlyPrayerTimes(month, 41.0, 29.0, zoneId, CalculationMethod.TURKEY_DIYANET, 10)
         }
         assertThat(result).isEqualTo(mockMonth)
     }
@@ -115,12 +115,12 @@ class PrayerRepositoryTest {
                 )
             )
         )
-        coEvery { prayerDataStore.saveMonthlyPrayerTimes(any(), any(), any(), any(), any(), any()) } returns Unit
+        coEvery { prayerDataStore.saveMonthlyPrayerTimes(any(), any(), any(), any(), any(), any(), any()) } returns Unit
 
-        repository.saveMonthlyPrayerTimes(month, 41.0, 29.0, zoneId, CalculationMethod.TURKEY_DIYANET, monthToSave)
+        repository.saveMonthlyPrayerTimes(month, 41.0, 29.0, zoneId, CalculationMethod.TURKEY_DIYANET, 10, monthToSave)
 
         coVerify(exactly = 1) {
-            prayerDataStore.saveMonthlyPrayerTimes(month, 41.0, 29.0, zoneId, CalculationMethod.TURKEY_DIYANET, monthToSave)
+            prayerDataStore.saveMonthlyPrayerTimes(month, 41.0, 29.0, zoneId, CalculationMethod.TURKEY_DIYANET, 10, monthToSave)
         }
     }
 }

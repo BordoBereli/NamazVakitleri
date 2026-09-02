@@ -16,6 +16,8 @@
     <string name="imsak_offset_range">محدوده: ۵ تا ۲۰ دقیقه</string>
     <string name="minutes">دقیقه</string>
     <string name="no_changes">بدون تغییر</string>
+    <string name="decrease">کاهش</string>
+    <string name="increase">افزایش</string>
     <string name="select_language">انتخاب زبان</string>
     <string name="language">زبان</string>
     <string name="location">موقعیت</string>

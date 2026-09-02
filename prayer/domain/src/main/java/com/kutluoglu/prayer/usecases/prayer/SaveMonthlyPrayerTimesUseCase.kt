@@ -21,6 +21,7 @@ class SaveMonthlyPrayerTimesUseCase(
         longitude: Double,
         zoneId: ZoneId,
         calculationMethod: CalculationMethod = CalculationMethod.TURKEY_DIYANET,
+        imsakOffsetMinutes: Int = 10,
         prayers: List<DailyPrayer>,
     ) {
         prayerRepository.saveMonthlyPrayerTimes(
@@ -29,6 +30,7 @@ class SaveMonthlyPrayerTimesUseCase(
             longitude = longitude,
             zoneId = zoneId,
             calculationMethod = calculationMethod,
+            imsakOffsetMinutes = imsakOffsetMinutes,
             prayers = prayers
         )
     }

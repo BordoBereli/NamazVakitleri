@@ -16,6 +16,8 @@
     <string name="imsak_offset_range">পরিসর: ৫ থেকে ২০ মিনিট</string>
     <string name="minutes">মিনিট</string>
     <string name="no_changes">কোনো পরিবর্তন নেই</string>
+    <string name="decrease">কমান</string>
+    <string name="increase">বাড়ান</string>
     <string name="select_language">ভাষা নির্বাচন করুন</string>
     <string name="language">ভাষা</string>
     <string name="location">অবস্থান</string>

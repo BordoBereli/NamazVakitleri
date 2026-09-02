@@ -38,12 +38,14 @@ class PrayerRepository(
         longitude: Double,
         zoneId: ZoneId,
         calculationMethod: CalculationMethod,
+        imsakOffsetMinutes: Int,
     ): List<DailyPrayer>? = prayerDataStore.getMonthlyPrayerTimes(
         month = month,
         latitude = latitude,
         longitude = longitude,
         zoneId = zoneId,
-        calculationMethod = calculationMethod
+        calculationMethod = calculationMethod,
+        imsakOffsetMinutes = imsakOffsetMinutes
     )
 
     override suspend fun saveMonthlyPrayerTimes(
@@ -52,6 +54,7 @@ class PrayerRepository(
         longitude: Double,
         zoneId: ZoneId,
         calculationMethod: CalculationMethod,
+        imsakOffsetMinutes: Int,
         prayers: List<DailyPrayer>,
     ) {
         prayerDataStore.saveMonthlyPrayerTimes(
@@ -60,6 +63,7 @@ class PrayerRepository(
             longitude = longitude,
             zoneId = zoneId,
             calculationMethod = calculationMethod,
+            imsakOffsetMinutes = imsakOffsetMinutes,
             prayers = prayers
         )
     }

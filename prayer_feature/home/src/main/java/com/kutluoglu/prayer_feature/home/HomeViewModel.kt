@@ -197,8 +197,8 @@ class HomeViewModel(
                 _locationsState.value = state
                 val activeId = state.selectedId ?: state.entries.firstOrNull()?.id
                 if (activeId != null) {
-                    val (method, adjustment) = currentSettings()
-                    val result = prayerTimesLoader.load(location, method, adjustment)
+                    val (method, adjustment, imsakOffset) = currentSettings()
+                    val result = prayerTimesLoader.load(location, method, adjustment, imsakOffset)
                     if (result.isSuccess) {
                         val loaded = result.getOrThrow()
                         stateMutex.withLock {
@@ -273,8 +273,8 @@ class HomeViewModel(
         val cached = _prayerDataByLocation.value[activeId]
         val locationChanged = cached?.locationState?.locationData != entry.location
         if (cached != null && !locationChanged) return cached
-        val (method, adjustment) = currentSettings()
-        return prayerTimesLoader.load(entry.location, method, adjustment)
+        val (method, adjustment, imsakOffset) = currentSettings()
+        return prayerTimesLoader.load(entry.location, method, adjustment, imsakOffset)
             .onSuccess { loaded ->
                 _prayerDataByLocation.value = _prayerDataByLocation.value + (activeId to loaded)
             }
@@ -294,8 +294,8 @@ class HomeViewModel(
                         val cached = _prayerDataByLocation.value[entry.id]
                         val locationChanged = cached?.locationState?.locationData != entry.location
                         if (cached == null || locationChanged) {
-                            val (method, adjustment) = currentSettings()
-                            prayerTimesLoader.load(entry.location, method, adjustment)
+                            val (method, adjustment, imsakOffset) = currentSettings()
+                            prayerTimesLoader.load(entry.location, method, adjustment, imsakOffset)
                                 .onSuccess { loaded ->
                                     stateMutex.withLock {
                                         _prayerDataByLocation.value = _prayerDataByLocation.value + (entry.id to loaded)
@@ -340,9 +340,13 @@ class HomeViewModel(
         quranVerseLoader.setSheetVisible(isVisible)
     }
 
-    private suspend fun currentSettings(): Pair<CalculationMethod, Int> {
+    private suspend fun currentSettings(): Triple<CalculationMethod, Int, Int> {
         val settings = getSettingsUseCase()
-        return CalculationMethod.fromSettingsId(settings.calculationMethod) to settings.hijriAdjustment
+        return Triple(
+            CalculationMethod.fromSettingsId(settings.calculationMethod),
+            settings.hijriAdjustment,
+            settings.imsakOffsetMinutes
+        )
     }
 
     private fun fail(message: String) {

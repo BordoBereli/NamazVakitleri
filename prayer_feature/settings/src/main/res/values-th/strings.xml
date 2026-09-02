@@ -16,6 +16,8 @@
     <string name="imsak_offset_range">ช่วง: 5 ถึง 20 นาที</string>
     <string name="minutes">นาที</string>
     <string name="no_changes">ไม่มีการเปลี่ยนแปลง</string>
+    <string name="decrease">ลดลง</string>
+    <string name="increase">เพิ่มขึ้น</string>
     <string name="select_language">เลือกภาษา</string>
     <string name="language">ภาษา</string>
     <string name="location">ตำแหน่งที่ตั้ง</string>

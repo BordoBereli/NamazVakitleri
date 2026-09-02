@@ -16,6 +16,8 @@
     <string name="imsak_offset_range">வரம்பு: 5 முதல் 20 நிமிடங்கள்</string>
     <string name="minutes">நிமிடங்கள்</string>
     <string name="no_changes">மாற்றங்கள் இல்லை</string>
+    <string name="decrease">குறை</string>
+    <string name="increase">அதிகரி</string>
     <string name="select_language">மொழியைத் தேர்ந்தெடுக்கவும்</string>
     <string name="language">மொழி</string>
     <string name="location">இருப்பிடம்</string>

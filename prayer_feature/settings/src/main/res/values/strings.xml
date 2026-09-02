@@ -16,6 +16,8 @@
     <string name="imsak_offset_range">Range: 5 to 20 minutes</string>
     <string name="minutes">minutes</string>
     <string name="no_changes">No changes</string>
+    <string name="decrease">Decrease</string>
+    <string name="increase">Increase</string>
     <string name="select_language">Select Language</string>
     <string name="language">Language</string>
     <string name="location">Location</string>
