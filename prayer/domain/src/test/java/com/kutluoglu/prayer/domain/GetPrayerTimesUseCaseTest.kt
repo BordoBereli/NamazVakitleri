@@ -36,15 +36,16 @@ class GetPrayerTimesUseCaseTest {
         // Arrange
         val mockPrayerList = listOf(
                 Prayer(
-                    name = "Fajr",
-                    arabicName = "الفجر",
+                    name = "Imsak",
+                    arabicName = "الإمساك",
                     time = LocalTime.parse("05:00"),
                     date = testDate.date,
                     isCurrent = false,
-                    notificationEnabled = false
+                    notificationEnabled = false,
+                    isImsak = true
                 )
             )
-        coEvery { prayerRepository.getPrayerTimes(any(), any(), any(), zoneId, any()) } returns mockPrayerList
+        coEvery { prayerRepository.getPrayerTimes(any(), any(), any(), zoneId, any(), any(), any()) } returns mockPrayerList
 
         // Act
         val result = useCase(testDate, 41.0, 29.0, zoneId)
@@ -58,7 +59,7 @@ class GetPrayerTimesUseCaseTest {
     fun `invoke should return Failure Result when repository throws exception`() = runTest {
         // Arrange
         val exception = RuntimeException("Database error")
-        coEvery { prayerRepository.getPrayerTimes(any(), any(), any(), zoneId, any()) } throws exception
+        coEvery { prayerRepository.getPrayerTimes(any(), any(), any(), zoneId, any(), any(), any()) } throws exception
 
         // Act
         val result = useCase(testDate, 41.0, 29.0, zoneId)
@@ -71,7 +72,7 @@ class GetPrayerTimesUseCaseTest {
     @Test
     fun `invoke forwards persistDailyCache=false to repository`() = runTest {
         coEvery {
-            prayerRepository.getPrayerTimes(any(), any(), any(), zoneId, any(), any())
+            prayerRepository.getPrayerTimes(any(), any(), any(), zoneId, any(), any(), any())
         } returns emptyList()
 
         useCase(testDate, 41.0, 29.0, zoneId, persistDailyCache = false)
@@ -79,7 +80,7 @@ class GetPrayerTimesUseCaseTest {
         coVerify(exactly = 1) {
             prayerRepository.getPrayerTimes(
                 testDate, 41.0, 29.0, zoneId,
-                CalculationMethod.TURKEY_DIYANET, 10, JuristicMethod.STANDARD, false
+                CalculationMethod.TURKEY_DIYANET, JuristicMethod.STANDARD, false
             )
         }
     }
@@ -87,7 +88,7 @@ class GetPrayerTimesUseCaseTest {
     @Test
     fun `invoke defaults persistDailyCache=true to repository`() = runTest {
         coEvery {
-            prayerRepository.getPrayerTimes(any(), any(), any(), zoneId, any(), any())
+            prayerRepository.getPrayerTimes(any(), any(), any(), zoneId, any(), any(), any())
         } returns emptyList()
 
         useCase(testDate, 41.0, 29.0, zoneId)
@@ -95,7 +96,7 @@ class GetPrayerTimesUseCaseTest {
         coVerify(exactly = 1) {
             prayerRepository.getPrayerTimes(
                 testDate, 41.0, 29.0, zoneId,
-                CalculationMethod.TURKEY_DIYANET, 10, JuristicMethod.STANDARD, true
+                CalculationMethod.TURKEY_DIYANET, JuristicMethod.STANDARD, true
             )
         }
     }
@@ -103,7 +104,7 @@ class GetPrayerTimesUseCaseTest {
     @Test
     fun `invoke forwards juristic method to repository`() = runTest {
         coEvery {
-            prayerRepository.getPrayerTimes(any(), any(), any(), zoneId, any(), any(), any(), any())
+            prayerRepository.getPrayerTimes(any(), any(), any(), zoneId, any(), any(), any())
         } returns emptyList()
 
         useCase(testDate, 41.0, 29.0, zoneId, juristicMethod = JuristicMethod.HANAFI)
@@ -111,7 +112,7 @@ class GetPrayerTimesUseCaseTest {
         coVerify(exactly = 1) {
             prayerRepository.getPrayerTimes(
                 testDate, 41.0, 29.0, zoneId,
-                CalculationMethod.TURKEY_DIYANET, 10, JuristicMethod.HANAFI, true
+                CalculationMethod.TURKEY_DIYANET, JuristicMethod.HANAFI, true
             )
         }
     }

@@ -30,11 +30,11 @@ class GetMonthlyPrayerTimesUseCaseTest {
                 gregorianDate = "1 Monday",
                 hijriDate = "1 Muharram 1448",
                 prayers = listOf(
-                    Prayer("Fajr", "الفجر", LocalTime.parse("05:00"), LocalDate(2024, 1, 1))
+                    Prayer("Imsak", "الإمساك", LocalTime.parse("05:00"), LocalDate(2024, 1, 1), isImsak = true)
                 )
             )
         )
-        coEvery { repository.getMonthlyPrayerTimes(any(), any(), any(), any(), any(), any(), any()) } returns cachedMonth
+        coEvery { repository.getMonthlyPrayerTimes(any(), any(), any(), any(), any(), any()) } returns cachedMonth
         val useCase = GetMonthlyPrayerTimesUseCase(repository)
 
         // WHEN requesting the cached month
@@ -43,7 +43,7 @@ class GetMonthlyPrayerTimesUseCaseTest {
         // THEN the repository's cached month is returned
         assertThat(result).isEqualTo(cachedMonth)
         coVerify(exactly = 1) {
-            repository.getMonthlyPrayerTimes(month, 41.0, 29.0, zoneId, CalculationMethod.TURKEY_DIYANET, 10, JuristicMethod.STANDARD)
+            repository.getMonthlyPrayerTimes(month, 41.0, 29.0, zoneId, CalculationMethod.TURKEY_DIYANET, JuristicMethod.STANDARD)
         }
     }
 
@@ -51,7 +51,7 @@ class GetMonthlyPrayerTimesUseCaseTest {
     fun `invoke returns null when the month is not cached`() = runTest {
         // GIVEN a repository without a cached month
         val repository = mockk<IPrayerRepository>()
-        coEvery { repository.getMonthlyPrayerTimes(any(), any(), any(), any(), any(), any(), any()) } returns null
+        coEvery { repository.getMonthlyPrayerTimes(any(), any(), any(), any(), any(), any()) } returns null
         val useCase = GetMonthlyPrayerTimesUseCase(repository)
 
         // WHEN requesting the cached month

@@ -35,14 +35,14 @@ class PrayerCalculationServiceTest {
         )
 
         // THEN we expect a specific, verifiable result
-        val fajrPrayer = prayers.first { it.name == "Fajr" }
+        val imsakPrayer = prayers.first { it.isImsak }
         val sunrisePrayer = prayers.first { it.name == "Sunrise" }
         val dhuhrPrayer = prayers.first { it.name == "Dhuhr" }
         val asrPrayer = prayers.first { it.name == "Asr" }
         val maghribPrayer = prayers.first { it.name == "Maghrib" }
         val ishaPrayer = prayers.first { it.name == "Isha" }
         // NOTE: Replace this with a time from a trusted source for that exact date/location.
-        assertThat(fajrPrayer.time).isEqualTo(LocalTime.parse("05:12"))
+        assertThat(imsakPrayer.time).isEqualTo(LocalTime.parse("05:12"))
         assertThat(sunrisePrayer.time).isEqualTo(LocalTime.parse("06:38"))
         assertThat(dhuhrPrayer.time).isEqualTo(LocalTime.parse("13:05"))
         assertThat(asrPrayer.time).isEqualTo(LocalTime.parse("16:34"))

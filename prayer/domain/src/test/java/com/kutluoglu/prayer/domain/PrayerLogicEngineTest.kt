@@ -36,7 +36,7 @@ class PrayerLogicEngineTest {
             Clock.fixed(Instant.parse("2026-08-11T12:00:00Z"), ZoneId.of("UTC"))
         )
         val prayers = listOf(
-            Prayer("Fajr", "الفجر", LocalTime.parse("05:00"), LocalDate(2026, 8, 11)),
+            Prayer("Sunrise", "الشروق", LocalTime.parse("05:00"), LocalDate(2026, 8, 11)),
             Prayer("Dhuhr", "الظهر", LocalTime.parse("13:00"), LocalDate(2026, 8, 11)),
             Prayer("Isha", "العشاء", LocalTime.parse("20:00"), LocalDate(2026, 8, 11))
         )
@@ -46,7 +46,7 @@ class PrayerLogicEngineTest {
         val (currentIstanbul, _) = engine.findCurrentAndNextPrayer(prayers, ZoneId.of("Europe/Istanbul"))
 
         // THEN the zone determines which prayer is current
-        assertThat(currentUtc?.name).isEqualTo("Fajr")
+        assertThat(currentUtc?.name).isEqualTo("Sunrise")
         assertThat(currentIstanbul?.name).isEqualTo("Dhuhr")
     }
 }
