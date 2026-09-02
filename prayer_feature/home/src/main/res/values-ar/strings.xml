@@ -8,6 +8,9 @@
     <string name="time_until_prayer_format">الوقت المتبقي حتى %1$s</string>
     <string name="time_until_sunrise">الوقت المتبقي حتى الشروق</string>
     <string name="prayer_jumuah">جمعة</string>
+    <string name="ramadan_day_format">يوم رمضان %1$d</string>
+    <string name="ramadan_sahur_ends_in">ينتهي السحور في</string>
+    <string name="ramadan_iftar_in">الإفطار في</string>
     <string name="unknown_error_message">خطأ غير معروف</string>
     <string name="share_verse">مشاركة الآية</string>
     <string name="no_verse_available">(لا توجد آية متاحة.)</string>

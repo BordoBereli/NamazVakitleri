@@ -7,9 +7,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -30,13 +33,20 @@ import com.kutluoglu.prayer_feature.common.components.TopContainer
 import com.kutluoglu.prayer_feature.common.states.TimeUiState
 import com.kutluoglu.prayer_feature.common.prayerUtils.getPrayerDrawableIdFrom
 import com.kutluoglu.prayer_feature.home.R
+import com.kutluoglu.prayer_feature.home.domain.RamadanCountdownState
+import com.kutluoglu.prayer_feature.home.domain.RamadanDateResolver
+import com.kutluoglu.prayer_feature.home.domain.computeRamadanCountdown
 import com.kutluoglu.prayer_feature.home.state.HomeUiState
 import com.kutluoglu.prayer_feature.home.state.PrayerUiState
+import kotlinx.coroutines.delay
+import kotlinx.datetime.toJavaLocalDate
+import kotlinx.datetime.toKotlinLocalTime
 
 @Composable
 fun HomeTopContainer(
         successState: HomeUiState.Success?,
-        painter: Painter
+        painter: Painter,
+        ramadanDateResolver: RamadanDateResolver = RamadanDateResolver()
 ) {
     val locationState by remember(successState) {
         derivedStateOf { successState?.locationState }
@@ -49,6 +59,27 @@ fun HomeTopContainer(
     }
     val countdownState by remember(successState) {
         derivedStateOf { successState?.countdownState }
+    }
+
+    val prayers = prayerState?.prayers.orEmpty()
+    val imsak = prayers.firstOrNull { it.isImsak }
+    val maghrib = prayers.firstOrNull { it.arabicName == "المغرب" }
+    val today = prayers.firstOrNull()?.date?.toJavaLocalDate()
+    val hijriAdjustment = successState?.timeState?.hijriAdjustment ?: 0
+    val ramadanDay = remember(today, hijriAdjustment) {
+        today?.let { ramadanDateResolver.ramadanDayFor(it, hijriAdjustment) }
+    }
+    var ramadanCountdown by remember { mutableStateOf<RamadanCountdownState?>(null) }
+    LaunchedEffect(ramadanDay, imsak, maghrib) {
+        if (ramadanDay != null && imsak != null && maghrib != null) {
+            while (true) {
+                val now = java.time.LocalTime.now().toKotlinLocalTime()
+                ramadanCountdown = computeRamadanCountdown(now, imsak.time, maghrib.time, imsak.time)
+                delay(1_000)
+            }
+        } else {
+            ramadanCountdown = null
+        }
     }
 
     val borderColorFromTheme = MaterialTheme.colorScheme.onSecondaryContainer
@@ -70,6 +101,10 @@ fun HomeTopContainer(
             contentAlignment = Alignment.Center
         ) {
             timeState?.let { TimeInfoSection(timeState = it, currentTime = countdownState?.currentTime ?: "") }
+        }
+        val currentRamadanCountdown = ramadanCountdown
+        if (ramadanDay != null && currentRamadanCountdown != null) {
+            RamadanBanner(ramadanDay = ramadanDay, countdown = currentRamadanCountdown)
         }
         Box(
             modifier = Modifier
