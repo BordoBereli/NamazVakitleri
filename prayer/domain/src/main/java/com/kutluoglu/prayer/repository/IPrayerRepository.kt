@@ -2,6 +2,7 @@ package com.kutluoglu.prayer.repository
 
 import com.kutluoglu.prayer.model.prayer.CalculationMethod
 import com.kutluoglu.prayer.model.prayer.DailyPrayer
+import com.kutluoglu.prayer.model.prayer.JuristicMethod
 import com.kutluoglu.prayer.model.prayer.Prayer
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.YearMonth
@@ -23,6 +24,7 @@ interface IPrayerRepository {
             zoneId: ZoneId,
             calculationMethod: CalculationMethod = CalculationMethod.TURKEY_DIYANET,
             imsakOffsetMinutes: Int = 10,
+            juristicMethod: JuristicMethod = JuristicMethod.STANDARD,
             persistDailyCache: Boolean = true,
     ): List<Prayer>
 
@@ -37,6 +39,7 @@ interface IPrayerRepository {
             zoneId: ZoneId,
             calculationMethod: CalculationMethod = CalculationMethod.TURKEY_DIYANET,
             imsakOffsetMinutes: Int = 10,
+            juristicMethod: JuristicMethod = JuristicMethod.STANDARD,
     ): List<DailyPrayer>?
 
     /**
@@ -50,6 +53,7 @@ interface IPrayerRepository {
             zoneId: ZoneId,
             calculationMethod: CalculationMethod = CalculationMethod.TURKEY_DIYANET,
             imsakOffsetMinutes: Int = 10,
+            juristicMethod: JuristicMethod = JuristicMethod.STANDARD,
             prayers: List<DailyPrayer>,
     )
 

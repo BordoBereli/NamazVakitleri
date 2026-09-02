@@ -50,7 +50,7 @@ class WidgetDataProviderTest {
 
             coEvery { locations.resolveSelected() } returns LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", null)
             coEvery { settings() } returns Settings()
-            coEvery { useCase.invoke(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
+            coEvery { useCase.invoke(any(), any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
                 listOf(
                     prayer("Fajr", LocalTime(5, 0)),
                     prayer("Dhuhr", LocalTime(12, 30)),
@@ -93,7 +93,7 @@ class WidgetDataProviderTest {
 
             coEvery { locations.resolveSelected() } returns LocationData(41.0, 29.0, "United States", "US", "New York", null)
             coEvery { settings() } returns Settings()
-            coEvery { useCase.invoke(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
+            coEvery { useCase.invoke(any(), any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
                 listOf(prayer("Fajr", LocalTime(5, 0)))
             )
             coEvery { calculator.findCurrentAndNextPrayer(any(), any()) } returns Pair(
@@ -107,7 +107,7 @@ class WidgetDataProviderTest {
             val expectedZone = getZoneIdFromLocation("US")
             assertNotEquals(ZoneId.of("Europe/Berlin"), expectedZone)
             coVerify {
-                useCase.invoke(any(), any(), any(), eq(expectedZone), any(), any(), eq(false))
+                useCase.invoke(any(), any(), any(), eq(expectedZone), any(), any(), any(), eq(false))
             }
         }
     }

@@ -3,6 +3,7 @@ package com.kutluoglu.prayer.usecases.prayer
 import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.prayer.model.prayer.CalculationMethod
 import com.kutluoglu.prayer.model.prayer.DailyPrayer
+import com.kutluoglu.prayer.model.prayer.JuristicMethod
 import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer.repository.IPrayerRepository
 import io.mockk.coEvery
@@ -33,7 +34,7 @@ class GetMonthlyPrayerTimesUseCaseTest {
                 )
             )
         )
-        coEvery { repository.getMonthlyPrayerTimes(any(), any(), any(), any(), any(), any()) } returns cachedMonth
+        coEvery { repository.getMonthlyPrayerTimes(any(), any(), any(), any(), any(), any(), any()) } returns cachedMonth
         val useCase = GetMonthlyPrayerTimesUseCase(repository)
 
         // WHEN requesting the cached month
@@ -42,7 +43,7 @@ class GetMonthlyPrayerTimesUseCaseTest {
         // THEN the repository's cached month is returned
         assertThat(result).isEqualTo(cachedMonth)
         coVerify(exactly = 1) {
-            repository.getMonthlyPrayerTimes(month, 41.0, 29.0, zoneId, CalculationMethod.TURKEY_DIYANET, 10)
+            repository.getMonthlyPrayerTimes(month, 41.0, 29.0, zoneId, CalculationMethod.TURKEY_DIYANET, 10, JuristicMethod.STANDARD)
         }
     }
 
@@ -50,7 +51,7 @@ class GetMonthlyPrayerTimesUseCaseTest {
     fun `invoke returns null when the month is not cached`() = runTest {
         // GIVEN a repository without a cached month
         val repository = mockk<IPrayerRepository>()
-        coEvery { repository.getMonthlyPrayerTimes(any(), any(), any(), any(), any(), any()) } returns null
+        coEvery { repository.getMonthlyPrayerTimes(any(), any(), any(), any(), any(), any(), any()) } returns null
         val useCase = GetMonthlyPrayerTimesUseCase(repository)
 
         // WHEN requesting the cached month

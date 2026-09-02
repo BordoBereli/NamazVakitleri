@@ -1,6 +1,7 @@
 package com.kutluoglu.prayer.usecases.prayer
 
 import com.kutluoglu.prayer.model.prayer.CalculationMethod
+import com.kutluoglu.prayer.model.prayer.JuristicMethod
 import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer.repository.IPrayerRepository
 import kotlinx.datetime.LocalDateTime
@@ -18,11 +19,12 @@ class GetPrayerTimesUseCase(
             zoneId: ZoneId,
             calculationMethod: CalculationMethod = CalculationMethod.TURKEY_DIYANET,
             imsakOffsetMinutes: Int = 10,
+            juristicMethod: JuristicMethod = JuristicMethod.STANDARD,
             persistDailyCache: Boolean = true,
     ): Result<List<Prayer>> {
         return try {
             val prayerTimes = prayerRepository.getPrayerTimes(
-                date, latitude, longitude, zoneId, calculationMethod, imsakOffsetMinutes, persistDailyCache
+                date, latitude, longitude, zoneId, calculationMethod, imsakOffsetMinutes, juristicMethod, persistDailyCache
             )
             Result.success(prayerTimes)
         } catch (e: Exception) {

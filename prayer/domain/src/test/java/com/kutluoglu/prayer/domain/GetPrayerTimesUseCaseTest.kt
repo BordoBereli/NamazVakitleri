@@ -3,6 +3,7 @@ package com.kutluoglu.prayer.domain
 import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.core.common.createBy
 import com.kutluoglu.prayer.model.prayer.CalculationMethod
+import com.kutluoglu.prayer.model.prayer.JuristicMethod
 import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer.repository.IPrayerRepository
 import com.kutluoglu.prayer.usecases.prayer.GetPrayerTimesUseCase
@@ -78,7 +79,7 @@ class GetPrayerTimesUseCaseTest {
         coVerify(exactly = 1) {
             prayerRepository.getPrayerTimes(
                 testDate, 41.0, 29.0, zoneId,
-                CalculationMethod.TURKEY_DIYANET, 10, false
+                CalculationMethod.TURKEY_DIYANET, 10, JuristicMethod.STANDARD, false
             )
         }
     }
@@ -94,7 +95,23 @@ class GetPrayerTimesUseCaseTest {
         coVerify(exactly = 1) {
             prayerRepository.getPrayerTimes(
                 testDate, 41.0, 29.0, zoneId,
-                CalculationMethod.TURKEY_DIYANET, 10, true
+                CalculationMethod.TURKEY_DIYANET, 10, JuristicMethod.STANDARD, true
+            )
+        }
+    }
+
+    @Test
+    fun `invoke forwards juristic method to repository`() = runTest {
+        coEvery {
+            prayerRepository.getPrayerTimes(any(), any(), any(), zoneId, any(), any(), any(), any())
+        } returns emptyList()
+
+        useCase(testDate, 41.0, 29.0, zoneId, juristicMethod = JuristicMethod.HANAFI)
+
+        coVerify(exactly = 1) {
+            prayerRepository.getPrayerTimes(
+                testDate, 41.0, 29.0, zoneId,
+                CalculationMethod.TURKEY_DIYANET, 10, JuristicMethod.HANAFI, true
             )
         }
     }

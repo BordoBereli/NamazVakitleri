@@ -3,6 +3,7 @@ package com.kutluoglu.prayer.data.prayer
 import com.kutluoglu.prayer.data.repository.prayer.PrayerDataStore
 import com.kutluoglu.prayer.model.prayer.CalculationMethod
 import com.kutluoglu.prayer.model.prayer.DailyPrayer
+import com.kutluoglu.prayer.model.prayer.JuristicMethod
 import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer.repository.IPrayerRepository
 import kotlinx.datetime.LocalDateTime
@@ -21,6 +22,7 @@ class PrayerRepository(
         zoneId: ZoneId,
         calculationMethod: CalculationMethod,
         imsakOffsetMinutes: Int,
+        juristicMethod: JuristicMethod,
         persistDailyCache: Boolean,
     ): List<Prayer> = prayerDataStore.getPrayerTimes(
         date = date,
@@ -29,6 +31,7 @@ class PrayerRepository(
         zoneId = zoneId,
         calculationMethod = calculationMethod,
         imsakOffsetMinutes = imsakOffsetMinutes,
+        juristicMethod = juristicMethod,
         persistDailyCache = persistDailyCache
     )
 
@@ -39,13 +42,15 @@ class PrayerRepository(
         zoneId: ZoneId,
         calculationMethod: CalculationMethod,
         imsakOffsetMinutes: Int,
+        juristicMethod: JuristicMethod,
     ): List<DailyPrayer>? = prayerDataStore.getMonthlyPrayerTimes(
         month = month,
         latitude = latitude,
         longitude = longitude,
         zoneId = zoneId,
         calculationMethod = calculationMethod,
-        imsakOffsetMinutes = imsakOffsetMinutes
+        imsakOffsetMinutes = imsakOffsetMinutes,
+        juristicMethod = juristicMethod
     )
 
     override suspend fun saveMonthlyPrayerTimes(
@@ -55,6 +60,7 @@ class PrayerRepository(
         zoneId: ZoneId,
         calculationMethod: CalculationMethod,
         imsakOffsetMinutes: Int,
+        juristicMethod: JuristicMethod,
         prayers: List<DailyPrayer>,
     ) {
         prayerDataStore.saveMonthlyPrayerTimes(
@@ -64,6 +70,7 @@ class PrayerRepository(
             zoneId = zoneId,
             calculationMethod = calculationMethod,
             imsakOffsetMinutes = imsakOffsetMinutes,
+            juristicMethod = juristicMethod,
             prayers = prayers
         )
     }

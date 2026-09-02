@@ -6,6 +6,7 @@ import com.kutluoglu.prayer.data.prayer.PrayerRepository
 import com.kutluoglu.prayer.data.repository.prayer.PrayerDataStore
 import com.kutluoglu.prayer.model.prayer.CalculationMethod
 import com.kutluoglu.prayer.model.prayer.DailyPrayer
+import com.kutluoglu.prayer.model.prayer.JuristicMethod
 import com.kutluoglu.prayer.model.prayer.Prayer
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -91,12 +92,12 @@ class PrayerRepositoryTest {
                 )
             )
         )
-        coEvery { prayerDataStore.getMonthlyPrayerTimes(any(), any(), any(), any(), any(), any()) } returns mockMonth
+        coEvery { prayerDataStore.getMonthlyPrayerTimes(any(), any(), any(), any(), any(), any(), any()) } returns mockMonth
 
         val result = repository.getMonthlyPrayerTimes(month, 41.0, 29.0, zoneId, CalculationMethod.TURKEY_DIYANET)
 
         coVerify(exactly = 1) {
-            prayerDataStore.getMonthlyPrayerTimes(month, 41.0, 29.0, zoneId, CalculationMethod.TURKEY_DIYANET, 10)
+            prayerDataStore.getMonthlyPrayerTimes(month, 41.0, 29.0, zoneId, CalculationMethod.TURKEY_DIYANET, 10, JuristicMethod.STANDARD)
         }
         assertThat(result).isEqualTo(mockMonth)
     }
@@ -115,12 +116,12 @@ class PrayerRepositoryTest {
                 )
             )
         )
-        coEvery { prayerDataStore.saveMonthlyPrayerTimes(any(), any(), any(), any(), any(), any(), any()) } returns Unit
+        coEvery { prayerDataStore.saveMonthlyPrayerTimes(any(), any(), any(), any(), any(), any(), any(), any()) } returns Unit
 
-        repository.saveMonthlyPrayerTimes(month, 41.0, 29.0, zoneId, CalculationMethod.TURKEY_DIYANET, 10, monthToSave)
+        repository.saveMonthlyPrayerTimes(month, 41.0, 29.0, zoneId, CalculationMethod.TURKEY_DIYANET, 10, JuristicMethod.STANDARD, monthToSave)
 
         coVerify(exactly = 1) {
-            prayerDataStore.saveMonthlyPrayerTimes(month, 41.0, 29.0, zoneId, CalculationMethod.TURKEY_DIYANET, 10, monthToSave)
+            prayerDataStore.saveMonthlyPrayerTimes(month, 41.0, 29.0, zoneId, CalculationMethod.TURKEY_DIYANET, 10, JuristicMethod.STANDARD, monthToSave)
         }
     }
 }

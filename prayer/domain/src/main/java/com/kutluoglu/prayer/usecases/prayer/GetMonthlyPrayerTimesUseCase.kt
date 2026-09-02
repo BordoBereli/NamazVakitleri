@@ -2,6 +2,7 @@ package com.kutluoglu.prayer.usecases.prayer
 
 import com.kutluoglu.prayer.model.prayer.CalculationMethod
 import com.kutluoglu.prayer.model.prayer.DailyPrayer
+import com.kutluoglu.prayer.model.prayer.JuristicMethod
 import com.kutluoglu.prayer.repository.IPrayerRepository
 import kotlinx.datetime.YearMonth
 import org.koin.core.annotation.Factory
@@ -22,12 +23,14 @@ class GetMonthlyPrayerTimesUseCase(
         zoneId: ZoneId,
         calculationMethod: CalculationMethod = CalculationMethod.TURKEY_DIYANET,
         imsakOffsetMinutes: Int = 10,
+        juristicMethod: JuristicMethod = JuristicMethod.STANDARD,
     ): List<DailyPrayer>? = prayerRepository.getMonthlyPrayerTimes(
         month = month,
         latitude = latitude,
         longitude = longitude,
         zoneId = zoneId,
         calculationMethod = calculationMethod,
-        imsakOffsetMinutes = imsakOffsetMinutes
+        imsakOffsetMinutes = imsakOffsetMinutes,
+        juristicMethod = juristicMethod
     )
 }

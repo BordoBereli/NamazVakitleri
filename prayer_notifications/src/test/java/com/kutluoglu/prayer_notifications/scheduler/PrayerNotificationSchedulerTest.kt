@@ -120,7 +120,7 @@ class PrayerNotificationSchedulerTest {
             location = LocationSettings(timeZone = "Europe/Istanbul"),
             calculationMethod = "TURKEY_DIYANET"
         )
-        coEvery { getPrayerTimesUseCase(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
+        coEvery { getPrayerTimesUseCase(any(), any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
             listOf(
                 Prayer(
                     name = "Fajr",
@@ -159,7 +159,7 @@ class PrayerNotificationSchedulerTest {
             location = LocationSettings(timeZone = "Not/AZone"),
             calculationMethod = "TURKEY_DIYANET"
         )
-        coEvery { getPrayerTimesUseCase(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
+        coEvery { getPrayerTimesUseCase(any(), any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
             listOf(
                 Prayer(
                     name = "Fajr",
@@ -263,7 +263,7 @@ class PrayerNotificationSchedulerTest {
             location = LocationSettings(timeZone = "Europe/Istanbul"),
             calculationMethod = "TURKEY_DIYANET"
         )
-        coEvery { getPrayerTimesUseCase(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
+        coEvery { getPrayerTimesUseCase(any(), any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
             listOf(
                 Prayer(
                     name = "Fajr",
@@ -308,7 +308,7 @@ class PrayerNotificationSchedulerTest {
             location = LocationSettings(timeZone = "Europe/Istanbul"),
             calculationMethod = "TURKEY_DIYANET"
         )
-        coEvery { getPrayerTimesUseCase(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
+        coEvery { getPrayerTimesUseCase(any(), any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
             listOf(
                 Prayer(
                     name = "Fajr",
@@ -358,7 +358,7 @@ class PrayerNotificationSchedulerTest {
             location = LocationSettings(timeZone = "Europe/Istanbul"),
             calculationMethod = "TURKEY_DIYANET"
         )
-        coEvery { getPrayerTimesUseCase(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
+        coEvery { getPrayerTimesUseCase(any(), any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
             listOf(
                 Prayer(
                     name = "Fajr",
@@ -406,7 +406,7 @@ class PrayerNotificationSchedulerTest {
             location = LocationSettings(timeZone = "Europe/Istanbul"),
             calculationMethod = "TURKEY_DIYANET"
         )
-        coEvery { getPrayerTimesUseCase(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
+        coEvery { getPrayerTimesUseCase(any(), any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
             listOf(
                 Prayer(
                     name = "Fajr",
@@ -439,7 +439,7 @@ class PrayerNotificationSchedulerTest {
             location = LocationSettings(timeZone = "Europe/Istanbul"),
             calculationMethod = "TURKEY_DIYANET"
         )
-        coEvery { getPrayerTimesUseCase(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
+        coEvery { getPrayerTimesUseCase(any(), any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
             listOf(
                 Prayer(
                     name = "Fajr",
@@ -491,7 +491,7 @@ class PrayerNotificationSchedulerTest {
             location = LocationSettings(timeZone = "Europe/Istanbul"),
             calculationMethod = "TURKEY_DIYANET"
         )
-        coEvery { getPrayerTimesUseCase(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
+        coEvery { getPrayerTimesUseCase(any(), any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
             listOf(
                 Prayer(
                     name = "Fajr",

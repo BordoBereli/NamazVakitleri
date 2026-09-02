@@ -12,6 +12,7 @@ import com.kutluoglu.prayer.domain.PrayerLogicEngine
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.prayer.CalculationMethod
 import com.kutluoglu.prayer.model.prayer.DailyPrayer
+import com.kutluoglu.prayer.model.prayer.JuristicMethod
 import com.kutluoglu.prayer.usecases.prayer.GetMonthlyPrayerTimesUseCase
 import com.kutluoglu.prayer.usecases.prayer.GetPrayerTimesUseCase
 import com.kutluoglu.prayer.usecases.prayer.SaveMonthlyPrayerTimesUseCase
@@ -114,7 +115,7 @@ class PrayerTimesViewModel(
         }
         settingsObserverJob = viewModelScope.launch {
             settingsRepository.observeSettings()
-                .map { SettingsKey(it.calculationMethod, it.hijriAdjustment, it.language, it.imsakOffsetMinutes) }
+                .map { SettingsKey(it.calculationMethod, it.hijriAdjustment, it.language, it.imsakOffsetMinutes, it.juristicMethod) }
                 .distinctUntilChanged()
                 .drop(1)
                 .collect {
@@ -212,6 +213,7 @@ class PrayerTimesViewModel(
             val calculationMethod = CalculationMethod.fromSettingsId(settings.calculationMethod)
             val hijriAdjustment = settings.hijriAdjustment
             val imsakOffsetMinutes = settings.imsakOffsetMinutes
+            val juristicMethod = JuristicMethod.fromSettingsId(settings.juristicMethod)
             try {
                 val locationCache = monthCache.getOrPut(locationId) { mutableMapOf() }
                 val cached = locationCache[month]
@@ -225,7 +227,8 @@ class PrayerTimesViewModel(
                     longitude = location.longitude,
                     zoneId = resolvedZoneId,
                     calculationMethod = calculationMethod,
-                    imsakOffsetMinutes = imsakOffsetMinutes
+                    imsakOffsetMinutes = imsakOffsetMinutes,
+                    juristicMethod = juristicMethod
                 )
                 if (persistedMonth != null) {
                     val today = LocalDateTime.now(resolvedZoneId).date
@@ -257,7 +260,7 @@ class PrayerTimesViewModel(
                         orderedDays.map { day ->
                             async(computationDispatcher) {
                                 val computed = computeDailyPrayer(
-                                    day, month, location, resolvedZoneId, today, calculationMethod, hijriAdjustment, imsakOffsetMinutes
+                                    day, month, location, resolvedZoneId, today, calculationMethod, hijriAdjustment, imsakOffsetMinutes, juristicMethod
                                 )
                                 mutex.withLock {
                                     results[day - 1] = computed
@@ -290,6 +293,7 @@ class PrayerTimesViewModel(
                             zoneId = resolvedZoneId,
                             calculationMethod = calculationMethod,
                             imsakOffsetMinutes = imsakOffsetMinutes,
+                            juristicMethod = juristicMethod,
                             prayers = monthlyPrayers
                         )
                     }.onFailure {
@@ -318,7 +322,8 @@ class PrayerTimesViewModel(
         today: LocalDateTime,
         calculationMethod: CalculationMethod,
         hijriAdjustment: Int,
-        imsakOffsetMinutes: Int
+        imsakOffsetMinutes: Int,
+        juristicMethod: JuristicMethod
     ): DailyPrayer {
         val date = month.onDay(day)
         val prayerTimes = getPrayerTimesUseCase(
@@ -328,6 +333,7 @@ class PrayerTimesViewModel(
             zoneId = resolvedZoneId,
             calculationMethod = calculationMethod,
             imsakOffsetMinutes = imsakOffsetMinutes,
+            juristicMethod = juristicMethod,
             persistDailyCache = false
         ).getOrElse { throw it }
         val langDetectedPrayerTimes = formatter.withLocalizedNames(prayerTimes)
@@ -364,7 +370,8 @@ class PrayerTimesViewModel(
         val calculationMethod: String,
         val hijriAdjustment: Int,
         val language: String,
-        val imsakOffsetMinutes: Int
+        val imsakOffsetMinutes: Int,
+        val juristicMethod: String
     )
 
     private suspend fun buildPayload(
