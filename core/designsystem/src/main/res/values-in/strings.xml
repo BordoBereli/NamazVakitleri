@@ -2,7 +2,6 @@
 <resources>
     <string-array name="prayers">
         <item>Imsak</item>
-        <item>Subuh</item>
         <item>Terbit</item>
         <item>Zuhur</item>
         <item>Ashar</item>

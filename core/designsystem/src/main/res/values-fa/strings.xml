@@ -2,7 +2,6 @@
 <resources>
     <string-array name="prayers">
         <item>امساک</item>
-        <item>فجر</item>
         <item>طلوع آفتاب</item>
         <item>ظهر</item>
         <item>عصر</item>

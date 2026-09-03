@@ -2,7 +2,6 @@
 <resources>
     <string-array name="prayers">
         <item>Имсак</item>
-        <item>Фаджр</item>
         <item>Восход</item>
         <item>Зухр</item>
         <item>Аср</item>

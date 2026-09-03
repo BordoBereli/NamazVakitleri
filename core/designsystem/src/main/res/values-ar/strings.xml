@@ -2,7 +2,6 @@
 <resources>
     <string-array name="prayers">
         <item>الإمساك</item>
-        <item>الفجر</item>
         <item>الشروق</item>
         <item>الظهر</item>
         <item>العصر</item>
