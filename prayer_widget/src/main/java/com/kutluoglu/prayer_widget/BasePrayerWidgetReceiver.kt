@@ -24,6 +24,21 @@ abstract class BasePrayerWidgetReceiver : GlanceAppWidgetReceiver() {
     ) {
         super.onUpdate(context, appWidgetManager, appWidgetIds)
         enqueueRefresh(context)
+        WidgetMinuteScheduler(context).schedule()
+    }
+
+    override fun onDeleted(context: Context, appWidgetIds: IntArray) {
+        super.onDeleted(context, appWidgetIds)
+        if (!hasAnyWidget(context)) {
+            WidgetMinuteScheduler(context).cancel()
+        }
+    }
+
+    override fun onDisabled(context: Context) {
+        super.onDisabled(context)
+        if (!hasAnyWidget(context)) {
+            WidgetMinuteScheduler(context).cancel()
+        }
     }
 
     internal fun enqueueRefresh(
