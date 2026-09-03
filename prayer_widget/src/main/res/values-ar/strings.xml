@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="prayer_widget_open_app">فتح التطبيق</string>
+    <string name="prayer_widget_set_location">تعيين الموقع</string>
+    <string name="prayer_widget_tap_to_open">اضغط لفتح التطبيق</string>
+    <string name="widget_countdown_hour_short">س</string>
+    <string name="widget_countdown_minute_short">د</string>
+    <string name="widget_until_next">متبقي على %1$s</string>
 </resources>

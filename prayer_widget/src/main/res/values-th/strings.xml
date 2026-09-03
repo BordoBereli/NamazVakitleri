@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="prayer_widget_open_app">เปิดแอป</string>
+    <string name="prayer_widget_set_location">ตั้งค่าตำแหน่ง</string>
+    <string name="prayer_widget_tap_to_open">แตะเพื่อเปิดแอป</string>
+    <string name="widget_countdown_hour_short">ชม.</string>
+    <string name="widget_countdown_minute_short">นาที</string>
+    <string name="widget_until_next">จนถึง %1$s</string>
 </resources>

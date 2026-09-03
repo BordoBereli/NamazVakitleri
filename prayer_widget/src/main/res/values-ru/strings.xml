@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="prayer_widget_open_app">Открыть приложение</string>
+    <string name="prayer_widget_set_location">Указать местоположение</string>
+    <string name="prayer_widget_tap_to_open">Нажмите, чтобы открыть приложение</string>
+    <string name="widget_countdown_hour_short">ч</string>
+    <string name="widget_countdown_minute_short">мин</string>
+    <string name="widget_until_next">до %1$s</string>
 </resources>

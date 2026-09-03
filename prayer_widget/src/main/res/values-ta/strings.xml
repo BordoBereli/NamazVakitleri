@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="prayer_widget_open_app">பயன்பாட்டைத் திற</string>
+    <string name="prayer_widget_set_location">இருப்பிடத்தை அமைக்கவும்</string>
+    <string name="prayer_widget_tap_to_open">பயன்பாட்டைத் திறக்க தட்டவும்</string>
+    <string name="widget_countdown_hour_short">மணி</string>
+    <string name="widget_countdown_minute_short">நிமி</string>
+    <string name="widget_until_next">%1$s வரை</string>
 </resources>
