@@ -118,7 +118,7 @@ private fun SmallLayout(data: WidgetData) {
             size = 34.dp,
             modifier = GlanceModifier.defaultWeight()
         ) {
-            Text(data.countdownText, style = TextStyle(fontSize = 8.sp, fontWeight = FontWeight.Bold, color = ColorProvider(Gold)))
+            Text(data.countdownText, style = TextStyle(fontSize = 6.sp, fontWeight = FontWeight.Bold, color = ColorProvider(Gold)))
         }
         Column(
             modifier = GlanceModifier.defaultWeight(),
@@ -156,7 +156,7 @@ private fun MediumLayout(data: WidgetData) {
                 size = 38.dp,
                 modifier = GlanceModifier.padding(start = 8.dp)
             ) {
-                Text(data.countdownText, style = TextStyle(fontSize = 8.sp, fontWeight = FontWeight.Bold, color = ColorProvider(Gold)))
+                Text(data.countdownText, style = TextStyle(fontSize = 7.sp, fontWeight = FontWeight.Bold, color = ColorProvider(Gold)))
             }
         }
     }
@@ -182,8 +182,8 @@ private fun LargeLayout(data: WidgetData) {
             modifier = GlanceModifier.fillMaxWidth(),
             verticalAlignment = Alignment.Vertical.CenterVertically
         ) {
-            ProgressRing(progress = data.ringProgress, size = 28.dp) {
-                Text(data.countdownText, style = TextStyle(fontSize = 7.sp, fontWeight = FontWeight.Bold, color = ColorProvider(Gold)))
+            ProgressRing(progress = data.ringProgress, size = 36.dp) {
+                Text(data.countdownText, style = TextStyle(fontSize = 6.sp, fontWeight = FontWeight.Bold, color = ColorProvider(Gold)))
             }
             Text(
                 context.getString(R.string.widget_until_next, untilNextPrayerName(context, data.nextPrayerName)),
@@ -235,7 +235,7 @@ private fun ProgressRing(
             modifier = GlanceModifier.fillMaxSize()
         )
         Box(
-            modifier = GlanceModifier.fillMaxSize(),
+            modifier = GlanceModifier.fillMaxSize().padding(size * 0.15f),
             contentAlignment = Alignment.Center
         ) { content() }
     }
