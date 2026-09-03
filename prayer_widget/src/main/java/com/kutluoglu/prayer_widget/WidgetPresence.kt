@@ -8,7 +8,7 @@ import android.content.Context
  * True when at least one widget instance of any size is placed on the home screen.
  * Used to keep the per-minute refresh alarm running only while a widget exists.
  */
-internal fun hasAnyWidget(
+fun hasAnyWidget(
     context: Context,
     manager: AppWidgetManager = AppWidgetManager.getInstance(context)
 ): Boolean {
