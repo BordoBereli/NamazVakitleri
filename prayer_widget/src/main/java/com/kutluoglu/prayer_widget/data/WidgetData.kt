@@ -3,7 +3,8 @@ package com.kutluoglu.prayer_widget.data
 data class WidgetData(
     val nextPrayerName: String,
     val nextPrayerTime: String,
-    val timeRemaining: String,
+    val countdownText: String,
+    val ringProgress: Float,
     val locationName: String,
     val gregorianDate: String,
     val hijriDate: String,

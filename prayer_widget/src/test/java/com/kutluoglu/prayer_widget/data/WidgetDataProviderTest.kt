@@ -30,6 +30,8 @@ class WidgetDataProviderTest {
     private fun prayer(name: String, time: LocalTime) =
         Prayer(name, name, time, LocalDate(2026, 9, 2))
 
+    private fun countdownFormatter() = mockk<WidgetCountdownFormatter>(relaxed = true)
+
     private suspend fun withSystemDefaultZone(zoneId: String, block: suspend () -> Unit) {
         val original = TimeZone.getDefault()
         TimeZone.setDefault(TimeZone.getTimeZone(zoneId))
@@ -48,6 +50,7 @@ class WidgetDataProviderTest {
             val settings = mockk<GetSettingsUseCase>(relaxed = true)
             val calculator = PrayerLogicEngine(Clock.fixed(Instant.parse("2026-09-02T08:00:00Z"), ZoneOffset.UTC))
             val formatter = mockk<com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter>(relaxed = true)
+            val countdown = countdownFormatter()
 
             coEvery { locations.resolveSelected() } returns LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", null)
             coEvery { settings() } returns Settings()
@@ -63,13 +66,49 @@ class WidgetDataProviderTest {
                 prayer("Maghrib", LocalTime(19, 30)),
                 prayer("Asr", LocalTime(16, 0))
             )
+            coEvery { countdown.format(any(), any()) } returns "2s 15d"
 
-            val provider = WidgetDataProvider(useCase, locations, settings, calculator, formatter)
+            val provider = WidgetDataProvider(useCase, locations, settings, calculator, formatter, countdown)
             val result = provider.load()
             assertTrue(result is WidgetResult.Success)
             val data = (result as WidgetResult.Success).data
             assertEquals("Dhuhr", data.nextPrayerName)
             assertEquals("Istanbul", data.locationName)
+            assertEquals("2s 15d", data.countdownText)
+        }
+    }
+
+    @Test
+    fun `load computes ring progress between current and next prayer`() = runTest {
+        withSystemDefaultZone("Europe/Istanbul") {
+            val useCase = mockk<GetPrayerTimesUseCase>(relaxed = true)
+            val locations = mockk<LocationsCoordinator>(relaxed = true)
+            val settings = mockk<GetSettingsUseCase>(relaxed = true)
+            val clock = Clock.fixed(Instant.parse("2026-09-02T11:15:00Z"), ZoneOffset.UTC)
+            val calculator = PrayerLogicEngine(clock)
+            val formatter = mockk<com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter>(relaxed = true)
+            val countdown = countdownFormatter()
+
+            coEvery { locations.resolveSelected() } returns LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", null)
+            coEvery { settings() } returns Settings()
+            coEvery { useCase.invoke(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
+                listOf(
+                    prayer("Dhuhr", LocalTime(12, 30)),
+                    prayer("Asr", LocalTime(16, 0))
+                )
+            )
+            coEvery { formatter.withLocalizedNames(any()) } returns listOf(
+                prayer("Dhuhr", LocalTime(12, 30)),
+                prayer("Asr", LocalTime(16, 0))
+            )
+            coEvery { countdown.format(any(), any()) } returns "2s 15d"
+
+            val provider = WidgetDataProvider(useCase, locations, settings, calculator, formatter, countdown, clock)
+            val result = provider.load()
+            assertTrue(result is WidgetResult.Success)
+            val data = (result as WidgetResult.Success).data
+            // 11:15 UTC = 14:15 Istanbul; Dhuhr 12:30 -> Asr 16:00 is 50% through
+            assertEquals(0.5f, data.ringProgress, 0.01f)
         }
     }
 
@@ -80,10 +119,11 @@ class WidgetDataProviderTest {
         val settings = mockk<GetSettingsUseCase>(relaxed = true)
         val calculator = mockk<PrayerLogicEngine>(relaxed = true)
         val formatter = mockk<com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter>(relaxed = true)
+        val countdown = countdownFormatter()
 
         coEvery { locations.resolveSelected() } returns null
 
-        val provider = WidgetDataProvider(useCase, locations, settings, calculator, formatter)
+        val provider = WidgetDataProvider(useCase, locations, settings, calculator, formatter, countdown)
         val result = provider.load()
         assertTrue(result is WidgetResult.Error)
     }
@@ -96,6 +136,7 @@ class WidgetDataProviderTest {
             val settings = mockk<GetSettingsUseCase>(relaxed = true)
             val calculator = mockk<PrayerLogicEngine>(relaxed = true)
             val formatter = mockk<com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter>(relaxed = true)
+            val countdown = countdownFormatter()
 
             coEvery { locations.resolveSelected() } returns LocationData(41.0, 29.0, "United States", "US", "New York", null)
             coEvery { settings() } returns Settings()
@@ -108,7 +149,7 @@ class WidgetDataProviderTest {
             )
             coEvery { formatter.withLocalizedNames(any()) } returns listOf(prayer("Dhuhr", LocalTime(12, 30)))
 
-            val provider = WidgetDataProvider(useCase, locations, settings, calculator, formatter)
+            val provider = WidgetDataProvider(useCase, locations, settings, calculator, formatter, countdown)
             provider.load()
 
             val expectedZone = getZoneIdFromLocation("US")
@@ -127,6 +168,7 @@ class WidgetDataProviderTest {
             val settings = mockk<GetSettingsUseCase>(relaxed = true)
             val calculator = mockk<PrayerLogicEngine>(relaxed = true)
             val formatter = mockk<com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter>(relaxed = true)
+            val countdown = countdownFormatter()
 
             coEvery { locations.resolveSelected() } returns LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", null)
             coEvery { settings() } returns Settings(juristicMethod = "HANAFI")
@@ -139,7 +181,7 @@ class WidgetDataProviderTest {
             )
             coEvery { formatter.withLocalizedNames(any()) } returns listOf(prayer("Dhuhr", LocalTime(12, 30)))
 
-            val provider = WidgetDataProvider(useCase, locations, settings, calculator, formatter)
+            val provider = WidgetDataProvider(useCase, locations, settings, calculator, formatter, countdown)
             provider.load()
 
             coVerify {

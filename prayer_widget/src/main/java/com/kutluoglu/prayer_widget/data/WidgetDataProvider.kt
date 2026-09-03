@@ -11,7 +11,10 @@ import com.kutluoglu.prayer_settings.domain.usecase.GetSettingsUseCase
 import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
+import kotlinx.datetime.toKotlinLocalTime
 import org.koin.core.annotation.Factory
+import java.time.Clock
+import kotlin.time.toKotlinDuration
 
 @Factory
 class WidgetDataProvider(
@@ -19,7 +22,9 @@ class WidgetDataProvider(
     private val locationsCoordinator: LocationsCoordinator,
     private val getSettingsUseCase: GetSettingsUseCase,
     private val calculator: PrayerLogicEngine,
-    private val formatter: PrayerFormatter
+    private val formatter: PrayerFormatter,
+    private val countdownFormatter: WidgetCountdownFormatter,
+    private val clock: Clock = Clock.systemDefaultZone()
 ) {
     suspend fun load(): WidgetResult {
         val location = locationsCoordinator.resolveSelected() ?: return WidgetResult.Error
@@ -38,17 +43,26 @@ class WidgetDataProvider(
         ).getOrNull() ?: return WidgetResult.Error
         val localizedPrayers = formatter.withLocalizedNames(prayers)
 
-        val (_, next) = calculator.findCurrentAndNextPrayer(localizedPrayers, zoneId)
+        val (current, next) = calculator.findCurrentAndNextPrayer(localizedPrayers, zoneId)
         val nextPrayer = next ?: return WidgetResult.Error
-        val timeRemaining = formatter.formatTimeRemaining(
-            calculator.calculateTimeRemaining(nextPrayer.time, zoneId)
-        )
+        val duration = calculator.calculateTimeRemaining(nextPrayer.time, zoneId)
+        val countdownText = duration.toKotlinDuration().toComponents { _, hours, minutes, _, _ ->
+            countdownFormatter.format(hours, minutes)
+        }
+        val ringProgress = current?.let {
+            WidgetProgressCalculator.computeRingProgress(
+                current = it.time,
+                next = nextPrayer.time,
+                now = java.time.LocalTime.now(clock.withZone(zoneId)).toKotlinLocalTime()
+            )
+        } ?: 0f
         val timeInfo = formatter.getInitialTimeInfo(zoneId, hijriAdjustment = settings.hijriAdjustment)
         return WidgetResult.Success(
             WidgetData(
                 nextPrayerName = nextPrayer.name,
                 nextPrayerTime = formatClockTime(nextPrayer.time),
-                timeRemaining = timeRemaining,
+                countdownText = countdownText,
+                ringProgress = ringProgress,
                 locationName = location.city ?: "",
                 gregorianDate = timeInfo.gregorianFullDate,
                 hijriDate = timeInfo.hijriDate,
