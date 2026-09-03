@@ -2,6 +2,7 @@ package com.kutluoglu.prayer_widget
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.updateAll
 import com.kutluoglu.core.common.WidgetRefreshContract
@@ -49,7 +50,9 @@ class PrayerWidgetReceiver : BasePrayerWidgetReceiver() {
         context: Context,
         refresh: suspend (Context) -> Unit = { PrayerWidget().updateAll(it) }
     ) {
-        runCatching { refresh(context) }
+        runCatching { refresh(context) }.onFailure {
+            Log.e("PrayerWidget", "Failed to refresh widget on minute tick -> ${it.message}")
+        }
     }
 
     internal fun rearmMinuteTick(
