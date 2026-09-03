@@ -22,6 +22,7 @@ import com.kutluoglu.prayer_settings.domain.usecase.UpdateCalculationMethodUseCa
 import com.kutluoglu.prayer_settings.domain.usecase.UpdateHijriAdjustmentUseCase
 import com.kutluoglu.prayer_settings.domain.usecase.UpdateLanguageUseCase
 import com.kutluoglu.prayer_settings.domain.usecase.UpdateLocationUseCase
+import com.kutluoglu.prayer_widget.WidgetRefresher
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -40,6 +41,9 @@ val appModule: Module = module {
 
     // NotificationRescheduler (reschedules notification alarms when prayer times change)
     single { NotificationRescheduler(get(), get(), get()) }
+
+    // WidgetRefresher (refreshes the home-screen widget when location/settings change)
+    single { WidgetRefresher.create(get(), get(), get()) }
 
     // Settings DataStore (singleton to share data)
     single { SettingsDataStore.create(get()) }

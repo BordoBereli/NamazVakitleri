@@ -12,6 +12,7 @@ import com.kutluoglu.namazvakitleri.locale.LocaleManager
 import com.kutluoglu.namazvakitleri.notifications.NotificationRescheduler
 import com.kutluoglu.prayer_settings.data.local.SettingsDataStore
 import com.kutluoglu.prayer_settings.domain.repository.SettingsRepository
+import com.kutluoglu.prayer_widget.WidgetRefresher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -44,6 +45,7 @@ class NamazVakitleriApplication : Application() {
         setupActivityLifecycleCallbacks()
         startAnalyticsUserProperties()
         startNotificationRescheduler()
+        startWidgetRefresher()
     }
 
     private fun applyCrashlyticsConsent() {
@@ -75,6 +77,17 @@ class NamazVakitleriApplication : Application() {
             }.onFailure {
                 // Rescheduling must never crash the app.
                 android.util.Log.e("NamazVakitleriApp", "Failed to start notification rescheduler -> ${it.message}")
+            }
+        }
+    }
+
+    private fun startWidgetRefresher() {
+        applicationScope.launch {
+            runCatching {
+                get<WidgetRefresher>().start(applicationScope)
+            }.onFailure {
+                // Widget refresh must never crash the app.
+                android.util.Log.e("NamazVakitleriApp", "Failed to start widget refresher -> ${it.message}")
             }
         }
     }
