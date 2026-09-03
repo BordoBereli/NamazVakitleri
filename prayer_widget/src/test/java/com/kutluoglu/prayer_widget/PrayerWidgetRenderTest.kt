@@ -22,7 +22,8 @@ class PrayerWidgetRenderTest {
     private val data = WidgetData(
         nextPrayerName = "Dhuhr",
         nextPrayerTime = "12:30",
-        timeRemaining = "02:15:00",
+        countdownText = "2s 15d",
+        ringProgress = 0.5f,
         locationName = "Istanbul",
         gregorianDate = "2026-09-02",
         hijriDate = "20 Safer 1448",
@@ -33,69 +34,52 @@ class PrayerWidgetRenderTest {
     )
 
     @Test
-    fun `renders small size without throwing`() {
+    fun `renders small size with next prayer and countdown`() {
         runGlanceAppWidgetUnitTest {
             setContext(ApplicationProvider.getApplicationContext())
             setAppWidgetSize(PrayerWidgetSizes.SMALL)
             provideComposable { WidgetContent(data) }
             awaitIdle()
-            onNode(hasText("Dhuhr · 12:30")).assertExists()
+            onNode(hasText("Dhuhr")).assertExists()
+            onNode(hasText("12:30")).assertExists()
+            onNode(hasText("2s 15d")).assertExists()
         }
     }
 
     @Test
-    fun `renders medium size without throwing`() {
+    fun `renders medium size with location and hijri date`() {
         runGlanceAppWidgetUnitTest {
             setContext(ApplicationProvider.getApplicationContext())
             setAppWidgetSize(PrayerWidgetSizes.MEDIUM)
             provideComposable { WidgetContent(data) }
             awaitIdle()
             onNode(hasText("Istanbul")).assertExists()
+            onNode(hasText("20 Safer 1448")).assertExists()
         }
     }
 
     @Test
-    fun `renders medium layout for medium size`() {
-        runGlanceAppWidgetUnitTest {
-            setContext(ApplicationProvider.getApplicationContext())
-            setAppWidgetSize(PrayerWidgetSizes.MEDIUM)
-            provideComposable { WidgetContent(data) }
-            awaitIdle()
-            onNode(hasText("2026-09-02")).assertExists()
-        }
-    }
-
-    @Test
-    fun `renders large size without throwing`() {
+    fun `renders large size with prayer list and next prayer bold`() {
         runGlanceAppWidgetUnitTest {
             setContext(ApplicationProvider.getApplicationContext())
             setAppWidgetSize(PrayerWidgetSizes.LARGE)
             provideComposable { WidgetContent(data) }
             awaitIdle()
-            onNode(hasText("Dhuhr")).assertExists()
-        }
-    }
-
-    @Test
-    fun `renders next prayer in large layout with bold weight`() {
-        runGlanceAppWidgetUnitTest {
-            setContext(ApplicationProvider.getApplicationContext())
-            setAppWidgetSize(PrayerWidgetSizes.LARGE)
-            provideComposable { WidgetContent(data) }
-            awaitIdle()
+            onAllNodes(hasText("Dhuhr")).assertCountEquals(2)
             onNode(hasTextWithFontWeight("Dhuhr", FontWeight.Bold)).assertExists()
             onNode(hasTextWithFontWeight("Asr", FontWeight.Normal)).assertExists()
         }
     }
 
     @Test
-    fun `renders error content with open app text and click action`() {
+    fun `renders error content with set location and tap to open`() {
         runGlanceAppWidgetUnitTest {
             setContext(ApplicationProvider.getApplicationContext())
             setAppWidgetSize(PrayerWidgetSizes.SMALL)
             provideComposable { ErrorContent() }
             awaitIdle()
-            onNode(hasText("Open app")).assertExists()
+            onNode(hasText("Set location")).assertExists()
+            onNode(hasText("Tap to open app")).assertExists()
             onAllNodes(hasClickAction()).assertCountEquals(1)
         }
     }
