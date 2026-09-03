@@ -2,6 +2,7 @@ package com.kutluoglu.prayer_widget
 
 import android.app.AlarmManager
 import android.appwidget.AppWidgetManager
+import android.content.ComponentName
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import androidx.work.Configuration
@@ -48,5 +49,19 @@ class BasePrayerWidgetReceiverTest {
         receiver.onDeleted(context, intArrayOf(1))
 
         assertThat(scheduledAlarms()).isEmpty()
+    }
+
+    @Test
+    fun `onDeleted keeps the minute tick when another widget remains`() {
+        val receiver = PrayerWidgetReceiver()
+        receiver.onUpdate(context, AppWidgetManager.getInstance(context), intArrayOf(1))
+        assertThat(scheduledAlarms()).hasSize(1)
+
+        shadowOf(AppWidgetManager.getInstance(context))
+            .bindAppWidgetId(1, ComponentName(context, PrayerWidgetReceiver::class.java))
+
+        receiver.onDeleted(context, intArrayOf(1))
+
+        assertThat(scheduledAlarms()).hasSize(1)
     }
 }
