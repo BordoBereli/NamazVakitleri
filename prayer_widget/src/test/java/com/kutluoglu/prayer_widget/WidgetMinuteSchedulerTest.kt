@@ -59,4 +59,13 @@ class WidgetMinuteSchedulerTest {
 
         assertThat(scheduledAlarms()).isEmpty()
     }
+
+    @Test
+    fun `schedule skips when exact alarm permission is missing`() {
+        ShadowAlarmManager.setCanScheduleExactAlarms(false)
+
+        WidgetMinuteScheduler(context).schedule()
+
+        assertThat(scheduledAlarms()).isEmpty()
+    }
 }

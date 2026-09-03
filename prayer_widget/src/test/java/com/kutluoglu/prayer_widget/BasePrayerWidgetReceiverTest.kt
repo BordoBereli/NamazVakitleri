@@ -64,4 +64,15 @@ class BasePrayerWidgetReceiverTest {
 
         assertThat(scheduledAlarms()).hasSize(1)
     }
+
+    @Test
+    fun `onDisabled cancels the minute tick when no widget remains`() {
+        val receiver = PrayerWidgetReceiver()
+        receiver.onUpdate(context, AppWidgetManager.getInstance(context), intArrayOf(1))
+        assertThat(scheduledAlarms()).hasSize(1)
+
+        receiver.onDisabled(context)
+
+        assertThat(scheduledAlarms()).isEmpty()
+    }
 }

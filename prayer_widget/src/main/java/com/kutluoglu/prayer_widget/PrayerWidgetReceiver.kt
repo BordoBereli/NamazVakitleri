@@ -59,10 +59,14 @@ class PrayerWidgetReceiver : BasePrayerWidgetReceiver() {
         context: Context,
         widgetPresent: Boolean = hasAnyWidget(context)
     ) {
-        if (widgetPresent) {
-            WidgetMinuteScheduler(context).schedule()
-        } else {
-            WidgetMinuteScheduler(context).cancel()
+        runCatching {
+            if (widgetPresent) {
+                WidgetMinuteScheduler(context).schedule()
+            } else {
+                WidgetMinuteScheduler(context).cancel()
+            }
+        }.onFailure {
+            Log.e("PrayerWidget", "Failed to re-arm minute tick -> ${it.message}")
         }
     }
 }
