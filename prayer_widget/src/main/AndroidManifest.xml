@@ -6,6 +6,7 @@
             android:exported="false">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.kutluoglu.prayer_widget.REFRESH" />
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"

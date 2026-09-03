@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
+import com.kutluoglu.core.common.WidgetRefreshContract
 import com.kutluoglu.prayer_notifications.data.NotificationSettingsDataStore
 import com.kutluoglu.prayer_notifications.domain.AlarmType
 import com.kutluoglu.prayer_notifications.domain.NotificationSettings
@@ -110,6 +111,18 @@ class AlarmReceiverTest {
         receiver.handleAlarm(context, intent)
         verify { notificationDisplayer.showJumuahNotification() }
         verify(exactly = 0) { notificationDisplayer.showPrayerNotification(any(), any()) }
+    }
+
+    @Test
+    fun `prayer alarm sends widget refresh broadcast`() = runTest {
+        coEvery { dataStore.getSettings() } returns NotificationSettings(adhanEnabled = false, countdownEnabled = false)
+        val receiver = AlarmReceiver()
+        val intent = Intent(context, AlarmReceiver::class.java)
+            .putExtra(AlarmReceiver.EXTRA_ALARM_TYPE, AlarmType.PRAYER.name)
+            .putExtra(AlarmReceiver.EXTRA_PRAYER_KEY, "Dhuhr")
+        receiver.handleAlarm(context, intent)
+        val sent = shadowOf(context as Application).getBroadcastIntents()
+        assertThat(sent.any { it.action == WidgetRefreshContract.ACTION_REFRESH }).isTrue()
     }
 
     @Test

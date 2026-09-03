@@ -3,6 +3,7 @@ package com.kutluoglu.prayer_notifications.scheduler
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import com.kutluoglu.core.common.WidgetRefreshContract
 import com.kutluoglu.prayer_notifications.data.NotificationSettingsDataStore
 import com.kutluoglu.prayer_notifications.domain.AlarmType
 import com.kutluoglu.prayer_notifications.domain.SpecialDay
@@ -73,6 +74,7 @@ class AlarmReceiver : BroadcastReceiver(), KoinComponent {
         when (type) {
             AlarmType.PRAYER -> {
                 val prayerKey = intent.getStringExtra(EXTRA_PRAYER_KEY) ?: return
+                context.sendBroadcast(Intent(WidgetRefreshContract.ACTION_REFRESH))
                 if (settings.adhanEnabled) {
                     context.startForegroundService(
                         Intent(context, AdhanService::class.java)
