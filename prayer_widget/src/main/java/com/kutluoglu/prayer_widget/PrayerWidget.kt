@@ -13,6 +13,7 @@ import androidx.glance.BitmapImageProvider
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.Image
+import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
 import androidx.glance.LocalSize
 import androidx.glance.action.clickable
@@ -36,6 +37,7 @@ import com.kutluoglu.prayer_widget.R
 import com.kutluoglu.prayer_widget.data.WidgetData
 import com.kutluoglu.prayer_widget.data.WidgetDataProvider
 import com.kutluoglu.prayer_widget.data.WidgetResult
+import com.kutluoglu.prayer_widget.data.toTurkishDative
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -91,7 +93,7 @@ internal fun WidgetContent(data: WidgetData) {
     val size = LocalSize.current
     Box(
         modifier = GlanceModifier.fillMaxSize()
-            .background(R.drawable.widget_background)
+            .background(ImageProvider(R.drawable.widget_background))
     ) {
         when {
             size.height >= PrayerWidgetSizes.LARGE.height -> LargeLayout(data)
@@ -166,25 +168,26 @@ private fun LargeLayout(data: WidgetData) {
     Column(
         modifier = GlanceModifier.fillMaxSize()
             .clickable { openApp(context) }
-            .padding(12.dp)
+            .padding(8.dp)
     ) {
         Row(modifier = GlanceModifier.fillMaxWidth()) {
             Text(
                 data.locationName,
                 modifier = GlanceModifier.defaultWeight(),
-                style = TextStyle(fontWeight = FontWeight.Bold, color = ColorProvider(TextPrimary))
+                style = TextStyle(fontWeight = FontWeight.Bold, color = ColorProvider(TextPrimary), fontSize = 12.sp)
             )
-            Text(data.hijriDate, style = TextStyle(color = ColorProvider(Gold), fontSize = 11.sp))
+            Text(data.hijriDate, style = TextStyle(color = ColorProvider(Gold), fontSize = 10.sp))
         }
-        Column(
+        Row(
             modifier = GlanceModifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.Horizontal.CenterHorizontally
+            verticalAlignment = Alignment.Vertical.CenterVertically
         ) {
-            ProgressRing(progress = data.ringProgress, size = 64.dp) {
-                Text(data.countdownText, style = TextStyle(fontSize = 11.sp, fontWeight = FontWeight.Bold, color = ColorProvider(Gold)))
+            ProgressRing(progress = data.ringProgress, size = 28.dp) {
+                Text(data.countdownText, style = TextStyle(fontSize = 7.sp, fontWeight = FontWeight.Bold, color = ColorProvider(Gold)))
             }
             Text(
-                context.getString(R.string.widget_until_next, data.nextPrayerName),
+                context.getString(R.string.widget_until_next, untilNextPrayerName(context, data.nextPrayerName)),
+                modifier = GlanceModifier.padding(start = 8.dp),
                 style = TextStyle(fontWeight = FontWeight.Bold, color = ColorProvider(Gold), fontSize = 12.sp)
             )
         }
@@ -194,10 +197,14 @@ private fun LargeLayout(data: WidgetData) {
             Row(
                 modifier = GlanceModifier.fillMaxWidth()
                     .background(if (p.isNext) NextPill else Color.Transparent)
-                    .padding(horizontal = 6.dp, vertical = 2.dp)
+                    .padding(horizontal = 6.dp, vertical = 1.dp)
             ) {
-                Text(p.name, modifier = GlanceModifier.defaultWeight(), style = TextStyle(fontWeight = fontWeight, color = ColorProvider(color)))
-                Text(p.time, style = TextStyle(fontWeight = fontWeight, color = ColorProvider(color)))
+                Text(
+                    p.name,
+                    modifier = GlanceModifier.defaultWeight(),
+                    style = TextStyle(fontWeight = fontWeight, color = ColorProvider(color), fontSize = 11.sp)
+                )
+                Text(p.time, style = TextStyle(fontWeight = fontWeight, color = ColorProvider(color), fontSize = 11.sp))
             }
         }
     }
@@ -239,7 +246,7 @@ internal fun ErrorContent() {
     val context = LocalContext.current
     Column(
         modifier = GlanceModifier.fillMaxSize()
-            .background(R.drawable.widget_background)
+            .background(ImageProvider(R.drawable.widget_background))
             .clickable { openApp(context) }
             .padding(12.dp),
         verticalAlignment = Alignment.Vertical.CenterVertically,
@@ -259,4 +266,9 @@ internal fun ErrorContent() {
 private fun openApp(context: Context) {
     val intent = context.packageManager.getLaunchIntentForPackage(context.packageName) ?: return
     context.startActivity(intent)
+}
+
+private fun untilNextPrayerName(context: Context, prayerName: String): String {
+    val isTurkish = context.resources.configuration.locales[0].language == "tr"
+    return if (isTurkish) prayerName.toTurkishDative() else prayerName
 }

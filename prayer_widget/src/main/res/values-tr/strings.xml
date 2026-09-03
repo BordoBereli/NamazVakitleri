@@ -5,5 +5,5 @@
     <string name="prayer_widget_tap_to_open">Açmak için dokunun</string>
     <string name="widget_countdown_hour_short">s</string>
     <string name="widget_countdown_minute_short">d</string>
-    <string name="widget_until_next">%1$s\'e kaldı</string>
+    <string name="widget_until_next">%1$s kaldı</string>
 </resources>

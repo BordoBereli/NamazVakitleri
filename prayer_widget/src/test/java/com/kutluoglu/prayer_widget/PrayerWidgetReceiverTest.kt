@@ -43,7 +43,7 @@ class PrayerWidgetReceiverTest {
         val requestSlot = slot<PeriodicWorkRequest>()
         verify {
             workManager.enqueueUniquePeriodicWork(
-                PrayerWidgetReceiver.REFRESH_WORK_NAME,
+                BasePrayerWidgetReceiver.REFRESH_WORK_NAME,
                 ExistingPeriodicWorkPolicy.KEEP,
                 capture(requestSlot)
             )
@@ -62,7 +62,7 @@ class PrayerWidgetReceiverTest {
         val requestSlot = slot<OneTimeWorkRequest>()
         verify {
             workManager.enqueueUniqueWork(
-                PrayerWidgetReceiver.ONE_TIME_REFRESH_WORK_NAME,
+                BasePrayerWidgetReceiver.ONE_TIME_REFRESH_WORK_NAME,
                 ExistingWorkPolicy.REPLACE,
                 capture(requestSlot)
             )
