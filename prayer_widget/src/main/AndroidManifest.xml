@@ -7,6 +7,7 @@
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="com.kutluoglu.prayer_widget.REFRESH" />
+                <action android:name="com.kutluoglu.prayer_widget.MINUTE_TICK" />
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"
@@ -31,6 +32,13 @@
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/prayer_widget_info_large" />
+        </receiver>
+        <receiver
+            android:name=".WidgetBootReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
         </receiver>
     </application>
 </manifest>
