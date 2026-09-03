@@ -15,9 +15,15 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.test.runTest
+import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
+import kotlinx.datetime.plus
 import org.junit.jupiter.api.Test
+import java.time.Clock
+import java.time.Instant
+import java.time.ZoneId
 import kotlin.Result.Companion.success
 
 class PrayerTimesLoaderTest {
@@ -35,12 +41,17 @@ class PrayerTimesLoaderTest {
         county = null
     )
 
+    private val fixedClock = Clock.fixed(
+        Instant.parse("2026-08-02T12:00:00Z"),
+        ZoneId.of("Europe/Istanbul")
+    )
+
     @Test
     fun `load builds prayerState timeState locationState on success`() = runTest {
         val date = LocalDate(2026, 8, 2)
         val fajr = Prayer(name = "İmsak", arabicName = "الفجر", time = LocalTime(5, 0), date = date)
         val dhuhr = Prayer(name = "Öğle", arabicName = "الظهر", time = LocalTime(12, 30), date = date)
-        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any(), any()) } returns success(listOf(fajr, dhuhr))
+        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any(), any(), any(), any()) } returns success(listOf(fajr, dhuhr))
         every { formatter.withLocalizedNames(any()) } returns listOf(fajr, dhuhr)
         every { formatter.getInitialTimeInfo(any(), any(), any(), any()) } returns TimeUiState(gregorianFullDate = "02 Ağustos 2026")
         every { formatter.locationInfo(any()) } returns "Istanbul, TR"
@@ -60,7 +71,7 @@ class PrayerTimesLoaderTest {
 
     @Test
     fun `load maps failure to a failed Result`() = runTest {
-        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any(), any()) } returns
+        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any(), any(), any(), any()) } returns
             Result.failure(RuntimeException("fetch failed"))
 
         val loader = PrayerTimesLoader(getPrayerTimesUseCase, calculator, formatter)
@@ -74,7 +85,7 @@ class PrayerTimesLoaderTest {
     fun `load passes hijri adjustment to formatter`() = runTest {
         val date = LocalDate(2026, 8, 2)
         val fajr = Prayer(name = "İmsak", arabicName = "الفجر", time = LocalTime(5, 0), date = date)
-        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any(), any()) } returns success(listOf(fajr))
+        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any(), any(), any(), any()) } returns success(listOf(fajr))
         every { formatter.withLocalizedNames(any()) } returns listOf(fajr)
         every { formatter.locationInfo(any()) } returns "Istanbul, TR"
         every { calculator.findCurrentAndNextPrayer(any(), any()) } returns Pair(fajr, null)
@@ -99,5 +110,33 @@ class PrayerTimesLoaderTest {
         assertThat(state.prayers[0].isCurrent).isFalse()
         assertThat(state.prayers[1].isCurrent).isTrue()
         assertThat(state.currentPrayer).isEqualTo(dhuhr)
+    }
+
+    @Test
+    fun `load resolves next imsak time from tomorrow prayers`() = runTest {
+        val today = LocalDate(2026, 8, 2)
+        val tomorrow = today.plus(1, DateTimeUnit.DAY)
+        val todayImsak = Prayer(name = "İmsak", arabicName = "الإمساك", time = LocalTime(4, 50), date = today, isImsak = true)
+        val dhuhr = Prayer(name = "Öğle", arabicName = "الظهر", time = LocalTime(12, 30), date = today)
+        val tomorrowImsak = Prayer(name = "İmsak", arabicName = "الإمساك", time = LocalTime(4, 49), date = tomorrow, isImsak = true)
+
+        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any(), any(), any(), any()) } returns
+            success(listOf(todayImsak, dhuhr))
+        coEvery {
+            getPrayerTimesUseCase.invoke(
+                match<LocalDateTime> { it.date == tomorrow },
+                any(), any(), any(), any(), any(), any()
+            )
+        } returns success(listOf(tomorrowImsak))
+
+        every { formatter.withLocalizedNames(any()) } returns listOf(todayImsak, dhuhr)
+        every { formatter.getInitialTimeInfo(any(), any(), any(), any()) } returns TimeUiState()
+        every { formatter.locationInfo(any()) } returns "Istanbul, TR"
+        every { calculator.findCurrentAndNextPrayer(any(), any()) } returns Pair(todayImsak, dhuhr)
+
+        val loader = PrayerTimesLoader(getPrayerTimesUseCase, calculator, formatter, fixedClock)
+        val loaded = loader.load(location, CalculationMethod.TURKEY_DIYANET).getOrThrow()
+
+        assertThat(loaded.nextImsakTime).isEqualTo(LocalTime(4, 49))
     }
 }

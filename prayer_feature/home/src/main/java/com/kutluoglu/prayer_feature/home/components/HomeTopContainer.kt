@@ -66,6 +66,7 @@ fun HomeTopContainer(
     val prayers = prayerState?.prayers.orEmpty()
     val imsak = prayers.firstOrNull { it.isImsak }
     val maghrib = prayers.firstOrNull { it.arabicName == "المغرب" }
+    val nextImsakTime = successState?.nextImsakTime
     val today = prayers.firstOrNull()?.date?.toJavaLocalDate()
     val hijriAdjustment = successState?.timeState?.hijriAdjustment ?: 0
     val zoneId = successState?.timeState?.zoneId ?: ZoneId.systemDefault()
@@ -73,11 +74,11 @@ fun HomeTopContainer(
         today?.let { resolver.ramadanDayFor(it, hijriAdjustment) }
     }
     var ramadanCountdown by remember { mutableStateOf<RamadanCountdownState?>(null) }
-    LaunchedEffect(ramadanDay, imsak, maghrib, zoneId) {
+    LaunchedEffect(ramadanDay, imsak, maghrib, nextImsakTime, zoneId) {
         if (ramadanDay != null && imsak != null && maghrib != null) {
             while (true) {
                 val now = java.time.LocalTime.now(zoneId).toKotlinLocalTime()
-                ramadanCountdown = computeRamadanCountdown(now, imsak.time, maghrib.time, imsak.time)
+                ramadanCountdown = computeRamadanCountdown(now, imsak.time, maghrib.time, nextImsakTime ?: imsak.time)
                 delay(1_000)
             }
         } else {

@@ -5,6 +5,7 @@ import com.kutluoglu.prayer.model.quran.AyahData
 import com.kutluoglu.prayer_feature.common.states.LocationUiState
 import com.kutluoglu.prayer_feature.common.states.TimeUiState
 import kotlinx.datetime.DayOfWeek
+import kotlinx.datetime.LocalTime
 
 private const val DHUHR_ARABIC_NAME = "الظهر"
 
@@ -25,7 +26,8 @@ sealed class HomeUiState {
 
         val quranVerse: AyahData? = null,
         val isVerseDetailSheetVisible: Boolean = false,
-        val isVerseSaved: Boolean = false
+        val isVerseSaved: Boolean = false,
+        val nextImsakTime: LocalTime? = null
     ) : HomeUiState()
 }
 

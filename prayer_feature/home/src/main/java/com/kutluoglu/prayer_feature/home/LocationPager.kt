@@ -179,7 +179,8 @@ private fun LocationPagePreview(
         locationState = data.locationState,
         countdownState = countdownState,
         quranVerse = null,
-        isVerseDetailSheetVisible = false
+        isVerseDetailSheetVisible = false,
+        nextImsakTime = data.nextImsakTime
     )
     HomeResponsiveLayout(
         innerPadding = PaddingValues(0.dp),

@@ -47,7 +47,8 @@ fun HomeRoute(
             time = activeData?.timeState,
             prayer = activeData?.prayerState,
             countdown = countdown,
-            quran = quran
+            quran = quran,
+            nextImsakTime = activeData?.nextImsakTime
         )
     }
 

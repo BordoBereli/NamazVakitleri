@@ -2,6 +2,7 @@ package com.kutluoglu.prayer_feature.home.state
 
 import com.kutluoglu.prayer_feature.common.states.LocationUiState
 import com.kutluoglu.prayer_feature.common.states.TimeUiState
+import kotlinx.datetime.LocalTime
 
 /**
  * Maps low-level failures to user-facing messages.
@@ -33,7 +34,8 @@ fun mergeToHomeUiState(
     time: TimeUiState?,
     prayer: PrayerUiState?,
     countdown: CountdownUiState,
-    quran: QuranUiState
+    quran: QuranUiState,
+    nextImsakTime: LocalTime? = null
 ): HomeUiState {
     return when (gate) {
         HomeScreenGate.Loading -> HomeUiState.Loading
@@ -50,7 +52,8 @@ fun mergeToHomeUiState(
                     countdownState = countdown,
                     quranVerse = quran.verse,
                     isVerseDetailSheetVisible = quran.isSheetVisible,
-                    isVerseSaved = quran.isSaved
+                    isVerseSaved = quran.isSaved,
+                    nextImsakTime = nextImsakTime
                 )
             }
         }
