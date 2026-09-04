@@ -23,16 +23,16 @@ object RingBitmapFactory {
         paint.color = trackColor
         canvas.drawArc(rect, 0f, 360f, false, paint)
         paint.color = progressColor
-        canvas.drawArc(rect, -90f, 360f - (360f * progress.coerceIn(0f, 1f)), false, paint)
+        canvas.drawArc(rect, -90f, 360f * progress.coerceIn(0f, 1f), false, paint)
 
         if (progress > 0f && progress < 1f) {
             val centerX = size / 2f
             val centerY = size / 2f
             val radius = (size - strokeWidth) / 2f
             val startAngle = -90f
-            val endAngle = -90f + 180f * progress
+            val endAngle = -90f + 360f * progress
             val arrowHeight = strokeWidth * 1.5f
-            val arrowBaseWidth = strokeWidth * 0.4f
+            val arrowBaseWidth = strokeWidth * 0.8f
 
             paint.style = Paint.Style.FILL
             drawInwardArrows(canvas, centerX, centerY, radius, startAngle, endAngle, arrowHeight, arrowBaseWidth, paint)

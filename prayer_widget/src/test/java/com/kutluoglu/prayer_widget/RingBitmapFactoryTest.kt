@@ -40,11 +40,11 @@ class RingBitmapFactoryTest {
     @Test
     fun `arrows are drawn when progress is between 0 and 1`() {
         val bitmap = RingBitmapFactory.create(64, 0.5f, trackColor, progressColor)
-        // The ring center is at (32, 32), radius ~24
-        // Start arrow at top (32, 8) pointing inward - check pixel just inside the arc
+        // The ring center is at (32, 32), radius ~27.5
+        // Start arrow at top (-90deg) pointing inward - check pixel just inside the arc
         val startArrowPixel = bitmap.getPixel(32, 14)
-        // End arrow at ~90deg right side - check pixel just inside the arc
-        val endArrowPixel = bitmap.getPixel(50, 32)
+        // End arrow at bottom (90deg) pointing inward - check pixel just inside the arc
+        val endArrowPixel = bitmap.getPixel(32, 50)
         assertThat(startArrowPixel).isEqualTo(progressColor)
         assertThat(endArrowPixel).isEqualTo(progressColor)
     }
