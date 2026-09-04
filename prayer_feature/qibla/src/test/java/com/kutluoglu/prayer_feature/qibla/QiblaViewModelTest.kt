@@ -7,6 +7,7 @@ import com.kutluoglu.core.common.analytics.AnalyticsTracker
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.qibla.QiblaState
 import com.kutluoglu.prayer.usecases.qibla.CalculateQiblaUseCase
+import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
 import com.kutluoglu.prayer_location.ActiveLocationProvider
 import io.mockk.coEvery
 import io.mockk.every
@@ -30,6 +31,7 @@ class QiblaViewModelTest {
     private val calculateQiblaUseCase = mockk<CalculateQiblaUseCase>(relaxed = true)
     private val provider = ActiveLocationProvider()
     private val analyticsTracker = mockk<AnalyticsTracker>(relaxed = true)
+    private val formatter = mockk<PrayerFormatter>(relaxed = true)
     private lateinit var viewModel: QiblaViewModel
 
     private val location = LocationData(
@@ -46,10 +48,14 @@ class QiblaViewModelTest {
         mockkStatic(Log::class)
         every { Log.e(any<String>(), any<String>(), any()) } returns 0
         every { Log.i(any<String>(), any<String>()) } returns 0
+        every { formatter.locationInfo(any()) } answers {
+            val loc = firstArg<LocationData>()
+            "${loc.city ?: ""}, ${loc.countryCode ?: ""}"
+        }
 
         Dispatchers.setMain(UnconfinedTestDispatcher())
         provider.set(location)
-        viewModel = QiblaViewModel(provider, calculateQiblaUseCase, analyticsTracker)
+        viewModel = QiblaViewModel(provider, calculateQiblaUseCase, analyticsTracker, formatter)
     }
 
     @AfterEach
@@ -75,6 +81,7 @@ class QiblaViewModelTest {
             val state = awaitItem()
             assertThat(state.qiblaBearing).isEqualTo(150.0)
             assertThat(state.isLocationAvailable).isTrue()
+            assertThat(state.locationName).isEqualTo("Istanbul, TR")
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -110,10 +117,12 @@ class QiblaViewModelTest {
         viewModel.uiState.test {
             val first = awaitItem()
             assertThat(first.qiblaBearing).isEqualTo(150.0)
+            assertThat(first.locationName).isEqualTo("Istanbul, TR")
 
             provider.set(locB)
             val second = awaitItem()
             assertThat(second.qiblaBearing).isEqualTo(160.0)
+            assertThat(second.locationName).isEqualTo("Ankara, TR")
             cancelAndIgnoreRemainingEvents()
         }
     }

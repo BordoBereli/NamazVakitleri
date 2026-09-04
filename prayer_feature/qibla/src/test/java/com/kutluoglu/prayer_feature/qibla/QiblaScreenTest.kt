@@ -25,7 +25,8 @@ class QiblaScreenTest {
         qiblaAngle = 5f,
         sensorAccuracy = SensorManager.SENSOR_STATUS_ACCURACY_HIGH,
         isLocationAvailable = true,
-        error = null
+        error = null,
+        locationName = "Istanbul, TR"
     )
 
     @Test
@@ -33,7 +34,6 @@ class QiblaScreenTest {
         composeTestRule.setContent {
             QiblaScreen(
                 uiState = successState,
-                locationName = "Istanbul, TR",
                 onEvent = {}
             )
         }

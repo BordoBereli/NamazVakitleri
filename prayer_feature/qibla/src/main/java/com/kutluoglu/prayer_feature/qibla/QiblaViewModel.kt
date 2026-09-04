@@ -8,6 +8,7 @@ import com.kutluoglu.core.common.analytics.AnalyticsEvents
 import com.kutluoglu.core.common.analytics.AnalyticsParams
 import com.kutluoglu.core.common.analytics.AnalyticsTracker
 import com.kutluoglu.prayer.usecases.qibla.CalculateQiblaUseCase
+import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
 import com.kutluoglu.prayer_location.ActiveLocationProvider
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
@@ -17,6 +18,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -28,7 +30,8 @@ data class QiblaUiState(
     val qiblaAngle: Float = 0.0f,     // Cihaz ve Kıble arasındaki son açı
     val isLocationAvailable: Boolean = false,
     val error: String? = null,
-    val sensorAccuracy: Int = SensorManager.SENSOR_STATUS_UNRELIABLE
+    val sensorAccuracy: Int = SensorManager.SENSOR_STATUS_UNRELIABLE,
+    val locationName: String? = null
 )
 
 @OptIn(FlowPreview::class)
@@ -36,7 +39,8 @@ data class QiblaUiState(
 class QiblaViewModel(
     private val activeLocationProvider: ActiveLocationProvider,
     private val calculateQiblaUseCase: CalculateQiblaUseCase,
-    private val analyticsTracker: AnalyticsTracker
+    private val analyticsTracker: AnalyticsTracker,
+    private val formatter: PrayerFormatter
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(QiblaUiState())
     val uiState: StateFlow<QiblaUiState> = _uiState
@@ -72,12 +76,13 @@ class QiblaViewModel(
                     .flatMapLatest { location ->
                         if (location != null) {
                             calculateQiblaUseCase.observeQiblaDirection(location.latitude, location.longitude)
+                                .map { qiblaState -> qiblaState to location }
                         } else {
-                            flowOf(null)
+                            flowOf(null to null)
                         }
                     }
-                    .collectLatest { currQiblaState ->
-                        if (currQiblaState != null) {
+                    .collectLatest { (currQiblaState, location) ->
+                        if (currQiblaState != null && location != null) {
                             _uiState.update {
                                 it.copy(
                                     qiblaAngle = currQiblaState.qiblaAngle,
@@ -85,7 +90,8 @@ class QiblaViewModel(
                                     sensorAccuracy = currQiblaState.sensorAccuracy,
                                     qiblaBearing = currQiblaState.qiblaBearing,
                                     isLocationAvailable = true,
-                                    error = null
+                                    error = null,
+                                    locationName = formatter.locationInfo(location)
                                 )
                             }
                             trackAlignment(currQiblaState.qiblaAngle)

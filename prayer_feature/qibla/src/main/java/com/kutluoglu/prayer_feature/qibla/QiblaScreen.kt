@@ -15,7 +15,6 @@ import com.kutluoglu.prayer_feature.qibla.components.qiblaLayoutStrategy
 @Composable
 fun QiblaScreen(
     uiState: QiblaUiState,
-    locationName: String? = "Istanbul, TR",
     onEvent: (QiblaEvent) -> Unit
 ) {
     LaunchedEffect(Unit) {
@@ -46,7 +45,7 @@ fun QiblaScreen(
                     deviceAzimuth = uiState.deviceAzimuth,
                     qiblaAngle = uiState.qiblaAngle,
                     sensorAccuracy = uiState.sensorAccuracy,
-                    locationName = locationName
+                    locationName = uiState.locationName
                 )
             }
         }
