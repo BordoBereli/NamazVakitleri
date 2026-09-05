@@ -39,14 +39,14 @@ class RingBitmapFactoryTest {
 
     @Test
     fun `arrows are drawn when progress is between 0 and 1`() {
-        val bitmap = RingBitmapFactory.create(64, 0.5f, trackColor, progressColor)
-        // The ring center is at (32, 32), radius ~27.5
-        // Start arrow at top (-90deg) pointing inward - check pixel just inside the arc
-        val startArrowPixel = bitmap.getPixel(32, 14)
-        // End arrow at bottom (90deg) pointing inward - check pixel just inside the arc
-        val endArrowPixel = bitmap.getPixel(32, 50)
-        assertThat(startArrowPixel).isEqualTo(progressColor)
-        assertThat(endArrowPixel).isEqualTo(progressColor)
+        val withArrows = RingBitmapFactory.create(64, 0.5f, trackColor, progressColor)
+        val noArrows = RingBitmapFactory.create(64, 0f, trackColor, progressColor)
+
+        // The progress arc stays within the ring band (distance >= ring inner edge).
+        // Any progress-color pixels deeper inside the hollow can only come from arrows,
+        // which are only drawn when progress is strictly between 0 and 1.
+        val hollowArrows = countHollowPixels(withArrows, noArrows)
+        assertThat(hollowArrows).isGreaterThan(0)
     }
 
     @Test
@@ -79,5 +79,22 @@ class RingBitmapFactoryTest {
         val pixels = IntArray(bitmap.width * bitmap.height)
         bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
         return pixels
+    }
+
+    private fun countHollowPixels(withArrows: Bitmap, noArrows: Bitmap): Int {
+        val cx = withArrows.width / 2f
+        val cy = withArrows.height / 2f
+        val strokeWidth = withArrows.width * 0.14f
+        val innerRadius = (withArrows.width - strokeWidth) / 2f - strokeWidth / 2f
+        var count = 0
+        for (y in 0 until withArrows.height) {
+            for (x in 0 until withArrows.width) {
+                val d = Math.sqrt(((x - cx) * (x - cx) + (y - cy) * (y - cy)).toDouble()).toFloat()
+                if (d < innerRadius && withArrows.getPixel(x, y) != noArrows.getPixel(x, y)) {
+                    count++
+                }
+            }
+        }
+        return count
     }
 }

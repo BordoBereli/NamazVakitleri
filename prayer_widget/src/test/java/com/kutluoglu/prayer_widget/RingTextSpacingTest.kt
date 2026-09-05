@@ -77,16 +77,16 @@ class RingTextSpacingTest {
 
     @Test
     fun `small layout countdown text keeps spacing from ring`() {
-        assertCountdownFitsInRing(ringSizeDp = 34f, textSp = 6f, minGapDp = 2f)
+        assertCountdownFitsInRing(ringSizeDp = 64f, textSp = 13f, minGapDp = 2f)
     }
 
     @Test
     fun `medium layout countdown text keeps spacing from ring`() {
-        assertCountdownFitsInRing(ringSizeDp = 38f, textSp = 7f, minGapDp = 2f)
+        assertCountdownFitsInRing(ringSizeDp = 64f, textSp = 13f, minGapDp = 2f)
     }
 
     @Test
     fun `large layout countdown text keeps spacing from ring`() {
-        assertCountdownFitsInRing(ringSizeDp = 36f, textSp = 6f, minGapDp = 2f)
+        assertCountdownFitsInRing(ringSizeDp = 64f, textSp = 13f, minGapDp = 2f)
     }
 }

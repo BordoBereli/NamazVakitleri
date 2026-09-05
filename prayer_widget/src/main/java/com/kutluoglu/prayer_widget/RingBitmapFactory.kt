@@ -31,7 +31,7 @@ object RingBitmapFactory {
             val radius = (size - strokeWidth) / 2f
             val startAngle = -90f
             val endAngle = -90f + 360f * progress
-            val arrowHeight = strokeWidth * 1.5f
+            val arrowHeight = strokeWidth * 0.65f
             val arrowBaseWidth = strokeWidth * 0.8f
 
             paint.style = Paint.Style.FILL
