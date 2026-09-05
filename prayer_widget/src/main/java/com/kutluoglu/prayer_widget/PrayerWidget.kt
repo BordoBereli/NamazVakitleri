@@ -1,5 +1,6 @@
 package com.kutluoglu.prayer_widget
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.Composable
@@ -43,9 +44,9 @@ import org.koin.core.component.inject
 
 private val Gold = Color(0xFFFFD700)
 private val TextPrimary = Color(0xFFFFFFFF)
-private val TextDim = Color(0xFFA0A0A0)
+private val TextDim = Color(0xFFFFD700) //Color(0xFFA0A0A0)
 private val NextPill = Color(0x29FFD700)
-private val RingTrack = 0x1FFFFFFF
+private val RingTrack = 0x7FFFFFFF
 private val RingProgress = 0xFFFFD700.toInt()
 
 class PrayerWidget(
@@ -85,7 +86,7 @@ class PrayerWidget(
 object PrayerWidgetSizes {
     val SMALL = DpSize(110.dp, 40.dp)
     val MEDIUM = DpSize(250.dp, 40.dp)
-    val LARGE = DpSize(250.dp, 110.dp)
+    val LARGE = DpSize(250.dp, 120.dp)
 }
 
 @Composable
@@ -103,33 +104,61 @@ internal fun WidgetContent(data: WidgetData) {
     }
 }
 
+@SuppressLint("RestrictedApi")
 @Composable
 private fun SmallLayout(data: WidgetData) {
     val context = LocalContext.current
     Row(
         modifier = GlanceModifier.fillMaxSize()
-            .clickable { openApp(context) }
-            .padding(8.dp),
+        .clickable { openApp(context) }
+        .padding(8.dp),
         verticalAlignment = Alignment.Vertical.CenterVertically,
         horizontalAlignment = Alignment.Horizontal.CenterHorizontally
     ) {
-        ProgressRing(
-            progress = data.ringProgress,
-            size = 34.dp,
-            modifier = GlanceModifier.defaultWeight()
-        ) {
-            Text(data.countdownText, style = TextStyle(fontSize = 6.sp, fontWeight = FontWeight.Bold, color = ColorProvider(Gold)))
-        }
         Column(
-            modifier = GlanceModifier.defaultWeight(),
+            modifier = GlanceModifier.defaultWeight()
+                .padding(start = 8.dp),
             horizontalAlignment = Alignment.Horizontal.Start
         ) {
-            Text(data.nextPrayerName, style = TextStyle(fontWeight = FontWeight.Bold, color = ColorProvider(Gold)))
-            Text(data.nextPrayerTime, style = TextStyle(color = ColorProvider(TextDim), fontSize = 11.sp))
+            Text(
+                data.locationName,
+                style = TextStyle(
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = ColorProvider(TextPrimary)
+                )
+            )
+            Text(
+                data.nextPrayerName,
+                style = TextStyle(
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = ColorProvider(Gold)
+                )
+            )
+            Text(
+                data.nextPrayerTime,
+                style = TextStyle(color = ColorProvider(TextDim), fontSize = 12.sp)
+            )
+        }
+        ProgressRing(
+            progress = data.ringProgress,
+            size = 64.dp,
+            modifier = GlanceModifier.defaultWeight()
+        ) {
+            Text(
+                data.countdownText,
+                style = TextStyle(
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = ColorProvider(Gold)
+                )
+            )
         }
     }
 }
 
+@SuppressLint("RestrictedApi")
 @Composable
 private fun MediumLayout(data: WidgetData) {
     val context = LocalContext.current
@@ -137,31 +166,41 @@ private fun MediumLayout(data: WidgetData) {
         modifier = GlanceModifier.fillMaxSize()
             .clickable { openApp(context) }
             .padding(12.dp),
-        verticalAlignment = Alignment.Vertical.CenterVertically
+        verticalAlignment = Alignment.Vertical.CenterVertically,
+        horizontalAlignment = Alignment.Horizontal.CenterHorizontally,
     ) {
-        Column(modifier = GlanceModifier.defaultWeight()) {
-            Text(data.locationName, style = TextStyle(fontWeight = FontWeight.Bold, color = ColorProvider(TextPrimary)))
-            Text(data.hijriDate, style = TextStyle(color = ColorProvider(TextDim), fontSize = 11.sp))
+        Column(
+            modifier = GlanceModifier.defaultWeight(),
+            verticalAlignment = Alignment.Vertical.CenterVertically,
+            horizontalAlignment = Alignment.Horizontal.Start
+        ) {
+            Text(data.locationName, style = TextStyle(fontSize = 17.sp, fontWeight = FontWeight.Bold, color = ColorProvider(TextPrimary)))
+            Text(data.hijriDate, style = TextStyle(color = ColorProvider(TextDim), fontSize = 15.sp))
         }
         Row(
+            modifier = GlanceModifier.defaultWeight(),
             verticalAlignment = Alignment.Vertical.CenterVertically,
             horizontalAlignment = Alignment.Horizontal.End
         ) {
-            Column(horizontalAlignment = Alignment.Horizontal.End) {
-                Text(data.nextPrayerName, style = TextStyle(fontWeight = FontWeight.Bold, color = ColorProvider(Gold)))
-                Text(data.nextPrayerTime, style = TextStyle(color = ColorProvider(TextDim), fontSize = 11.sp))
+            Column(
+                modifier = GlanceModifier.defaultWeight().padding(start = 8.dp, end = 8.dp),
+                horizontalAlignment = Alignment.Horizontal.End
+            ) {
+                Text(data.nextPrayerName, style = TextStyle(fontSize = 15.sp, fontWeight = FontWeight.Bold, color = ColorProvider(Gold)))
+                Text(data.nextPrayerTime, style = TextStyle(color = ColorProvider(TextDim), fontSize = 14.sp))
             }
             ProgressRing(
                 progress = data.ringProgress,
-                size = 38.dp,
-                modifier = GlanceModifier.padding(start = 8.dp)
+                size = 64.dp,
+                modifier = GlanceModifier.defaultWeight()
             ) {
-                Text(data.countdownText, style = TextStyle(fontSize = 7.sp, fontWeight = FontWeight.Bold, color = ColorProvider(Gold)))
+                Text(data.countdownText, style = TextStyle(fontSize = 13.sp, fontWeight = FontWeight.Bold, color = ColorProvider(Gold)))
             }
         }
     }
 }
 
+@SuppressLint("RestrictedApi")
 @Composable
 private fun LargeLayout(data: WidgetData) {
     val context = LocalContext.current
@@ -171,45 +210,52 @@ private fun LargeLayout(data: WidgetData) {
             .padding(8.dp)
     ) {
         Row(modifier = GlanceModifier.fillMaxWidth()) {
-            Text(
-                data.locationName,
-                modifier = GlanceModifier.defaultWeight(),
-                style = TextStyle(fontWeight = FontWeight.Bold, color = ColorProvider(TextPrimary), fontSize = 12.sp)
-            )
-            Text(data.hijriDate, style = TextStyle(color = ColorProvider(Gold), fontSize = 10.sp))
-        }
-        Row(
-            modifier = GlanceModifier.fillMaxWidth(),
-            verticalAlignment = Alignment.Vertical.CenterVertically
-        ) {
-            ProgressRing(progress = data.ringProgress, size = 36.dp) {
-                Text(data.countdownText, style = TextStyle(fontSize = 6.sp, fontWeight = FontWeight.Bold, color = ColorProvider(Gold)))
+            Column {
+                Text(
+                    data.locationName,
+                    modifier = GlanceModifier.defaultWeight(),
+                    style = TextStyle(fontWeight = FontWeight.Bold, color = ColorProvider(TextPrimary), fontSize = 17.sp)
+                )
+                Text(data.hijriDate, style = TextStyle(color = ColorProvider(Gold), fontSize = 15.sp))
             }
-            Text(
-                context.getString(R.string.widget_until_next, untilNextPrayerName(context, data.nextPrayerName)),
-                modifier = GlanceModifier.padding(start = 8.dp),
-                style = TextStyle(fontWeight = FontWeight.Bold, color = ColorProvider(Gold), fontSize = 12.sp)
-            )
+            Column {
+                Row(
+                    modifier = GlanceModifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.Vertical.CenterVertically,
+                    horizontalAlignment = Alignment.Horizontal.End
+                ) {
+                    ProgressRing(progress = data.ringProgress, size = 64.dp) {
+                        Text(data.countdownText, style = TextStyle(fontSize = 13.sp, fontWeight = FontWeight.Bold, color = ColorProvider(Gold)))
+                    }
+                    Text(
+                        context.getString(R.string.widget_until_next, untilNextPrayerName(context, data.nextPrayerName)),
+                        modifier = GlanceModifier.padding(start = 8.dp),
+                        style = TextStyle(fontWeight = FontWeight.Bold, color = ColorProvider(Gold), fontSize = 15.sp)
+                    )
+                }
+            }
         }
         data.prayers.forEach { p ->
             val fontWeight = if (p.isNext) FontWeight.Bold else FontWeight.Normal
             val color = if (p.isNext) Gold else TextPrimary
+            val fontSize = if (p.isNext) 15.sp else 11.sp
             Row(
                 modifier = GlanceModifier.fillMaxWidth()
                     .background(if (p.isNext) NextPill else Color.Transparent)
-                    .padding(horizontal = 6.dp, vertical = 1.dp)
+                    .padding(horizontal = 6.dp, vertical = 2.dp)
             ) {
                 Text(
                     p.name,
                     modifier = GlanceModifier.defaultWeight(),
-                    style = TextStyle(fontWeight = fontWeight, color = ColorProvider(color), fontSize = 11.sp)
+                    style = TextStyle(fontWeight = fontWeight, color = ColorProvider(color), fontSize = fontSize)
                 )
-                Text(p.time, style = TextStyle(fontWeight = fontWeight, color = ColorProvider(color), fontSize = 11.sp))
+                Text(p.time, style = TextStyle(fontWeight = fontWeight, color = ColorProvider(color), fontSize = fontSize))
             }
         }
     }
 }
 
+@SuppressLint("RestrictedApi")
 @Composable
 private fun ProgressRing(
     progress: Float,
@@ -235,12 +281,13 @@ private fun ProgressRing(
             modifier = GlanceModifier.fillMaxSize()
         )
         Box(
-            modifier = GlanceModifier.fillMaxSize().padding(size * 0.15f),
+            modifier = GlanceModifier.fillMaxSize().padding(size * 0.2f),
             contentAlignment = Alignment.Center
         ) { content() }
     }
 }
 
+@SuppressLint("RestrictedApi")
 @Composable
 internal fun ErrorContent() {
     val context = LocalContext.current
