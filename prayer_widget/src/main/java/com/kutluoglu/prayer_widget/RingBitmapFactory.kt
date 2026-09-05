@@ -22,27 +22,37 @@ object RingBitmapFactory {
         }
         paint.color = trackColor
         canvas.drawArc(rect, 0f, 360f, false, paint)
-        paint.color = progressColor
-        canvas.drawArc(rect, -90f, 360f * progress.coerceIn(0f, 1f), false, paint)
 
-        if (progress > 0f && progress < 1f) {
+        // The ring shows the REMAINING time: full at the start of the period,
+        // depleting clockwise as time passes. The arc is anchored at the top
+        // (next prayer) and extends to the right side. `progress` is the elapsed fraction.
+        val clamped = progress.coerceIn(0f, 1f)
+        val remainingStart = -90f
+        val remainingSweep = 360f * (1f - clamped)
+
+        paint.color = progressColor
+        canvas.drawArc(rect, remainingStart, remainingSweep, false, paint)
+
+        if (clamped > 0f && clamped < 1f) {
             val centerX = size / 2f
             val centerY = size / 2f
             val radius = (size - strokeWidth) / 2f
-            val startAngle = -90f
-            val endAngle = -90f + 360f * progress
             val arrowHeight = strokeWidth * 0.65f
             val arrowBaseWidth = strokeWidth * 0.8f
 
             paint.style = Paint.Style.FILL
-            drawInwardArrows(canvas, centerX, centerY, radius, startAngle, endAngle, arrowHeight, arrowBaseWidth, paint)
+            drawPathArrows(
+                canvas, centerX, centerY, radius,
+                remainingStart, remainingStart + remainingSweep,
+                arrowHeight, arrowBaseWidth, paint
+            )
             paint.style = Paint.Style.STROKE
         }
 
         return bitmap
     }
 
-    private fun drawInwardArrows(
+    private fun drawPathArrows(
         canvas: Canvas,
         centerX: Float,
         centerY: Float,
@@ -53,37 +63,49 @@ object RingBitmapFactory {
         arrowBaseWidth: Float,
         paint: Paint
     ) {
-        val angles = listOf(startAngleDeg, endAngleDeg)
-        for (angleDeg in angles) {
-            val angleRad = Math.toRadians(angleDeg.toDouble()).toFloat()
-            val tipX = centerX + radius * Math.cos(angleRad.toDouble()).toFloat()
-            val tipY = centerY + radius * Math.sin(angleRad.toDouble()).toFloat()
+        drawPathArrow(canvas, centerX, centerY, radius, startAngleDeg, arrowHeight, arrowBaseWidth, paint, forward = false)
+        drawPathArrow(canvas, centerX, centerY, radius, endAngleDeg, arrowHeight, arrowBaseWidth, paint, forward = true)
+    }
 
-            val inwardX = centerX - tipX
-            val inwardY = centerY - tipY
-            val inwardLen = Math.sqrt((inwardX * inwardX + inwardY * inwardY).toDouble()).toFloat()
-            val unitInwardX = inwardX / inwardLen
-            val unitInwardY = inwardY / inwardLen
+    private fun drawPathArrow(
+        canvas: Canvas,
+        centerX: Float,
+        centerY: Float,
+        radius: Float,
+        angleDeg: Float,
+        arrowHeight: Float,
+        arrowBaseWidth: Float,
+        paint: Paint,
+        forward: Boolean
+    ) {
+        val angleRad = Math.toRadians(angleDeg.toDouble()).toFloat()
+        val tipX = centerX + radius * Math.cos(angleRad.toDouble()).toFloat()
+        val tipY = centerY + radius * Math.sin(angleRad.toDouble()).toFloat()
 
-            val perpX = -unitInwardY
-            val perpY = unitInwardX
+        // Tangent direction of the arc at this angle (clockwise in canvas coords).
+        val tanX = -Math.sin(angleRad.toDouble()).toFloat()
+        val tanY = Math.cos(angleRad.toDouble()).toFloat()
+        val dirX = if (forward) tanX else -tanX
+        val dirY = if (forward) tanY else -tanY
 
-            val baseCenterX = tipX + unitInwardX * arrowHeight
-            val baseCenterY = tipY + unitInwardY * arrowHeight
+        val perpX = -dirY
+        val perpY = dirX
 
-            val path = Path().apply {
-                moveTo(tipX, tipY)
-                lineTo(
-                    baseCenterX + perpX * arrowBaseWidth / 2f,
-                    baseCenterY + perpY * arrowBaseWidth / 2f
-                )
-                lineTo(
-                    baseCenterX - perpX * arrowBaseWidth / 2f,
-                    baseCenterY - perpY * arrowBaseWidth / 2f
-                )
-                close()
-            }
-            canvas.drawPath(path, paint)
+        val baseCenterX = tipX + dirX * arrowHeight
+        val baseCenterY = tipY + dirY * arrowHeight
+
+        val path = Path().apply {
+            moveTo(tipX, tipY)
+            lineTo(
+                baseCenterX + perpX * arrowBaseWidth / 2f,
+                baseCenterY + perpY * arrowBaseWidth / 2f
+            )
+            lineTo(
+                baseCenterX - perpX * arrowBaseWidth / 2f,
+                baseCenterY - perpY * arrowBaseWidth / 2f
+            )
+            close()
         }
+        canvas.drawPath(path, paint)
     }
 }

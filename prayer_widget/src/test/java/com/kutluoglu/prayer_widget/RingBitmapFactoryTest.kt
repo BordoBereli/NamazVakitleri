@@ -30,11 +30,11 @@ class RingBitmapFactoryTest {
     }
 
     @Test
-    fun `full progress paints progress color while zero progress paints track color`() {
+    fun `zero progress paints full remaining ring while full progress paints empty ring`() {
         val empty = RingBitmapFactory.create(64, 0f, trackColor, progressColor)
         val full = RingBitmapFactory.create(64, 1f, trackColor, progressColor)
-        assertPixelColor(full, 32, 4, progressColor)
-        assertPixelColor(empty, 32, 4, trackColor)
+        assertPixelColor(empty, 32, 4, progressColor)
+        assertPixelColor(full, 32, 4, trackColor)
     }
 
     @Test
