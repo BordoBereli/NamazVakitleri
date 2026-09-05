@@ -27,7 +27,6 @@ include(":core:designsystem")              // Reusable composables/views - Mater
 include(":prayer_navigation:core") // Navigation setup, destinations
 //include(":core:database")        // Room database, DAOs
 //include(":core:preferences")     // DataStore/SharedPreferences wrapper
-//include(":core:di")              // Dependency injection setup (Hilt/Koin)
 
 // Domain Modules
 include(":prayer:domain") // Prayer calculations, business logic
@@ -42,10 +41,6 @@ include(":prayer_settings")  // Settings data models and use cases
 
 
 // Features
-//include(":feature:home")
-//include(":feature:prayertimes")
-//include(":feature:qibla")
-//include(":feature:settings")
 include(":prayer_feature:common")
 include(":prayer_feature:home")
 include(":prayer_feature:prayertimes")

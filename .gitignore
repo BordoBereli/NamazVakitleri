@@ -21,3 +21,15 @@ __pycache__/
 # Firebase config (contains API keys - never commit)
 google-services.json
 google_services.xml
+
+# Local-only docs (kept out of git, stay on disk)
+.worktrees/
+AGENTS.md
+CLAUDE.md
+CHANGE_SUMMARY.md
+RELEASE_PLAN.md
+TODO.md
+NamazVakitleriTechnicalAnalysis
+.claude/
+docs/
+prayer_settings/ANDROID_TECHNICAL_ANALYSIS_*.md

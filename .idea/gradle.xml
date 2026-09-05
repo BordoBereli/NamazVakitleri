@@ -32,6 +32,7 @@
             <option value="$PROJECT_DIR$/prayer_qibla" />
             <option value="$PROJECT_DIR$/prayer_remote" />
             <option value="$PROJECT_DIR$/prayer_settings" />
+            <option value="$PROJECT_DIR$/prayer_widget" />
           </set>
         </option>
       </GradleProjectSettings>
