@@ -9,7 +9,13 @@ import com.kutluoglu.prayer.model.qibla.QiblaState
 import com.kutluoglu.prayer.usecases.qibla.CalculateQiblaUseCase
 import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
 import com.kutluoglu.prayer_location.ActiveLocationProvider
+import com.kutluoglu.prayer_settings.domain.model.Settings
+import com.kutluoglu.prayer_settings.domain.usecase.GetSettingsUseCase
+import com.kutluoglu.prayer_settings.domain.usecase.ObserveSettingsUseCase
+import com.kutluoglu.prayer_settings.domain.usecase.UpdateCompassAutoRotateUseCase
+import com.kutluoglu.prayer_settings.domain.usecase.UpdateLockPortraitUseCase
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
@@ -32,6 +38,10 @@ class QiblaViewModelTest {
     private val provider = ActiveLocationProvider()
     private val analyticsTracker = mockk<AnalyticsTracker>(relaxed = true)
     private val formatter = mockk<PrayerFormatter>(relaxed = true)
+    private val getSettingsUseCase = mockk<GetSettingsUseCase>(relaxed = true)
+    private val observeSettingsUseCase = mockk<ObserveSettingsUseCase>(relaxed = true)
+    private val updateLockPortraitUseCase = mockk<UpdateLockPortraitUseCase>(relaxed = true)
+    private val updateCompassAutoRotateUseCase = mockk<UpdateCompassAutoRotateUseCase>(relaxed = true)
     private lateinit var viewModel: QiblaViewModel
 
     private val location = LocationData(
@@ -53,9 +63,21 @@ class QiblaViewModelTest {
             "${loc.city ?: ""}, ${loc.countryCode ?: ""}"
         }
 
+        coEvery { getSettingsUseCase() } returns Settings()
+        every { observeSettingsUseCase() } returns MutableStateFlow(Settings())
+
         Dispatchers.setMain(UnconfinedTestDispatcher())
         provider.set(location)
-        viewModel = QiblaViewModel(provider, calculateQiblaUseCase, analyticsTracker, formatter)
+        viewModel = QiblaViewModel(
+            provider,
+            calculateQiblaUseCase,
+            analyticsTracker,
+            formatter,
+            getSettingsUseCase,
+            observeSettingsUseCase,
+            updateLockPortraitUseCase,
+            updateCompassAutoRotateUseCase
+        )
     }
 
     @AfterEach
@@ -125,5 +147,38 @@ class QiblaViewModelTest {
             assertThat(second.locationName).isEqualTo("Ankara, TR")
             cancelAndIgnoreRemainingEvents()
         }
+    }
+
+    @Test
+    fun `OnStart loads default preferences lockPortrait true compassAutoRotate true`() = runTest {
+        val qiblaState = QiblaState(
+            qiblaBearing = 150.0,
+            deviceAzimuth = 10.0f,
+            qiblaAngle = 140.0f,
+            sensorAccuracy = 3
+        )
+        coEvery { calculateQiblaUseCase.observeQiblaDirection(location.latitude, location.longitude) } returns
+            MutableStateFlow(qiblaState)
+
+        viewModel.onEvent(QiblaEvent.OnStart)
+
+        viewModel.uiState.test {
+            val state = awaitItem()
+            assertThat(state.lockPortrait).isTrue()
+            assertThat(state.compassAutoRotate).isTrue()
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `ToggleLockPortrait writes false to use case`() = runTest {
+        viewModel.onEvent(QiblaEvent.ToggleLockPortrait)
+        coVerify { updateLockPortraitUseCase(false) }
+    }
+
+    @Test
+    fun `ToggleCompassAutoRotate writes false to use case`() = runTest {
+        viewModel.onEvent(QiblaEvent.ToggleCompassAutoRotate)
+        coVerify { updateCompassAutoRotateUseCase(false) }
     }
 }
