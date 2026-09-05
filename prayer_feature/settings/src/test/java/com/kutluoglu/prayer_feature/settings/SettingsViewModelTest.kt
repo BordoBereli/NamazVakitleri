@@ -10,8 +10,10 @@ import com.kutluoglu.prayer_settings.domain.model.Settings
 import com.kutluoglu.prayer_settings.domain.usecase.ClearLocationCacheUseCase
 import com.kutluoglu.prayer_settings.domain.usecase.GetSettingsUseCase
 import com.kutluoglu.prayer_settings.domain.usecase.UpdateCalculationMethodUseCase
+import com.kutluoglu.prayer_settings.domain.usecase.UpdateCompassAutoRotateUseCase
 import com.kutluoglu.prayer_settings.domain.usecase.UpdateHijriAdjustmentUseCase
 import com.kutluoglu.prayer_settings.domain.usecase.UpdateLanguageUseCase
+import com.kutluoglu.prayer_settings.domain.usecase.UpdateLockPortraitUseCase
 import com.kutluoglu.prayer_settings.domain.usecase.UpdateLocationUseCase
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -34,6 +36,8 @@ class SettingsViewModelTest {
     private lateinit var updateCalculationMethodUseCase: UpdateCalculationMethodUseCase
     private lateinit var updateLanguageUseCase: UpdateLanguageUseCase
     private lateinit var updateHijriAdjustmentUseCase: UpdateHijriAdjustmentUseCase
+    private lateinit var updateLockPortraitUseCase: UpdateLockPortraitUseCase
+    private lateinit var updateCompassAutoRotateUseCase: UpdateCompassAutoRotateUseCase
     private lateinit var clearLocationCacheUseCase: ClearLocationCacheUseCase
     private lateinit var clearPrayerTimesCacheUseCase: ClearPrayerTimesCacheUseCase
     private val analyticsTracker = mockk<AnalyticsTracker>(relaxed = true)
@@ -47,6 +51,8 @@ class SettingsViewModelTest {
         updateCalculationMethodUseCase = mockk(relaxed = true)
         updateLanguageUseCase = mockk(relaxed = true)
         updateHijriAdjustmentUseCase = mockk(relaxed = true)
+        updateLockPortraitUseCase = mockk(relaxed = true)
+        updateCompassAutoRotateUseCase = mockk(relaxed = true)
         clearLocationCacheUseCase = mockk(relaxed = true)
         clearPrayerTimesCacheUseCase = mockk(relaxed = true)
         
@@ -58,6 +64,8 @@ class SettingsViewModelTest {
             updateCalculationMethodUseCase,
             updateLanguageUseCase,
             updateHijriAdjustmentUseCase,
+            updateLockPortraitUseCase,
+            updateCompassAutoRotateUseCase,
             clearLocationCacheUseCase,
             clearPrayerTimesCacheUseCase,
             analyticsTracker,
@@ -156,6 +164,18 @@ class SettingsViewModelTest {
 
         // Assert
         coVerify { updateHijriAdjustmentUseCase(-2) }
+    }
+
+    @Test
+    fun `UpdateLockPortrait should call updateLockPortraitUseCase`() = runTest {
+        viewModel.onEvent(SettingsEvent.UpdateLockPortrait(false))
+        coVerify { updateLockPortraitUseCase(false) }
+    }
+
+    @Test
+    fun `UpdateCompassAutoRotate should call updateCompassAutoRotateUseCase`() = runTest {
+        viewModel.onEvent(SettingsEvent.UpdateCompassAutoRotate(false))
+        coVerify { updateCompassAutoRotateUseCase(false) }
     }
 
     @Test

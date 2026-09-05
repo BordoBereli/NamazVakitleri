@@ -110,4 +110,7 @@
     <string name="battery_optimization_not_now">Not now</string>
     <string name="app_name">NamazVakitleri</string>
     <string name="version_format">Version %1$s (%2$d)</string>
+    <string name="qibla_settings">Qibla</string>
+    <string name="lock_portrait">Lock screen to portrait</string>
+    <string name="auto_rotate_compass">Auto rotate compass</string>
 </resources>

@@ -7,9 +7,11 @@ import com.kutluoglu.prayer_feature.settings.SettingsViewModel
 import com.kutluoglu.prayer_settings.domain.usecase.ClearLocationCacheUseCase
 import com.kutluoglu.prayer_settings.domain.usecase.GetSettingsUseCase
 import com.kutluoglu.prayer_settings.domain.usecase.UpdateCalculationMethodUseCase
+import com.kutluoglu.prayer_settings.domain.usecase.UpdateCompassAutoRotateUseCase
 import com.kutluoglu.prayer_settings.domain.usecase.UpdateHijriAdjustmentUseCase
 import com.kutluoglu.prayer_settings.domain.usecase.UpdateLanguageUseCase
 import com.kutluoglu.prayer_settings.domain.usecase.UpdateLocationUseCase
+import com.kutluoglu.prayer_settings.domain.usecase.UpdateLockPortraitUseCase
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -47,6 +49,8 @@ class SettingsViewModelKoinTest {
                     single<UpdateCalculationMethodUseCase> { mockk(relaxed = true) }
                     single<UpdateLanguageUseCase> { mockk(relaxed = true) }
                     single<UpdateHijriAdjustmentUseCase> { mockk(relaxed = true) }
+                    single<UpdateLockPortraitUseCase> { mockk(relaxed = true) }
+                    single<UpdateCompassAutoRotateUseCase> { mockk(relaxed = true) }
                     single<ClearLocationCacheUseCase> { mockk(relaxed = true) }
                     single<ClearPrayerTimesCacheUseCase> { mockk(relaxed = true) }
                 }

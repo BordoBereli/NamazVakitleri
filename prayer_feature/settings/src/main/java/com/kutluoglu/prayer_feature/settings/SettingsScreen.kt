@@ -17,12 +17,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
+import androidx.compose.material.icons.filled.CompassCalibration
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Functions
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.filled.ScreenRotation
 import androidx.compose.material.icons.filled.Translate
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.AlertDialog
@@ -34,6 +36,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -114,7 +117,9 @@ fun SettingsScreen(
                         onNavigateToHijriAdjustment = onNavigateToHijriAdjustment,
                         onNavigateToJuristicMethod = onNavigateToJuristicMethod,
                         onNavigateToLanguage = onNavigateToLanguage,
-                        onNavigateToNotifications = onNavigateToNotifications
+                        onNavigateToNotifications = onNavigateToNotifications,
+                        onLockPortraitChange = { viewModel.onEvent(SettingsEvent.UpdateLockPortrait(it)) },
+                        onCompassAutoRotateChange = { viewModel.onEvent(SettingsEvent.UpdateCompassAutoRotate(it)) }
                     )
                 }
             }
@@ -142,7 +147,9 @@ private fun SettingsContent(
     onNavigateToHijriAdjustment: () -> Unit,
     onNavigateToJuristicMethod: () -> Unit,
     onNavigateToLanguage: () -> Unit,
-    onNavigateToNotifications: () -> Unit
+    onNavigateToNotifications: () -> Unit,
+    onLockPortraitChange: (Boolean) -> Unit,
+    onCompassAutoRotateChange: (Boolean) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -224,6 +231,36 @@ private fun SettingsContent(
             }
         }
 
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant
+            ),
+            shape = RoundedCornerShape(16.dp)
+        ) {
+            Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
+                Text(
+                    text = stringResource(SettingsR.string.qibla_settings),
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(bottom = 4.dp)
+                )
+                ToggleRow(
+                    icon = Icons.Default.ScreenRotation,
+                    title = stringResource(SettingsR.string.lock_portrait),
+                    checked = settings.lockPortrait,
+                    onCheckedChange = onLockPortraitChange
+                )
+                ToggleRow(
+                    icon = Icons.Filled.CompassCalibration,
+                    title = stringResource(SettingsR.string.auto_rotate_compass),
+                    checked = settings.compassAutoRotate,
+                    onCheckedChange = onCompassAutoRotateChange
+                )
+            }
+        }
+
         Spacer(modifier = Modifier.height(16.dp))
 
         Card(
@@ -301,6 +338,35 @@ private fun SettingsItem(
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.size(16.dp)
         )
+    }
+}
+
+@Composable
+private fun ToggleRow(
+    icon: ImageVector,
+    title: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(24.dp)
+        )
+        Spacer(modifier = Modifier.width(16.dp))
+        Text(
+            text = title,
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.weight(1f)
+        )
+        Switch(checked = checked, onCheckedChange = onCheckedChange)
     }
 }
 
