@@ -19,9 +19,11 @@ import com.kutluoglu.prayer_settings.domain.usecase.ClearLocationCacheUseCase
 import com.kutluoglu.prayer_settings.domain.usecase.GetSettingsUseCase
 import com.kutluoglu.prayer_settings.domain.usecase.SearchLocationUseCase
 import com.kutluoglu.prayer_settings.domain.usecase.UpdateCalculationMethodUseCase
+import com.kutluoglu.prayer_settings.domain.usecase.UpdateCompassAutoRotateUseCase
 import com.kutluoglu.prayer_settings.domain.usecase.UpdateHijriAdjustmentUseCase
 import com.kutluoglu.prayer_settings.domain.usecase.UpdateLanguageUseCase
 import com.kutluoglu.prayer_settings.domain.usecase.UpdateLocationUseCase
+import com.kutluoglu.prayer_settings.domain.usecase.UpdateLockPortraitUseCase
 import com.kutluoglu.prayer_widget.WidgetRefresher
 import org.koin.core.module.Module
 import org.koin.dsl.module
@@ -60,11 +62,13 @@ val appModule: Module = module {
     factory { UpdateCalculationMethodUseCase(get()) }
     factory { UpdateLanguageUseCase(get()) }
     factory { UpdateHijriAdjustmentUseCase(get()) }
+    factory { UpdateLockPortraitUseCase(get()) }
+    factory { UpdateCompassAutoRotateUseCase(get()) }
     factory { ClearLocationCacheUseCase(get()) }
     factory { SearchLocationUseCase(get()) }
     
     // Settings ViewModels
-    viewModel { SettingsViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get()) }
+    viewModel { SettingsViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
     factory { LocationSelectionViewModel(get(), get(), get(), get(), get(), get()) }
     viewModel { MyLocationsViewModel(get(), get()) }
     factory { CalculationMethodViewModel(get(), get(), get()) }

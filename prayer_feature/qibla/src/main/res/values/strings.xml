@@ -12,4 +12,6 @@
     <string name="qibla_aligned_pill">Facing Qibla</string>
     <string name="qibla_compass_arrow">Qibla Direction</string>
     <string name="qibla_kaaba">Kaaba</string>
+    <string name="qibla_lock_portrait">Lock portrait</string>
+    <string name="qibla_auto_rotate_compass">Auto rotate compass</string>
 </resources>

@@ -10,12 +10,17 @@ import com.kutluoglu.core.common.analytics.AnalyticsTracker
 import com.kutluoglu.prayer.usecases.qibla.CalculateQiblaUseCase
 import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
 import com.kutluoglu.prayer_location.ActiveLocationProvider
+import com.kutluoglu.prayer_settings.domain.usecase.GetSettingsUseCase
+import com.kutluoglu.prayer_settings.domain.usecase.ObserveSettingsUseCase
+import com.kutluoglu.prayer_settings.domain.usecase.UpdateCompassAutoRotateUseCase
+import com.kutluoglu.prayer_settings.domain.usecase.UpdateLockPortraitUseCase
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
@@ -25,13 +30,15 @@ import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
 
 data class QiblaUiState(
-    val qiblaBearing: Double = 0.0, // Kıble'nin Kuzey'e göre açısı
-    val deviceAzimuth: Float = 0.0f,  // Cihazın Kuzey'e göre açısı
-    val qiblaAngle: Float = 0.0f,     // Cihaz ve Kıble arasındaki son açı
+    val qiblaBearing: Double = 0.0,
+    val deviceAzimuth: Float = 0.0f,
+    val qiblaAngle: Float = 0.0f,
     val isLocationAvailable: Boolean = false,
     val error: String? = null,
     val sensorAccuracy: Int = SensorManager.SENSOR_STATUS_UNRELIABLE,
-    val locationName: String? = null
+    val locationName: String? = null,
+    val lockPortrait: Boolean = true,
+    val compassAutoRotate: Boolean = true
 )
 
 @OptIn(FlowPreview::class)
@@ -40,7 +47,11 @@ class QiblaViewModel(
     private val activeLocationProvider: ActiveLocationProvider,
     private val calculateQiblaUseCase: CalculateQiblaUseCase,
     private val analyticsTracker: AnalyticsTracker,
-    private val formatter: PrayerFormatter
+    private val formatter: PrayerFormatter,
+    private val getSettingsUseCase: GetSettingsUseCase,
+    private val observeSettingsUseCase: ObserveSettingsUseCase,
+    private val updateLockPortraitUseCase: UpdateLockPortraitUseCase,
+    private val updateCompassAutoRotateUseCase: UpdateCompassAutoRotateUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(QiblaUiState())
     val uiState: StateFlow<QiblaUiState> = _uiState
@@ -51,6 +62,7 @@ class QiblaViewModel(
         )
 
     private var observationJob: Job? = null
+    private var settingsJob: Job? = null
     private var hasLoggedAlignment = false
 
     fun onEvent(event: QiblaEvent) {
@@ -58,18 +70,55 @@ class QiblaViewModel(
             QiblaEvent.OnStart -> {
                 analyticsTracker.logEvent(AnalyticsEvents.QIBLA_COMPASS_STARTED)
                 hasLoggedAlignment = false
+                loadQiblaPreferences()
                 startQiblaObservation()
             }
             QiblaEvent.OnStop -> {
                 analyticsTracker.logEvent(AnalyticsEvents.QIBLA_COMPASS_STOPPED)
                 stopQiblaObservation()
+                stopSettingsObservation()
+            }
+            QiblaEvent.ToggleLockPortrait -> toggleLockPortrait()
+            QiblaEvent.ToggleCompassAutoRotate -> toggleCompassAutoRotate()
+        }
+    }
+
+    private fun loadQiblaPreferences() {
+        if (settingsJob?.isActive == true) return
+        settingsJob = viewModelScope.launch {
+            try {
+                val initial = getSettingsUseCase()
+                _uiState.update {
+                    it.copy(
+                        lockPortrait = initial.lockPortrait,
+                        compassAutoRotate = initial.compassAutoRotate
+                    )
+                }
+                observeSettingsUseCase()
+                    .map { s -> s.lockPortrait to s.compassAutoRotate }
+                    .distinctUntilChanged()
+                    .collectLatest { (lock, compass) ->
+                        _uiState.update {
+                            it.copy(lockPortrait = lock, compassAutoRotate = compass)
+                        }
+                    }
+            } catch (e: Exception) {
+                if (e is kotlinx.coroutines.CancellationException) {
+                    Log.i("QiblaViewModel", "Settings observation cancelled.")
+                } else {
+                    Log.e("QiblaViewModel", "Error observing settings", e)
+                }
             }
         }
     }
 
+    private fun stopSettingsObservation() {
+        settingsJob?.cancel()
+        settingsJob = null
+    }
+
     private fun startQiblaObservation() {
         if (observationJob?.isActive == true) return
-
         observationJob = viewModelScope.launch {
             try {
                 activeLocationProvider.location
@@ -101,10 +150,8 @@ class QiblaViewModel(
                     }
             } catch (e: Exception) {
                 if (e is kotlinx.coroutines.CancellationException) {
-                    // Job iptal edildiğinde bu bir hata değildir, log'a yazıp geçebiliriz.
                     Log.i("QiblaViewModel", "Observation Job was cancelled as expected.")
                 } else {
-                    // Diğer hataları log'layıp UI'a bildirelim.
                     Log.e("QiblaViewModel", "Error observing Qibla state", e)
                     _uiState.update { it.copy(error = e.message, isLocationAvailable = false) }
                 }
@@ -116,6 +163,20 @@ class QiblaViewModel(
         observationJob?.cancel()
         observationJob = null
         calculateQiblaUseCase.stop()
+    }
+
+    private fun toggleLockPortrait() {
+        val newValue = !_uiState.value.lockPortrait
+        viewModelScope.launch {
+            updateLockPortraitUseCase(newValue)
+        }
+    }
+
+    private fun toggleCompassAutoRotate() {
+        val newValue = !_uiState.value.compassAutoRotate
+        viewModelScope.launch {
+            updateCompassAutoRotateUseCase(newValue)
+        }
     }
 
     private fun trackAlignment(qiblaAngle: Float) {
@@ -138,5 +199,6 @@ class QiblaViewModel(
     override fun onCleared() {
         super.onCleared()
         stopQiblaObservation()
+        stopSettingsObservation()
     }
 }

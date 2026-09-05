@@ -11,9 +11,11 @@ import com.kutluoglu.prayer_settings.domain.model.Settings
 import com.kutluoglu.prayer_settings.domain.usecase.ClearLocationCacheUseCase
 import com.kutluoglu.prayer_settings.domain.usecase.GetSettingsUseCase
 import com.kutluoglu.prayer_settings.domain.usecase.UpdateCalculationMethodUseCase
+import com.kutluoglu.prayer_settings.domain.usecase.UpdateCompassAutoRotateUseCase
 import com.kutluoglu.prayer_settings.domain.usecase.UpdateHijriAdjustmentUseCase
 import com.kutluoglu.prayer_settings.domain.usecase.UpdateLanguageUseCase
 import com.kutluoglu.prayer_settings.domain.usecase.UpdateLocationUseCase
+import com.kutluoglu.prayer_settings.domain.usecase.UpdateLockPortraitUseCase
 import io.mockk.coEvery
 import io.mockk.mockk
 import org.junit.Rule
@@ -34,6 +36,8 @@ class SettingsScreenTest {
     private val updateCalculationMethodUseCase = mockk<UpdateCalculationMethodUseCase>(relaxed = true)
     private val updateLanguageUseCase = mockk<UpdateLanguageUseCase>(relaxed = true)
     private val updateHijriAdjustmentUseCase = mockk<UpdateHijriAdjustmentUseCase>(relaxed = true)
+    private val updateLockPortraitUseCase = mockk<UpdateLockPortraitUseCase>(relaxed = true)
+    private val updateCompassAutoRotateUseCase = mockk<UpdateCompassAutoRotateUseCase>(relaxed = true)
     private val clearLocationCacheUseCase = mockk<ClearLocationCacheUseCase>(relaxed = true)
     private val clearPrayerTimesCacheUseCase = mockk<ClearPrayerTimesCacheUseCase>(relaxed = true)
     private val analyticsTracker = mockk<AnalyticsTracker>(relaxed = true)
@@ -47,6 +51,8 @@ class SettingsScreenTest {
             updateCalculationMethodUseCase,
             updateLanguageUseCase,
             updateHijriAdjustmentUseCase,
+            updateLockPortraitUseCase,
+            updateCompassAutoRotateUseCase,
             clearLocationCacheUseCase,
             clearPrayerTimesCacheUseCase,
             analyticsTracker,

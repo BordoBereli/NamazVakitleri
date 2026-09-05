@@ -58,6 +58,8 @@ const val QIBLA_ALIGNMENT_THRESHOLD = 10f
 fun QiblaCompass(
     deviceAzimuth: Float,
     qiblaAngle: Float,
+    qiblaBearing: Double,
+    compassAutoRotate: Boolean,
     sensorAccuracy: Int,
     modifier: Modifier = Modifier
 ) {
@@ -134,20 +136,22 @@ fun QiblaCompass(
         )
 
         // Dial drawn once, rotated on the GPU
+        val dialRotation = if (compassAutoRotate) -deviceAzimuth else 0f
         Canvas(
             modifier = Modifier
                 .fillMaxSize(0.88f)
-                .graphicsLayer { rotationZ = -deviceAzimuth }
+                .graphicsLayer { rotationZ = dialRotation }
         ) {
             drawCompassDial()
         }
 
+        val arrowRotation = if (compassAutoRotate) qiblaAngle else qiblaBearing.toFloat()
         Icon(
             painter = painterResource(id = R.drawable.ic_qibla_arrow),
             contentDescription = stringResource(R.string.qibla_compass_arrow),
             modifier = Modifier
                 .fillMaxSize(0.75f)
-                .graphicsLayer { rotationZ = qiblaAngle }
+                .graphicsLayer { rotationZ = arrowRotation }
                 .scale(arrowScale),
             tint = arrowColor
         )

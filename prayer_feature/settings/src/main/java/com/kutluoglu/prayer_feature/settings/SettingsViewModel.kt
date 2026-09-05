@@ -10,9 +10,11 @@ import com.kutluoglu.prayer_settings.domain.model.LocationSettings
 import com.kutluoglu.prayer_settings.domain.usecase.ClearLocationCacheUseCase
 import com.kutluoglu.prayer_settings.domain.usecase.GetSettingsUseCase
 import com.kutluoglu.prayer_settings.domain.usecase.UpdateCalculationMethodUseCase
+import com.kutluoglu.prayer_settings.domain.usecase.UpdateCompassAutoRotateUseCase
 import com.kutluoglu.prayer_settings.domain.usecase.UpdateHijriAdjustmentUseCase
 import com.kutluoglu.prayer_settings.domain.usecase.UpdateLanguageUseCase
 import com.kutluoglu.prayer_settings.domain.usecase.UpdateLocationUseCase
+import com.kutluoglu.prayer_settings.domain.usecase.UpdateLockPortraitUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -25,6 +27,8 @@ class SettingsViewModel(
     private val updateCalculationMethodUseCase: UpdateCalculationMethodUseCase,
     private val updateLanguageUseCase: UpdateLanguageUseCase,
     private val updateHijriAdjustmentUseCase: UpdateHijriAdjustmentUseCase,
+    private val updateLockPortraitUseCase: UpdateLockPortraitUseCase,
+    private val updateCompassAutoRotateUseCase: UpdateCompassAutoRotateUseCase,
     private val clearLocationCacheUseCase: ClearLocationCacheUseCase,
     private val clearPrayerTimesCacheUseCase: ClearPrayerTimesCacheUseCase,
     private val analyticsTracker: AnalyticsTracker,
@@ -50,6 +54,8 @@ class SettingsViewModel(
             is SettingsEvent.UpdateCalculationMethod -> updateCalculationMethod(event.method)
             is SettingsEvent.UpdateLanguage -> updateLanguage(event.language)
             is SettingsEvent.UpdateHijriAdjustment -> updateHijriAdjustment(event.days)
+            is SettingsEvent.UpdateLockPortrait -> updateLockPortrait(event.lockPortrait)
+            is SettingsEvent.UpdateCompassAutoRotate -> updateCompassAutoRotate(event.compassAutoRotate)
             is SettingsEvent.ClearCache -> clearCache()
         }
     }
@@ -119,6 +125,28 @@ class SettingsViewModel(
                 loadSettings()
             } catch (e: Exception) {
                 _uiState.value = SettingsUiState.Error(e.message ?: "Failed to clear cache")
+            }
+        }
+    }
+
+    private fun updateLockPortrait(lockPortrait: Boolean) {
+        viewModelScope.launch {
+            try {
+                updateLockPortraitUseCase(lockPortrait)
+                loadSettings()
+            } catch (e: Exception) {
+                _uiState.value = SettingsUiState.Error(e.message ?: "Failed to update lock portrait")
+            }
+        }
+    }
+
+    private fun updateCompassAutoRotate(compassAutoRotate: Boolean) {
+        viewModelScope.launch {
+            try {
+                updateCompassAutoRotateUseCase(compassAutoRotate)
+                loadSettings()
+            } catch (e: Exception) {
+                _uiState.value = SettingsUiState.Error(e.message ?: "Failed to update compass auto rotate")
             }
         }
     }

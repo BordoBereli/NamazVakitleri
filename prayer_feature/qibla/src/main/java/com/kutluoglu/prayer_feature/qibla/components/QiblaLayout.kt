@@ -19,6 +19,7 @@ internal fun QiblaLayout(
     qiblaBearing: Double,
     deviceAzimuth: Float,
     qiblaAngle: Float,
+    compassAutoRotate: Boolean,
     sensorAccuracy: Int,
     locationName: String?,
     modifier: Modifier = Modifier
@@ -28,6 +29,7 @@ internal fun QiblaLayout(
             qiblaBearing = qiblaBearing,
             deviceAzimuth = deviceAzimuth,
             qiblaAngle = qiblaAngle,
+            compassAutoRotate = compassAutoRotate,
             sensorAccuracy = sensorAccuracy,
             locationName = locationName,
             modifier = modifier
@@ -36,6 +38,7 @@ internal fun QiblaLayout(
             qiblaBearing = qiblaBearing,
             deviceAzimuth = deviceAzimuth,
             qiblaAngle = qiblaAngle,
+            compassAutoRotate = compassAutoRotate,
             sensorAccuracy = sensorAccuracy,
             locationName = locationName,
             modifier = modifier
@@ -48,6 +51,7 @@ private fun PortraitColumn(
     qiblaBearing: Double,
     deviceAzimuth: Float,
     qiblaAngle: Float,
+    compassAutoRotate: Boolean,
     sensorAccuracy: Int,
     locationName: String?,
     modifier: Modifier = Modifier
@@ -66,6 +70,8 @@ private fun PortraitColumn(
         QiblaCompass(
             deviceAzimuth = deviceAzimuth,
             qiblaAngle = qiblaAngle,
+            qiblaBearing = qiblaBearing,
+            compassAutoRotate = compassAutoRotate,
             sensorAccuracy = sensorAccuracy
         )
         Spacer(modifier = Modifier.height(16.dp))
@@ -81,6 +87,7 @@ private fun LandscapeRow(
     qiblaBearing: Double,
     deviceAzimuth: Float,
     qiblaAngle: Float,
+    compassAutoRotate: Boolean,
     sensorAccuracy: Int,
     locationName: String?,
     modifier: Modifier = Modifier
@@ -107,6 +114,8 @@ private fun LandscapeRow(
         QiblaCompass(
             deviceAzimuth = deviceAzimuth,
             qiblaAngle = qiblaAngle,
+            qiblaBearing = qiblaBearing,
+            compassAutoRotate = compassAutoRotate,
             sensorAccuracy = sensorAccuracy
         )
 
