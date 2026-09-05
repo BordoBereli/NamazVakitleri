@@ -45,6 +45,8 @@ class SettingsDataStore(
         val HIJRI_ADJUSTMENT = intPreferencesKey("hijri_adjustment")
         val JURISTIC_METHOD = stringPreferencesKey("juristic_method")
         val CRASHLYTICS_ENABLED = booleanPreferencesKey("crashlytics_enabled")
+        val LOCK_PORTRAIT = booleanPreferencesKey("lock_portrait")
+        val COMPASS_AUTO_ROTATE = booleanPreferencesKey("compass_auto_rotate")
     }
     
     fun observeSettings(): Flow<Settings> = dataStore.data.map { preferences ->
@@ -61,7 +63,9 @@ class SettingsDataStore(
             language = preferences[PreferencesKeys.LANGUAGE] ?: "system",
             hijriAdjustment = preferences[PreferencesKeys.HIJRI_ADJUSTMENT] ?: 0,
             juristicMethod = preferences[PreferencesKeys.JURISTIC_METHOD] ?: "STANDARD",
-            crashlyticsEnabled = preferences[PreferencesKeys.CRASHLYTICS_ENABLED] ?: true
+            crashlyticsEnabled = preferences[PreferencesKeys.CRASHLYTICS_ENABLED] ?: true,
+            lockPortrait = preferences[PreferencesKeys.LOCK_PORTRAIT] ?: true,
+            compassAutoRotate = preferences[PreferencesKeys.COMPASS_AUTO_ROTATE] ?: true
         )
     }
     
@@ -80,7 +84,9 @@ class SettingsDataStore(
                 language = preferences[PreferencesKeys.LANGUAGE] ?: "system",
                 hijriAdjustment = preferences[PreferencesKeys.HIJRI_ADJUSTMENT] ?: 0,
                 juristicMethod = preferences[PreferencesKeys.JURISTIC_METHOD] ?: "STANDARD",
-                crashlyticsEnabled = preferences[PreferencesKeys.CRASHLYTICS_ENABLED] ?: true
+                crashlyticsEnabled = preferences[PreferencesKeys.CRASHLYTICS_ENABLED] ?: true,
+                lockPortrait = preferences[PreferencesKeys.LOCK_PORTRAIT] ?: true,
+                compassAutoRotate = preferences[PreferencesKeys.COMPASS_AUTO_ROTATE] ?: true
             )
         }
     }
@@ -127,6 +133,18 @@ class SettingsDataStore(
     suspend fun updateCrashlyticsEnabled(enabled: Boolean) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.CRASHLYTICS_ENABLED] = enabled
+        }
+    }
+
+    suspend fun updateLockPortrait(lockPortrait: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.LOCK_PORTRAIT] = lockPortrait
+        }
+    }
+
+    suspend fun updateCompassAutoRotate(compassAutoRotate: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.COMPASS_AUTO_ROTATE] = compassAutoRotate
         }
     }
 }

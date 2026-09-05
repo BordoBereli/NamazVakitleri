@@ -12,4 +12,6 @@ interface SettingsRepository {
     suspend fun updateLanguage(language: String)
     suspend fun updateHijriAdjustment(days: Int)
     suspend fun updateCrashlyticsEnabled(enabled: Boolean)
+    suspend fun updateLockPortrait(lockPortrait: Boolean)
+    suspend fun updateCompassAutoRotate(compassAutoRotate: Boolean)
 }

@@ -52,4 +52,12 @@ class SettingsRepositoryImpl(
     override suspend fun updateCrashlyticsEnabled(enabled: Boolean) {
         settingsDataStore.updateCrashlyticsEnabled(enabled)
     }
+
+    override suspend fun updateLockPortrait(lockPortrait: Boolean) {
+        settingsDataStore.updateLockPortrait(lockPortrait)
+    }
+
+    override suspend fun updateCompassAutoRotate(compassAutoRotate: Boolean) {
+        settingsDataStore.updateCompassAutoRotate(compassAutoRotate)
+    }
 }

@@ -6,7 +6,9 @@ data class Settings(
     val language: String = "system",
     val hijriAdjustment: Int = 0,
     val juristicMethod: String = "STANDARD",
-    val crashlyticsEnabled: Boolean = true
+    val crashlyticsEnabled: Boolean = true,
+    val lockPortrait: Boolean = true,
+    val compassAutoRotate: Boolean = true
 )
 
 data class LocationSettings(

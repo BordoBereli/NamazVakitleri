@@ -90,4 +90,30 @@ class SettingsDataStoreTest {
         val settings = dataStore.getSettings()
         assertThat(settings.language).isEqualTo("system")
     }
+
+    @Test
+    fun `default lockPortrait is true`() = runBlocking {
+        val settings = dataStore.getSettings()
+        assertThat(settings.lockPortrait).isTrue()
+    }
+
+    @Test
+    fun `default compassAutoRotate is true`() = runBlocking {
+        val settings = dataStore.getSettings()
+        assertThat(settings.compassAutoRotate).isTrue()
+    }
+
+    @Test
+    fun `updateLockPortrait round-trips correctly`() = runBlocking {
+        dataStore.updateLockPortrait(false)
+        val settings = dataStore.getSettings()
+        assertThat(settings.lockPortrait).isFalse()
+    }
+
+    @Test
+    fun `updateCompassAutoRotate round-trips correctly`() = runBlocking {
+        dataStore.updateCompassAutoRotate(false)
+        val settings = dataStore.getSettings()
+        assertThat(settings.compassAutoRotate).isFalse()
+    }
 }
