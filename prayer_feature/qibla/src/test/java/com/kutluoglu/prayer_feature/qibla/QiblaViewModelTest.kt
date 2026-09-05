@@ -42,6 +42,7 @@ class QiblaViewModelTest {
     private val observeSettingsUseCase = mockk<ObserveSettingsUseCase>(relaxed = true)
     private val updateLockPortraitUseCase = mockk<UpdateLockPortraitUseCase>(relaxed = true)
     private val updateCompassAutoRotateUseCase = mockk<UpdateCompassAutoRotateUseCase>(relaxed = true)
+    private val settingsFlow = MutableStateFlow(Settings())
     private lateinit var viewModel: QiblaViewModel
 
     private val location = LocationData(
@@ -64,7 +65,7 @@ class QiblaViewModelTest {
         }
 
         coEvery { getSettingsUseCase() } returns Settings()
-        every { observeSettingsUseCase() } returns MutableStateFlow(Settings())
+        every { observeSettingsUseCase() } returns settingsFlow
 
         Dispatchers.setMain(UnconfinedTestDispatcher())
         provider.set(location)
@@ -150,22 +151,30 @@ class QiblaViewModelTest {
     }
 
     @Test
-    fun `OnStart loads default preferences lockPortrait true compassAutoRotate true`() = runTest {
-        val qiblaState = QiblaState(
-            qiblaBearing = 150.0,
-            deviceAzimuth = 10.0f,
-            qiblaAngle = 140.0f,
-            sensorAccuracy = 3
-        )
-        coEvery { calculateQiblaUseCase.observeQiblaDirection(location.latitude, location.longitude) } returns
-            MutableStateFlow(qiblaState)
+    fun `OnStart loads persisted lockPortrait and compassAutoRotate from settings`() = runTest {
+        coEvery { getSettingsUseCase() } returns Settings(lockPortrait = false, compassAutoRotate = false)
+        settingsFlow.value = Settings(lockPortrait = false, compassAutoRotate = false)
 
         viewModel.onEvent(QiblaEvent.OnStart)
 
         viewModel.uiState.test {
             val state = awaitItem()
-            assertThat(state.lockPortrait).isTrue()
-            assertThat(state.compassAutoRotate).isTrue()
+            assertThat(state.lockPortrait).isFalse()
+            assertThat(state.compassAutoRotate).isFalse()
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `observeSettings flow updates lockPortrait and compassAutoRotate in ui state`() = runTest {
+        viewModel.onEvent(QiblaEvent.OnStart)
+
+        settingsFlow.value = Settings(lockPortrait = false, compassAutoRotate = false)
+
+        viewModel.uiState.test {
+            val state = awaitItem()
+            assertThat(state.lockPortrait).isFalse()
+            assertThat(state.compassAutoRotate).isFalse()
             cancelAndIgnoreRemainingEvents()
         }
     }
