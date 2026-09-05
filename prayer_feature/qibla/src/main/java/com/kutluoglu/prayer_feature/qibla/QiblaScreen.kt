@@ -44,6 +44,7 @@ fun QiblaScreen(
                     qiblaBearing = uiState.qiblaBearing,
                     deviceAzimuth = uiState.deviceAzimuth,
                     qiblaAngle = uiState.qiblaAngle,
+                    compassAutoRotate = uiState.compassAutoRotate,
                     sensorAccuracy = uiState.sensorAccuracy,
                     locationName = uiState.locationName
                 )
