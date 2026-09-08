@@ -5,6 +5,7 @@ import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
+import com.google.firebase.messaging.FirebaseMessaging
 import com.kutluoglu.prayer_notifications.data.NotificationSettingsDataStore
 import org.koin.core.annotation.ComponentScan
 import org.koin.core.annotation.Configuration
@@ -31,4 +32,7 @@ object PrayerNotificationsModule {
                 /* handleAudioFocus = */ false,
             )
             .build()
+
+    @Single
+    fun provideFirebaseMessaging(): FirebaseMessaging = FirebaseMessaging.getInstance()
 }
