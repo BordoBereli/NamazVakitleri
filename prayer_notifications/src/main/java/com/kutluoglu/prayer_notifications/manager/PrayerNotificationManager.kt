@@ -269,6 +269,7 @@ class PrayerNotificationManager(
             Log.w("PrayerNotificationManager", "Notifications disabled; skipping push")
             return
         }
+        ensureAnnouncementsChannel()
         val contentIntent = PendingIntent.getActivity(
             context, 0,
             context.packageManager.getLaunchIntentForPackage(context.packageName),
@@ -284,6 +285,19 @@ class PrayerNotificationManager(
             .setContentIntent(contentIntent)
             .build()
         notificationManager.notify(NOTIFICATION_ID_PUSH, notification)
+    }
+
+    private fun ensureAnnouncementsChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
+            notificationManager.getNotificationChannel(CHANNEL_ANNOUNCEMENTS) == null
+        ) {
+            createChannel(
+                CHANNEL_ANNOUNCEMENTS,
+                localizedString(R.string.channel_announcements),
+                NotificationManager.IMPORTANCE_DEFAULT,
+                NotificationSettings()
+            )
+        }
     }
 
     private fun formatRemaining(millis: Long): String {

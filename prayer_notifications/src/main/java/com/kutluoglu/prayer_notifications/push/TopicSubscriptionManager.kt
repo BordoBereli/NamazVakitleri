@@ -2,6 +2,7 @@ package com.kutluoglu.prayer_notifications.push
 
 import com.kutluoglu.prayer.model.location.LocationData
 import org.koin.core.annotation.Single
+import java.util.Locale
 
 /**
  * Keeps the device subscribed to the FCM topics relevant to the current
@@ -43,7 +44,7 @@ class TopicSubscriptionManager(
         const val TOPIC_NAMESPACE_CITY = "city_"
 
         private fun String.normalizeTopicSegment(): String {
-            val normalized = lowercase()
+            val normalized = lowercase(Locale.ROOT)
                 .replace(Regex("[^a-z0-9_-]"), "-")
                 .trim('-')
             return normalized.ifEmpty { "unknown" }

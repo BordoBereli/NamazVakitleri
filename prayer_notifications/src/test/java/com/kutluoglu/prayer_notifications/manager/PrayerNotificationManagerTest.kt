@@ -80,6 +80,15 @@ class PrayerNotificationManagerTest {
     }
 
     @Test
+    fun `showPushNotification creates announcements channel if missing`() {
+        manager.showPushNotification("Eid message", "Ramadan Kareem")
+        val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notification = shadowOf(nm).allNotifications.single()
+        assertThat(notification.channelId).isEqualTo("announcements")
+        assertThat(shadowOf(nm).notificationChannels.map { it.id }).contains("announcements")
+    }
+
+    @Test
     fun `showPrayerNotification localizes prayer name and content`() {
         val original = Locale.getDefault()
         try {

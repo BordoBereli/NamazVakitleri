@@ -6,6 +6,7 @@ import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.util.Locale
 
 class TopicSubscriptionManagerTest {
 
@@ -97,5 +98,19 @@ class TopicSubscriptionManagerTest {
         coVerify(exactly = 1) { client.subscribe("country_tr") }
         coVerify(exactly = 1) { client.subscribe("city_istanbul") }
         coVerify(exactly = 0) { client.unsubscribe(any()) }
+    }
+
+    @Test
+    fun `city topic normalization is locale independent`() = runTest {
+        val original = Locale.getDefault()
+        try {
+            Locale.setDefault(Locale("tr"))
+            manager.syncForLocation(location(city = "Istanbul"))
+
+            coVerify { client.subscribe("city_istanbul") }
+            coVerify(exactly = 0) { client.subscribe("city_stanbul") }
+        } finally {
+            Locale.setDefault(original)
+        }
     }
 }
