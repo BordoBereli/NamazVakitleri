@@ -58,6 +58,8 @@ dependencies {
     implementation(libs.media3.common)
     implementation(libs.media3.exoplayer)
     implementation(libs.media3.session)
+    implementation(libs.firebase.messaging)
+    implementation(libs.kotlinx.coroutines.play.services)
 
     api(platform(libs.koin.bom))
     api(libs.koin.core)
