@@ -10,6 +10,7 @@ import com.kutluoglu.core.designsystem.utils.DisplayProvider
 import com.kutluoglu.namazvakitleri.analytics.AnalyticsUserPropertiesManager
 import com.kutluoglu.namazvakitleri.locale.LocaleManager
 import com.kutluoglu.namazvakitleri.notifications.NotificationRescheduler
+import com.kutluoglu.namazvakitleri.push.PushTopicCoordinator
 import com.kutluoglu.prayer_settings.data.local.SettingsDataStore
 import com.kutluoglu.prayer_settings.domain.repository.SettingsRepository
 import com.kutluoglu.prayer_widget.WidgetMinuteScheduler
@@ -47,6 +48,7 @@ class NamazVakitleriApplication : Application() {
         setupActivityLifecycleCallbacks()
         startAnalyticsUserProperties()
         startNotificationRescheduler()
+        startPushTopicCoordinator()
         startWidgetRefresher()
         startWidgetMinuteRefresh()
     }
@@ -80,6 +82,17 @@ class NamazVakitleriApplication : Application() {
             }.onFailure {
                 // Rescheduling must never crash the app.
                 android.util.Log.e("NamazVakitleriApp", "Failed to start notification rescheduler -> ${it.message}")
+            }
+        }
+    }
+
+    private fun startPushTopicCoordinator() {
+        applicationScope.launch {
+            runCatching {
+                get<PushTopicCoordinator>().start(applicationScope)
+            }.onFailure {
+                // Topic subscription must never crash the app.
+                android.util.Log.e("NamazVakitleriApp", "Failed to start push topic coordinator -> ${it.message}")
             }
         }
     }

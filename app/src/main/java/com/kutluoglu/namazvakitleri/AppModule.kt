@@ -11,6 +11,7 @@ import com.kutluoglu.prayer_feature.settings.location.MyLocationsViewModel
 import com.kutluoglu.prayer_feature.settings.notifications.NotificationsViewModel
 import com.kutluoglu.namazvakitleri.locale.LocaleManager
 import com.kutluoglu.namazvakitleri.notifications.NotificationRescheduler
+import com.kutluoglu.namazvakitleri.push.PushTopicCoordinator
 import com.kutluoglu.prayer_settings.data.local.SettingsDataStore
 import com.kutluoglu.prayer_settings.data.repository.SettingsRepositoryImpl
 import com.kutluoglu.prayer_settings.domain.repository.LocationRepository
@@ -43,6 +44,9 @@ val appModule: Module = module {
 
     // NotificationRescheduler (reschedules notification alarms when prayer times change)
     single { NotificationRescheduler(get(), get(), get()) }
+
+    // PushTopicCoordinator (subscribes to FCM topics for the selected location)
+    single { PushTopicCoordinator(get(), get()) }
 
     // WidgetRefresher (refreshes the home-screen widget when location/settings change)
     single { WidgetRefresher.create(get(), get(), get()) }
