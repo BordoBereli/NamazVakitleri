@@ -4,6 +4,7 @@
     <string name="channel_adhan">Adzan</string>
     <string name="channel_countdown">Hitung mundur salat berikutnya</string>
     <string name="channel_reminders">Pengingat</string>
+    <string name="channel_announcements">Pengumuman</string>
 
     <string name="notification_prayer_time">Waktu %1$s telah tiba</string>
     <string name="notification_countdown_title">%1$s · %2$s</string>

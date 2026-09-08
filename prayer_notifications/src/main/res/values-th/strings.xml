@@ -4,6 +4,7 @@
     <string name="channel_adhan">อาซาน</string>
     <string name="channel_countdown">การนับถอยหลังละหมาดถัดไป</string>
     <string name="channel_reminders">การแจ้งเตือน</string>
+    <string name="channel_announcements">ประกาศ</string>
 
     <string name="notification_prayer_time">ถึงเวลาละหมาด %1$s</string>
     <string name="notification_countdown_title">%1$s · %2$s</string>

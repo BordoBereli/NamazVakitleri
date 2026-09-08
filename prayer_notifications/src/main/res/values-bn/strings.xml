@@ -4,6 +4,7 @@
     <string name="channel_adhan">আজান</string>
     <string name="channel_countdown">পরবর্তী নামাজের কাউন্টডাউন</string>
     <string name="channel_reminders">অনুস্মারক</string>
+    <string name="channel_announcements">ঘোষণা</string>
 
     <string name="notification_prayer_time">%1$s এর সময় এখন</string>
     <string name="notification_countdown_title">%1$s · %2$s</string>

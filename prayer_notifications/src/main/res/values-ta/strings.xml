@@ -4,6 +4,7 @@
     <string name="channel_adhan">அதான்</string>
     <string name="channel_countdown">அடுத்த தொழுகை கவுண்டவுன்</string>
     <string name="channel_reminders">நினைவூட்டல்கள்</string>
+    <string name="channel_announcements">அறிவிப்புகள்</string>
 
     <string name="notification_prayer_time">%1$s நேரம் இப்போது</string>
     <string name="notification_countdown_title">%1$s · %2$s</string>

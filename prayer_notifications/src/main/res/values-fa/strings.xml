@@ -4,6 +4,7 @@
     <string name="channel_adhan">اذان</string>
     <string name="channel_countdown">شمارش معکوس نماز بعدی</string>
     <string name="channel_reminders">یادآوری‌ها</string>
+    <string name="channel_announcements">اطلاعیه‌ها</string>
 
     <string name="notification_prayer_time">وقت %1$s فرا رسید</string>
     <string name="notification_countdown_title">%1$s · %2$s</string>

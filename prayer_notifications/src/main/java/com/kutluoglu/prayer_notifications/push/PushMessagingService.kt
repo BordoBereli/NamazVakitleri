@@ -19,7 +19,8 @@ class PushMessagingService : FirebaseMessagingService(), KoinComponent {
     private val topicSubscriptionManager: TopicSubscriptionManager by inject()
 
     override fun onMessageReceived(message: RemoteMessage) {
-        messageHandler.handle(message.data)
+        runCatching { messageHandler.handle(message.data) }
+            .onFailure { Log.e(TAG, "Failed to handle push message -> ${it.message}") }
     }
 
     override fun onNewToken(token: String) {

@@ -4,6 +4,7 @@
     <string name="channel_adhan">अज़ान</string>
     <string name="channel_countdown">अगली नमाज़ की काउंटडाउन</string>
     <string name="channel_reminders">अनुस्मारक</string>
+    <string name="channel_announcements">घोषणाएँ</string>
 
     <string name="notification_prayer_time">%1$s का समय हो गया है</string>
     <string name="notification_countdown_title">%1$s · %2$s</string>

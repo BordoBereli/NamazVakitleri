@@ -4,6 +4,7 @@
     <string name="channel_adhan">Adhan</string>
     <string name="channel_countdown">Cuenta atrás para la próxima oración</string>
     <string name="channel_reminders">Recordatorios</string>
+    <string name="channel_announcements">Anuncios</string>
 
     <string name="notification_prayer_time">Es hora de %1$s</string>
     <string name="notification_countdown_title">%1$s · %2$s</string>
