@@ -32,6 +32,7 @@ import androidx.glance.layout.padding
 import androidx.glance.layout.size
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
+import androidx.glance.text.TextAlign
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import com.kutluoglu.prayer_widget.R
@@ -151,8 +152,10 @@ private fun SmallLayout(data: WidgetData) {
                 style = TextStyle(
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Bold,
-                    color = ColorProvider(Gold)
-                )
+                    color = ColorProvider(Gold),
+                    textAlign = TextAlign.Center
+                ),
+                maxLines = 2
             )
         }
     }
@@ -194,7 +197,11 @@ private fun MediumLayout(data: WidgetData) {
                 size = 64.dp,
                 modifier = GlanceModifier.defaultWeight()
             ) {
-                Text(data.countdownText, style = TextStyle(fontSize = 13.sp, fontWeight = FontWeight.Bold, color = ColorProvider(Gold)))
+                Text(
+                    data.countdownText,
+                    style = TextStyle(fontSize = 13.sp, fontWeight = FontWeight.Bold, color = ColorProvider(Gold), textAlign = TextAlign.Center),
+                    maxLines = 2
+                )
             }
         }
     }
@@ -225,7 +232,11 @@ private fun LargeLayout(data: WidgetData) {
                     horizontalAlignment = Alignment.Horizontal.End
                 ) {
                     ProgressRing(progress = data.ringProgress, size = 64.dp) {
-                        Text(data.countdownText, style = TextStyle(fontSize = 13.sp, fontWeight = FontWeight.Bold, color = ColorProvider(Gold)))
+                        Text(
+                            data.countdownText,
+                            style = TextStyle(fontSize = 13.sp, fontWeight = FontWeight.Bold, color = ColorProvider(Gold), textAlign = TextAlign.Center),
+                            maxLines = 2
+                        )
                     }
                     Text(
                         context.getString(R.string.widget_until_next, untilNextPrayerName(context, data.nextPrayerName)),
@@ -281,7 +292,7 @@ private fun ProgressRing(
             modifier = GlanceModifier.fillMaxSize()
         )
         Box(
-            modifier = GlanceModifier.fillMaxSize().padding(size * 0.2f),
+            modifier = GlanceModifier.fillMaxSize().padding(size * 0.12f),
             contentAlignment = Alignment.Center
         ) { content() }
     }

@@ -67,9 +67,12 @@ class RingTextSpacingTest {
         return (maxX - minX) / 2f / density()
     }
 
-    private fun assertCountdownFitsInRing(ringSizeDp: Float, textSp: Float, minGapDp: Float) {
+    private fun assertCountdownFitsInRing(ringSizeDp: Float, textSp: Float, minGapDp: Float, countdown: String) {
         val innerRadius = ringInnerRadius(ringSizeDp)
-        val halfWidth = textHalfWidth(ringSizeDp, "2s 15d", textSp)
+        // The countdown wraps at the space, so the widest single line is the
+        // constraint for fitting inside the ring.
+        val widestLine = countdown.split(" ").maxByOrNull { textHalfWidth(ringSizeDp, it, textSp) } ?: countdown
+        val halfWidth = textHalfWidth(ringSizeDp, widestLine, textSp)
         val gap = innerRadius - halfWidth
         assertThat(gap)
             .isAtLeast(minGapDp)
@@ -77,16 +80,23 @@ class RingTextSpacingTest {
 
     @Test
     fun `small layout countdown text keeps spacing from ring`() {
-        assertCountdownFitsInRing(ringSizeDp = 64f, textSp = 13f, minGapDp = 2f)
+        assertCountdownFitsInRing(ringSizeDp = 64f, textSp = 13f, minGapDp = 2f, countdown = "2s 15d")
     }
 
     @Test
     fun `medium layout countdown text keeps spacing from ring`() {
-        assertCountdownFitsInRing(ringSizeDp = 64f, textSp = 13f, minGapDp = 2f)
+        assertCountdownFitsInRing(ringSizeDp = 64f, textSp = 13f, minGapDp = 2f, countdown = "2s 15d")
     }
 
     @Test
     fun `large layout countdown text keeps spacing from ring`() {
-        assertCountdownFitsInRing(ringSizeDp = 64f, textSp = 13f, minGapDp = 2f)
+        assertCountdownFitsInRing(ringSizeDp = 64f, textSp = 13f, minGapDp = 2f, countdown = "2s 15d")
+    }
+
+    @Test
+    fun `widest wrapped countdown line keeps spacing from ring for long locales`() {
+        for (countdown in listOf("4s 44d", "4h 44m", "4ч 44мин", "4Std. 44Min.")) {
+            assertCountdownFitsInRing(ringSizeDp = 64f, textSp = 13f, minGapDp = 2f, countdown = countdown)
+        }
     }
 }
