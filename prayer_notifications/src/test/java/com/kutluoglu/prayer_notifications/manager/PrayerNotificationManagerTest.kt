@@ -25,12 +25,12 @@ class PrayerNotificationManagerTest {
     private val manager = PrayerNotificationManager(context)
 
     @Test
-    fun `createChannels registers four channels`() {
+    fun `createChannels registers five channels`() {
         manager.createChannels()
         val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val channels = shadowOf(nm).notificationChannels
         assertThat(channels.map { it.id }).containsExactly(
-            "prayer_alerts", "adhan", "countdown", "reminders"
+            "prayer_alerts", "adhan", "countdown", "reminders", "announcements"
         )
     }
 
@@ -56,6 +56,27 @@ class PrayerNotificationManagerTest {
         val channels = shadowOf(nm).notificationChannels
         assertThat(channels.first { it.id == "adhan" }.sound).isNull()
         assertThat(channels.first { it.id == "prayer_alerts" }.sound).isNotNull()
+    }
+
+    @Test
+    fun `showPushNotification posts on announcements channel with title and body`() {
+        manager.createChannels()
+        manager.showPushNotification("Eid message", "Ramadan Kareem")
+        val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notification = shadowOf(nm).allNotifications.single()
+        assertThat(notification.channelId).isEqualTo("announcements")
+        assertThat(notification.extras.getString("android.title")).isEqualTo("Eid message")
+        assertThat(notification.extras.getString("android.text")).isEqualTo("Ramadan Kareem")
+        assertThat(notification.contentIntent).isNotNull()
+    }
+
+    @Test
+    fun `showPushNotification respects disabled notifications`() {
+        manager.createChannels()
+        val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        shadowOf(nm).setNotificationsEnabled(false)
+        manager.showPushNotification("Eid message", "Ramadan Kareem")
+        assertThat(shadowOf(nm).allNotifications).isEmpty()
     }
 
     @Test

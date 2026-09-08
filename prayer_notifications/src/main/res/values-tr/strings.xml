@@ -4,6 +4,7 @@
     <string name="channel_adhan">Ezan</string>
     <string name="channel_countdown">Sonraki namaz geri sayımı</string>
     <string name="channel_reminders">Hatırlatmalar</string>
+    <string name="channel_announcements">Duyurular</string>
 
     <string name="notification_prayer_time">%1$s vakti geldi</string>
     <string name="notification_countdown_title">%1$s · %2$s</string>

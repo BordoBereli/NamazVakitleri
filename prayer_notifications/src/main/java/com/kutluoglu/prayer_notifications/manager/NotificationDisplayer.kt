@@ -47,4 +47,6 @@ interface NotificationDisplayer {
     fun showSahurEndNotification()
 
     fun showIftarNotification()
+
+    fun showPushNotification(title: String, body: String)
 }

@@ -8,7 +8,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Build
+import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import com.kutluoglu.prayer_notifications.R
 import com.kutluoglu.prayer_notifications.domain.NotificationSettings
 import com.kutluoglu.prayer_notifications.domain.SpecialDay
@@ -39,6 +41,8 @@ class PrayerNotificationManager(
         const val NOTIFICATION_ID_ADHAN = 1009
         const val NOTIFICATION_ID_SAHUR_END = 1010
         const val NOTIFICATION_ID_IFTAR = 1011
+        const val CHANNEL_ANNOUNCEMENTS = "announcements"
+        const val NOTIFICATION_ID_PUSH = 1012
     }
 
     private val notificationManager: NotificationManager =
@@ -67,6 +71,12 @@ class PrayerNotificationManager(
         createChannel(
             CHANNEL_REMINDERS,
             localizedString(R.string.channel_reminders),
+            NotificationManager.IMPORTANCE_DEFAULT,
+            settings
+        )
+        createChannel(
+            CHANNEL_ANNOUNCEMENTS,
+            localizedString(R.string.channel_announcements),
             NotificationManager.IMPORTANCE_DEFAULT,
             settings
         )
@@ -252,6 +262,28 @@ class PrayerNotificationManager(
             .setAutoCancel(true)
             .build()
         notificationManager.notify(NOTIFICATION_ID_IFTAR, notification)
+    }
+
+    override fun showPushNotification(title: String, body: String) {
+        if (!NotificationManagerCompat.from(context).areNotificationsEnabled()) {
+            Log.w("PrayerNotificationManager", "Notifications disabled; skipping push")
+            return
+        }
+        val contentIntent = PendingIntent.getActivity(
+            context, 0,
+            context.packageManager.getLaunchIntentForPackage(context.packageName),
+            PendingIntent.FLAG_IMMUTABLE
+        )
+        val notification = NotificationCompat.Builder(context, CHANNEL_ANNOUNCEMENTS)
+            .setSmallIcon(R.drawable.ic_notification)
+            .setContentTitle(title)
+            .setContentText(body)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(body))
+            .setAutoCancel(true)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentIntent(contentIntent)
+            .build()
+        notificationManager.notify(NOTIFICATION_ID_PUSH, notification)
     }
 
     private fun formatRemaining(millis: Long): String {
