@@ -55,6 +55,7 @@
     <string name="reorder">மறுவரிசைப்படுத்து</string>
     <string name="no_locations_yet">இன்னும் இருப்பிடங்கள் இல்லை — இருப்பிடம் சேர் பொத்தானைப் பயன்படுத்தி ஒன்றைச் சேர்க்கவும்</string>
     <string name="no_location_selected">எந்த இடமும் தேர்ந்தெடுக்கப்படவில்லை. தொழுகை நேரங்களைக் காண ஒரு இடத்தைத் தேர்ந்தெடுக்கவும்.</string>
+    <string name="location_permission_required">உங்கள் தற்போதைய இருப்பிடத்தைப் பயன்படுத்த இருப்பிட அனுமதி தேவை.</string>
     <string name="language_tr">துருக்கியம்</string>
     <string name="language_en">ஆங்கிலம்</string>
     <string name="language_ar">அரபு</string>
@@ -76,12 +77,15 @@
     <string name="notifications_section_prayer_times">தொழுகை நேரம்</string>
     <string name="notifications_section_reminders">நினைவூட்டல்கள்</string>
     <string name="notifications_section_general">பொது</string>
+    <string name="prayer_imsak">இம்சாக்</string>
+    <string name="prayer_sunrise">சூரிய உதயம்</string>
     <string name="prayer_dhuhr">ஜுஹ்ர்</string>
     <string name="prayer_asr">அஸ்ர்</string>
     <string name="prayer_maghrib">மக்ரிப்</string>
     <string name="prayer_isha">இஷா</string>
     <string name="adhan">அதான்</string>
     <string name="adhan_volume">அதான் ஒலி அளவு</string>
+    <string name="adhan_for_prayers">தொழுகைகளுக்கான அதான்</string>
     <string name="countdown">கவுண்டவுன்</string>
     <string name="pre_prayer_reminder">தொழுகைக்கு முன் நினைவூட்டல்</string>
     <string name="daily_reminder">தினசரி நினைவூட்டல்</string>
@@ -108,4 +112,7 @@
     <string name="battery_optimization_not_now">இப்போது இல்லை</string>
     <string name="open_settings">அமைப்புகளைத் திற</string>
     <string name="version_format">பதிப்பு %1$s (%2$d)</string>
+    <string name="qibla_settings">கிப்லா</string>
+    <string name="lock_portrait">திரையை போர்ட்ரெய்ட்டில் பூட்டு</string>
+    <string name="auto_rotate_compass">திசைகாட்டியை தானாக சுழற்று</string>
 </resources>

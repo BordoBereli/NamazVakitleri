@@ -78,12 +78,15 @@
     <string name="notifications_section_prayer_times">Prayer Times</string>
     <string name="notifications_section_reminders">Reminders</string>
     <string name="notifications_section_general">General</string>
+    <string name="prayer_imsak">Imsak</string>
+    <string name="prayer_sunrise">Sunrise</string>
     <string name="prayer_dhuhr">Dhuhr</string>
     <string name="prayer_asr">Asr</string>
     <string name="prayer_maghrib">Maghrib</string>
     <string name="prayer_isha">Isha</string>
     <string name="adhan">Adhan</string>
     <string name="adhan_volume">Ezan loudness</string>
+    <string name="adhan_for_prayers">Adhan for prayers</string>
     <string name="countdown">Countdown</string>
     <string name="pre_prayer_reminder">Pre-prayer reminder</string>
     <string name="daily_reminder">Daily reminder</string>

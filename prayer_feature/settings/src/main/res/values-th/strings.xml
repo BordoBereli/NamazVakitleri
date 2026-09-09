@@ -55,6 +55,7 @@
     <string name="reorder">จัดเรียงใหม่</string>
     <string name="no_locations_yet">ยังไม่มีตำแหน่ง — เพิ่มหนึ่งรายการด้วยปุ่มเพิ่มตำแหน่ง</string>
     <string name="no_location_selected">ยังไม่ได้เลือกสถานที่ กรุณาเลือกสถานที่เพื่อดูเวลาละหมาด</string>
+    <string name="location_permission_required">ต้องได้รับอนุญาตตำแหน่งที่ตั้งเพื่อใช้ตำแหน่งปัจจุบันของคุณ</string>
     <string name="language_tr">ตุรกี</string>
     <string name="language_en">อังกฤษ</string>
     <string name="language_ar">อาหรับ</string>
@@ -76,12 +77,15 @@
     <string name="notifications_section_prayer_times">เวลาละหมาด</string>
     <string name="notifications_section_reminders">การแจ้งเตือน</string>
     <string name="notifications_section_general">ทั่วไป</string>
+    <string name="prayer_imsak">อิมซัก</string>
+    <string name="prayer_sunrise">พระอาทิตย์ขึ้น</string>
     <string name="prayer_dhuhr">ดุฮ์รี</string>
     <string name="prayer_asr">อัสร์</string>
     <string name="prayer_maghrib">มักริบ</string>
     <string name="prayer_isha">อิชาอ์</string>
     <string name="adhan">อาซาน</string>
     <string name="adhan_volume">ระดับเสียงอาซาน</string>
+    <string name="adhan_for_prayers">อาซานสำหรับละหมาด</string>
     <string name="countdown">การนับถอยหลัง</string>
     <string name="pre_prayer_reminder">การเตือนก่อนละหมาด</string>
     <string name="daily_reminder">การเตือนรายวัน</string>
@@ -108,4 +112,7 @@
     <string name="battery_optimization_not_now">ไม่ใช่ตอนนี้</string>
     <string name="open_settings">เปิดการตั้งค่า</string>
     <string name="version_format">เวอร์ชัน %1$s (%2$d)</string>
+    <string name="qibla_settings">กิบลัต</string>
+    <string name="lock_portrait">ล็อกหน้าจอเป็นแนวตั้ง</string>
+    <string name="auto_rotate_compass">หมุนเข็มทิศอัตโนมัติ</string>
 </resources>

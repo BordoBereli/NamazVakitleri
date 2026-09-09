@@ -55,6 +55,7 @@
     <string name="reorder">مرتب‌سازی مجدد</string>
     <string name="no_locations_yet">هنوز موقعیتی وجود ندارد — با دکمه افزودن موقعیت یکی اضافه کنید</string>
     <string name="no_location_selected">هیچ مکانی انتخاب نشده است. لطفاً برای مشاهده اوقات نماز مکانی را انتخاب کنید.</string>
+    <string name="location_permission_required">برای استفاده از موقعیت فعلی شما، مجوز موقعیت لازم است.</string>
     <string name="language_tr">ترکی</string>
     <string name="language_en">انگلیسی</string>
     <string name="language_ar">عربی</string>
@@ -76,12 +77,15 @@
     <string name="notifications_section_prayer_times">اوقات نماز</string>
     <string name="notifications_section_reminders">یادآوریها</string>
     <string name="notifications_section_general">عمومی</string>
+    <string name="prayer_imsak">امساک</string>
+    <string name="prayer_sunrise">طلوع آفتاب</string>
     <string name="prayer_dhuhr">ظهر</string>
     <string name="prayer_asr">عصر</string>
     <string name="prayer_maghrib">مغرب</string>
     <string name="prayer_isha">عشاء</string>
     <string name="adhan">اذان</string>
     <string name="adhan_volume">صدای اذان</string>
+    <string name="adhan_for_prayers">اذان برای نمازها</string>
     <string name="countdown">شمارش معکوس</string>
     <string name="pre_prayer_reminder">یادآوری قبل از نماز</string>
     <string name="daily_reminder">یادآوری روزانه</string>
@@ -108,4 +112,7 @@
     <string name="battery_optimization_not_now">الان نه</string>
     <string name="open_settings">باز کردن تنظیمات</string>
     <string name="version_format">نسخه %1$s (%2$d)</string>
+    <string name="qibla_settings">قبله</string>
+    <string name="lock_portrait">قفل کردن صفحه در حالت عمودی</string>
+    <string name="auto_rotate_compass">چرخش خودکار قطب‌نما</string>
 </resources>

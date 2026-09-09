@@ -38,4 +38,5 @@
     <string name="recent_searches">Recherches récentes</string>
     <string name="clear_all">Tout effacer</string>
     <string name="sort">Trier</string>
+    <string name="clear_cache_confirmation">Cela videra le cache. Voulez-vous continuer ?</string>
 </resources>

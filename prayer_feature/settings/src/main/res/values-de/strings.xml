@@ -55,6 +55,7 @@
     <string name="reorder">Neu anordnen</string>
     <string name="no_locations_yet">Noch keine Standorte — fügen Sie einen mit der Schaltfläche Standort hinzufügen hinzu</string>
     <string name="no_location_selected">Kein Standort ausgewählt. Bitte wählen Sie einen Standort, um Gebetszeiten zu sehen.</string>
+    <string name="location_permission_required">Für die Nutzung Ihres aktuellen Standorts ist die Standortberechtigung erforderlich.</string>
     <string name="language_tr">Türkisch</string>
     <string name="language_en">Englisch</string>
     <string name="language_ar">Arabisch</string>
@@ -76,12 +77,15 @@
     <string name="notifications_section_prayer_times">Gebetszeiten</string>
     <string name="notifications_section_reminders">Erinnerungen</string>
     <string name="notifications_section_general">Allgemein</string>
+    <string name="prayer_imsak">Imsak</string>
+    <string name="prayer_sunrise">Sonnenaufgang</string>
     <string name="prayer_dhuhr">Dhuhr</string>
     <string name="prayer_asr">Asr</string>
     <string name="prayer_maghrib">Maghrib</string>
     <string name="prayer_isha">Isha</string>
     <string name="adhan">Adhan</string>
     <string name="adhan_volume">Adhan-Lautstärke</string>
+    <string name="adhan_for_prayers">Adhan für Gebete</string>
     <string name="countdown">Countdown</string>
     <string name="pre_prayer_reminder">Erinnerung vor dem Gebet</string>
     <string name="daily_reminder">Tägliche Erinnerung</string>
@@ -108,4 +112,7 @@
     <string name="battery_optimization_not_now">Später</string>
     <string name="open_settings">Einstellungen öffnen</string>
     <string name="version_format">Version %1$s (%2$d)</string>
+    <string name="qibla_settings">Qibla</string>
+    <string name="lock_portrait">Bildschirm im Hochformat sperren</string>
+    <string name="auto_rotate_compass">Kompass automatisch drehen</string>
 </resources>

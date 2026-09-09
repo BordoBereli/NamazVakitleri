@@ -55,6 +55,7 @@
     <string name="reorder">Susun semula</string>
     <string name="no_locations_yet">Belum ada lokasi — tambah satu dengan butang Tambah lokasi</string>
     <string name="no_location_selected">Tiada lokasi dipilih. Sila pilih lokasi untuk melihat waktu solat.</string>
+    <string name="location_permission_required">Kebenaran lokasi diperlukan untuk menggunakan lokasi semasa anda.</string>
     <string name="language_tr">Turki</string>
     <string name="language_en">Inggeris</string>
     <string name="language_ar">Arab</string>
@@ -76,12 +77,15 @@
     <string name="notifications_section_prayer_times">Waktu Solat</string>
     <string name="notifications_section_reminders">Peringatan</string>
     <string name="notifications_section_general">Umum</string>
+    <string name="prayer_imsak">Imsak</string>
+    <string name="prayer_sunrise">Syuruk</string>
     <string name="prayer_dhuhr">Zuhur</string>
     <string name="prayer_asr">Asar</string>
     <string name="prayer_maghrib">Maghrib</string>
     <string name="prayer_isha">Isyak</string>
     <string name="adhan">Azan</string>
     <string name="adhan_volume">Kelantangan Azan</string>
+    <string name="adhan_for_prayers">Azan untuk solat</string>
     <string name="countdown">Kiraan detik</string>
     <string name="pre_prayer_reminder">Peringatan sebelum solat</string>
     <string name="daily_reminder">Peringatan harian</string>
@@ -108,4 +112,7 @@
     <string name="battery_optimization_not_now">Tidak sekarang</string>
     <string name="open_settings">Buka Tetapan</string>
     <string name="version_format">Versi %1$s (%2$d)</string>
+    <string name="qibla_settings">Kiblat</string>
+    <string name="lock_portrait">Kunci skrin ke mod potret</string>
+    <string name="auto_rotate_compass">Putar kompas secara automatik</string>
 </resources>

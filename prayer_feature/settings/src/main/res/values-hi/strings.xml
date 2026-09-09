@@ -55,6 +55,7 @@
     <string name="reorder">पुनः क्रमबद्ध करें</string>
     <string name="no_locations_yet">अभी कोई स्थान नहीं — स्थान जोड़ें बटन से एक जोड़ें</string>
     <string name="no_location_selected">कोई स्थान चयनित नहीं है। नमाज़ का समय देखने के लिए कृपया स्थान चुनें।</string>
+    <string name="location_permission_required">अपना वर्तमान स्थान उपयोग करने के लिए स्थान अनुमति आवश्यक है।</string>
     <string name="language_tr">तुर्की</string>
     <string name="language_en">अंग्रेज़ी</string>
     <string name="language_ar">अरबी</string>
@@ -76,12 +77,15 @@
     <string name="notifications_section_prayer_times">नमाज़ का समय</string>
     <string name="notifications_section_reminders">अनुस्मारक</string>
     <string name="notifications_section_general">सामान्य</string>
+    <string name="prayer_imsak">इमसाक</string>
+    <string name="prayer_sunrise">सूर्योदय</string>
     <string name="prayer_dhuhr">ज़ुहर</string>
     <string name="prayer_asr">अस्र</string>
     <string name="prayer_maghrib">मग़रिब</string>
     <string name="prayer_isha">ईशा</string>
     <string name="adhan">अज़ान</string>
     <string name="adhan_volume">अज़ान की आवाज़</string>
+    <string name="adhan_for_prayers">नमाज़ों के लिए अज़ान</string>
     <string name="countdown">काउंटडाउन</string>
     <string name="pre_prayer_reminder">नमाज़ से पहले अनुस्मारक</string>
     <string name="daily_reminder">दैनिक अनुस्मारक</string>
@@ -108,4 +112,7 @@
     <string name="battery_optimization_not_now">अभी नहीं</string>
     <string name="open_settings">सेटिंग्स खोलें</string>
     <string name="version_format">संस्करण %1$s (%2$d)</string>
+    <string name="qibla_settings">क़िबला</string>
+    <string name="lock_portrait">स्क्रीन को पोर्ट्रेट में लॉक करें</string>
+    <string name="auto_rotate_compass">कम्पास को स्वतः घुमाएँ</string>
 </resources>

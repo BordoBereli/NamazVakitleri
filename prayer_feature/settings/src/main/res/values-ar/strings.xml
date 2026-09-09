@@ -55,6 +55,7 @@
     <string name="reorder">إعادة ترتيب</string>
     <string name="no_locations_yet">لا توجد مواقع بعد — أضف واحداً باستخدام زر إضافة موقع</string>
     <string name="no_location_selected">لم يتم تحديد موقع. يرجى اختيار موقع لعرض أوقات الصلاة.</string>
+    <string name="location_permission_required">إذن الموقع مطلوب لاستخدام موقعك الحالي.</string>
     <string name="language_tr">التركية</string>
     <string name="language_en">الإنجليزية</string>
     <string name="language_ar">العربية</string>
@@ -76,12 +77,15 @@
     <string name="notifications_section_prayer_times">أوقات الصلاة</string>
     <string name="notifications_section_reminders">التذكيرات</string>
     <string name="notifications_section_general">عام</string>
+    <string name="prayer_imsak">الإمساك</string>
+    <string name="prayer_sunrise">الشروق</string>
     <string name="prayer_dhuhr">الظهر</string>
     <string name="prayer_asr">العصر</string>
     <string name="prayer_maghrib">المغرب</string>
     <string name="prayer_isha">العشاء</string>
     <string name="adhan">الأذان</string>
     <string name="adhan_volume">حجم الأذان</string>
+    <string name="adhan_for_prayers">الأذان للصلوات</string>
     <string name="countdown">العد التنازلي</string>
     <string name="pre_prayer_reminder">تذكير قبل الصلاة</string>
     <string name="daily_reminder">تذكير يومي</string>
@@ -108,4 +112,7 @@
     <string name="battery_optimization_not_now">ليس الآن</string>
     <string name="open_settings">فتح الإعدادات</string>
     <string name="version_format">الإصدار %1$s (%2$d)</string>
+    <string name="qibla_settings">القبلة</string>
+    <string name="lock_portrait">قفل الشاشة في الوضع الرأسي</string>
+    <string name="auto_rotate_compass">تدوير البوصلة تلقائياً</string>
 </resources>

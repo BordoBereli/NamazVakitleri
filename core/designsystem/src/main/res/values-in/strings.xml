@@ -38,4 +38,5 @@
     <string name="recent_searches">Pencarian Terbaru</string>
     <string name="clear_all">Hapus Semua</string>
     <string name="sort">Urutkan</string>
+    <string name="clear_cache_confirmation">Ini akan menghapus cache. Apakah Anda ingin melanjutkan?</string>
 </resources>

@@ -55,6 +55,7 @@
     <string name="reorder">Изменить порядок</string>
     <string name="no_locations_yet">Пока нет местоположений — добавьте одно с помощью кнопки «Добавить местоположение»</string>
     <string name="no_location_selected">Местоположение не выбрано. Выберите местоположение, чтобы увидеть время намаза.</string>
+    <string name="location_permission_required">Для использования вашего текущего местоположения требуется разрешение на доступ к геолокации.</string>
     <string name="language_tr">Турецкий</string>
     <string name="language_en">Английский</string>
     <string name="language_ar">Арабский</string>
@@ -76,12 +77,15 @@
     <string name="notifications_section_prayer_times">Время намаза</string>
     <string name="notifications_section_reminders">Напоминания</string>
     <string name="notifications_section_general">Общие</string>
+    <string name="prayer_imsak">Имсак</string>
+    <string name="prayer_sunrise">Восход</string>
     <string name="prayer_dhuhr">Зухр</string>
     <string name="prayer_asr">Аср</string>
     <string name="prayer_maghrib">Магриб</string>
     <string name="prayer_isha">Иша</string>
     <string name="adhan">Азан</string>
     <string name="adhan_volume">Громкость азана</string>
+    <string name="adhan_for_prayers">Азан для намазов</string>
     <string name="countdown">Обратный отсчёт</string>
     <string name="pre_prayer_reminder">Напоминание перед намазом</string>
     <string name="daily_reminder">Ежедневное напоминание</string>
@@ -108,4 +112,7 @@
     <string name="battery_optimization_not_now">Не сейчас</string>
     <string name="open_settings">Открыть настройки</string>
     <string name="version_format">Версия %1$s (%2$d)</string>
+    <string name="qibla_settings">Кибла</string>
+    <string name="lock_portrait">Заблокировать экран в портретной ориентации</string>
+    <string name="auto_rotate_compass">Автоповорот компаса</string>
 </resources>
