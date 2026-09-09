@@ -73,6 +73,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
@@ -80,6 +81,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.kutluoglu.core.designsystem.R as DesignSystemR
 import com.kutluoglu.core.designsystem.components.LoadingIndicator
 import com.kutluoglu.prayer_feature.common.prayerUtils.getPrayerDrawableIdFrom
 import com.kutluoglu.prayer_feature.settings.BuildConfig
@@ -180,6 +182,7 @@ internal fun NotificationsContent(
     var pendingBatteryAction by remember { mutableStateOf<(() -> Unit)?>(null) }
     val context = LocalContext.current
     val activity = LocalActivity.current
+    val localizedPrayerNames = stringArrayResource(DesignSystemR.array.prayers)
 
     fun checkNotificationPermission(): Boolean =
         Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
@@ -342,12 +345,12 @@ internal fun NotificationsContent(
             initiallyExpanded = true,
             testTag = NotificationsTestTags.PrayerTimesSection
         ) {
-            NotificationSettings.PRAYER_KEYS.forEach { key ->
+            NotificationSettings.PRAYER_KEYS.forEachIndexed { index, key ->
                 ToggleRow(
                     title = prayerNameRes(key),
                     icon = {
                         Icon(
-                            painter = painterResource(getPrayerDrawableIdFrom(key)),
+                            painter = painterResource(getPrayerDrawableIdFrom(localizedPrayerNames[index])),
                             contentDescription = null,
                             modifier = Modifier.size(18.dp),
                             tint = MaterialTheme.colorScheme.primary
