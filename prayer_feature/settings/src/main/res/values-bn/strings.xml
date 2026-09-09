@@ -72,6 +72,10 @@
     <string name="language_ur">উর্দু</string>
     <string name="notifications">বিজ্ঞপ্তি</string>
     <string name="notifications_enabled">বিজ্ঞপ্তি সক্রিয় করুন</string>
+    <string name="notifications_master_subtitle">সব সতর্কতার জন্য মাস্টার সুইচ</string>
+    <string name="notifications_section_prayer_times">নামাজের সময়</string>
+    <string name="notifications_section_reminders">স্মরণীয়</string>
+    <string name="notifications_section_general">সাধারণ</string>
     <string name="prayer_dhuhr">যোহর</string>
     <string name="prayer_asr">আসর</string>
     <string name="prayer_maghrib">মাগরিব</string>

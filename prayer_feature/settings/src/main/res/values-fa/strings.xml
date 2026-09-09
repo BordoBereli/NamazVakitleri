@@ -72,6 +72,10 @@
     <string name="language_ur">اردو</string>
     <string name="notifications">اعلان‌ها</string>
     <string name="notifications_enabled">فعال‌سازی اعلان‌ها</string>
+    <string name="notifications_master_subtitle">کلید اصلی برای همه هشدارها</string>
+    <string name="notifications_section_prayer_times">اوقات نماز</string>
+    <string name="notifications_section_reminders">یادآوریها</string>
+    <string name="notifications_section_general">عمومی</string>
     <string name="prayer_dhuhr">ظهر</string>
     <string name="prayer_asr">عصر</string>
     <string name="prayer_maghrib">مغرب</string>

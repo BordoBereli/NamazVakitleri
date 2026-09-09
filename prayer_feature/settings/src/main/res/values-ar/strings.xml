@@ -72,6 +72,10 @@
     <string name="language_ur">الأردية</string>
     <string name="notifications">الإشعارات</string>
     <string name="notifications_enabled">تفعيل الإشعارات</string>
+    <string name="notifications_master_subtitle">المفتاح الرئيسي لجميع التنبيهات</string>
+    <string name="notifications_section_prayer_times">أوقات الصلاة</string>
+    <string name="notifications_section_reminders">التذكيرات</string>
+    <string name="notifications_section_general">عام</string>
     <string name="prayer_dhuhr">الظهر</string>
     <string name="prayer_asr">العصر</string>
     <string name="prayer_maghrib">المغرب</string>

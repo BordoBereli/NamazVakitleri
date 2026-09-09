@@ -72,6 +72,10 @@
     <string name="language_ur">உருது</string>
     <string name="notifications">அறிவிப்புகள்</string>
     <string name="notifications_enabled">அறிவிப்புகளை இயக்கு</string>
+    <string name="notifications_master_subtitle">அனைத்து எச்சரிக்கைகளுக்கும் முதன்மை சுவிட்ச்</string>
+    <string name="notifications_section_prayer_times">தொழுகை நேரம்</string>
+    <string name="notifications_section_reminders">நினைவூட்டல்கள்</string>
+    <string name="notifications_section_general">பொது</string>
     <string name="prayer_dhuhr">ஜுஹ்ர்</string>
     <string name="prayer_asr">அஸ்ர்</string>
     <string name="prayer_maghrib">மக்ரிப்</string>

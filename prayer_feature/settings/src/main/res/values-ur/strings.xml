@@ -72,6 +72,10 @@
     <string name="language_ur">اردو</string>
     <string name="notifications">اطلاعات</string>
     <string name="notifications_enabled">اطلاعات فعال کریں</string>
+    <string name="notifications_master_subtitle">تمام الرٹس کے لیے مین سوئچ</string>
+    <string name="notifications_section_prayer_times">نماز کے اوقات</string>
+    <string name="notifications_section_reminders">یاد دہانیاں</string>
+    <string name="notifications_section_general">عام</string>
     <string name="prayer_dhuhr">ظہر</string>
     <string name="prayer_asr">عصر</string>
     <string name="prayer_maghrib">مغرب</string>

@@ -72,6 +72,10 @@
     <string name="language_ur">Ourdou</string>
     <string name="notifications">Notifications</string>
     <string name="notifications_enabled">Activer les notifications</string>
+    <string name="notifications_master_subtitle">Interrupteur principal pour toutes les alertes</string>
+    <string name="notifications_section_prayer_times">Heures de prière</string>
+    <string name="notifications_section_reminders">Rappels</string>
+    <string name="notifications_section_general">Général</string>
     <string name="prayer_dhuhr">Dhuhr</string>
     <string name="prayer_asr">Asr</string>
     <string name="prayer_maghrib">Maghrib</string>

@@ -72,6 +72,10 @@
     <string name="language_ur">อูรดู</string>
     <string name="notifications">การแจ้งเตือน</string>
     <string name="notifications_enabled">เปิดใช้งานการแจ้งเตือน</string>
+    <string name="notifications_master_subtitle">สวิตช์หลักสำหรับการแจ้งเตือนทั้งหมด</string>
+    <string name="notifications_section_prayer_times">เวลาละหมาด</string>
+    <string name="notifications_section_reminders">การแจ้งเตือน</string>
+    <string name="notifications_section_general">ทั่วไป</string>
     <string name="prayer_dhuhr">ดุฮ์รี</string>
     <string name="prayer_asr">อัสร์</string>
     <string name="prayer_maghrib">มักริบ</string>

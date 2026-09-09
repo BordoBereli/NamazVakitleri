@@ -72,6 +72,10 @@
     <string name="language_ur">Urdu</string>
     <string name="notifications">Notifikasi</string>
     <string name="notifications_enabled">Aktifkan notifikasi</string>
+    <string name="notifications_master_subtitle">Saklar utama untuk semua peringatan</string>
+    <string name="notifications_section_prayer_times">Waktu Salat</string>
+    <string name="notifications_section_reminders">Pengingat</string>
+    <string name="notifications_section_general">Umum</string>
     <string name="prayer_dhuhr">Dzuhur</string>
     <string name="prayer_asr">Asar</string>
     <string name="prayer_maghrib">Maghrib</string>
