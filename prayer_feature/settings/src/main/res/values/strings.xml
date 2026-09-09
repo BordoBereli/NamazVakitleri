@@ -74,6 +74,10 @@
     <string name="language_ur">اردو</string>
     <string name="notifications">Notifications</string>
     <string name="notifications_enabled">Enable notifications</string>
+    <string name="notifications_master_subtitle">Master switch for all alerts</string>
+    <string name="notifications_section_prayer_times">Prayer Times</string>
+    <string name="notifications_section_reminders">Reminders</string>
+    <string name="notifications_section_general">General</string>
     <string name="prayer_dhuhr">Dhuhr</string>
     <string name="prayer_asr">Asr</string>
     <string name="prayer_maghrib">Maghrib</string>
@@ -93,6 +97,7 @@
     <string name="test_adhan_instant" translatable="false">Instant</string>
     <string name="schedule_adhan_test" translatable="false">Schedule Adhan test</string>
     <string name="test_adhan_adhan_off_warning" translatable="false">Adhan toggle is OFF — the test will show a notification but will NOT play sound.</string>
+    <string name="notifications_section_test" translatable="false">Test</string>
     <string name="minutes_before">minutes before</string>
     <string name="cancel">Cancel</string>
 

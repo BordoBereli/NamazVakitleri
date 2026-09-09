@@ -74,6 +74,10 @@
     <string name="language_ur">Urduca</string>
     <string name="notifications">Bildirimler</string>
     <string name="notifications_enabled">Bildirimleri etkinleştir</string>
+    <string name="notifications_master_subtitle">Tüm uyarılar için ana anahtar</string>
+    <string name="notifications_section_prayer_times">Namaz Vakitleri</string>
+    <string name="notifications_section_reminders">Hatırlatmalar</string>
+    <string name="notifications_section_general">Genel</string>
     <string name="prayer_dhuhr">Öğle</string>
     <string name="prayer_asr">İkindi</string>
     <string name="prayer_maghrib">Akşam</string>
