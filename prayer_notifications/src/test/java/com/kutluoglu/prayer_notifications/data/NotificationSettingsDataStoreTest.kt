@@ -97,4 +97,31 @@ class NotificationSettingsDataStoreTest {
         store.updateAdhanVolume(50)
         assertThat(store.getSettings().adhanVolume).isEqualTo(50)
     }
+
+    @Test
+    fun `adhan prayer toggles default sunrise off`() = runTest {
+        val store = freshStore()
+        val settings = store.getSettings()
+        assertThat(settings.adhanPrayerToggles["Sunrise"]).isFalse()
+        assertThat(settings.adhanPrayerToggles["Dhuhr"]).isTrue()
+    }
+
+    @Test
+    fun `updateAdhanPrayerToggle persists per prayer`() = runTest {
+        val store = freshStore()
+        store.updateAdhanPrayerToggle("Sunrise", true)
+        val settings = store.getSettings()
+        assertThat(settings.adhanPrayerToggles["Sunrise"]).isTrue()
+        assertThat(settings.adhanPrayerToggles["Dhuhr"]).isTrue()
+    }
+
+    @Test
+    fun `updateAdhanPrayerToggle round-trips disable then re-enable`() = runTest {
+        val store = freshStore()
+        store.updateAdhanPrayerToggle("Dhuhr", false)
+        assertThat(store.getSettings().adhanPrayerToggles["Dhuhr"]).isFalse()
+
+        store.updateAdhanPrayerToggle("Dhuhr", true)
+        assertThat(store.getSettings().adhanPrayerToggles["Dhuhr"]).isTrue()
+    }
 }

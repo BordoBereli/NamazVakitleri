@@ -77,6 +77,16 @@ class NotificationsViewModelTest {
     }
 
     @Test
+    fun `toggling adhan for a prayer persists`() = runTest {
+        coEvery { getUseCase() } returns NotificationSettings()
+
+        val viewModel = NotificationsViewModel(getUseCase, updateUseCase, notificationManager, alarmScheduler)
+        viewModel.onEvent(NotificationsEvent.SetAdhanPrayerToggle("Sunrise", false))
+
+        coVerify { updateUseCase(match { it.adhanPrayerToggles["Sunrise"] == false }) }
+    }
+
+    @Test
     fun `setting adhan volume persists`() = runTest {
         coEvery { getUseCase() } returns NotificationSettings()
 

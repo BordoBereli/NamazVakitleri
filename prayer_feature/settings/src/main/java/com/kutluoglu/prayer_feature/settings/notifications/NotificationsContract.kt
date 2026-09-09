@@ -13,6 +13,7 @@ sealed class NotificationsEvent {
     data class SetEnabled(val enabled: Boolean) : NotificationsEvent()
     data class SetPrayerToggle(val prayerKey: String, val enabled: Boolean) : NotificationsEvent()
     data class SetAdhanEnabled(val enabled: Boolean) : NotificationsEvent()
+    data class SetAdhanPrayerToggle(val prayerKey: String, val enabled: Boolean) : NotificationsEvent()
     data class SetAdhanVolume(val volume: Int) : NotificationsEvent()
     data class SetAdhanStyle(val prayerKey: String, val styleId: String) : NotificationsEvent()
     data class SetCountdownEnabled(val enabled: Boolean) : NotificationsEvent()

@@ -17,6 +17,8 @@
     <string name="notification_remaining_hours_minutes">%1$d ساعت %2$d دقیقه</string>
     <string name="notification_remaining_minutes">%1$d دقیقه</string>
 
+    <string name="prayer_imsak">امساک</string>
+    <string name="prayer_sunrise">طلوع آفتاب</string>
     <string name="prayer_dhuhr">ظهر</string>
     <string name="prayer_asr">عصر</string>
     <string name="prayer_maghrib">مغرب</string>

@@ -34,6 +34,7 @@ class NotificationSettingsDataStore(
         val ENABLED = booleanPreferencesKey("enabled")
         val PRAYER_TOGGLES = stringPreferencesKey("prayer_toggles")
         val ADHAN_ENABLED = booleanPreferencesKey("adhan_enabled")
+        val ADHAN_PRAYER_TOGGLES = stringPreferencesKey("adhan_prayer_toggles")
         val ADHAN_VOLUME = intPreferencesKey("adhan_volume")
         val ADHAN_STYLE_PREFIX = "adhan_style_"
         val COUNTDOWN_ENABLED = booleanPreferencesKey("countdown_enabled")
@@ -65,6 +66,20 @@ class NotificationSettingsDataStore(
     }
 
     suspend fun updateAdhanEnabled(enabled: Boolean) = dataStore.edit { it[Keys.ADHAN_ENABLED] = enabled }
+    suspend fun updateAdhanPrayerToggle(prayerKey: String, enabled: Boolean) {
+        dataStore.edit { prefs ->
+            val stored = prefs[Keys.ADHAN_PRAYER_TOGGLES]
+            val current = if (stored == null) {
+                NotificationSettings.PRAYER_KEYS
+                    .filter { !NotificationSettings.defaultAdhanPrayerToggles()[it]!! }
+                    .toMutableSet()
+            } else {
+                stored.split(",").filter { it.isNotBlank() }.toMutableSet()
+            }
+            if (enabled) current.remove(prayerKey) else current.add(prayerKey)
+            prefs[Keys.ADHAN_PRAYER_TOGGLES] = current.joinToString(",")
+        }
+    }
     suspend fun updateAdhanVolume(volume: Int) = dataStore.edit { it[Keys.ADHAN_VOLUME] = volume }
     suspend fun updateAdhanStyle(prayerKey: String, styleId: String) = dataStore.edit {
         it[stringPreferencesKey("${Keys.ADHAN_STYLE_PREFIX}$prayerKey")] = styleId
@@ -93,6 +108,7 @@ class NotificationSettingsDataStore(
             enabled = this[Keys.ENABLED] ?: false,
             prayerToggles = toggles,
             adhanEnabled = this[Keys.ADHAN_ENABLED] ?: false,
+            adhanPrayerToggles = adhanPrayerToggles(),
             adhanVolume = this[Keys.ADHAN_VOLUME] ?: 100,
             adhanStyles = adhanStyles(),
             countdownEnabled = this[Keys.COUNTDOWN_ENABLED] ?: true,
@@ -112,6 +128,13 @@ class NotificationSettingsDataStore(
     private fun Preferences.prayerToggles(): Map<String, Boolean> {
         val stored = this[Keys.PRAYER_TOGGLES].orEmpty()
         if (stored.isBlank()) return NotificationSettings.defaultPrayerToggles()
+        val disabledKeys = stored.split(",").filter { it.isNotBlank() }.toSet()
+        return NotificationSettings.PRAYER_KEYS.associateWith { it !in disabledKeys }
+    }
+
+    private fun Preferences.adhanPrayerToggles(): Map<String, Boolean> {
+        val stored = this[Keys.ADHAN_PRAYER_TOGGLES]
+        if (stored == null) return NotificationSettings.defaultAdhanPrayerToggles()
         val disabledKeys = stored.split(",").filter { it.isNotBlank() }.toSet()
         return NotificationSettings.PRAYER_KEYS.associateWith { it !in disabledKeys }
     }

@@ -101,6 +101,48 @@ class AlarmReceiverTest {
     }
 
     @Test
+    fun `prayer alarm with adhan enabled but prayer toggle off posts prayer notification`() = runTest {
+        coEvery { dataStore.getSettings() } returns NotificationSettings(
+            adhanEnabled = true,
+            adhanPrayerToggles = NotificationSettings.defaultAdhanPrayerToggles() + ("Dhuhr" to false)
+        )
+        val receiver = AlarmReceiver()
+        val intent = Intent(context, AlarmReceiver::class.java)
+            .putExtra(AlarmReceiver.EXTRA_ALARM_TYPE, AlarmType.PRAYER.name)
+            .putExtra(AlarmReceiver.EXTRA_PRAYER_KEY, "Dhuhr")
+        receiver.handleAlarm(context, intent)
+        verify { notificationDisplayer.showPrayerNotification("Dhuhr", any()) }
+        verify(exactly = 0) { adhanPlayer.play(any(), any()) }
+    }
+
+    @Test
+    fun `sunrise prayer alarm with adhan enabled does not start adhan by default`() = runTest {
+        coEvery { dataStore.getSettings() } returns NotificationSettings(adhanEnabled = true)
+        val receiver = AlarmReceiver()
+        val intent = Intent(context, AlarmReceiver::class.java)
+            .putExtra(AlarmReceiver.EXTRA_ALARM_TYPE, AlarmType.PRAYER.name)
+            .putExtra(AlarmReceiver.EXTRA_PRAYER_KEY, "Sunrise")
+        receiver.handleAlarm(context, intent)
+        verify { notificationDisplayer.showPrayerNotification("Sunrise", any()) }
+        verify(exactly = 0) { adhanPlayer.play(any(), any()) }
+    }
+
+    @Test
+    fun `sunrise prayer alarm with adhan enabled and toggle on starts adhan service`() = runTest {
+        coEvery { dataStore.getSettings() } returns NotificationSettings(
+            adhanEnabled = true,
+            adhanPrayerToggles = NotificationSettings.defaultAdhanPrayerToggles() + ("Sunrise" to true)
+        )
+        val receiver = AlarmReceiver()
+        val intent = Intent(context, AlarmReceiver::class.java)
+            .putExtra(AlarmReceiver.EXTRA_ALARM_TYPE, AlarmType.PRAYER.name)
+            .putExtra(AlarmReceiver.EXTRA_PRAYER_KEY, "Sunrise")
+        receiver.handleAlarm(context, intent)
+        val started = shadowOf(context as Application).getNextStartedService()
+        assertThat(started?.component?.className).isEqualTo(AdhanService::class.java.name)
+    }
+
+    @Test
     fun `jumuah prayer alarm posts jumuah notification`() = runTest {
         coEvery { dataStore.getSettings() } returns NotificationSettings(jumuahEnabled = true, adhanEnabled = false)
         val receiver = AlarmReceiver()

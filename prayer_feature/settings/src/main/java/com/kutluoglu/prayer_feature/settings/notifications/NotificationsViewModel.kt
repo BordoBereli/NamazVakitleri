@@ -36,6 +36,9 @@ class NotificationsViewModel(
                 it.copy(prayerToggles = it.prayerToggles + (event.prayerKey to event.enabled))
             }
             is NotificationsEvent.SetAdhanEnabled -> update { it.copy(adhanEnabled = event.enabled) }
+            is NotificationsEvent.SetAdhanPrayerToggle -> update {
+                it.copy(adhanPrayerToggles = it.adhanPrayerToggles + (event.prayerKey to event.enabled))
+            }
             is NotificationsEvent.SetAdhanVolume -> update { it.copy(adhanVolume = event.volume) }
             is NotificationsEvent.SetAdhanStyle -> update {
                 it.copy(adhanStyles = it.adhanStyles + (event.prayerKey to event.styleId))

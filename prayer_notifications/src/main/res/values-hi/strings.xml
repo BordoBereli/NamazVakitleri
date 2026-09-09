@@ -17,6 +17,8 @@
     <string name="notification_remaining_hours_minutes">%1$d घं %2$d मिन</string>
     <string name="notification_remaining_minutes">%1$d मिन</string>
 
+    <string name="prayer_imsak">इमसाक</string>
+    <string name="prayer_sunrise">सूर्योदय</string>
     <string name="prayer_dhuhr">ज़ुहर</string>
     <string name="prayer_asr">अस्र</string>
     <string name="prayer_maghrib">मग़रिब</string>

@@ -317,6 +317,8 @@ class PrayerNotificationManager(
     }
 
     private fun localizedPrayerName(key: String): String = when (key) {
+        "Imsak" -> localizedString(R.string.prayer_imsak)
+        "Sunrise" -> localizedString(R.string.prayer_sunrise)
         "Dhuhr" -> localizedString(R.string.prayer_dhuhr)
         "Asr" -> localizedString(R.string.prayer_asr)
         "Maghrib" -> localizedString(R.string.prayer_maghrib)

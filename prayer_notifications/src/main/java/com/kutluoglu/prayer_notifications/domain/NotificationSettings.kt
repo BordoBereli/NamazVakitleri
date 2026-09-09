@@ -4,6 +4,7 @@ data class NotificationSettings(
     val enabled: Boolean = false,
     val prayerToggles: Map<String, Boolean> = defaultPrayerToggles(),
     val adhanEnabled: Boolean = false,
+    val adhanPrayerToggles: Map<String, Boolean> = defaultAdhanPrayerToggles(),
     val adhanVolume: Int = 100,
     val adhanStyles: Map<String, String> = emptyMap(),
     val countdownEnabled: Boolean = true,
@@ -19,9 +20,12 @@ data class NotificationSettings(
     val vibrationEnabled: Boolean = true
 ) {
     companion object {
-        val PRAYER_KEYS = listOf("Dhuhr", "Asr", "Maghrib", "Isha")
+        val PRAYER_KEYS = listOf("Imsak", "Sunrise", "Dhuhr", "Asr", "Maghrib", "Isha")
 
         fun defaultPrayerToggles(): Map<String, Boolean> =
             PRAYER_KEYS.associateWith { true }
+
+        fun defaultAdhanPrayerToggles(): Map<String, Boolean> =
+            PRAYER_KEYS.associateWith { it == "Imsak" || it == "Dhuhr" || it == "Asr" || it == "Maghrib" || it == "Isha" }
     }
 }
