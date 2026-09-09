@@ -8,6 +8,8 @@ import androidx.activity.ComponentActivity
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.hasProgressBarRangeInfo
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -563,5 +565,34 @@ class NotificationsScreenTest {
             composeTestRule.activity.getString(R.string.send_test_notification)
         ).assertDoesNotExist()
         composeTestRule.onNodeWithText("Test Adhan").assertDoesNotExist()
+    }
+
+    @Test
+    fun `all toggles are off and disabled when master switch is off`() {
+        launchScreen(
+            NotificationSettings(
+                enabled = false,
+                adhanEnabled = true,
+                countdownEnabled = true,
+                prePrayerReminderEnabled = true,
+                dailyReminderEnabled = true,
+                jumuahEnabled = true,
+                specialDaysEnabled = true,
+                ramadanEnabled = true,
+                soundEnabled = true,
+                vibrationEnabled = true
+            )
+        )
+
+        composeTestRule.onNodeWithTag("toggle_prayer_Imsak").assertIsOff().assertIsNotEnabled()
+
+        composeTestRule.onNodeWithTag(NotificationsTestTags.AdhanSection).performScrollTo().performClick()
+        composeTestRule.onNodeWithTag(NotificationsTestTags.AdhanToggle).assertIsOff().assertIsNotEnabled()
+
+        composeTestRule.onNodeWithTag(NotificationsTestTags.RemindersSection).performScrollTo().performClick()
+        composeTestRule.onNodeWithTag(NotificationsTestTags.CountdownToggle).assertIsOff().assertIsNotEnabled()
+
+        composeTestRule.onNodeWithTag(NotificationsTestTags.GeneralSection).performScrollTo().performClick()
+        composeTestRule.onNodeWithTag(NotificationsTestTags.SoundToggle).assertIsOff().assertIsNotEnabled()
     }
 }

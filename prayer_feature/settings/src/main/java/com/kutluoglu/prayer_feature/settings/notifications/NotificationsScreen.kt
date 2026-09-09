@@ -183,6 +183,22 @@ internal fun NotificationsContent(
     val context = LocalContext.current
     val activity = LocalActivity.current
     val localizedPrayerNames = stringArrayResource(DesignSystemR.array.prayers)
+    val effectiveSettings = if (settings.enabled) {
+        settings
+    } else {
+        settings.copy(
+            prayerToggles = settings.prayerToggles.mapValues { false },
+            adhanEnabled = false,
+            countdownEnabled = false,
+            prePrayerReminderEnabled = false,
+            dailyReminderEnabled = false,
+            jumuahEnabled = false,
+            specialDaysEnabled = false,
+            ramadanEnabled = false,
+            soundEnabled = false,
+            vibrationEnabled = false
+        )
+    }
 
     fun checkNotificationPermission(): Boolean =
         Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
@@ -356,9 +372,10 @@ internal fun NotificationsContent(
                             tint = MaterialTheme.colorScheme.primary
                         )
                     },
-                    checked = settings.prayerToggles[key] ?: true,
+                    checked = effectiveSettings.prayerToggles[key] ?: true,
                     onCheckedChange = { onEvent(NotificationsEvent.SetPrayerToggle(key, it)) },
-                    testTag = "toggle_prayer_$key"
+                    testTag = "toggle_prayer_$key",
+                    enabled = settings.enabled
                 )
             }
         }
@@ -370,7 +387,7 @@ internal fun NotificationsContent(
         ) {
             ToggleRow(
                 title = stringResource(R.string.adhan),
-                checked = settings.adhanEnabled,
+                checked = effectiveSettings.adhanEnabled,
                 onCheckedChange = { enabled ->
                     if (enabled) {
                         requestEnable { onEvent(NotificationsEvent.SetAdhanEnabled(true)) }
@@ -378,9 +395,10 @@ internal fun NotificationsContent(
                         onEvent(NotificationsEvent.SetAdhanEnabled(false))
                     }
                 },
-                testTag = NotificationsTestTags.AdhanToggle
+                testTag = NotificationsTestTags.AdhanToggle,
+                enabled = settings.enabled
             )
-            if (settings.adhanEnabled) {
+            if (effectiveSettings.adhanEnabled) {
                 AdhanVolumeSlider(
                     volume = settings.adhanVolume,
                     onVolumeChange = { onEvent(NotificationsEvent.SetAdhanVolume(it)) }
@@ -409,19 +427,21 @@ internal fun NotificationsContent(
         ) {
             ToggleRow(
                 title = stringResource(R.string.countdown),
-                checked = settings.countdownEnabled,
+                checked = effectiveSettings.countdownEnabled,
                 onCheckedChange = { onEvent(NotificationsEvent.SetCountdownEnabled(it)) },
-                testTag = NotificationsTestTags.CountdownToggle
+                testTag = NotificationsTestTags.CountdownToggle,
+                enabled = settings.enabled
             )
             ToggleRow(
                 title = stringResource(R.string.pre_prayer_reminder),
-                checked = settings.prePrayerReminderEnabled,
+                checked = effectiveSettings.prePrayerReminderEnabled,
                 onCheckedChange = {
                     onEvent(NotificationsEvent.SetPrePrayerReminder(it, settings.prePrayerMinutes))
                 },
-                testTag = NotificationsTestTags.PrePrayerToggle
+                testTag = NotificationsTestTags.PrePrayerToggle,
+                enabled = settings.enabled
             )
-            if (settings.prePrayerReminderEnabled) {
+            if (effectiveSettings.prePrayerReminderEnabled) {
                 PrePrayerMinutesSelector(
                     selectedMinutes = settings.prePrayerMinutes,
                     onMinutesSelected = { minutes ->
@@ -431,7 +451,7 @@ internal fun NotificationsContent(
             }
             ToggleRow(
                 title = stringResource(R.string.daily_reminder),
-                checked = settings.dailyReminderEnabled,
+                checked = effectiveSettings.dailyReminderEnabled,
                 onCheckedChange = { enabled ->
                     onEvent(
                         NotificationsEvent.SetDailyReminder(
@@ -441,9 +461,10 @@ internal fun NotificationsContent(
                         )
                     )
                 },
-                testTag = NotificationsTestTags.DailyReminderToggle
+                testTag = NotificationsTestTags.DailyReminderToggle,
+                enabled = settings.enabled
             )
-            if (settings.dailyReminderEnabled) {
+            if (effectiveSettings.dailyReminderEnabled) {
                 DailyReminderTimeRow(
                     hour = settings.dailyReminderHour,
                     minute = settings.dailyReminderMinute,
@@ -452,21 +473,24 @@ internal fun NotificationsContent(
             }
             ToggleRow(
                 title = stringResource(R.string.jumuah),
-                checked = settings.jumuahEnabled,
+                checked = effectiveSettings.jumuahEnabled,
                 onCheckedChange = { onEvent(NotificationsEvent.SetJumuahEnabled(it)) },
-                testTag = NotificationsTestTags.JumuahToggle
+                testTag = NotificationsTestTags.JumuahToggle,
+                enabled = settings.enabled
             )
             ToggleRow(
                 title = stringResource(R.string.special_days),
-                checked = settings.specialDaysEnabled,
+                checked = effectiveSettings.specialDaysEnabled,
                 onCheckedChange = { onEvent(NotificationsEvent.SetSpecialDaysEnabled(it)) },
-                testTag = NotificationsTestTags.SpecialDaysToggle
+                testTag = NotificationsTestTags.SpecialDaysToggle,
+                enabled = settings.enabled
             )
             ToggleRow(
                 title = stringResource(R.string.ramadan),
-                checked = settings.ramadanEnabled,
+                checked = effectiveSettings.ramadanEnabled,
                 onCheckedChange = { onEvent(NotificationsEvent.SetRamadanEnabled(it)) },
-                testTag = NotificationsTestTags.RamadanToggle
+                testTag = NotificationsTestTags.RamadanToggle,
+                enabled = settings.enabled
             )
         }
         SectionCard(
@@ -477,15 +501,17 @@ internal fun NotificationsContent(
         ) {
             ToggleRow(
                 title = stringResource(R.string.sound),
-                checked = settings.soundEnabled,
+                checked = effectiveSettings.soundEnabled,
                 onCheckedChange = { onEvent(NotificationsEvent.SetSoundEnabled(it)) },
-                testTag = NotificationsTestTags.SoundToggle
+                testTag = NotificationsTestTags.SoundToggle,
+                enabled = settings.enabled
             )
             ToggleRow(
                 title = stringResource(R.string.vibration),
-                checked = settings.vibrationEnabled,
+                checked = effectiveSettings.vibrationEnabled,
                 onCheckedChange = { onEvent(NotificationsEvent.SetVibrationEnabled(it)) },
-                testTag = NotificationsTestTags.VibrationToggle
+                testTag = NotificationsTestTags.VibrationToggle,
+                enabled = settings.enabled
             )
         }
         if (showTestSection) {
@@ -595,7 +621,8 @@ private fun ToggleRow(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
     icon: (@Composable () -> Unit)? = null,
-    testTag: String? = null
+    testTag: String? = null,
+    enabled: Boolean = true
 ) {
     Row(
         modifier = Modifier
@@ -625,6 +652,7 @@ private fun ToggleRow(
         Switch(
             checked = checked,
             onCheckedChange = onCheckedChange,
+            enabled = enabled,
             modifier = if (testTag != null) Modifier.testTag(testTag) else Modifier
         )
     }
