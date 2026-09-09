@@ -9,8 +9,8 @@ import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasProgressBarRangeInfo
-import androidx.compose.ui.test.isToggleable
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
@@ -79,6 +79,8 @@ class NotificationsScreenTest {
             )
         )
 
+        composeTestRule.onNodeWithTag(NotificationsTestTags.RemindersSection).performScrollTo().performClick()
+
         composeTestRule.onNodeWithText("5").assertIsDisplayed()
         composeTestRule.onNodeWithText("15").assertIsDisplayed()
         composeTestRule.onNodeWithText("60").assertIsDisplayed()
@@ -96,6 +98,8 @@ class NotificationsScreenTest {
             )
         )
 
+        composeTestRule.onNodeWithTag(NotificationsTestTags.RemindersSection).performScrollTo().performClick()
+
         composeTestRule.onNodeWithText("07:30").assertIsDisplayed()
     }
 
@@ -109,6 +113,8 @@ class NotificationsScreenTest {
             )
         )
 
+        composeTestRule.onNodeWithTag(NotificationsTestTags.RemindersSection).performScrollTo().performClick()
+
         composeTestRule.onNodeWithText("30").performClick()
         composeTestRule.waitForIdle()
 
@@ -120,7 +126,7 @@ class NotificationsScreenTest {
         shadowOf(composeTestRule.activity).denyPermissions(Manifest.permission.POST_NOTIFICATIONS)
         launchScreen(NotificationSettings(enabled = false))
 
-        composeTestRule.onAllNodes(isToggleable())[0].performClick()
+        composeTestRule.onNodeWithTag(NotificationsTestTags.MasterToggle).performClick()
         composeTestRule.waitForIdle()
 
         assertThat(shadowOf(composeTestRule.activity).lastRequestedPermission.requestedPermissions)
@@ -134,7 +140,8 @@ class NotificationsScreenTest {
         shadowOf(composeTestRule.activity).denyPermissions(Manifest.permission.POST_NOTIFICATIONS)
         launchScreen(NotificationSettings(enabled = true, adhanEnabled = false))
 
-        composeTestRule.onAllNodes(isToggleable())[5].performClick()
+        composeTestRule.onNodeWithTag(NotificationsTestTags.AdhanSection).performScrollTo().performClick()
+        composeTestRule.onNodeWithTag(NotificationsTestTags.AdhanToggle).performClick()
         composeTestRule.waitForIdle()
 
         assertThat(shadowOf(composeTestRule.activity).lastRequestedPermission.requestedPermissions)
@@ -215,6 +222,8 @@ class NotificationsScreenTest {
             NotificationSettings(enabled = true, adhanEnabled = true, adhanVolume = 30)
         )
 
+        composeTestRule.onNodeWithTag(NotificationsTestTags.AdhanSection).performScrollTo().performClick()
+
         composeTestRule.onNodeWithText(
             composeTestRule.activity.getString(R.string.adhan_volume)
         ).assertIsDisplayed()
@@ -224,6 +233,8 @@ class NotificationsScreenTest {
     @Test
     fun `hides adhan volume slider when adhan disabled`() {
         launchScreen(NotificationSettings(enabled = true, adhanEnabled = false))
+
+        composeTestRule.onNodeWithTag(NotificationsTestTags.AdhanSection).performScrollTo().performClick()
 
         composeTestRule.onNodeWithText(
             composeTestRule.activity.getString(R.string.adhan_volume)
@@ -235,6 +246,8 @@ class NotificationsScreenTest {
         launchScreen(
             NotificationSettings(enabled = true, adhanEnabled = true, adhanVolume = 30)
         )
+
+        composeTestRule.onNodeWithTag(NotificationsTestTags.AdhanSection).performScrollTo().performClick()
 
         composeTestRule.onNode(hasProgressBarRangeInfo(ProgressBarRangeInfo(30f, 0f..100f)))
             .performSemanticsAction(SemanticsActions.SetProgress) { it(50f) }
@@ -249,7 +262,7 @@ class NotificationsScreenTest {
         shadowOf(composeTestRule.activity).grantPermissions(Manifest.permission.POST_NOTIFICATIONS)
         launchScreen(NotificationSettings(enabled = false))
 
-        composeTestRule.onAllNodes(isToggleable())[0].performClick()
+        composeTestRule.onNodeWithTag(NotificationsTestTags.MasterToggle).performClick()
         composeTestRule.waitForIdle()
 
         composeTestRule.onNodeWithText(
@@ -264,7 +277,7 @@ class NotificationsScreenTest {
         shadowOf(composeTestRule.activity).grantPermissions(Manifest.permission.POST_NOTIFICATIONS)
         launchScreen(NotificationSettings(enabled = false))
 
-        composeTestRule.onAllNodes(isToggleable())[0].performClick()
+        composeTestRule.onNodeWithTag(NotificationsTestTags.MasterToggle).performClick()
         composeTestRule.waitForIdle()
         composeTestRule.onNodeWithText(
             composeTestRule.activity.getString(R.string.exact_alarm_grant)
@@ -281,7 +294,7 @@ class NotificationsScreenTest {
         shadowOf(composeTestRule.activity).grantPermissions(Manifest.permission.POST_NOTIFICATIONS)
         launchScreen(NotificationSettings(enabled = false))
 
-        composeTestRule.onAllNodes(isToggleable())[0].performClick()
+        composeTestRule.onNodeWithTag(NotificationsTestTags.MasterToggle).performClick()
         composeTestRule.waitForIdle()
         composeTestRule.onNodeWithText(
             composeTestRule.activity.getString(R.string.exact_alarm_not_now)
@@ -329,7 +342,7 @@ class NotificationsScreenTest {
         shadowOf(composeTestRule.activity).grantPermissions(Manifest.permission.POST_NOTIFICATIONS)
         launchScreen(NotificationSettings(enabled = false))
 
-        composeTestRule.onAllNodes(isToggleable())[0].performClick()
+        composeTestRule.onNodeWithTag(NotificationsTestTags.MasterToggle).performClick()
         composeTestRule.waitForIdle()
         composeTestRule.onNodeWithText(
             composeTestRule.activity.getString(R.string.exact_alarm_grant)
@@ -364,7 +377,7 @@ class NotificationsScreenTest {
         shadowOf(composeTestRule.activity).grantPermissions(Manifest.permission.POST_NOTIFICATIONS)
         launchScreen(NotificationSettings(enabled = false))
 
-        composeTestRule.onAllNodes(isToggleable())[0].performClick()
+        composeTestRule.onNodeWithTag(NotificationsTestTags.MasterToggle).performClick()
         composeTestRule.waitForIdle()
 
         composeTestRule.onNodeWithText(
@@ -381,7 +394,7 @@ class NotificationsScreenTest {
         shadowOf(composeTestRule.activity).grantPermissions(Manifest.permission.POST_NOTIFICATIONS)
         launchScreen(NotificationSettings(enabled = false))
 
-        composeTestRule.onAllNodes(isToggleable())[0].performClick()
+        composeTestRule.onNodeWithTag(NotificationsTestTags.MasterToggle).performClick()
         composeTestRule.waitForIdle()
         composeTestRule.onNodeWithText(
             composeTestRule.activity.getString(R.string.battery_optimization_open_settings)
@@ -400,7 +413,7 @@ class NotificationsScreenTest {
         shadowOf(composeTestRule.activity).grantPermissions(Manifest.permission.POST_NOTIFICATIONS)
         launchScreen(NotificationSettings(enabled = false))
 
-        composeTestRule.onAllNodes(isToggleable())[0].performClick()
+        composeTestRule.onNodeWithTag(NotificationsTestTags.MasterToggle).performClick()
         composeTestRule.waitForIdle()
         composeTestRule.onNodeWithText(
             composeTestRule.activity.getString(R.string.battery_optimization_not_now)
@@ -451,6 +464,7 @@ class NotificationsScreenTest {
             .onNodeWithText(
                 "Adhan toggle is OFF — the test will show a notification but will NOT play sound."
             )
+            .performScrollTo()
             .assertIsDisplayed()
     }
 
@@ -498,5 +512,56 @@ class NotificationsScreenTest {
         composeTestRule.onNodeWithText("Schedule Adhan test").performClick()
 
         verify(exactly = 0) { alarmScheduler.scheduleTestAdhan(any()) }
+    }
+
+    @Test
+    fun `prayer times section expanded by default`() {
+        launchScreen(NotificationSettings(enabled = true))
+
+        composeTestRule.onNodeWithText(
+            composeTestRule.activity.getString(R.string.prayer_imsak)
+        ).assertExists()
+    }
+
+    @Test
+    fun `adhan section collapsed by default`() {
+        launchScreen(NotificationSettings(enabled = true))
+
+        composeTestRule.onNodeWithTag(NotificationsTestTags.AdhanToggle).assertDoesNotExist()
+    }
+
+    @Test
+    fun `expanding adhan section reveals adhan toggle`() {
+        launchScreen(NotificationSettings(enabled = true))
+
+        composeTestRule.onNodeWithTag(NotificationsTestTags.AdhanSection).performScrollTo().performClick()
+        composeTestRule.waitForIdle()
+
+        composeTestRule.onNodeWithTag(NotificationsTestTags.AdhanToggle).assertExists()
+    }
+
+    @Test
+    fun `master switch card shows subtitle`() {
+        launchScreen(NotificationSettings(enabled = true))
+
+        composeTestRule.onNodeWithText(
+            composeTestRule.activity.getString(R.string.notifications_master_subtitle)
+        ).assertIsDisplayed()
+    }
+
+    @Test
+    fun `test section hidden when showTestSection false`() {
+        composeTestRule.setContent {
+            NotificationsContent(
+                settings = NotificationSettings(enabled = true),
+                onEvent = {},
+                showTestSection = false
+            )
+        }
+
+        composeTestRule.onNodeWithText(
+            composeTestRule.activity.getString(R.string.send_test_notification)
+        ).assertDoesNotExist()
+        composeTestRule.onNodeWithText("Test Adhan").assertDoesNotExist()
     }
 }
