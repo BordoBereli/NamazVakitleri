@@ -82,7 +82,8 @@ class PrayerTopContainerBoxTest {
 
     @Test
     fun contentFitsInPortraitTopContainerOnSmallScreen() {
-        // Simulates the real portrait layout: TopContainer = 35% of a 640dp-tall screen.
+        // Simulates the real portrait layout: TopContainer = 35% of a 640dp-tall screen;
+        // the location/date box is 45% of TopContainer's height.
         composeRule.setContent {
             Box(modifier = Modifier.width(320.dp).height(224.dp)) {
                 TopContainer(
