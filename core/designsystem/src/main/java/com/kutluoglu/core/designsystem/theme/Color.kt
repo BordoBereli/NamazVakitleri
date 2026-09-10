@@ -9,11 +9,10 @@ val IslamicCardBg = Color(0xFF1E1E1E)         // #1E1E1E
 val IslamicWhite = Color.White       // #FFFFFF
 val IslamicTextSecondary = Color(0xFFA0A0A0) // #A0A0A0
 val IslamicBorder = Color(0xFFABABAB) // #ABABAB
-
-// Muted gold (Asr method selection card)
-val IslamicGoldSoft = Color(0xFFFFE9A8)   // #FFE9A8 cream — light mode
 val IslamicGoldOlive = Color(0xFF5A501E)  // #5A501E olive — dark mode
 
 // Light
+val IslamicGoldSoft = Color(0xFFFFE9A8)   // #FFE9A8 cream — light mode
 val IslamicSurface = Color(0xFFF5F5F5)
 val IslamicTextPrimary = Color(0xFF000000)
+
