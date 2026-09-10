@@ -61,4 +61,18 @@ class JuristicMethodScreenTest {
             composeTestRule.activity.getString(R.string.juristic_hanafi_description)
         ).assertIsDisplayed()
     }
+
+    @Test
+    fun `renders angle badge and shadow caption for both methods`() {
+        launchScreen()
+
+        composeTestRule.onNodeWithText("45°").assertIsDisplayed()
+        composeTestRule.onNodeWithText(
+            composeTestRule.activity.getString(R.string.juristic_shadow_equals_height)
+        ).assertIsDisplayed()
+        composeTestRule.onNodeWithText("26.5°").assertIsDisplayed()
+        composeTestRule.onNodeWithText(
+            composeTestRule.activity.getString(R.string.juristic_shadow_twice_height)
+        ).assertIsDisplayed()
+    }
 }

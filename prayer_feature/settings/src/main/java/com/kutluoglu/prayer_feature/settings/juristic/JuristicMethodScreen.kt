@@ -31,12 +31,22 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.annotation.StringRes
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.kutluoglu.core.designsystem.R
 import com.kutluoglu.prayer_feature.settings.R as SettingsR
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
+
+private data class JuristicMethodInfo(
+    val id: String,
+    @StringRes val labelRes: Int,
+    @StringRes val descRes: Int,
+    val shadowFactor: Float,
+    val angleLabel: String,
+    @StringRes val captionRes: Int
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -83,66 +93,95 @@ fun JuristicMethodRoute(
         ) {
             items(
                 listOf(
-                    Triple(
-                        "STANDARD",
-                        SettingsR.string.juristic_standard,
-                        SettingsR.string.juristic_standard_description
+                    JuristicMethodInfo(
+                        id = "STANDARD",
+                        labelRes = SettingsR.string.juristic_standard,
+                        descRes = SettingsR.string.juristic_standard_description,
+                        shadowFactor = 1f,
+                        angleLabel = "45°",
+                        captionRes = SettingsR.string.juristic_shadow_equals_height
                     ),
-                    Triple(
-                        "HANAFI",
-                        SettingsR.string.juristic_hanafi,
-                        SettingsR.string.juristic_hanafi_description
+                    JuristicMethodInfo(
+                        id = "HANAFI",
+                        labelRes = SettingsR.string.juristic_hanafi,
+                        descRes = SettingsR.string.juristic_hanafi_description,
+                        shadowFactor = 2f,
+                        angleLabel = "26.5°",
+                        captionRes = SettingsR.string.juristic_shadow_twice_height
                     )
                 )
-            ) { (id, labelRes, descRes) ->
-                Card(
+            ) { info ->
+                JuristicMethodCard(
+                    info = info,
+                    selected = info.id == currentMethod,
+                    onSelect = { viewModel.onEvent(JuristicMethodEvent.SelectMethod(info.id)) }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun JuristicMethodCard(
+    info: JuristicMethodInfo,
+    selected: Boolean,
+    onSelect: () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onSelect),
+        colors = CardDefaults.cardColors(
+            containerColor = if (selected) {
+                MaterialTheme.colorScheme.primaryContainer
+            } else {
+                MaterialTheme.colorScheme.surfaceVariant
+            }
+        ),
+        shape = RoundedCornerShape(12.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                RadioButton(
+                    selected = selected,
+                    onClick = onSelect
+                )
+                Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { viewModel.onEvent(JuristicMethodEvent.SelectMethod(id)) },
-                    colors = CardDefaults.cardColors(
-                        containerColor = if (id == currentMethod) {
-                            MaterialTheme.colorScheme.primaryContainer
-                        } else {
-                            MaterialTheme.colorScheme.surfaceVariant
-                        }
-                    ),
-                    shape = RoundedCornerShape(12.dp)
+                        .weight(1f)
+                        .padding(start = 8.dp)
                 ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        RadioButton(
-                            selected = id == currentMethod,
-                            onClick = { viewModel.onEvent(JuristicMethodEvent.SelectMethod(id)) }
-                        )
-                        Column(
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(start = 8.dp)
-                        ) {
-                            Text(
-                                text = stringResource(labelRes),
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                            Text(
-                                text = stringResource(descRes),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                        if (id == currentMethod) {
-                            Icon(
-                                imageVector = Icons.Default.Check,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                        }
-                    }
+                    Text(
+                        text = stringResource(info.labelRes),
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                    Text(
+                        text = stringResource(info.descRes),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                if (selected) {
+                    Icon(
+                        imageVector = Icons.Default.Check,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary
+                    )
                 }
             }
+            ShadowLengthDiagram(
+                shadowFactor = info.shadowFactor,
+                angleLabel = info.angleLabel,
+                caption = stringResource(info.captionRes),
+                modifier = Modifier.padding(top = 12.dp)
+            )
         }
     }
 }
