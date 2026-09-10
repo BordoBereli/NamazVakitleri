@@ -14,8 +14,10 @@
     <string name="asr_calculation">Pengiraan Asar</string>
     <string name="juristic_standard">Standard (Syafii)</string>
     <string name="juristic_hanafi">Hanafi</string>
-    <string name="juristic_standard_description">Asar bermula apabila bayangan sesuatu objek sama dengan ketinggiannya. Digunakan oleh mazhab Syafii, Maliki dan Hanbali.</string>
-    <string name="juristic_hanafi_description">Asar bermula apabila bayangan sesuatu objek dua kali ketinggiannya. Digunakan oleh mazhab Hanafi — waktu Asar yang lebih lewat.</string>
+    <string name="juristic_standard_description">Bayangan sama dengan ketinggian objek · Syafii, Maliki, Hanbali.</string>
+    <string name="juristic_hanafi_description">Bayangan dua kali ketinggian objek · Hanafi — Asar lebih lewat.</string>
+    <string name="juristic_shadow_equals_height">bayangan = tinggi</string>
+    <string name="juristic_shadow_twice_height">bayangan = 2 × tinggi</string>
     <string name="select_language">Pilih Bahasa</string>
     <string name="language">Bahasa</string>
     <string name="location">Lokasi</string>

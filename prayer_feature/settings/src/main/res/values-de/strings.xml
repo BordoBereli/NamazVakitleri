@@ -14,8 +14,10 @@
     <string name="asr_calculation">Asr-Berechnung</string>
     <string name="juristic_standard">Standard (Schafi\'i)</string>
     <string name="juristic_hanafi">Hanafi</string>
-    <string name="juristic_standard_description">Das Asr beginnt, wenn der Schatten eines Objekts seiner Höhe entspricht. Wird von den Schulen Schafi\'i, Maliki und Hanbali verwendet.</string>
-    <string name="juristic_hanafi_description">Das Asr beginnt, wenn der Schatten eines Objekts doppelt so lang ist wie seine Höhe. Wird von der hanafitischen Schule verwendet — eine spätere Asr-Zeit.</string>
+    <string name="juristic_standard_description">Schatten gleich Objekthöhe · Schafi\'i, Maliki, Hanbali.</string>
+    <string name="juristic_hanafi_description">Schatten doppelte Objekthöhe · Hanafi — späteres Asr.</string>
+    <string name="juristic_shadow_equals_height">Schatten = Höhe</string>
+    <string name="juristic_shadow_twice_height">Schatten = 2 × Höhe</string>
     <string name="select_language">Sprache auswählen</string>
     <string name="language">Sprache</string>
     <string name="location">Standort</string>

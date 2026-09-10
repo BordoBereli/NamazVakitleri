@@ -14,8 +14,10 @@
     <string name="asr_calculation">আসর হিসাব</string>
     <string name="juristic_standard">স্ট্যান্ডার্ড (শাফি)</string>
     <string name="juristic_hanafi">হানাফি</string>
-    <string name="juristic_standard_description">আসর শুরু হয় যখন কোনো বস্তুর ছায়া তার উচ্চতার সমান হয়। শাফিঈ, মালিকি ও হাম্বলি মাযহাবে ব্যবহৃত।</string>
-    <string name="juristic_hanafi_description">আসর শুরু হয় যখন কোনো বস্তুর ছায়া তার উচ্চতার দ্বিগুণ হয়। হানাফি মাযহাবে ব্যবহৃত — আসরের বেশি দেরিতে হওয়া সময়।</string>
+    <string name="juristic_standard_description">ছায়া বস্তুর উচ্চতার সমান · শাফিঈ, মালিকি ও হাম্বলি।</string>
+    <string name="juristic_hanafi_description">ছায়া বস্তুর উচ্চতার দ্বিগুণ · হানাফি — আসরের দেরি সময়।</string>
+    <string name="juristic_shadow_equals_height">ছায়া = উচ্চতা</string>
+    <string name="juristic_shadow_twice_height">ছায়া = 2 × উচ্চতা</string>
     <string name="select_language">ভাষা নির্বাচন করুন</string>
     <string name="language">ভাষা</string>
     <string name="location">অবস্থান</string>

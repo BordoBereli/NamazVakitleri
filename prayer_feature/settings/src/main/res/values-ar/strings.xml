@@ -14,8 +14,10 @@
     <string name="asr_calculation">حساب العصر</string>
     <string name="juristic_standard">قياسي (شافعي)</string>
     <string name="juristic_hanafi">حنفي</string>
-    <string name="juristic_standard_description">يبدأ العصر عندما يكون ظل الشيء مساوياً لطوله. يُتبع في المذاهب الشافعي والمالكي والحنبلي.</string>
-    <string name="juristic_hanafi_description">يبدأ العصر عندما يكون ظل الشيء ضعف طوله. يُتبع في المذهب الحنفي — وقت عصر متأخر أكثر.</string>
+    <string name="juristic_standard_description">يساوي الظلُّ ارتفاعَ الجسم · الشافعي والمالكي والحنبلي.</string>
+    <string name="juristic_hanafi_description">الظلُّ ضعفُ ارتفاع الجسم · الحنفي — وقت عصر متأخر أكثر.</string>
+    <string name="juristic_shadow_equals_height">الظل = الارتفاع</string>
+    <string name="juristic_shadow_twice_height">الظل = 2 × الارتفاع</string>
     <string name="select_language">اختر اللغة</string>
     <string name="language">اللغة</string>
     <string name="location">الموقع</string>
