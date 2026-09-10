@@ -14,6 +14,8 @@
     <string name="asr_calculation">असर गणना</string>
     <string name="juristic_standard">मानक (शाफी)</string>
     <string name="juristic_hanafi">हनफी</string>
+    <string name="juristic_standard_description">अस्र तब शुरू होता है जब किसी वस्तु की छाया उसकी ऊँचाई के बराबर होती है। शाफ़ी, मालिकी और हनबली मतों में प्रयुक्त।</string>
+    <string name="juristic_hanafi_description">अस्र तब शुरू होता है जब किसी वस्तु की छाया उसकी ऊँचाई से दोगुनी होती है। हनफ़ी मत में प्रयुक्त — अस्र का अधिक देर वाला समय।</string>
     <string name="select_language">भाषा चुनें</string>
     <string name="language">भाषा</string>
     <string name="location">स्थान</string>

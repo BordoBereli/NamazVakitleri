@@ -14,6 +14,8 @@
     <string name="asr_calculation">அஸர் கணக்கீடு</string>
     <string name="juristic_standard">நிலையான (ஷாஃபி)</string>
     <string name="juristic_hanafi">ஹனஃபி</string>
+    <string name="juristic_standard_description">அஸ்ர் ஒரு பொருளின் நிழல் அதன் உயரத்திற்கு சமமாக இருக்கும்போது தொடங்குகிறது. ஷாஃபி, மாலிகி மற்றும் ஹன்பலி மத்ஹபுகளில் பயன்படுத்தப்படுகிறது.</string>
+    <string name="juristic_hanafi_description">அஸ்ர் ஒரு பொருளின் நிழல் அதன் உயரத்தை விட இருமடங்காக இருக்கும்போது தொடங்குகிறது. ஹனஃபி மத்ஹபில் பயன்படுத்தப்படுகிறது — தாமதமான அஸ்ர் நேரம்.</string>
     <string name="select_language">மொழியைத் தேர்ந்தெடுக்கவும்</string>
     <string name="language">மொழி</string>
     <string name="location">இருப்பிடம்</string>

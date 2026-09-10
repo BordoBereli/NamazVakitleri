@@ -14,6 +14,8 @@
     <string name="asr_calculation">İkindi Hesabı</string>
     <string name="juristic_standard">Standart (Şafii)</string>
     <string name="juristic_hanafi">Hanefi</string>
+    <string name="juristic_standard_description">İkindi, bir cismin gölgesi boyuna eşit olduğunda başlar. Şafii, Maliki ve Hanbeli mezheplerine göredir.</string>
+    <string name="juristic_hanafi_description">İkindi, bir cismin gölgesi boyunun iki katı olduğunda başlar. Hanefi mezhebine göredir — daha geç bir ikindi vaktidir.</string>
     <string name="select_language">Dil Seç</string>
     <string name="language">Dil</string>
     <string name="location">Konum</string>

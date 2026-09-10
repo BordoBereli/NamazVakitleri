@@ -14,6 +14,8 @@
     <string name="asr_calculation">Расчёт Асра</string>
     <string name="juristic_standard">Стандартный (Шафиит)</string>
     <string name="juristic_hanafi">Ханафит</string>
+    <string name="juristic_standard_description">Аср начинается, когда тень объекта равна его высоте. Используется в шафиитском, маликитском и ханбалитском мазхабах.</string>
+    <string name="juristic_hanafi_description">Аср начинается, когда тень объекта вдвое превышает его высоту. Используется в ханафитском мазхабе — более позднее время асра.</string>
     <string name="select_language">Выберите язык</string>
     <string name="language">Язык</string>
     <string name="location">Местоположение</string>

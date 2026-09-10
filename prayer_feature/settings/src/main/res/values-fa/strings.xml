@@ -14,6 +14,8 @@
     <string name="asr_calculation">محاسبه عصر</string>
     <string name="juristic_standard">استاندارد (شافعی)</string>
     <string name="juristic_hanafi">حنفی</string>
+    <string name="juristic_standard_description">نماز عصر زمانی آغاز می‌شود که سایه یک جسم به اندازه ارتفاع آن باشد. در مذاهب شافعی، مالکی و حنبلی استفاده می‌شود.</string>
+    <string name="juristic_hanafi_description">نماز عصر زمانی آغاز می‌شود که سایه یک جسم دو برابر ارتفاع آن باشد. در مذهب حنفی استفاده می‌شود — وقت عصر دیرتر.</string>
     <string name="select_language">انتخاب زبان</string>
     <string name="language">زبان</string>
     <string name="location">موقعیت</string>

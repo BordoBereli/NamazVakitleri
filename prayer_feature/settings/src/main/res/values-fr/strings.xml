@@ -14,6 +14,8 @@
     <string name="asr_calculation">Calcul du Asr</string>
     <string name="juristic_standard">Standard (Chaféite)</string>
     <string name="juristic_hanafi">Hanafite</string>
+    <string name="juristic_standard_description">L\'Asr commence lorsque l\'ombre d\'un objet est égale à sa hauteur. Utilisé par les écoles shafiite, malikite et hanbalite.</string>
+    <string name="juristic_hanafi_description">L\'Asr commence lorsque l\'ombre d\'un objet est deux fois sa hauteur. Utilisé par l\'école hanafite — une heure d\'Asr plus tardive.</string>
     <string name="select_language">Sélectionner la langue</string>
     <string name="language">Langue</string>
     <string name="location">Localisation</string>

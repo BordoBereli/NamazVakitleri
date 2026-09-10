@@ -14,6 +14,8 @@
     <string name="asr_calculation">عصر کا حساب</string>
     <string name="juristic_standard">معیاری (شافعی)</string>
     <string name="juristic_hanafi">حنفی</string>
+    <string name="juristic_standard_description">عصر اس وقت شروع ہوتی ہے جب کسی چیز کا سایہ اس کی اونچائی کے برابر ہو۔ شافعی، مالکی اور حنبلی مکاتب میں استعمال ہوتی ہے۔</string>
+    <string name="juristic_hanafi_description">عصر اس وقت شروع ہوتی ہے جب کسی چیز کا سایہ اس کی اونچائی سے دوگنا ہو۔ حنفی مکتب میں استعمال ہوتی ہے — عصر کا دیر والا وقت۔</string>
     <string name="select_language">زبان منتخب کریں</string>
     <string name="language">زبان</string>
     <string name="location">مقام</string>

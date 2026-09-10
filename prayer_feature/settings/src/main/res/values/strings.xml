@@ -14,6 +14,8 @@
     <string name="asr_calculation">Asr Calculation</string>
     <string name="juristic_standard">Standard (Shafi)</string>
     <string name="juristic_hanafi">Hanafi</string>
+    <string name="juristic_standard_description">Asr begins when an object\'s shadow is equal to its height. Used by the Shafi\'i, Maliki and Hanbali schools.</string>
+    <string name="juristic_hanafi_description">Asr begins when an object\'s shadow is twice its height. Used by the Hanafi school — a later Asr time.</string>
     <string name="select_language">Select Language</string>
     <string name="language">Language</string>
     <string name="location">Location</string>
