@@ -140,7 +140,7 @@ private fun JuristicMethodCard(
             .clickable(onClick = onSelect),
         colors = CardDefaults.cardColors(
             containerColor = if (selected) {
-                MaterialTheme.colorScheme.primaryContainer
+                juristicSelectedContainerColor(isSystemInDarkTheme())
             } else {
                 MaterialTheme.colorScheme.surfaceVariant
             }
