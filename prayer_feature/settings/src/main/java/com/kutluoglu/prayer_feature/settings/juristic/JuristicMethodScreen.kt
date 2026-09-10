@@ -2,6 +2,7 @@ package com.kutluoglu.prayer_feature.settings.juristic
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -82,10 +83,18 @@ fun JuristicMethodRoute(
         ) {
             items(
                 listOf(
-                    "STANDARD" to SettingsR.string.juristic_standard,
-                    "HANAFI" to SettingsR.string.juristic_hanafi
+                    Triple(
+                        "STANDARD",
+                        SettingsR.string.juristic_standard,
+                        SettingsR.string.juristic_standard_description
+                    ),
+                    Triple(
+                        "HANAFI",
+                        SettingsR.string.juristic_hanafi,
+                        SettingsR.string.juristic_hanafi_description
+                    )
                 )
-            ) { (id, labelRes) ->
+            ) { (id, labelRes, descRes) ->
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -109,13 +118,21 @@ fun JuristicMethodRoute(
                             selected = id == currentMethod,
                             onClick = { viewModel.onEvent(JuristicMethodEvent.SelectMethod(id)) }
                         )
-                        Text(
-                            text = stringResource(labelRes),
-                            style = MaterialTheme.typography.bodyLarge,
+                        Column(
                             modifier = Modifier
                                 .weight(1f)
                                 .padding(start = 8.dp)
-                        )
+                        ) {
+                            Text(
+                                text = stringResource(labelRes),
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                            Text(
+                                text = stringResource(descRes),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
                         if (id == currentMethod) {
                             Icon(
                                 imageVector = Icons.Default.Check,
