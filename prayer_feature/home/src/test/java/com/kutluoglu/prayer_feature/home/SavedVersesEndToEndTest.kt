@@ -138,6 +138,11 @@ class SavedVersesEndToEndTest {
             )
         }
         composeTestRule.waitForIdle()
+        val deadline = System.currentTimeMillis() + 5_000
+        while (vm.uiState.value !is SavedVersesUiState.Success && System.currentTimeMillis() < deadline) {
+            composeTestRule.waitForIdle()
+            Thread.sleep(50)
+        }
         val state = vm.uiState.value as SavedVersesUiState.Success
         assertThat(state.groups).hasSize(1)
         assertThat(state.groups[0].verses.map { it.position() }).contains(verse.position())
