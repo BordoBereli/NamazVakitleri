@@ -1,16 +1,21 @@
 package com.kutluoglu.prayer_feature.home
 
+import android.content.Context
 import android.util.Log
 import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.core.designsystem.utils.LanguageProvider
 import com.kutluoglu.prayer.model.quran.AyahData
 import com.kutluoglu.prayer.model.quran.SavedVerseGroup
+import com.kutluoglu.prayer.model.quran.SavedVersesSortOrder
 import com.kutluoglu.prayer.model.quran.SurahInfo
 import com.kutluoglu.prayer.usecases.quran.GetCollapsedSurahsUseCase
+import com.kutluoglu.prayer.usecases.quran.GetSavedVersesSortOrderUseCase
 import com.kutluoglu.prayer.usecases.quran.GetSavedVersesUseCase
 import com.kutluoglu.prayer.usecases.quran.ReorderSavedVersesUseCase
 import com.kutluoglu.prayer.usecases.quran.SetCollapsedSurahsUseCase
+import com.kutluoglu.prayer.usecases.quran.SetSavedVersesSortOrderUseCase
 import com.kutluoglu.prayer.usecases.quran.ToggleSavedVerseUseCase
+import com.kutluoglu.prayer_feature.home.common.QuranVerseFormatter
 import com.kutluoglu.prayer_feature.home.state.SavedVersesUiState
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -39,6 +44,10 @@ class SavedVersesViewModelTest {
     private val toggleSavedVerseUseCase: ToggleSavedVerseUseCase = mockk()
     private val getCollapsedSurahsUseCase: GetCollapsedSurahsUseCase = mockk()
     private val setCollapsedSurahsUseCase: SetCollapsedSurahsUseCase = mockk()
+    private val getSavedVersesSortOrderUseCase: GetSavedVersesSortOrderUseCase = mockk()
+    private val setSavedVersesSortOrderUseCase: SetSavedVersesSortOrderUseCase = mockk()
+    private val verseFormatter: QuranVerseFormatter = mockk()
+    private val context: Context = mockk()
     private val languageProvider: LanguageProvider = mockk()
 
     private fun verse(surahNumber: Int, numberInSurah: Int) = AyahData(
@@ -61,6 +70,9 @@ class SavedVersesViewModelTest {
         every { languageProvider.getLanguageCode() } returns "tr"
         coEvery { getCollapsedSurahsUseCase() } returns emptySet()
         coEvery { setCollapsedSurahsUseCase(any()) } returns Unit
+        coEvery { getSavedVersesSortOrderUseCase() } returns SavedVersesSortOrder.MANUAL
+        coEvery { setSavedVersesSortOrderUseCase(any()) } returns Unit
+        every { verseFormatter.getLocalizedNameOf(any<SurahInfo>(), any<Context>()) } answers { firstArg<SurahInfo>().englishName }
     }
 
     @AfterEach
@@ -259,12 +271,110 @@ class SavedVersesViewModelTest {
         assertThat(state.isDetailVisible).isFalse()
     }
 
+    @Test
+    fun `loads persisted sort order on init`() = runTest {
+        coEvery { getSavedVersesUseCase("tr") } returns Result.success(listOf(group(1, 1), group(36, 1)))
+        coEvery { getSavedVersesSortOrderUseCase() } returns SavedVersesSortOrder.SURAH_NUMBER
+
+        val vm = viewModel()
+        advanceUntilIdle()
+
+        val state = vm.uiState.value as SavedVersesUiState.Success
+        assertThat(state.sortOrder).isEqualTo(SavedVersesSortOrder.SURAH_NUMBER)
+    }
+
+    @Test
+    fun `sorts by surah number ascending`() = runTest {
+        coEvery { getSavedVersesUseCase("tr") } returns Result.success(listOf(group(2, 1), group(1, 1)))
+        coEvery { getSavedVersesSortOrderUseCase() } returns SavedVersesSortOrder.SURAH_NUMBER
+
+        val vm = viewModel()
+        advanceUntilIdle()
+
+        val state = vm.uiState.value as SavedVersesUiState.Success
+        assertThat(state.filteredGroups.map { it.surah.number }).containsExactly(1, 2).inOrder()
+    }
+
+    @Test
+    fun `sorts by localized surah name`() = runTest {
+        val groups = listOf(
+            SavedVerseGroup(SurahInfo("Al-Fatihah", "الفاتحة", 1, 7), listOf(verse(1, 1))),
+            SavedVerseGroup(SurahInfo("Al-Baqarah", "البقرة", 2, 286), listOf(verse(2, 1)))
+        )
+        coEvery { getSavedVersesUseCase("tr") } returns Result.success(groups)
+        coEvery { getSavedVersesSortOrderUseCase() } returns SavedVersesSortOrder.SURAH_NAME
+
+        val vm = viewModel()
+        advanceUntilIdle()
+
+        val state = vm.uiState.value as SavedVersesUiState.Success
+        assertThat(state.filteredGroups.map { it.surah.number }).containsExactly(2, 1).inOrder()
+    }
+
+    @Test
+    fun `sorts by verse count descending`() = runTest {
+        coEvery { getSavedVersesUseCase("tr") } returns Result.success(listOf(group(1, 1), group(2, 1, 2, 3)))
+        coEvery { getSavedVersesSortOrderUseCase() } returns SavedVersesSortOrder.VERSE_COUNT
+
+        val vm = viewModel()
+        advanceUntilIdle()
+
+        val state = vm.uiState.value as SavedVersesUiState.Success
+        assertThat(state.filteredGroups.map { it.surah.number }).containsExactly(2, 1).inOrder()
+    }
+
+    @Test
+    fun `sorts by date saved descending`() = runTest {
+        val groups = listOf(
+            group(1, 1).copy(verses = listOf(verse(1, 1).copy(savedAt = 100L))),
+            group(2, 1).copy(verses = listOf(verse(2, 1).copy(savedAt = 200L)))
+        )
+        coEvery { getSavedVersesUseCase("tr") } returns Result.success(groups)
+        coEvery { getSavedVersesSortOrderUseCase() } returns SavedVersesSortOrder.DATE_SAVED
+
+        val vm = viewModel()
+        advanceUntilIdle()
+
+        val state = vm.uiState.value as SavedVersesUiState.Success
+        assertThat(state.filteredGroups.map { it.surah.number }).containsExactly(2, 1).inOrder()
+    }
+
+    @Test
+    fun `manual keeps stored order`() = runTest {
+        coEvery { getSavedVersesUseCase("tr") } returns Result.success(listOf(group(2, 1), group(1, 1)))
+
+        val vm = viewModel()
+        advanceUntilIdle()
+
+        val state = vm.uiState.value as SavedVersesUiState.Success
+        assertThat(state.filteredGroups.map { it.surah.number }).containsExactly(2, 1).inOrder()
+    }
+
+    @Test
+    fun `change sort order re-sorts and persists`() = runTest {
+        coEvery { getSavedVersesUseCase("tr") } returns Result.success(listOf(group(2, 1), group(1, 1)))
+
+        val vm = viewModel()
+        advanceUntilIdle()
+        vm.onEvent(SavedVersesEvent.OnChangeSortOrder(SavedVersesSortOrder.SURAH_NUMBER))
+        advanceUntilIdle()
+
+        val state = vm.uiState.value as SavedVersesUiState.Success
+        assertThat(state.sortOrder).isEqualTo(SavedVersesSortOrder.SURAH_NUMBER)
+        assertThat(state.filteredGroups.map { it.surah.number }).containsExactly(1, 2).inOrder()
+        coVerify { setSavedVersesSortOrderUseCase(SavedVersesSortOrder.SURAH_NUMBER) }
+    }
+
     private fun viewModel() = SavedVersesViewModel(
         getSavedVersesUseCase,
         reorderSavedVersesUseCase,
         toggleSavedVerseUseCase,
         getCollapsedSurahsUseCase,
         setCollapsedSurahsUseCase,
+        getSavedVersesSortOrderUseCase,
+        setSavedVersesSortOrderUseCase,
+        verseFormatter,
+        context,
         languageProvider
     )
 }

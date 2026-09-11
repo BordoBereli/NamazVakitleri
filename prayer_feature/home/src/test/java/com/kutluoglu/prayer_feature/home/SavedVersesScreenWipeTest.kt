@@ -1,5 +1,6 @@
 package com.kutluoglu.prayer_feature.home
 
+import android.content.Context
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -13,9 +14,11 @@ import com.kutluoglu.prayer.model.quran.AyahData
 import com.kutluoglu.prayer.model.quran.SurahInfo
 import com.kutluoglu.prayer.repository.IQuranRepository
 import com.kutluoglu.prayer.usecases.quran.GetCollapsedSurahsUseCase
+import com.kutluoglu.prayer.usecases.quran.GetSavedVersesSortOrderUseCase
 import com.kutluoglu.prayer.usecases.quran.GetSavedVersesUseCase
 import com.kutluoglu.prayer.usecases.quran.ReorderSavedVersesUseCase
 import com.kutluoglu.prayer.usecases.quran.SetCollapsedSurahsUseCase
+import com.kutluoglu.prayer.usecases.quran.SetSavedVersesSortOrderUseCase
 import com.kutluoglu.prayer.usecases.quran.ToggleSavedVerseUseCase
 import com.kutluoglu.prayer_remote.di.PrayerRemoteModule
 import com.kutluoglu.prayer_remote.quran.QuranDataSource
@@ -44,6 +47,8 @@ class SavedVersesScreenWipeTest {
 
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
+
+    private fun AyahData.position() = surah.number to numberInSurah
 
     @Before
     fun setUp() {
@@ -88,6 +93,10 @@ class SavedVersesScreenWipeTest {
         val toggleSavedVerseUseCase: ToggleSavedVerseUseCase = GlobalContext.get().get()
         val getCollapsedSurahsUseCase: GetCollapsedSurahsUseCase = GlobalContext.get().get()
         val setCollapsedSurahsUseCase: SetCollapsedSurahsUseCase = GlobalContext.get().get()
+        val getSavedVersesSortOrderUseCase: GetSavedVersesSortOrderUseCase = GlobalContext.get().get()
+        val setSavedVersesSortOrderUseCase: SetSavedVersesSortOrderUseCase = GlobalContext.get().get()
+        val verseFormatter: QuranVerseFormatter = GlobalContext.get().get()
+        val context: Context = GlobalContext.get().get()
         val languageProvider = LanguageProvider()
         val vm = SavedVersesViewModel(
             getSavedVersesUseCase,
@@ -95,6 +104,10 @@ class SavedVersesScreenWipeTest {
             toggleSavedVerseUseCase,
             getCollapsedSurahsUseCase,
             setCollapsedSurahsUseCase,
+            getSavedVersesSortOrderUseCase,
+            setSavedVersesSortOrderUseCase,
+            verseFormatter,
+            context,
             languageProvider
         )
 
@@ -102,7 +115,7 @@ class SavedVersesScreenWipeTest {
             val state by vm.uiState.collectAsState()
             SavedVersesScreen(
                 state = state,
-                verseFormatter = GlobalContext.get().get<QuranVerseFormatter>(),
+                verseFormatter = verseFormatter,
                 onNavigateBack = {},
                 onEvent = vm::onEvent
             )
@@ -112,7 +125,7 @@ class SavedVersesScreenWipeTest {
         runBlocking {
             val repository: IQuranRepository = GlobalContext.get().get()
             val after = repository.getSavedVerses("tr").getOrThrow()
-            assertThat(after.flatMap { it.verses }).contains(verse)
+            assertThat(after.flatMap { it.verses }.map { it.position() }).contains(verse.position())
         }
     }
 }

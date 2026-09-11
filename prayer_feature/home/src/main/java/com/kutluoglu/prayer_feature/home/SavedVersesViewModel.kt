@@ -1,16 +1,21 @@
 package com.kutluoglu.prayer_feature.home
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kutluoglu.core.designsystem.utils.LanguageProvider
 import com.kutluoglu.prayer.model.quran.AyahData
 import com.kutluoglu.prayer.model.quran.SavedVerseGroup
+import com.kutluoglu.prayer.model.quran.SavedVersesSortOrder
 import com.kutluoglu.prayer.usecases.quran.GetCollapsedSurahsUseCase
+import com.kutluoglu.prayer.usecases.quran.GetSavedVersesSortOrderUseCase
 import com.kutluoglu.prayer.usecases.quran.GetSavedVersesUseCase
 import com.kutluoglu.prayer.usecases.quran.ReorderSavedVersesUseCase
 import com.kutluoglu.prayer.usecases.quran.SetCollapsedSurahsUseCase
+import com.kutluoglu.prayer.usecases.quran.SetSavedVersesSortOrderUseCase
 import com.kutluoglu.prayer.usecases.quran.ToggleSavedVerseUseCase
+import com.kutluoglu.prayer_feature.home.common.QuranVerseFormatter
 import com.kutluoglu.prayer_feature.home.state.SavedVersesUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,6 +30,10 @@ class SavedVersesViewModel(
     private val toggleSavedVerseUseCase: ToggleSavedVerseUseCase,
     private val getCollapsedSurahsUseCase: GetCollapsedSurahsUseCase,
     private val setCollapsedSurahsUseCase: SetCollapsedSurahsUseCase,
+    private val getSavedVersesSortOrderUseCase: GetSavedVersesSortOrderUseCase,
+    private val setSavedVersesSortOrderUseCase: SetSavedVersesSortOrderUseCase,
+    private val verseFormatter: QuranVerseFormatter,
+    private val context: Context,
     private val languageProvider: LanguageProvider
 ) : ViewModel() {
 
@@ -43,6 +52,7 @@ class SavedVersesViewModel(
             is SavedVersesEvent.OnToggleCollapse -> toggleCollapse(event.surahNumber)
             SavedVersesEvent.OnExpandAll -> expandAll()
             SavedVersesEvent.OnCollapseAll -> collapseAll()
+            is SavedVersesEvent.OnChangeSortOrder -> changeSortOrder(event.order)
             is SavedVersesEvent.OnSearch -> search(event.query)
             is SavedVersesEvent.OnSelect -> selectVerse(event.verse)
             SavedVersesEvent.OnDismissDetail -> dismissDetail()
@@ -58,12 +68,14 @@ class SavedVersesViewModel(
             _uiState.value = SavedVersesUiState.Loading
             val language = languageProvider.getLanguageCode()
             val collapsed = getCollapsedSurahsUseCase()
+            val sortOrder = getSavedVersesSortOrderUseCase()
             getSavedVersesUseCase(language)
                 .onSuccess { groups ->
                     _uiState.value = SavedVersesUiState.Success(
                         groups = groups,
-                        filteredGroups = filterGroups(groups, ""),
-                        collapsedSurahs = collapsed
+                        filteredGroups = sortGroups(filterGroups(groups, ""), sortOrder),
+                        collapsedSurahs = collapsed,
+                        sortOrder = sortOrder
                     )
                 }
                 .onFailure {
@@ -168,7 +180,7 @@ class SavedVersesViewModel(
         val current = _uiState.value as? SavedVersesUiState.Success ?: return
         _uiState.value = current.copy(
             query = query,
-            filteredGroups = filterGroups(current.groups, query)
+            filteredGroups = sortGroups(filterGroups(current.groups, query), current.sortOrder)
         )
     }
 
@@ -176,8 +188,33 @@ class SavedVersesViewModel(
         val current = _uiState.value as? SavedVersesUiState.Success ?: return
         _uiState.value = current.copy(
             groups = groups,
-            filteredGroups = filterGroups(groups, current.query)
+            filteredGroups = sortGroups(filterGroups(groups, current.query), current.sortOrder)
         )
+    }
+
+    private fun changeSortOrder(order: SavedVersesSortOrder) {
+        viewModelScope.launch {
+            val current = _uiState.value as? SavedVersesUiState.Success ?: return@launch
+            _uiState.value = current.copy(
+                sortOrder = order,
+                filteredGroups = sortGroups(filterGroups(current.groups, current.query), order)
+            )
+            runCatching { setSavedVersesSortOrderUseCase(order) }
+                .onFailure { Log.e("SavedVersesViewModel", "Failed to persist sort order -> ${it.message}") }
+        }
+    }
+
+    private fun sortGroups(
+        groups: List<SavedVerseGroup>,
+        order: SavedVersesSortOrder
+    ): List<SavedVerseGroup> = when (order) {
+        SavedVersesSortOrder.MANUAL -> groups
+        SavedVersesSortOrder.SURAH_NUMBER -> groups.sortedBy { it.surah.number }
+        SavedVersesSortOrder.SURAH_NAME ->
+            groups.sortedBy { verseFormatter.getLocalizedNameOf(it.surah, context).lowercase() }
+        SavedVersesSortOrder.VERSE_COUNT -> groups.sortedByDescending { it.verses.size }
+        SavedVersesSortOrder.DATE_SAVED ->
+            groups.sortedByDescending { it.verses.maxOfOrNull { v -> v.savedAt ?: 0L } ?: 0L }
     }
 
     private fun selectVerse(verse: AyahData) {

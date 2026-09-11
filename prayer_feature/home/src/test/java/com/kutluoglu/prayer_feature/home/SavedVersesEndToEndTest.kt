@@ -1,5 +1,6 @@
 package com.kutluoglu.prayer_feature.home
 
+import android.content.Context
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -15,9 +16,11 @@ import com.kutluoglu.prayer.model.quran.AyahData
 import com.kutluoglu.prayer.model.quran.SurahInfo
 import com.kutluoglu.prayer.repository.IQuranRepository
 import com.kutluoglu.prayer.usecases.quran.GetCollapsedSurahsUseCase
+import com.kutluoglu.prayer.usecases.quran.GetSavedVersesSortOrderUseCase
 import com.kutluoglu.prayer.usecases.quran.GetSavedVersesUseCase
 import com.kutluoglu.prayer.usecases.quran.ReorderSavedVersesUseCase
 import com.kutluoglu.prayer.usecases.quran.SetCollapsedSurahsUseCase
+import com.kutluoglu.prayer.usecases.quran.SetSavedVersesSortOrderUseCase
 import com.kutluoglu.prayer.usecases.quran.ToggleSavedVerseUseCase
 import com.kutluoglu.prayer_remote.di.PrayerRemoteModule
 import com.kutluoglu.prayer_remote.quran.QuranDataSource
@@ -47,6 +50,8 @@ class SavedVersesEndToEndTest {
 
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
+
+    private fun AyahData.position() = surah.number to numberInSurah
 
     @Before
     fun setUp() {
@@ -85,7 +90,7 @@ class SavedVersesEndToEndTest {
             val repository: IQuranRepository = GlobalContext.get().get()
             repository.toggleSavedVerse(verse)
             val saved = repository.getSavedVerses("tr").getOrThrow()
-            assertThat(saved.flatMap { it.verses }).contains(verse)
+            assertThat(saved.flatMap { it.verses }.map { it.position() }).contains(verse.position())
         }
 
         val getSavedVersesUseCase: GetSavedVersesUseCase = GlobalContext.get().get()
@@ -93,6 +98,10 @@ class SavedVersesEndToEndTest {
         val toggleSavedVerseUseCase: ToggleSavedVerseUseCase = GlobalContext.get().get()
         val getCollapsedSurahsUseCase: GetCollapsedSurahsUseCase = GlobalContext.get().get()
         val setCollapsedSurahsUseCase: SetCollapsedSurahsUseCase = GlobalContext.get().get()
+        val getSavedVersesSortOrderUseCase: GetSavedVersesSortOrderUseCase = GlobalContext.get().get()
+        val setSavedVersesSortOrderUseCase: SetSavedVersesSortOrderUseCase = GlobalContext.get().get()
+        val verseFormatter: QuranVerseFormatter = GlobalContext.get().get()
+        val context: Context = GlobalContext.get().get()
         val languageProvider = LanguageProvider()
         val repo1: IQuranRepository = GlobalContext.get().get()
         val repo2: IQuranRepository = GlobalContext.get().get()
@@ -103,8 +112,8 @@ class SavedVersesEndToEndTest {
         runBlocking {
             val direct = repo1.getSavedVerses("tr").getOrThrow()
             val viaUseCase = getSavedVersesUseCase("tr").getOrThrow()
-            assertThat(direct.flatMap { it.verses }).contains(verse)
-            assertThat(viaUseCase.flatMap { it.verses }).contains(verse)
+            assertThat(direct.flatMap { it.verses }.map { it.position() }).contains(verse.position())
+            assertThat(viaUseCase.flatMap { it.verses }.map { it.position() }).contains(verse.position())
         }
         val vm = SavedVersesViewModel(
             getSavedVersesUseCase,
@@ -112,6 +121,10 @@ class SavedVersesEndToEndTest {
             toggleSavedVerseUseCase,
             getCollapsedSurahsUseCase,
             setCollapsedSurahsUseCase,
+            getSavedVersesSortOrderUseCase,
+            setSavedVersesSortOrderUseCase,
+            verseFormatter,
+            context,
             languageProvider
         )
 
@@ -119,7 +132,7 @@ class SavedVersesEndToEndTest {
             val state by vm.uiState.collectAsState()
             SavedVersesScreen(
                 state = state,
-                verseFormatter = GlobalContext.get().get<QuranVerseFormatter>(),
+                verseFormatter = verseFormatter,
                 onNavigateBack = {},
                 onEvent = vm::onEvent
             )
@@ -127,7 +140,7 @@ class SavedVersesEndToEndTest {
         composeTestRule.waitForIdle()
         val state = vm.uiState.value as SavedVersesUiState.Success
         assertThat(state.groups).hasSize(1)
-        assertThat(state.groups[0].verses).contains(verse)
+        assertThat(state.groups[0].verses.map { it.position() }).contains(verse.position())
         composeTestRule.onNodeWithText("Bismillah").assertIsDisplayed()
     }
 }
