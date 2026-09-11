@@ -84,6 +84,38 @@ class PrayerWidgetRenderTest {
         }
     }
 
+    @Test
+    fun `renders Jumuah for next prayer label when isJumuah true`() {
+        val jumuahData = data.copy(isJumuah = true)
+        runGlanceAppWidgetUnitTest {
+            setContext(ApplicationProvider.getApplicationContext())
+            setAppWidgetSize(PrayerWidgetSizes.SMALL)
+            provideComposable { WidgetContent(jumuahData) }
+            awaitIdle()
+            onNode(hasText("Jumu'ah")).assertExists()
+            onNode(hasText("Dhuhr")).assertDoesNotExist()
+        }
+    }
+
+    @Test
+    fun `renders Jumuah for next prayer and Dhuhr row in large layout when isJumuah true`() {
+        val jumuahData = data.copy(
+            isJumuah = true,
+            prayers = listOf(
+                WidgetPrayer("Asr", "16:00", false),
+                WidgetPrayer("Dhuhr", "12:30", true, isJumuah = true)
+            )
+        )
+        runGlanceAppWidgetUnitTest {
+            setContext(ApplicationProvider.getApplicationContext())
+            setAppWidgetSize(PrayerWidgetSizes.LARGE)
+            provideComposable { WidgetContent(jumuahData) }
+            awaitIdle()
+            // "until Jumu'ah" text + the Dhuhr list row renamed to "Jumu'ah"
+            onAllNodes(hasText("Jumu'ah")).assertCountEquals(2)
+        }
+    }
+
     private fun hasTextWithFontWeight(
         text: String,
         fontWeight: FontWeight

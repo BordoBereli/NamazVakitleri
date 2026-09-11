@@ -130,7 +130,7 @@ private fun SmallLayout(data: WidgetData) {
                 )
             )
             Text(
-                data.nextPrayerName,
+                prayerDisplayName(context, data.nextPrayerName, data.isJumuah),
                 style = TextStyle(
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
@@ -189,7 +189,7 @@ private fun MediumLayout(data: WidgetData) {
                 modifier = GlanceModifier.defaultWeight().padding(start = 8.dp, end = 8.dp),
                 horizontalAlignment = Alignment.Horizontal.End
             ) {
-                Text(data.nextPrayerName, style = TextStyle(fontSize = 15.sp, fontWeight = FontWeight.Bold, color = ColorProvider(Gold)))
+                Text(prayerDisplayName(context, data.nextPrayerName, data.isJumuah), style = TextStyle(fontSize = 15.sp, fontWeight = FontWeight.Bold, color = ColorProvider(Gold)))
                 Text(data.nextPrayerTime, style = TextStyle(color = ColorProvider(TextDim), fontSize = 14.sp))
             }
             ProgressRing(
@@ -239,7 +239,10 @@ private fun LargeLayout(data: WidgetData) {
                         )
                     }
                     Text(
-                        context.getString(R.string.widget_until_next, untilNextPrayerName(context, data.nextPrayerName)),
+                        context.getString(
+                            R.string.widget_until_next,
+                            untilNextPrayerName(context, prayerDisplayName(context, data.nextPrayerName, data.isJumuah))
+                        ),
                         modifier = GlanceModifier.padding(start = 8.dp),
                         style = TextStyle(fontWeight = FontWeight.Bold, color = ColorProvider(Gold), fontSize = 15.sp)
                     )
@@ -256,7 +259,7 @@ private fun LargeLayout(data: WidgetData) {
                     .padding(horizontal = 6.dp, vertical = 2.dp)
             ) {
                 Text(
-                    p.name,
+                    prayerDisplayName(context, p.name, p.isJumuah),
                     modifier = GlanceModifier.defaultWeight(),
                     style = TextStyle(fontWeight = fontWeight, color = ColorProvider(color), fontSize = fontSize)
                 )
@@ -330,3 +333,6 @@ private fun untilNextPrayerName(context: Context, prayerName: String): String {
     val isTurkish = context.resources.configuration.locales[0].language == "tr"
     return if (isTurkish) prayerName.toTurkishDative() else prayerName
 }
+
+private fun prayerDisplayName(context: Context, name: String, isJumuah: Boolean): String =
+    if (isJumuah) context.getString(R.string.prayer_jumuah) else name
