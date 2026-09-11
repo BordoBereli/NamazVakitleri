@@ -6,4 +6,5 @@
     <string name="widget_countdown_hour_short">ঘ</string>
     <string name="widget_countdown_minute_short">মি</string>
     <string name="widget_until_next">%1$s পর্যন্ত</string>
+    <string name="prayer_jumuah">জুমু\'আহ</string>
 </resources>

@@ -6,4 +6,5 @@
     <string name="widget_countdown_hour_short">ชม.</string>
     <string name="widget_countdown_minute_short">นาที</string>
     <string name="widget_until_next">จนถึง %1$s</string>
+    <string name="prayer_jumuah">ญุมุอะฮ์</string>
 </resources>

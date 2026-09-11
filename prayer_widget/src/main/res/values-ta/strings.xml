@@ -6,4 +6,5 @@
     <string name="widget_countdown_hour_short">மணி</string>
     <string name="widget_countdown_minute_short">நிமி</string>
     <string name="widget_until_next">%1$s வரை</string>
+    <string name="prayer_jumuah">ஜுமுஆ</string>
 </resources>

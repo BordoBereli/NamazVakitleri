@@ -6,4 +6,5 @@
     <string name="widget_countdown_hour_short">گھنٹے</string>
     <string name="widget_countdown_minute_short">منٹ</string>
     <string name="widget_until_next">%1$s تک</string>
+    <string name="prayer_jumuah">جمعہ</string>
 </resources>

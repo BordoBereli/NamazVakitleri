@@ -6,4 +6,5 @@
     <string name="widget_countdown_hour_short">j</string>
     <string name="widget_countdown_minute_short">mnt</string>
     <string name="widget_until_next">hingga %1$s</string>
+    <string name="prayer_jumuah">Jumu\'ah</string>
 </resources>
