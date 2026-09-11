@@ -67,6 +67,15 @@ class SavedVersesStoreTest {
     }
 
     @Test
+    fun `toggle stamps savedAt on a newly saved verse`() = runBlocking {
+        store.toggle(verse(1))
+
+        val groups = store.getSavedVerseGroups()
+
+        assertThat(groups[0].verses[0].savedAt).isNotNull()
+    }
+
+    @Test
     fun `verse is recognized across languages by its position`() = runBlocking {
         val savedInTurkish = verse(1).copy(text = "Türkçe metin")
         store.toggle(savedInTurkish)

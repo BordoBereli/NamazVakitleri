@@ -51,15 +51,16 @@ class SavedVersesStore(
                     if (remaining.isEmpty()) null else group.copy(verses = remaining)
                 }
             } else {
+                val stamped = verse.copy(savedAt = System.currentTimeMillis())
                 val existing = current.firstOrNull { it.surah.number == verse.surah.number }
                 if (existing != null) {
                     current.map { group ->
                         if (group.surah.number == verse.surah.number) {
-                            group.copy(verses = listOf(verse) + group.verses)
+                            group.copy(verses = listOf(stamped) + group.verses)
                         } else group
                     }
                 } else {
-                    current + listOf(SavedVerseGroup(surah = verse.surah, verses = listOf(verse)))
+                    current + listOf(SavedVerseGroup(surah = verse.surah, verses = listOf(stamped)))
                 }
             }
             prefs[keyGroups] = withContext(Dispatchers.Default) { json.encodeToString(updated) }

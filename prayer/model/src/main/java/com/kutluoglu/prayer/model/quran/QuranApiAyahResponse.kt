@@ -28,7 +28,8 @@ fun QuranApiAyahResponse.toQuranVerse() = AyahData(
 data class AyahData(
         val text: String,
         val surah: SurahInfo,
-        val numberInSurah: Int
+        val numberInSurah: Int,
+        val savedAt: Long? = null
 ) {
     override fun toString(): String {
         return "${surah.number}:$numberInSurah"
