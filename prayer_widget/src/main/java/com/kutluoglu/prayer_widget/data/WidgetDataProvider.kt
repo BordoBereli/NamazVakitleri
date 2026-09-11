@@ -5,16 +5,20 @@ import com.kutluoglu.core.common.now
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
 import com.kutluoglu.prayer.model.prayer.CalculationMethod
 import com.kutluoglu.prayer.model.prayer.JuristicMethod
+import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer.usecases.prayer.GetPrayerTimesUseCase
 import com.kutluoglu.prayer_location.LocationsCoordinator
 import com.kutluoglu.prayer_settings.domain.usecase.GetSettingsUseCase
 import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
+import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.toKotlinLocalTime
 import org.koin.core.annotation.Factory
 import java.time.Clock
 import kotlin.time.toKotlinDuration
+
+private const val DHUHR_ARABIC_NAME = "الظهر"
 
 @Factory
 class WidgetDataProvider(
@@ -70,13 +74,18 @@ class WidgetDataProvider(
                     WidgetPrayer(
                         name = p.name,
                         time = formatClockTime(p.time),
-                        isNext = p.name == nextPrayer.name
+                        isNext = p.name == nextPrayer.name,
+                        isJumuah = isJumuahPrayer(p)
                     )
-                }
+                },
+                isJumuah = isJumuahPrayer(nextPrayer)
             )
         )
     }
 
     private fun formatClockTime(time: LocalTime): String =
         "${time.hour.toString().padStart(2, '0')}:${time.minute.toString().padStart(2, '0')}"
+
+    private fun isJumuahPrayer(prayer: Prayer): Boolean =
+        prayer.arabicName == DHUHR_ARABIC_NAME && prayer.date.dayOfWeek == DayOfWeek.FRIDAY
 }

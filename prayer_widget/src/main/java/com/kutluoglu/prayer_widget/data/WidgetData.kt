@@ -8,13 +8,15 @@ data class WidgetData(
     val locationName: String,
     val gregorianDate: String,
     val hijriDate: String,
-    val prayers: List<WidgetPrayer>
+    val prayers: List<WidgetPrayer>,
+    val isJumuah: Boolean = false
 )
 
 data class WidgetPrayer(
     val name: String,
     val time: String,
-    val isNext: Boolean
+    val isNext: Boolean,
+    val isJumuah: Boolean = false
 )
 
 sealed interface WidgetResult {
