@@ -39,8 +39,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -57,6 +55,7 @@ import androidx.compose.ui.unit.dp
 import com.kutluoglu.core.common.AppVersion
 import com.kutluoglu.core.designsystem.R
 import com.kutluoglu.core.designsystem.components.LoadingIndicator
+import com.kutluoglu.core.designsystem.components.RoundedPageTitleBar
 import com.kutluoglu.prayer.model.prayer.CalculationMethod
 import com.kutluoglu.prayer_feature.settings.R as SettingsR
 import com.kutluoglu.prayer_feature.settings.calculation.displayNameRes
@@ -83,12 +82,8 @@ fun SettingsScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.settings)) },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary
-                )
+            RoundedPageTitleBar(
+                title = stringResource(R.string.settings)
             )
         }
     ) { paddingValues ->

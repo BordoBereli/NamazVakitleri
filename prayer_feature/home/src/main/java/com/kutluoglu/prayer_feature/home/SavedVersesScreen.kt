@@ -45,7 +45,6 @@ import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -67,6 +66,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.kutluoglu.core.designsystem.components.EmptyStateContent
 import com.kutluoglu.core.designsystem.components.LoadingIndicator
+import com.kutluoglu.core.designsystem.components.RoundedPageTitleBar
 import com.kutluoglu.prayer.model.quran.AyahData
 import com.kutluoglu.prayer.model.quran.SavedVerseGroup
 import com.kutluoglu.prayer_feature.home.common.QuranVerseFormatter
@@ -204,8 +204,8 @@ fun SavedVersesScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.saved_verses)) },
+            RoundedPageTitleBar(
+                title = stringResource(R.string.saved_verses),
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(

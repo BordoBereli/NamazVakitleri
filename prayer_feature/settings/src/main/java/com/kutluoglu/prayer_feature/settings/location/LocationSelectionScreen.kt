@@ -36,7 +36,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Clear
@@ -66,8 +65,6 @@ import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -95,6 +92,8 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import java.util.Locale
 import com.kutluoglu.core.designsystem.R
+import com.kutluoglu.core.designsystem.components.BackNavigationIcon
+import com.kutluoglu.core.designsystem.components.RoundedPageTitleBar
 import com.kutluoglu.core.designsystem.components.SkeletonList
 import com.kutluoglu.prayer.model.location.City
 import kotlinx.coroutines.flow.collectLatest
@@ -220,23 +219,20 @@ fun LocationSelectionRoute(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.select_location)) },
+            RoundedPageTitleBar(
+                title = stringResource(R.string.select_location),
                 navigationIcon = {
-                    IconButton(onClick = {
-                        when (uiState) {
-                            is LocationSelectionUiState.CitySelection,
-                            is LocationSelectionUiState.ProvinceSelection -> {
-                                viewModel.onEvent(LocationSelectionEvent.GoBack)
+                    BackNavigationIcon(
+                        onClick = {
+                            when (uiState) {
+                                is LocationSelectionUiState.CitySelection,
+                                is LocationSelectionUiState.ProvinceSelection -> {
+                                    viewModel.onEvent(LocationSelectionEvent.GoBack)
+                                }
+                                else -> onNavigateBack()
                             }
-                            else -> onNavigateBack()
                         }
-                    }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.back)
-                        )
-                    }
+                    )
                 },
                 actions = {
                     if (selectedTabIndex == 0) {
@@ -257,17 +253,11 @@ fun LocationSelectionRoute(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.SortByAlpha,
-                                contentDescription = stringResource(R.string.sort),
-                                tint = MaterialTheme.colorScheme.onPrimary
+                                contentDescription = stringResource(R.string.sort)
                             )
                         }
                     }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
-                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
-                )
+                }
             )
         }
     ) { paddingValues ->

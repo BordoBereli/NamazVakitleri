@@ -21,7 +21,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
@@ -41,7 +40,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -64,7 +62,9 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.kutluoglu.core.designsystem.components.BackNavigationIcon
 import com.kutluoglu.core.designsystem.components.EmptyStateContent
+import com.kutluoglu.core.designsystem.components.RoundedPageTitleBar
 import com.kutluoglu.prayer.model.location.LocationEntry
 import com.kutluoglu.prayer_feature.settings.R
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -171,13 +171,9 @@ fun MyLocationsRoute(
     }
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.my_locations)) },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
-                    }
-                }
+            RoundedPageTitleBar(
+                title = stringResource(R.string.my_locations),
+                navigationIcon = { BackNavigationIcon(onClick = onNavigateBack) }
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
