@@ -2,6 +2,7 @@ package com.kutluoglu.prayer.repository
 
 import com.kutluoglu.prayer.model.quran.AyahData
 import com.kutluoglu.prayer.model.quran.SavedVerseGroup
+import com.kutluoglu.prayer.model.quran.SavedVersesSortOrder
 
 /**
  * Created by F.K. on 11.11.2025.
@@ -16,4 +17,6 @@ interface IQuranRepository {
     suspend fun reorderSavedVerses(groups: List<SavedVerseGroup>): Result<Unit>
     suspend fun getCollapsedSurahs(): Set<Int>
     suspend fun setCollapsedSurahs(surahs: Set<Int>)
+    suspend fun getSavedVersesSortOrder(): SavedVersesSortOrder
+    suspend fun setSavedVersesSortOrder(order: SavedVersesSortOrder)
 }

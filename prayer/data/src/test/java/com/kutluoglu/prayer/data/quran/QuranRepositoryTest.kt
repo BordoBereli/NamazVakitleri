@@ -5,6 +5,7 @@ import com.kutluoglu.prayer.data.cache.QuranSurahCache
 import com.kutluoglu.prayer.data.cache.SavedVersesStore
 import com.kutluoglu.prayer.model.quran.AyahData
 import com.kutluoglu.prayer.model.quran.SavedVerseGroup
+import com.kutluoglu.prayer.model.quran.SavedVersesSortOrder
 import com.kutluoglu.prayer.model.quran.SurahInfo
 import com.kutluoglu.prayer_remote.quran.QuranDataSource
 import io.mockk.coEvery
@@ -165,6 +166,34 @@ class QuranRepositoryTest {
 
         assertThat(result.isSuccess).isTrue()
         assertThat(result.getOrThrow()[0].verses).isEqualTo(stored[0].verses)
+    }
+
+    @Test
+    fun `getSavedVerses preserves savedAt across re-fetch`() = runTest {
+        val stored = listOf(
+            SavedVerseGroup(verse(1, 1).surah, listOf(verse(1, 1).copy(savedAt = 123L)))
+        )
+        val localized = listOf(verse(1, 1).copy(text = "English text"))
+        coEvery { savedVersesStore.getSavedVerseGroups() } returns stored
+        coEvery { quranSurahCache.getSurah(any(), any()) } returns null
+        coEvery { quranSurahCache.putSurah(any(), any(), any()) } returns Unit
+        coEvery { quranDataSource.getSurah(any(), "en") } returns Result.success(localized)
+
+        val repository = QuranRepository(quranDataSource, quranSurahCache, savedVersesStore)
+        val result = repository.getSavedVerses("en")
+
+        assertThat(result.getOrThrow()[0].verses[0].savedAt).isEqualTo(123L)
+    }
+
+    @Test
+    fun `sort order delegates to the store`() = runTest {
+        coEvery { savedVersesStore.getSortOrder() } returns SavedVersesSortOrder.SURAH_NAME
+        coEvery { savedVersesStore.setSortOrder(any()) } returns Unit
+
+        val repository = QuranRepository(quranDataSource, quranSurahCache, savedVersesStore)
+        assertThat(repository.getSavedVersesSortOrder()).isEqualTo(SavedVersesSortOrder.SURAH_NAME)
+        repository.setSavedVersesSortOrder(SavedVersesSortOrder.DATE_SAVED)
+        coVerify(exactly = 1) { savedVersesStore.setSortOrder(SavedVersesSortOrder.DATE_SAVED) }
     }
 
     @Test

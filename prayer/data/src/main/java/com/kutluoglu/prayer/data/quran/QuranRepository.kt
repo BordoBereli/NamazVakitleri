@@ -4,6 +4,7 @@ import com.kutluoglu.prayer.data.cache.QuranSurahCache
 import com.kutluoglu.prayer.data.cache.SavedVersesStore
 import com.kutluoglu.prayer.model.quran.AyahData
 import com.kutluoglu.prayer.model.quran.SavedVerseGroup
+import com.kutluoglu.prayer.model.quran.SavedVersesSortOrder
 import com.kutluoglu.prayer.repository.IQuranRepository
 import com.kutluoglu.prayer_remote.quran.QuranDataSource
 import kotlin.random.Random
@@ -62,7 +63,9 @@ class QuranRepository(
     override suspend fun getSavedVerses(language: String): Result<List<SavedVerseGroup>> = runCatching {
         savedVersesStore.getSavedVerseGroups().map { group ->
             group.copy(verses = group.verses.map { verse ->
-                getVerse(verse.surah.number, verse.numberInSurah, language).getOrElse { verse }
+                getVerse(verse.surah.number, verse.numberInSurah, language)
+                    .getOrElse { verse }
+                    .copy(savedAt = verse.savedAt)
             })
         }
     }
@@ -74,5 +77,11 @@ class QuranRepository(
 
     override suspend fun setCollapsedSurahs(surahs: Set<Int>) {
         savedVersesStore.setCollapsedSurahs(surahs)
+    }
+
+    override suspend fun getSavedVersesSortOrder(): SavedVersesSortOrder = savedVersesStore.getSortOrder()
+
+    override suspend fun setSavedVersesSortOrder(order: SavedVersesSortOrder) {
+        savedVersesStore.setSortOrder(order)
     }
 }
