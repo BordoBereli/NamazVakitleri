@@ -148,4 +148,10 @@
     <string name="unsave_verse">Kaydı Kaldır</string>
     <string name="expand_all">Tümünü Genişlet (%1$d)</string>
     <string name="collapse_all">Tümünü Daralt (%1$d)</string>
+    <string name="sort">Sırala</string>
+    <string name="sort_manual">Manuel</string>
+    <string name="sort_surah_number">Sure numarası</string>
+    <string name="sort_surah_name">Sure adı</string>
+    <string name="sort_verse_count">Ayet sayısı</string>
+    <string name="sort_date_saved">Kayıt tarihi</string>
 </resources>

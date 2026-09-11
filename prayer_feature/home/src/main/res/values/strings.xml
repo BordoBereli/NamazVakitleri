@@ -148,6 +148,12 @@
     <string name="search_saved_verses">Search saved verses...</string>
     <string name="expand_all">Expand All (%1$d)</string>
     <string name="collapse_all">Collapse All (%1$d)</string>
+    <string name="sort">Sort</string>
+    <string name="sort_manual">Manual</string>
+    <string name="sort_surah_number">Surah number</string>
+    <string name="sort_surah_name">Surah name</string>
+    <string name="sort_verse_count">Verse count</string>
+    <string name="sort_date_saved">Date saved</string>
     <string name="no_matching_verses">No saved verses match your search.</string>
     <string name="clear">Clear</string>
 

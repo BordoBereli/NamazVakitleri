@@ -22,11 +22,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material.icons.filled.UnfoldLess
 import androidx.compose.material.icons.filled.UnfoldMore
 import androidx.compose.material.icons.filled.Share
@@ -34,6 +36,8 @@ import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.rounded.DragHandle
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
@@ -69,6 +73,7 @@ import com.kutluoglu.core.designsystem.components.LoadingIndicator
 import com.kutluoglu.core.designsystem.components.RoundedPageTitleBar
 import com.kutluoglu.prayer.model.quran.AyahData
 import com.kutluoglu.prayer.model.quran.SavedVerseGroup
+import com.kutluoglu.prayer.model.quran.SavedVersesSortOrder
 import com.kutluoglu.prayer_feature.home.common.QuranVerseFormatter
 import com.kutluoglu.prayer_feature.home.common.shareVerse
 import com.kutluoglu.prayer_feature.home.feature.CustomBottomSheet
@@ -143,6 +148,7 @@ fun SavedVersesScreen(
     val reorderableState = rememberReorderableLazyListState(lazyListState) { from, to ->
         val success = state as? SavedVersesUiState.Success ?: return@rememberReorderableLazyListState
         if (success.query.isNotBlank()) return@rememberReorderableLazyListState
+        if (success.sortOrder != SavedVersesSortOrder.MANUAL) return@rememberReorderableLazyListState
         val fromIndex = rows.indexOfFirst { it.key == from.key }
         val toIndex = rows.indexOfFirst { it.key == to.key }
         if (fromIndex == -1 || toIndex == -1) return@rememberReorderableLazyListState
@@ -213,6 +219,13 @@ fun SavedVersesScreen(
                             contentDescription = stringResource(R.string.back)
                         )
                     }
+                },
+                actions = {
+                    SortMenu(
+                        sortOrder = (state as? SavedVersesUiState.Success)?.sortOrder
+                            ?: SavedVersesSortOrder.MANUAL,
+                        onSelect = { onEvent(SavedVersesEvent.OnChangeSortOrder(it)) }
+                    )
                 }
             )
         }
@@ -447,6 +460,46 @@ private fun CollapseControls(
             )
         )
     }
+}
+
+@Composable
+internal fun SortMenu(
+    sortOrder: SavedVersesSortOrder,
+    onSelect: (SavedVersesSortOrder) -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+    Box {
+        IconButton(onClick = { expanded = true }) {
+            Icon(
+                imageVector = Icons.Filled.Sort,
+                contentDescription = stringResource(R.string.sort)
+            )
+        }
+        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            SavedVersesSortOrder.entries.forEach { order ->
+                DropdownMenuItem(
+                    text = { Text(stringResource(order.labelRes())) },
+                    onClick = {
+                        expanded = false
+                        onSelect(order)
+                    },
+                    trailingIcon = if (order == sortOrder) {
+                        { Icon(Icons.Filled.Check, contentDescription = null) }
+                    } else {
+                        null
+                    }
+                )
+            }
+        }
+    }
+}
+
+private fun SavedVersesSortOrder.labelRes(): Int = when (this) {
+    SavedVersesSortOrder.MANUAL -> R.string.sort_manual
+    SavedVersesSortOrder.SURAH_NUMBER -> R.string.sort_surah_number
+    SavedVersesSortOrder.SURAH_NAME -> R.string.sort_surah_name
+    SavedVersesSortOrder.VERSE_COUNT -> R.string.sort_verse_count
+    SavedVersesSortOrder.DATE_SAVED -> R.string.sort_date_saved
 }
 
 @Composable
