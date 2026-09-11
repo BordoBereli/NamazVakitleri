@@ -250,6 +250,7 @@ fun SavedVersesScreen(
                         if (state.query.isBlank()) {
                             CollapseControls(
                                 allCollapsed = allCollapsed,
+                                surahCount = state.groups.size,
                                 onToggle = {
                                     onEvent(
                                         if (allCollapsed) {
@@ -430,6 +431,7 @@ private fun SearchField(query: String, onQueryChange: (String) -> Unit) {
 @Composable
 private fun CollapseControls(
     allCollapsed: Boolean,
+    surahCount: Int,
     onToggle: () -> Unit
 ) {
     TextButton(onClick = onToggle) {
@@ -440,7 +442,8 @@ private fun CollapseControls(
         Spacer(modifier = Modifier.width(8.dp))
         Text(
             text = stringResource(
-                if (allCollapsed) R.string.expand_all else R.string.collapse_all
+                if (allCollapsed) R.string.expand_all else R.string.collapse_all,
+                surahCount
             )
         )
     }

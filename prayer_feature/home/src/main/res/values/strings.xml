@@ -146,8 +146,8 @@
     <string name="delete">Delete</string>
     <string name="reorder">Reorder</string>
     <string name="search_saved_verses">Search saved verses...</string>
-    <string name="expand_all">Expand All</string>
-    <string name="collapse_all">Collapse All</string>
+    <string name="expand_all">Expand All (%1$d)</string>
+    <string name="collapse_all">Collapse All (%1$d)</string>
     <string name="no_matching_verses">No saved verses match your search.</string>
     <string name="clear">Clear</string>
 

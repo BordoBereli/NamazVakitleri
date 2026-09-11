@@ -173,7 +173,7 @@ class SavedVersesScreenTest {
             ),
             onEvent = { lastEvent = it }
         )
-        composeTestRule.onNodeWithText("Expand All").performClick()
+        composeTestRule.onNodeWithText("Expand All (2)").performClick()
         assertThat(lastEvent).isEqualTo(SavedVersesEvent.OnExpandAll)
     }
 
@@ -188,7 +188,7 @@ class SavedVersesScreenTest {
             ),
             onEvent = { lastEvent = it }
         )
-        composeTestRule.onNodeWithText("Collapse All").performClick()
+        composeTestRule.onNodeWithText("Collapse All (2)").performClick()
         assertThat(lastEvent).isEqualTo(SavedVersesEvent.OnCollapseAll)
     }
 
