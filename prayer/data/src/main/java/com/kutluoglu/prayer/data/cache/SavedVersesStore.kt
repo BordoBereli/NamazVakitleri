@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.kutluoglu.prayer.model.quran.AyahData
 import com.kutluoglu.prayer.model.quran.SavedVerseGroup
+import com.kutluoglu.prayer.model.quran.SavedVersesSortOrder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
@@ -28,6 +29,7 @@ class SavedVersesStore(
     private val keyGroups = stringPreferencesKey("saved_verse_groups")
     private val keyLegacy = stringPreferencesKey("saved_verses")
     private val keyCollapsed = stringPreferencesKey("saved_verses_collapsed")
+    private val keySortOrder = stringPreferencesKey("saved_verses_sort")
 
     suspend fun getSavedVerseGroups(): List<SavedVerseGroup> {
         migrateIfNeeded()
@@ -84,6 +86,16 @@ class SavedVersesStore(
         dataStore.edit { prefs ->
             prefs[keyCollapsed] = surahs.sorted().joinToString(",")
         }
+    }
+
+    suspend fun getSortOrder(): SavedVersesSortOrder {
+        val raw = dataStore.data.map { it[keySortOrder] }.firstOrNull()
+        return raw?.let { runCatching { SavedVersesSortOrder.valueOf(it) }.getOrNull() }
+            ?: SavedVersesSortOrder.MANUAL
+    }
+
+    suspend fun setSortOrder(order: SavedVersesSortOrder) {
+        dataStore.edit { prefs -> prefs[keySortOrder] = order.name }
     }
 
     private suspend fun migrateIfNeeded() {

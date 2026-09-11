@@ -9,6 +9,7 @@ import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.prayer.model.quran.AyahData
+import com.kutluoglu.prayer.model.quran.SavedVersesSortOrder
 import com.kutluoglu.prayer.model.quran.SurahInfo
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
@@ -167,6 +168,19 @@ class SavedVersesStoreTest {
 
         val reloaded = SavedVersesStore(dataStore)
         assertThat(reloaded.getCollapsedSurahs()).containsExactly(1, 36)
+    }
+
+    @Test
+    fun `sort order defaults to manual`() = runBlocking {
+        assertThat(store.getSortOrder()).isEqualTo(SavedVersesSortOrder.MANUAL)
+    }
+
+    @Test
+    fun `sort order persists across store instances`() = runBlocking {
+        store.setSortOrder(SavedVersesSortOrder.SURAH_NUMBER)
+
+        val reloaded = SavedVersesStore(dataStore)
+        assertThat(reloaded.getSortOrder()).isEqualTo(SavedVersesSortOrder.SURAH_NUMBER)
     }
 
     @Test
