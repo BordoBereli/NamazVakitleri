@@ -39,7 +39,7 @@ private val COUNTRY_TIME_ZONE_IDS: Map<String, String> = mapOf(
  * Resolution order:
  * 1. A zone from [countryCode] via [COUNTRY_TIME_ZONE_IDS] (e.g. "TR" -> "Europe/Istanbul").
  * 2. A longitude-offset fallback ("UTC", "UTC+3", ...) preserving the legacy
- *    `CitySearchRemoteDataSource.calculateTimezone` behavior.
+ *    behavior of the former `CitySearchRemoteDataSource` timezone logic.
  *
  * The offset fallback means this effectively always returns a value; the nullable
  * return type lets callers treat "no sensible zone" as null. [latitude] is currently

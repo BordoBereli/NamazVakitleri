@@ -57,4 +57,20 @@ class LocationMapperTest {
 
         assertEquals("Europe/Istanbul", model.timeZoneId)
     }
+
+    @Test
+    fun `mapFromDomain defaults timeZoneId to null when domain has none`() {
+        val domain = LocationData(
+            latitude = 41.0082,
+            longitude = 28.9784,
+            country = "Turkey",
+            countryCode = "TR",
+            city = "Istanbul",
+            county = null
+        )
+
+        val model = mapper.mapFromDomain(domain)
+
+        assertNull(model.timeZoneId)
+    }
 }

@@ -46,17 +46,15 @@ class CitySearchRemoteDataSource(
             val cityField = address?.getCityName()
             val countryCode = address?.country_code?.uppercase() ?: ""
             val countryName = getCountryNameFromCode(countryCode) ?: address?.country ?: ""
+            val latitude = result.lat.toDoubleOrNull() ?: return@mapNotNull null
+            val longitude = result.lon.toDoubleOrNull() ?: return@mapNotNull null
             City(
                 name = cityName,
                 city = cityField,
                 country = countryName,
-                latitude = result.lat.toDoubleOrNull() ?: return@mapNotNull null,
-                longitude = result.lon.toDoubleOrNull() ?: return@mapNotNull null,
-                timezone = timeZoneIdFor(
-                    result.lat.toDoubleOrNull() ?: 0.0,
-                    result.lon.toDoubleOrNull() ?: 0.0,
-                    countryCode
-                ) ?: "",
+                latitude = latitude,
+                longitude = longitude,
+                timezone = timeZoneIdFor(latitude, longitude, countryCode) ?: "",
                 county = countyName
             )
         }
