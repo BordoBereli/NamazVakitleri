@@ -1,4 +1,20 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.io.FileInputStream
+import java.util.Properties
+
+val keystoreProperties = Properties()
+val keystorePropertiesFile = rootProject.file("keystore.properties")
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+}
+
+fun keystoreProp(propName: String, envName: String): String? =
+    keystoreProperties.getProperty(propName) ?: System.getenv(envName)
+
+val releaseStoreFile = keystoreProp("storeFile", "KEYSTORE_FILE")
+val releaseStorePassword = keystoreProp("storePassword", "KEYSTORE_PASSWORD")
+val releaseKeyAlias = keystoreProp("keyAlias", "KEYSTORE_KEY_ALIAS")
+val releaseKeyPassword = keystoreProp("keyPassword", "KEYSTORE_KEY_PASSWORD")
 
 plugins {
     alias(libs.plugins.android.application)
@@ -23,9 +39,19 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = releaseStoreFile?.let { file(it) }
+            storePassword = releaseStorePassword
+            keyAlias = releaseKeyAlias
+            keyPassword = releaseKeyPassword
+        }
+    }
+
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            signingConfig = if (releaseStoreFile != null) signingConfigs.getByName("release") else null
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

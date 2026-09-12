@@ -22,6 +22,12 @@ __pycache__/
 google-services.json
 google_services.xml
 
+# Keystore / signing secrets - never commit
+keystore.properties
+*.jks
+*.keystore
+*.keystore.properties
+
 # Local-only docs (kept out of git, stay on disk)
 .worktrees/
 AGENTS.md

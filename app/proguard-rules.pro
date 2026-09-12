@@ -47,3 +47,11 @@
 # osmdroid does not ship consumer rules and relies on reflection for tile providers.
 -keep class org.osmdroid.** { *; }
 -dontwarn org.osmdroid.**
+
+# --- Koin KSP ---
+# Koin KSP generates module wiring and metadata classes (org.koin.ksp.generated.*):
+#   *ModuleGen* classes, _KSP_* meta classes (@MetaModule/@MetaDefinition/@MetaApplication),
+#   and the *ApplicationGen* extension functions backing configurationModules/startKoin.
+# Koin ships consumer rules, but keep the generated package explicitly so the DI graph
+# survives R8 even if consumer rules change.
+-keep class org.koin.ksp.generated.** { *; }
