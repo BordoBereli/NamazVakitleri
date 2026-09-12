@@ -10,6 +10,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.koin.core.annotation.Single
 import java.io.IOException
+import java.util.logging.Logger
 
 @Single
 class QuranDataSource(
@@ -18,6 +19,7 @@ class QuranDataSource(
 ) {
 
     private val json = Json { ignoreUnknownKeys = true }
+    private val logger = Logger.getLogger(QuranDataSource::class.java.name)
     private val supportedTranslations = mapOf(
         "tr" to "tr.diyanet",
         "en" to "en.sahih"
@@ -44,7 +46,7 @@ class QuranDataSource(
                     Result.failure(IOException("API request failed with code: ${response.code}"))
                 }
             } catch (e: Exception) {
-                e.printStackTrace()
+                logger.severe("Failed to fetch surah -> ${e.message}")
                 Result.failure(e)
             }
         }

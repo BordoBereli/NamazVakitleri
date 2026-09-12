@@ -31,6 +31,21 @@ class NamazVakitleriApplication : Application() {
 
     private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
+    /**
+     * Applies the persisted locale before any activity is created.
+     *
+     * NOTE: This deliberately creates a LOCAL [SettingsDataStore] instance via
+     * [SettingsDataStore.create] because `attachBaseContext` runs BEFORE Koin is
+     * started in [onCreate]. The persisted locale must be applied to the base
+     * context before the activity context exists, so we cannot resolve the Koin
+     * singleton here.
+     *
+     * The Koin singleton registered by `AppModule.provideSettingsDataStore` is the
+     * canonical instance used by the rest of the app (see [MainActivity]).
+     *
+     * This dual-instantiation is a deliberate, documented exception. Do NOT "fix"
+     * it by removing the local instance — that would break locale application.
+     */
     override fun attachBaseContext(base: Context) {
         val localeManager = LocaleManager()
         super.attachBaseContext(localeManager.applyPersistedLocale(base, SettingsDataStore.create(base)))

@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
+import android.util.Log
 import androidx.core.content.FileProvider
 import androidx.core.graphics.createBitmap
 import com.kutluoglu.prayer.model.quran.AyahData
@@ -12,6 +13,8 @@ import com.kutluoglu.prayer_feature.home.R
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+
+private const val TAG = "QuranVerseShare"
 
 fun shareVerse(verse: AyahData, verseFormatter: QuranVerseFormatter, context: Context) {
     val localizedSurahName = verseFormatter.getLocalizedNameOf(verse, context)
@@ -58,7 +61,7 @@ private fun getIconUri(context: Context): Uri? {
         }
         return FileProvider.getUriForFile(context, "${context.packageName}.provider", imageFile)
     } catch (e: IOException) {
-        e.printStackTrace()
+        Log.e(TAG, "Failed to share verse -> ${e.message}")
     }
     return null
 }

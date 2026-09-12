@@ -45,9 +45,6 @@ android {
             isIncludeAndroidResources = true
         }
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
-    }
 }
 
 dependencies {

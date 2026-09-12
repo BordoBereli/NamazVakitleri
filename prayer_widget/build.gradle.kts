@@ -27,9 +27,6 @@ android {
     buildFeatures {
         compose = true
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
-    }
     testOptions {
         unitTests {
             isReturnDefaultValues = true
