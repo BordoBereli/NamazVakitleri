@@ -16,6 +16,15 @@ val releaseStorePassword = keystoreProp("storePassword", "KEYSTORE_PASSWORD")
 val releaseKeyAlias = keystoreProp("keyAlias", "KEYSTORE_KEY_ALIAS")
 val releaseKeyPassword = keystoreProp("keyPassword", "KEYSTORE_KEY_PASSWORD")
 
+// Only sign the release build when the full signing config is present; a partial
+// config degrades gracefully to an unsigned APK instead of a cryptic signing error.
+val releaseSigningConfigured = listOf(
+    releaseStoreFile,
+    releaseStorePassword,
+    releaseKeyAlias,
+    releaseKeyPassword,
+).all { !it.isNullOrBlank() }
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -41,7 +50,8 @@ android {
 
     signingConfigs {
         create("release") {
-            storeFile = releaseStoreFile?.let { file(it) }
+            // Resolve relative to the repo root, matching where keystore.properties lives.
+            storeFile = releaseStoreFile?.let { rootProject.file(it) }
             storePassword = releaseStorePassword
             keyAlias = releaseKeyAlias
             keyPassword = releaseKeyPassword
@@ -51,7 +61,7 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = true
-            signingConfig = if (releaseStoreFile != null) signingConfigs.getByName("release") else null
+            signingConfig = if (releaseSigningConfigured) signingConfigs.getByName("release") else null
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
