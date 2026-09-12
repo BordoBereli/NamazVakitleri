@@ -3,7 +3,7 @@ package com.kutluoglu.prayer.data.source.location
 import com.kutluoglu.prayer.data.mapper.location.LocationMapper
 import com.kutluoglu.prayer.data.repository.location.LocationDataStore
 import com.kutluoglu.prayer.model.location.LocationData
-import com.kutluoglu.prayer.repository.LocationRepository
+import com.kutluoglu.prayer.repository.SavedLocationRepository
 import com.kutluoglu.prayer.usecases.location.LocationError
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -18,7 +18,7 @@ import org.koin.core.annotation.Single
 class LocationRepositoryImp(
         private val locationCache: LocationDataStore,
         private val locationMapper: LocationMapper
-): LocationRepository {
+): SavedLocationRepository {
     override suspend fun saveLocation(locationData: LocationData) {
         locationCache.saveLocation(
             locationMapper.mapFromDomain(locationData)

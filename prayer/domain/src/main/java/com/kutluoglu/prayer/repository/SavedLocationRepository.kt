@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
  * Created by F.K. on 11.11.2025.
  *
  */
-interface LocationRepository {
+interface SavedLocationRepository {
     suspend fun saveLocation(locationData: LocationData)
     suspend fun getSavedLocation(): Result<LocationData>
     fun observeLocation(): Flow<LocationData>
