@@ -8,6 +8,10 @@ import java.util.TimeZone
  *
  * @param countryCode The country code of the location.
  * @return A ZoneId if a suitable one is found, otherwise returns the system default ZoneId.
+ *
+ * NOTE: The country-prefix heuristic below is duplicated in
+ * `prayer/model/.../location/ZoneIdUtils.kt` (`resolveZoneId`). Module layering
+ * prevents sharing this logic, so any fix to the heuristic MUST be applied in both places.
  */
 fun getZoneIdFromLocation(countryCode: String?): ZoneId {
     // 1. If country code is null or blank, fallback to system default.

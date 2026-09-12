@@ -8,7 +8,10 @@ import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.parallel.Execution
+import org.junit.jupiter.api.parallel.ExecutionMode
 
+@Execution(ExecutionMode.SAME_THREAD)
 class ZoneIdUtilsTest {
 
     private val originalDefault = TimeZone.getDefault()
@@ -69,6 +72,21 @@ class ZoneIdUtilsTest {
 
         assertTrue(zone.id.startsWith("US"), "expected US-prefixed zone but was ${zone.id}")
         assertNotEquals(ZoneId.systemDefault(), zone)
+    }
+
+    @Test
+    fun `TR country code with no stored timezone falls back to system default`() {
+        val location = LocationData(
+            latitude = 41.0082,
+            longitude = 28.9784,
+            country = "Turkey",
+            countryCode = "TR",
+            city = "Istanbul",
+            county = null,
+            timeZoneId = null
+        )
+
+        assertEquals(ZoneId.systemDefault(), resolveZoneId(location))
     }
 
     @Test
