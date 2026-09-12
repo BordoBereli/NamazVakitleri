@@ -66,9 +66,10 @@ fun timeZoneIdFor(latitude: Double, longitude: Double, countryCode: String?): St
  * 2. A zone derived from [LocationData.countryCode] via the available-ID prefix heuristic.
  * 3. The JVM/device default zone.
  *
- * NOTE: The country-prefix heuristic below is duplicated in
- * `core/common/.../utils/ZoneIdUtils.kt` (`getZoneIdFromLocation`). Module layering
- * prevents sharing this logic, so any fix to the heuristic MUST be applied in both places.
+ * This is the single shared resolver for all call sites (home loader, prayer-times
+ * view model, widget provider, and notification scheduler). The country-prefix
+ * heuristic was previously duplicated in `core/common/.../utils/ZoneIdUtils.kt`
+ * (`getZoneIdFromLocation`), which has been removed.
  */
 fun resolveZoneId(location: LocationData): ZoneId {
     val storedZoneId = location.timeZoneId

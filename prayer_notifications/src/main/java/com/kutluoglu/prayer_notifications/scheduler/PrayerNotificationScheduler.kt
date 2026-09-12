@@ -10,6 +10,7 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.kutluoglu.core.common.now
+import com.kutluoglu.prayer.model.location.resolveZoneId
 import com.kutluoglu.prayer.model.prayer.CalculationMethod
 import com.kutluoglu.prayer.model.prayer.JuristicMethod
 import com.kutluoglu.prayer.model.prayer.Prayer
@@ -30,7 +31,6 @@ import org.koin.core.annotation.Single
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
-import java.time.ZoneId
 import java.util.concurrent.TimeUnit
 
 @Single(binds = [AlarmScheduler::class])
@@ -88,8 +88,7 @@ class PrayerNotificationScheduler(
             cancelDailyReschedule()
             return
         }
-        val zoneId = runCatching { ZoneId.of(appSettings.location.timeZone) }
-            .getOrDefault(ZoneId.systemDefault())
+        val zoneId = resolveZoneId(location)
         val today = LocalDate.now(zoneId)
         val method = CalculationMethod.fromSettingsId(appSettings.calculationMethod)
         val juristicMethod = JuristicMethod.fromSettingsId(appSettings.juristicMethod)
@@ -315,8 +314,7 @@ class PrayerNotificationScheduler(
         if (!settings.dailyReminderEnabled) return
         val location = locationsCoordinator.resolveSelected() ?: return
         val appSettings = runCatching { getSettingsUseCase() }.getOrNull() ?: return
-        val zoneId = runCatching { ZoneId.of(appSettings.location.timeZone) }
-            .getOrDefault(ZoneId.systemDefault())
+        val zoneId = resolveZoneId(location)
         val tomorrow = LocalDate.now(zoneId).plusDays(1)
         val method = CalculationMethod.fromSettingsId(appSettings.calculationMethod)
         val juristicMethod = JuristicMethod.fromSettingsId(appSettings.juristicMethod)

@@ -5,11 +5,11 @@ import androidx.lifecycle.viewModelScope
 import com.kutluoglu.core.common.analytics.AnalyticsEvents
 import com.kutluoglu.core.common.analytics.AnalyticsParams
 import com.kutluoglu.core.common.analytics.AnalyticsTracker
-import com.kutluoglu.core.common.getZoneIdFromLocation
 import com.kutluoglu.core.common.gregorianDayAndNameFormatter
 import com.kutluoglu.core.common.now
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
 import com.kutluoglu.prayer.model.location.LocationData
+import com.kutluoglu.prayer.model.location.resolveZoneId
 import com.kutluoglu.prayer.model.prayer.CalculationMethod
 import com.kutluoglu.prayer.model.prayer.DailyPrayer
 import com.kutluoglu.prayer.model.prayer.JuristicMethod
@@ -134,7 +134,7 @@ class PrayerTimesViewModel(
             _uiState.value = PrayerTimesUiState.Loading
         }
         activeLocationId = newLocationId
-        val resolvedZoneId = getZoneIdFromLocation(location.countryCode)
+        val resolvedZoneId = resolveZoneId(location)
         zoneId = resolvedZoneId
         val today = LocalDateTime.now(resolvedZoneId)
         val month = selectedMonthByLocation[activeLocationId] ?: today.date.yearMonth

@@ -1,8 +1,8 @@
 package com.kutluoglu.prayer_widget.data
 
-import com.kutluoglu.core.common.getZoneIdFromLocation
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
 import com.kutluoglu.prayer.model.location.LocationData
+import com.kutluoglu.prayer.model.location.resolveZoneId
 import com.kutluoglu.prayer.model.prayer.JuristicMethod
 import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer.usecases.prayer.GetPrayerTimesUseCase
@@ -156,7 +156,7 @@ class WidgetDataProviderTest {
             val provider = WidgetDataProvider(useCase, locations, settings, calculator, formatter, countdown)
             provider.load()
 
-            val expectedZone = getZoneIdFromLocation("US")
+            val expectedZone = resolveZoneId(LocationData(41.0, 29.0, "United States", "US", "New York", null))
             assertNotEquals(ZoneId.of("Europe/Berlin"), expectedZone)
             coVerify {
                 useCase.invoke(any(), any(), any(), eq(expectedZone), any(), any(), eq(false))

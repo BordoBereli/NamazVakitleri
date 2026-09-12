@@ -1,8 +1,8 @@
 package com.kutluoglu.prayer_widget.data
 
-import com.kutluoglu.core.common.getZoneIdFromLocation
 import com.kutluoglu.core.common.now
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
+import com.kutluoglu.prayer.model.location.resolveZoneId
 import com.kutluoglu.prayer.model.prayer.CalculationMethod
 import com.kutluoglu.prayer.model.prayer.JuristicMethod
 import com.kutluoglu.prayer.model.prayer.Prayer
@@ -32,7 +32,7 @@ class WidgetDataProvider(
 ) {
     suspend fun load(): WidgetResult {
         val location = locationsCoordinator.resolveSelected() ?: return WidgetResult.Error
-        val zoneId = getZoneIdFromLocation(location.countryCode)
+        val zoneId = resolveZoneId(location)
         val settings = runCatching { getSettingsUseCase() }.getOrNull() ?: return WidgetResult.Error
         val method = CalculationMethod.fromSettingsId(settings.calculationMethod)
         val juristicMethod = JuristicMethod.fromSettingsId(settings.juristicMethod)

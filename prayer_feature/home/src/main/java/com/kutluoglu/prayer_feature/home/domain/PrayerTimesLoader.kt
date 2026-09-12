@@ -1,8 +1,8 @@
 package com.kutluoglu.prayer_feature.home.domain
 
-import com.kutluoglu.core.common.getZoneIdFromLocation
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
 import com.kutluoglu.prayer.model.location.LocationData
+import com.kutluoglu.prayer.model.location.resolveZoneId
 import com.kutluoglu.prayer.model.prayer.CalculationMethod
 import com.kutluoglu.prayer.model.prayer.JuristicMethod
 import com.kutluoglu.prayer.model.prayer.Prayer
@@ -46,7 +46,7 @@ class PrayerTimesLoader(
         hijriAdjustment: Int = 0,
         juristicMethod: JuristicMethod = JuristicMethod.STANDARD
     ): Result<LoadedPrayerData> {
-        val zoneId = getZoneIdFromLocation(location.countryCode)
+        val zoneId = resolveZoneId(location)
         val locationDateTime = java.time.LocalDateTime.now(clock.withZone(zoneId)).toKotlinLocalDateTime()
         return getPrayerTimesUseCase(
             date = locationDateTime,

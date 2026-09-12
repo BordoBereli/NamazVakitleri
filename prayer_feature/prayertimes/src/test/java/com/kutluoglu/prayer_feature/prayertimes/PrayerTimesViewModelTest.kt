@@ -7,11 +7,11 @@ import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.core.common.analytics.AnalyticsEvents
 import com.kutluoglu.core.common.analytics.AnalyticsParams
 import com.kutluoglu.core.common.analytics.AnalyticsTracker
-import com.kutluoglu.core.common.getZoneIdFromLocation
 import com.kutluoglu.core.common.gregorianDayAndNameFormatter
 import com.kutluoglu.core.common.now
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
 import com.kutluoglu.prayer.model.location.LocationData
+import com.kutluoglu.prayer.model.location.resolveZoneId
 import com.kutluoglu.prayer.model.prayer.CalculationMethod
 import com.kutluoglu.prayer.model.prayer.JuristicMethod
 import com.kutluoglu.prayer.model.prayer.DailyPrayer
@@ -161,7 +161,7 @@ class PrayerTimesViewModelTest {
             val state = awaitItem()
             assertThat(state).isInstanceOf(PrayerTimesUiState.Success::class.java)
             val success = state as PrayerTimesUiState.Success
-            val zoneId = getZoneIdFromLocation("TR")
+            val zoneId = resolveZoneId(mockLocation)
             val currentMonth = LocalDateTime.now(zoneId).date.yearMonth
             assertThat(success.selectedMonth).isEqualTo(currentMonth)
             assertThat(success.isCurrentMonth).isTrue()
@@ -182,7 +182,7 @@ class PrayerTimesViewModelTest {
     }
 
     private fun currentMonthDays(): Int {
-        val zoneId = getZoneIdFromLocation("TR")
+        val zoneId = resolveZoneId(mockLocation)
         return LocalDateTime.now(zoneId).date.yearMonth.numberOfDays
     }
 
@@ -262,7 +262,7 @@ class PrayerTimesViewModelTest {
 
     @Test
     fun `cold load streams today first then completes full sorted month`() = runTest {
-        val zoneId = getZoneIdFromLocation("TR")
+        val zoneId = resolveZoneId(mockLocation)
         val today = LocalDateTime.now(zoneId).date.dayOfMonth
         val days = currentMonthDays()
         val gates = mutableMapOf<Int, CompletableDeferred<Unit>>()
@@ -341,7 +341,7 @@ class PrayerTimesViewModelTest {
             val state = awaitItem()
             assertThat(state).isInstanceOf(PrayerTimesUiState.Success::class.java)
             val success = state as PrayerTimesUiState.Success
-            val zoneId = getZoneIdFromLocation("TR")
+            val zoneId = resolveZoneId(mockLocation)
             val currentMonth = LocalDateTime.now(zoneId).date.yearMonth
             val nextMonth = currentMonth.plus(1, DateTimeUnit.MONTH)
             assertThat(success.selectedMonth).isEqualTo(nextMonth)
@@ -384,7 +384,7 @@ class PrayerTimesViewModelTest {
         viewModel.uiState.test {
             val state = awaitItem()
             val success = state as PrayerTimesUiState.Success
-            val zoneId = getZoneIdFromLocation("TR")
+            val zoneId = resolveZoneId(mockLocation)
             val currentMonth = LocalDateTime.now(zoneId).date.yearMonth
             val previousMonth = currentMonth.minus(1, DateTimeUnit.MONTH)
             assertThat(success.selectedMonth).isEqualTo(previousMonth)
@@ -403,7 +403,7 @@ class PrayerTimesViewModelTest {
         viewModel.uiState.test {
             val state = awaitItem()
             val success = state as PrayerTimesUiState.Success
-            val zoneId = getZoneIdFromLocation("TR")
+            val zoneId = resolveZoneId(mockLocation)
             val currentMonth = LocalDateTime.now(zoneId).date.yearMonth
             assertThat(success.selectedMonth).isEqualTo(currentMonth)
             assertThat(success.isCurrentMonth).isTrue()
@@ -423,7 +423,7 @@ class PrayerTimesViewModelTest {
         viewModel.onEvent(PrayerTimesEvent.OnNextMonth)
         viewModel.onEvent(PrayerTimesEvent.OnToday)
 
-        val zoneId = getZoneIdFromLocation("TR")
+        val zoneId = resolveZoneId(mockLocation)
         val currentMonth = LocalDateTime.now(zoneId).date.yearMonth
         val nextMonth = currentMonth.plus(1, DateTimeUnit.MONTH)
         val expectedCalls = currentMonth.numberOfDays + nextMonth.numberOfDays
@@ -432,7 +432,7 @@ class PrayerTimesViewModelTest {
 
     @Test
     fun `loads month from persistent cache without per-day fetches`() = runTest {
-        val zoneId = getZoneIdFromLocation("TR")
+        val zoneId = resolveZoneId(mockLocation)
         val currentMonth = LocalDateTime.now(zoneId).date.yearMonth
         val cachedMonth = (1..currentMonth.numberOfDays).map { day ->
             DailyPrayer(
@@ -464,7 +464,7 @@ class PrayerTimesViewModelTest {
 
     @Test
     fun `persisted month hijri dates are recomputed with the adjustment`() = runTest {
-        val zoneId = getZoneIdFromLocation("TR")
+        val zoneId = resolveZoneId(mockLocation)
         val currentMonth = LocalDateTime.now(zoneId).date.yearMonth
         val cachedMonth = (1..currentMonth.numberOfDays).map { day ->
             DailyPrayer(
@@ -509,7 +509,7 @@ class PrayerTimesViewModelTest {
 
     @Test
     fun `saves month to persistent cache after per-day computation`() = runTest {
-        val zoneId = getZoneIdFromLocation("TR")
+        val zoneId = resolveZoneId(mockLocation)
         val currentMonth = LocalDateTime.now(zoneId).date.yearMonth
         coEvery { getMonthlyPrayerTimesUseCase.invoke(any(), any(), any(), any(), any(), any()) } returns null
 
@@ -553,7 +553,7 @@ class PrayerTimesViewModelTest {
             val state = awaitItem()
             assertThat(state).isInstanceOf(PrayerTimesUiState.Success::class.java)
             val success = state as PrayerTimesUiState.Success
-            val zoneId = getZoneIdFromLocation("TR")
+            val zoneId = resolveZoneId(mockLocation)
             val currentMonth = LocalDateTime.now(zoneId).date.yearMonth
             val secondNextMonth = currentMonth.plus(2, DateTimeUnit.MONTH)
             assertThat(success.selectedMonth).isEqualTo(secondNextMonth)
@@ -605,7 +605,7 @@ class PrayerTimesViewModelTest {
         activeLocationProvider.set(locA)
         viewModel.loadMonthlyPrayerTimes()
 
-        val zoneId = getZoneIdFromLocation("TR")
+        val zoneId = resolveZoneId(mockLocation)
         val currentMonth = LocalDateTime.now(zoneId).date.yearMonth
         val nextMonth = currentMonth.plus(1, DateTimeUnit.MONTH)
         viewModel.uiState.test {
@@ -738,7 +738,7 @@ class PrayerTimesViewModelTest {
         store.put("viewModel", viewModel)
         viewModel.loadMonthlyPrayerTimes()
 
-        val zoneId = getZoneIdFromLocation("TR")
+        val zoneId = resolveZoneId(mockLocation)
         val days = LocalDateTime.now(zoneId).date.yearMonth.numberOfDays
         try {
             withTimeout(5_000) {
@@ -804,7 +804,7 @@ class PrayerTimesViewModelTest {
 
     @Test
     fun `persisted month prayer names are re-localized on load`() = runTest {
-        val zoneId = getZoneIdFromLocation("TR")
+        val zoneId = resolveZoneId(mockLocation)
         val currentMonth = LocalDateTime.now(zoneId).date.yearMonth
         val cachedMonth = (1..currentMonth.numberOfDays).map { day ->
             DailyPrayer(
@@ -830,7 +830,7 @@ class PrayerTimesViewModelTest {
 
     @Test
     fun `persisted month gregorian dates are re-formatted on load`() = runTest {
-        val zoneId = getZoneIdFromLocation("TR")
+        val zoneId = resolveZoneId(mockLocation)
         val currentMonth = LocalDateTime.now(zoneId).date.yearMonth
         val cachedMonth = (1..currentMonth.numberOfDays).map { day ->
             DailyPrayer(

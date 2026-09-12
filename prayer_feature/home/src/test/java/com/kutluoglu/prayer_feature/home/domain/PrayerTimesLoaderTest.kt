@@ -1,9 +1,9 @@
 package com.kutluoglu.prayer_feature.home.domain
 
 import com.google.common.truth.Truth.assertThat
-import com.kutluoglu.core.common.getZoneIdFromLocation
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
 import com.kutluoglu.prayer.model.location.LocationData
+import com.kutluoglu.prayer.model.location.resolveZoneId
 import com.kutluoglu.prayer.model.prayer.CalculationMethod
 import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer.usecases.prayer.GetPrayerTimesUseCase
@@ -104,7 +104,7 @@ class PrayerTimesLoaderTest {
         every { calculator.findCurrentAndNextPrayer(any(), any()) } returns Pair(dhuhr, null)
 
         val loader = PrayerTimesLoader(getPrayerTimesUseCase, calculator, formatter)
-        val zoneId = getZoneIdFromLocation(location.countryCode)
+        val zoneId = resolveZoneId(location)
         val state = loader.computePrayerState(listOf(fajr, dhuhr), zoneId)
 
         assertThat(state.prayers[0].isCurrent).isFalse()
@@ -138,5 +138,35 @@ class PrayerTimesLoaderTest {
         val loaded = loader.load(location, CalculationMethod.TURKEY_DIYANET).getOrThrow()
 
         assertThat(loaded.nextImsakTime).isEqualTo(LocalTime(4, 49))
+    }
+
+    @Test
+    fun `load resolves zone from stored timeZoneId over country heuristic`() = runTest {
+        val usLocation = location.copy(
+            countryCode = "US",
+            timeZoneId = "America/Los_Angeles"
+        )
+        val date = LocalDate(2026, 8, 2)
+        val fajr = Prayer(name = "İmsak", arabicName = "الفجر", time = LocalTime(5, 0), date = date)
+        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any(), any(), any(), any()) } returns success(listOf(fajr))
+        every { formatter.withLocalizedNames(any()) } returns listOf(fajr)
+        every { formatter.getInitialTimeInfo(any(), any(), any(), any()) } returns TimeUiState()
+        every { formatter.locationInfo(any()) } returns "Los Angeles, US"
+        every { calculator.findCurrentAndNextPrayer(any(), any()) } returns Pair(fajr, null)
+
+        val loader = PrayerTimesLoader(getPrayerTimesUseCase, calculator, formatter)
+        loader.load(usLocation, CalculationMethod.TURKEY_DIYANET)
+
+        coVerify {
+            getPrayerTimesUseCase.invoke(
+                any(),
+                any(),
+                any(),
+                eq(ZoneId.of("America/Los_Angeles")),
+                any(),
+                any(),
+                any()
+            )
+        }
     }
 }
