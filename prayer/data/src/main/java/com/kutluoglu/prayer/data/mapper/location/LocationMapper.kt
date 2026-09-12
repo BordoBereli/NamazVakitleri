@@ -18,7 +18,8 @@ class LocationMapper() : Mapper<LocationDataModel, LocationData>  {
         country = type.country,
         countryCode = type.countryCode,
         city = type.city,
-        county = type.county
+        county = type.county,
+        timeZoneId = type.timeZoneId
     )
 
     override fun mapFromDomain(type: LocationData) = LocationDataModel(
@@ -27,6 +28,7 @@ class LocationMapper() : Mapper<LocationDataModel, LocationData>  {
         country = type.country,
         countryCode = type.countryCode,
         city = type.city,
-        county = type.county
+        county = type.county,
+        timeZoneId = type.timeZoneId
     )
 }

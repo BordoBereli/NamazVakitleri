@@ -12,6 +12,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
 import com.kutluoglu.prayer.model.location.LocationData
+import com.kutluoglu.prayer.model.location.timeZoneIdFor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -50,7 +51,12 @@ class LocationService(private val context: Context) {
                 country = address?.countryName,
                 countryCode = address?.countryCode,
                 city = address?.adminArea, // Often the state/province
-                county = address?.subAdminArea // Often the city/county
+                county = address?.subAdminArea, // Often the city/county
+                timeZoneId = timeZoneIdFor(
+                    coordinates.latitude,
+                    coordinates.longitude,
+                    address?.countryCode
+                )
             ).also {
                 currentLocation = it
             }

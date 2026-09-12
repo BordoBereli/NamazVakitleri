@@ -2,6 +2,7 @@ package com.kutluoglu.prayer_remote.location
 
 import com.kutluoglu.prayer.model.location.City
 import com.kutluoglu.prayer.model.location.GeocodingResult
+import com.kutluoglu.prayer.model.location.timeZoneIdFor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
@@ -51,11 +52,11 @@ class CitySearchRemoteDataSource(
                 country = countryName,
                 latitude = result.lat.toDoubleOrNull() ?: return@mapNotNull null,
                 longitude = result.lon.toDoubleOrNull() ?: return@mapNotNull null,
-                timezone = calculateTimezone(
+                timezone = timeZoneIdFor(
                     result.lat.toDoubleOrNull() ?: 0.0,
                     result.lon.toDoubleOrNull() ?: 0.0,
                     countryCode
-                ),
+                ) ?: "",
                 county = countyName
             )
         }
@@ -88,44 +89,9 @@ class CitySearchRemoteDataSource(
             country = countryName,
             latitude = latitude,
             longitude = longitude,
-            timezone = calculateTimezone(latitude, longitude, countryCode),
+            timezone = timeZoneIdFor(latitude, longitude, countryCode) ?: "",
             county = countyName
         )
-    }
-
-    private fun calculateTimezone(latitude: Double, longitude: Double, countryCode: String): String {
-        return when (countryCode) {
-            "TR" -> "Europe/Istanbul"
-            "SA" -> "Asia/Riyadh"
-            "EG" -> "Africa/Cairo"
-            "ID" -> "Asia/Jakarta"
-            "MY" -> "Asia/Kuala_Lumpur"
-            "PK" -> "Asia/Karachi"
-            "IN" -> "Asia/Kolkata"
-            "BD" -> "Asia/Dhaka"
-            "NG" -> "Africa/Lagos"
-            "MA" -> "Africa/Casablanca"
-            "DZ" -> "Africa/Algiers"
-            "TN" -> "Africa/Tunis"
-            "JO" -> "Asia/Amman"
-            "AE" -> "Asia/Dubai"
-            "KW" -> "Asia/Kuwait"
-            "QA" -> "Asia/Qatar"
-            "BH" -> "Asia/Bahrain"
-            "OM" -> "Asia/Muscat"
-            "GB" -> "Europe/London"
-            "US" -> "America/New_York"
-            "DE" -> "Europe/Berlin"
-            "FR" -> "Europe/Paris"
-            else -> {
-                val offset = ((longitude + 180) / 30).toInt().coerceIn(-12, 12)
-                when {
-                    offset == 0 -> "UTC"
-                    offset > 0 -> "UTC+$offset"
-                    else -> "UTC$offset"
-                }
-            }
-        }
     }
 
     private fun getCountryNameFromCode(code: String): String? {

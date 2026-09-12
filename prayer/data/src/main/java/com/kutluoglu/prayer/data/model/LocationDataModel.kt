@@ -14,5 +14,6 @@ data class LocationDataModel(
         val country: String?,
         val countryCode: String?,
         val city: String?,
-        val county: String?
+        val county: String?,
+        val timeZoneId: String? = null
 )

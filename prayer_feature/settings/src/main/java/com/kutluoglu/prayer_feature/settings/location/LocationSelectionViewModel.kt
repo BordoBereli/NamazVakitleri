@@ -9,6 +9,7 @@ import com.kutluoglu.core.designsystem.utils.LanguageProvider
 import com.kutluoglu.prayer.model.location.City
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.location.LocationEntry
+import com.kutluoglu.prayer.model.location.timeZoneIdFor
 import com.kutluoglu.prayer_location.LocationsCoordinator
 import com.kutluoglu.prayer_remote.location.NetworkException
 import com.kutluoglu.prayer_settings.data.location.LocationData as SettingsLocationData
@@ -329,7 +330,8 @@ class LocationSelectionViewModel(
             countryCode = countryCode,
             city = city.province,
             county = city.county?.takeIf { it.isNotBlank() }
-                ?: city.name.takeIf { it != city.province }
+                ?: city.name.takeIf { it != city.province },
+            timeZoneId = city.timezone.takeIf { it.isNotBlank() }
         )
         locationsCoordinator.addLocation(
             LocationEntry(
@@ -512,13 +514,15 @@ class LocationSelectionViewModel(
     private fun confirmMapLocation(location: MapLocationState) {
         analyticsTracker.logEvent(AnalyticsEvents.MAP_LOCATION_CONFIRMED)
         viewModelScope.launch {
+            val countryCode = getCountryCode(location.country ?: "")
+            val timeZone = timeZoneIdFor(location.latitude, location.longitude, countryCode)
             val city = City(
                 name = location.cityName ?: location.county ?: "Unknown",
                 city = location.cityName,
                 country = location.country ?: "Unknown",
                 latitude = location.latitude,
                 longitude = location.longitude,
-                timezone = "UTC",
+                timezone = timeZone ?: "",
                 county = location.county
             )
             selectCity(city)

@@ -106,7 +106,8 @@ class LocationCoordinator(
             country = locationSettings.country,
             countryCode = countryCodeFromTimeZone(locationSettings.timeZone),
             city = locationSettings.cityName,
-            county = locationSettings.district
+            county = locationSettings.district,
+            timeZoneId = locationSettings.timeZone
         )
     }
 

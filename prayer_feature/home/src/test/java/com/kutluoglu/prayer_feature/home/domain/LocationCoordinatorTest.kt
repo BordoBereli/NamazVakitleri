@@ -151,4 +151,11 @@ class LocationCoordinatorTest {
         val coordinator = coordinator()
         assertThat(coordinator.consumeLocationUpdatePrompt()).isFalse()
     }
+
+    @Test
+    fun `setLocationDataFrom sets timeZoneId from LocationSettings timeZone`() {
+        val result = coordinator().setLocationDataFrom(testSettings.location)
+
+        assertThat(result.timeZoneId).isEqualTo("Europe/Istanbul")
+    }
 }

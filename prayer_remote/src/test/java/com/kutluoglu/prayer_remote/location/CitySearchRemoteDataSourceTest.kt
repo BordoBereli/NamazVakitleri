@@ -132,4 +132,58 @@ class CitySearchRemoteDataSourceTest {
         assertEquals("Fatih", city.county)
         assertEquals("Turkey", city.country)
     }
+
+    @Test
+    fun `reverseGeocode sets timezone from country code`() = runBlocking {
+        mockWebServer.enqueue(
+            MockResponse()
+                .setResponseCode(200)
+                .setBody(
+                    """
+                    {
+                        "lat": "41.0082",
+                        "lon": "28.9784",
+                        "display_name": "Fatih, İstanbul, Türkiye",
+                        "address": {
+                            "city": "İstanbul",
+                            "town": "Fatih",
+                            "province": "İstanbul",
+                            "country": "Türkiye",
+                            "country_code": "tr"
+                        }
+                    }
+                    """.trimIndent()
+                )
+        )
+
+        val city = dataSource.reverseGeocode(41.0082, 28.9784)
+
+        assertEquals("Europe/Istanbul", city!!.timezone)
+    }
+
+    @Test
+    fun `reverseGeocode falls back to longitude offset for unknown country`() = runBlocking {
+        mockWebServer.enqueue(
+            MockResponse()
+                .setResponseCode(200)
+                .setBody(
+                    """
+                    {
+                        "lat": "41.0082",
+                        "lon": "28.9784",
+                        "display_name": "Somewhere",
+                        "address": {
+                            "city": "Somewhere",
+                            "country": "Nowhere",
+                            "country_code": "zz"
+                        }
+                    }
+                    """.trimIndent()
+                )
+        )
+
+        val city = dataSource.reverseGeocode(41.0082, 28.9784)
+
+        assertEquals("UTC+6", city!!.timezone)
+    }
 }

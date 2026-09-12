@@ -135,4 +135,30 @@ class ZoneIdUtilsTest {
 
         assertEquals(ZoneId.systemDefault(), resolveZoneId(location))
     }
+
+    @Test
+    fun `timeZoneIdFor returns IANA zone for known country code`() {
+        assertEquals("Europe/Istanbul", timeZoneIdFor(41.0082, 28.9784, "TR"))
+        assertEquals("America/New_York", timeZoneIdFor(40.7128, -74.0060, "US"))
+    }
+
+    @Test
+    fun `timeZoneIdFor is case-insensitive for country code`() {
+        assertEquals("Europe/Istanbul", timeZoneIdFor(41.0082, 28.9784, "tr"))
+    }
+
+    @Test
+    fun `timeZoneIdFor falls back to longitude offset for unknown country code`() {
+        assertEquals("UTC+6", timeZoneIdFor(41.0082, 28.9784, "ZZ"))
+    }
+
+    @Test
+    fun `timeZoneIdFor falls back to longitude offset for null country code`() {
+        assertEquals("UTC+6", timeZoneIdFor(41.0082, 28.9784, null))
+    }
+
+    @Test
+    fun `timeZoneIdFor returns UTC for zero offset`() {
+        assertEquals("UTC", timeZoneIdFor(0.0, -160.0, null))
+    }
 }

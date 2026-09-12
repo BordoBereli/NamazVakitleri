@@ -454,4 +454,42 @@ class LocationSelectionViewModelTest {
             cancelAndIgnoreRemainingEvents()
         }
     }
+
+    @Test
+    fun `SelectCity sets timeZoneId from City timezone`() = runTest {
+        val city = City("Istanbul", "Turkey", 41.0082, 28.9784, "Europe/Istanbul", "Istanbul")
+
+        viewModel.onEvent(LocationSelectionEvent.SelectCity(city))
+
+        val slot = slot<LocationEntry>()
+        coVerify { locationsCoordinator.addLocation(capture(slot)) }
+        assertThat(slot.captured.location.timeZoneId).isEqualTo("Europe/Istanbul")
+    }
+
+    @Test
+    fun `SelectCity with blank timezone stores null timeZoneId`() = runTest {
+        val city = City("Istanbul", "Turkey", 41.0082, 28.9784, "", "Istanbul")
+
+        viewModel.onEvent(LocationSelectionEvent.SelectCity(city))
+
+        val slot = slot<LocationEntry>()
+        coVerify { locationsCoordinator.addLocation(capture(slot)) }
+        assertThat(slot.captured.location.timeZoneId).isNull()
+    }
+
+    @Test
+    fun `ConfirmMapLocation resolves real timezone instead of hardcoded UTC`() = runTest {
+        val mapLocation = MapLocationState(
+            latitude = 41.0082,
+            longitude = 28.9784,
+            cityName = "Istanbul",
+            country = "Turkey"
+        )
+
+        viewModel.onEvent(LocationSelectionEvent.ConfirmMapLocation(mapLocation))
+
+        val slot = slot<LocationEntry>()
+        coVerify { locationsCoordinator.addLocation(capture(slot)) }
+        assertThat(slot.captured.location.timeZoneId).isEqualTo("Europe/Istanbul")
+    }
 }
