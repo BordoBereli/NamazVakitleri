@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            NamazVakitleriTheme(darkTheme = true) {
+            NamazVakitleriTheme {
                MainAppScreen()
             }
         }
