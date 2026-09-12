@@ -33,6 +33,7 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -40,6 +41,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 import org.robolectric.shadows.ShadowAlarmManager
+import java.util.TimeZone
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(RobolectricTestRunner::class)
@@ -69,9 +71,21 @@ class PrayerNotificationSchedulerTest {
         scope = scope
     )
 
+    private val originalDefaultTimeZone = TimeZone.getDefault()
+
     @Before
     fun grantExactAlarmPermission() {
         ShadowAlarmManager.setCanScheduleExactAlarms(true)
+    }
+
+    @Before
+    fun pinDefaultTimeZoneToUtc() {
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"))
+    }
+
+    @After
+    fun restoreDefaultTimeZone() {
+        TimeZone.setDefault(originalDefaultTimeZone)
     }
 
     @Test
@@ -114,7 +128,8 @@ class PrayerNotificationSchedulerTest {
             country = "Turkey",
             countryCode = "TR",
             city = "Istanbul",
-            county = null
+            county = null,
+            timeZoneId = "Europe/Istanbul"
         )
         coEvery { getSettingsUseCase() } returns Settings(
             location = LocationSettings(timeZone = "Europe/Istanbul"),
@@ -139,7 +154,7 @@ class PrayerNotificationSchedulerTest {
     }
 
     @Test
-    fun `scheduleAll with invalid timezone does not crash`() = runTest {
+    fun `scheduleAll with invalid location timezone does not crash`() = runTest {
         coEvery { dataStore.getSettings() } returns NotificationSettings(enabled = true)
         coEvery { locationsCoordinator.resolveSelected() } returns LocationData(
             latitude = 41.0082,
@@ -147,10 +162,11 @@ class PrayerNotificationSchedulerTest {
             country = "Turkey",
             countryCode = "TR",
             city = "Istanbul",
-            county = null
+            county = null,
+            timeZoneId = "Not/AZone"
         )
         coEvery { getSettingsUseCase() } returns Settings(
-            location = LocationSettings(timeZone = "Not/AZone"),
+            location = LocationSettings(timeZone = "Europe/Istanbul"),
             calculationMethod = "TURKEY_DIYANET"
         )
         coEvery { getPrayerTimesUseCase(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
@@ -251,7 +267,8 @@ class PrayerNotificationSchedulerTest {
             country = "Turkey",
             countryCode = "TR",
             city = "Istanbul",
-            county = null
+            county = null,
+            timeZoneId = "Europe/Istanbul"
         )
         coEvery { getSettingsUseCase() } returns Settings(
             location = LocationSettings(timeZone = "Europe/Istanbul"),
@@ -296,7 +313,8 @@ class PrayerNotificationSchedulerTest {
             country = "Turkey",
             countryCode = "TR",
             city = "Istanbul",
-            county = null
+            county = null,
+            timeZoneId = "Europe/Istanbul"
         )
         coEvery { getSettingsUseCase() } returns Settings(
             location = LocationSettings(timeZone = "Europe/Istanbul"),
@@ -346,7 +364,8 @@ class PrayerNotificationSchedulerTest {
             country = "Turkey",
             countryCode = "TR",
             city = "Istanbul",
-            county = null
+            county = null,
+            timeZoneId = "Europe/Istanbul"
         )
         coEvery { getSettingsUseCase() } returns Settings(
             location = LocationSettings(timeZone = "Europe/Istanbul"),
@@ -394,7 +413,8 @@ class PrayerNotificationSchedulerTest {
             country = "Turkey",
             countryCode = "TR",
             city = "Istanbul",
-            county = null
+            county = null,
+            timeZoneId = "Europe/Istanbul"
         )
         coEvery { getSettingsUseCase() } returns Settings(
             location = LocationSettings(timeZone = "Europe/Istanbul"),
@@ -427,7 +447,8 @@ class PrayerNotificationSchedulerTest {
             country = "Turkey",
             countryCode = "TR",
             city = "Istanbul",
-            county = null
+            county = null,
+            timeZoneId = "Europe/Istanbul"
         )
         coEvery { getSettingsUseCase() } returns Settings(
             location = LocationSettings(timeZone = "Europe/Istanbul"),
@@ -479,7 +500,8 @@ class PrayerNotificationSchedulerTest {
             country = "Turkey",
             countryCode = "TR",
             city = "Istanbul",
-            county = null
+            county = null,
+            timeZoneId = "Europe/Istanbul"
         )
         coEvery { getSettingsUseCase() } returns Settings(
             location = LocationSettings(timeZone = "Europe/Istanbul"),
