@@ -1,11 +1,12 @@
 package com.kutluoglu.namazvakitleri.locale
 
 import com.google.common.truth.Truth.assertThat
-import com.kutluoglu.namazvakitleri.appModule
+import com.kutluoglu.namazvakitleri.AppModule
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
+import org.koin.ksp.generated.module
 import org.koin.test.KoinTest
 import org.koin.test.get
 
@@ -18,7 +19,7 @@ class LocaleManagerKoinTest : KoinTest {
 
     @Test
     fun `LocaleManager is resolvable from app module`() {
-        startKoin { modules(appModule) }
+        startKoin { modules(AppModule.module) }
         val manager = get<LocaleManager>()
         assertThat(manager).isNotNull()
     }

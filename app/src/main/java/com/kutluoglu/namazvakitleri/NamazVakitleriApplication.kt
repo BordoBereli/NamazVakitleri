@@ -42,7 +42,7 @@ class NamazVakitleriApplication : Application() {
         startKoin {
             androidLogger()
             androidContext(this@NamazVakitleriApplication)
-            modules(configurationModules + appModule)
+            modules(configurationModules)
         }
         applyCrashlyticsConsent()
         setupActivityLifecycleCallbacks()

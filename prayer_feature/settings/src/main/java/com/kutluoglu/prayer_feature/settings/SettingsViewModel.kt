@@ -20,7 +20,9 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import org.koin.android.annotation.KoinViewModel
 
+@KoinViewModel
 class SettingsViewModel(
     private val getSettingsUseCase: GetSettingsUseCase,
     private val updateLocationUseCase: UpdateLocationUseCase,

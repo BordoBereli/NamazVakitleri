@@ -12,7 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.koin.core.annotation.Single
 
-@Single
+@Single(binds = [LocationRepository::class])
 class LocationRepositoryImpl(
     private val context: Context,
     private val citySearchRemoteDataSource: CitySearchRemoteDataSource,

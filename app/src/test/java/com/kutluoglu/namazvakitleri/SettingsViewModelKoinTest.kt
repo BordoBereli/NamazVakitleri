@@ -4,6 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.core.common.analytics.AnalyticsTracker
 import com.kutluoglu.prayer.usecases.prayer.ClearPrayerTimesCacheUseCase
 import com.kutluoglu.prayer_feature.settings.SettingsViewModel
+import com.kutluoglu.prayer_feature.settings.di.PrayerFeatureSettingsModule
 import com.kutluoglu.prayer_settings.domain.usecase.ClearLocationCacheUseCase
 import com.kutluoglu.prayer_settings.domain.usecase.GetSettingsUseCase
 import com.kutluoglu.prayer_settings.domain.usecase.UpdateCalculationMethodUseCase
@@ -23,6 +24,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.koin.dsl.koinApplication
 import org.koin.dsl.module
+import org.koin.ksp.generated.module
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SettingsViewModelKoinTest {
@@ -41,7 +43,8 @@ class SettingsViewModelKoinTest {
     fun `SettingsViewModel should not be registered as a singleton`() {
         val koin = koinApplication {
             modules(
-                appModule,
+                AppModule.module,
+                PrayerFeatureSettingsModule.module,
                 module {
                     single<AnalyticsTracker> { mockk(relaxed = true) }
                     single<GetSettingsUseCase> { mockk(relaxed = true) }

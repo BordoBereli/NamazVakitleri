@@ -1,83 +1,60 @@
 package com.kutluoglu.namazvakitleri
 
+import android.content.Context
 import com.kutluoglu.core.common.AppVersion
-import com.kutluoglu.prayer_feature.settings.SettingsViewModel
-import com.kutluoglu.prayer_feature.settings.calculation.CalculationMethodViewModel
-import com.kutluoglu.prayer_feature.settings.hijri.HijriAdjustmentViewModel
-import com.kutluoglu.prayer_feature.settings.juristic.JuristicMethodViewModel
-import com.kutluoglu.prayer_feature.settings.language.LanguageSelectionViewModel
-import com.kutluoglu.prayer_feature.settings.location.LocationSelectionViewModel
-import com.kutluoglu.prayer_feature.settings.location.MyLocationsViewModel
-import com.kutluoglu.prayer_feature.settings.notifications.NotificationsViewModel
 import com.kutluoglu.namazvakitleri.locale.LocaleManager
 import com.kutluoglu.namazvakitleri.notifications.NotificationRescheduler
 import com.kutluoglu.namazvakitleri.push.PushTopicCoordinator
+import com.kutluoglu.prayer_location.LocationsCoordinator
+import com.kutluoglu.prayer_notifications.push.TopicSubscriptionManager
+import com.kutluoglu.prayer_notifications.scheduler.AlarmScheduler
 import com.kutluoglu.prayer_settings.data.local.SettingsDataStore
-import com.kutluoglu.prayer_settings.data.repository.SettingsRepositoryImpl
-import com.kutluoglu.prayer_settings.domain.repository.LocationRepository
 import com.kutluoglu.prayer_settings.domain.repository.SettingsRepository
-import com.kutluoglu.prayer_settings.domain.usecase.ClearLocationCacheUseCase
-import com.kutluoglu.prayer_settings.domain.usecase.GetSettingsUseCase
-import com.kutluoglu.prayer_settings.domain.usecase.SearchLocationUseCase
-import com.kutluoglu.prayer_settings.domain.usecase.UpdateCalculationMethodUseCase
-import com.kutluoglu.prayer_settings.domain.usecase.UpdateCompassAutoRotateUseCase
-import com.kutluoglu.prayer_settings.domain.usecase.UpdateHijriAdjustmentUseCase
-import com.kutluoglu.prayer_settings.domain.usecase.UpdateLanguageUseCase
-import com.kutluoglu.prayer_settings.domain.usecase.UpdateLocationUseCase
-import com.kutluoglu.prayer_settings.domain.usecase.UpdateLockPortraitUseCase
 import com.kutluoglu.prayer_widget.WidgetRefresher
-import org.koin.core.module.Module
-import org.koin.dsl.module
-import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.core.annotation.Configuration
+import org.koin.core.annotation.Module
+import org.koin.core.annotation.Single
 
-val appModule: Module = module {
-    // LocaleManager (singleton to apply the selected language)
-    single { LocaleManager() }
+/**
+ * Koin module for the app's settings/data wiring.
+ *
+ * The `:app` module has no `@ComponentScan` root, so standalone `@Single` classes in
+ * the app package would land in the (unloaded) default module. Registering them here
+ * (the same pattern used by library modules) guarantees they are in the Koin graph.
+ *
+ * Settings use cases, repositories and ViewModels are registered by their own KSP
+ * annotations via `@ComponentScan` in `PrayerSettingsModule` / `PrayerFeatureSettingsModule`.
+ */
+@Module
+@Configuration
+object AppModule {
 
-    // App version info (from BuildConfig)
-    single {
-        AppVersion(
-            name = BuildConfig.VERSION_NAME,
-            code = BuildConfig.VERSION_CODE
-        )
-    }
+    @Single
+    fun provideLocaleManager(): LocaleManager = LocaleManager()
 
-    // NotificationRescheduler (reschedules notification alarms when prayer times change)
-    single { NotificationRescheduler(get(), get(), get()) }
+    @Single
+    fun provideAppVersion(): AppVersion = AppVersion(BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE)
 
-    // PushTopicCoordinator (subscribes to FCM topics for the selected location)
-    single { PushTopicCoordinator(get(), get()) }
+    @Single
+    fun provideNotificationRescheduler(
+        scheduler: AlarmScheduler,
+        settingsRepository: SettingsRepository,
+        locationsCoordinator: LocationsCoordinator
+    ): NotificationRescheduler = NotificationRescheduler(scheduler, settingsRepository, locationsCoordinator)
 
-    // WidgetRefresher (refreshes the home-screen widget when location/settings change)
-    single { WidgetRefresher.create(get(), get(), get()) }
+    @Single
+    fun providePushTopicCoordinator(
+        topicSubscriptionManager: TopicSubscriptionManager,
+        locationsCoordinator: LocationsCoordinator
+    ): PushTopicCoordinator = PushTopicCoordinator(topicSubscriptionManager, locationsCoordinator)
 
-    // Settings DataStore (singleton to share data)
-    single { SettingsDataStore.create(get()) }
-    
-    // Settings Repository (singleton to share flow between Settings and Home)
-    single<SettingsRepository> { SettingsRepositoryImpl(get(), get()) }
-    
-    // Location Repository (for LocationSelectionViewModel)
-    factory<LocationRepository> { get<com.kutluoglu.prayer_settings.data.repository.LocationRepositoryImpl>() }
-    
-    // Settings UseCases
-    factory { GetSettingsUseCase(get()) }
-    factory { UpdateLocationUseCase(get()) }
-    factory { UpdateCalculationMethodUseCase(get()) }
-    factory { UpdateLanguageUseCase(get()) }
-    factory { UpdateHijriAdjustmentUseCase(get()) }
-    factory { UpdateLockPortraitUseCase(get()) }
-    factory { UpdateCompassAutoRotateUseCase(get()) }
-    factory { ClearLocationCacheUseCase(get()) }
-    factory { SearchLocationUseCase(get()) }
-    
-    // Settings ViewModels
-    viewModel { SettingsViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
-    factory { LocationSelectionViewModel(get(), get(), get(), get(), get(), get()) }
-    viewModel { MyLocationsViewModel(get(), get()) }
-    factory { CalculationMethodViewModel(get(), get(), get()) }
-    factory { HijriAdjustmentViewModel(get(), get(), get()) }
-    factory { JuristicMethodViewModel(get(), get()) }
-    factory { LanguageSelectionViewModel(get(), get(), get()) }
-    viewModel { NotificationsViewModel(get(), get(), get(), get()) }
+    @Single
+    fun provideWidgetRefresher(
+        settingsRepository: SettingsRepository,
+        locationsCoordinator: LocationsCoordinator,
+        context: Context
+    ): WidgetRefresher = WidgetRefresher.create(settingsRepository, locationsCoordinator, context)
+
+    @Single
+    fun provideSettingsDataStore(context: Context): SettingsDataStore = SettingsDataStore.create(context)
 }

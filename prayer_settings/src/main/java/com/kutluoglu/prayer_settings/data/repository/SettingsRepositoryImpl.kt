@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import org.koin.core.annotation.Single
 
-@Single
+@Single(binds = [SettingsRepository::class])
 class SettingsRepositoryImpl(
     private val settingsDataStore: SettingsDataStore,
     private val locationDataStore: LocationDataStore

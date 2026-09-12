@@ -5,9 +5,7 @@ import android.content.res.Configuration
 import com.kutluoglu.prayer_settings.data.local.SettingsDataStore
 import java.util.Locale
 import kotlinx.coroutines.runBlocking
-import org.koin.core.annotation.Single
 
-@Single
 class LocaleManager {
 
     @Volatile
