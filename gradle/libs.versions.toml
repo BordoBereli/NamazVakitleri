@@ -32,12 +32,8 @@ okhttp = "4.12.0"
 osmdroid = "6.1.20"
 reorderable = "3.1.0"
 media3 = "1.11.0"
-googleServices = "4.3.10"
-# Crashlytics Gradle plugin pinned to 2.8.1 (not 3.x): plugin 3.x requires
-# google-services >= 4.4.1, but this project pins google-services 4.3.10 and the
-# upgrade to 4.4.x is blocked by the corporate network (dl.google.com redirects to
-# an internal auth proxy). Restore to 3.x after bumping google-services to >= 4.4.1.
-firebaseCrashlyticsGradle = "2.8.1"
+googleServices = "4.5.0"
+firebaseCrashlyticsGradle = "3.0.8"
 firebaseAnalytics = "23.2.0"
 firebaseCrashlytics = "20.1.0"
 firebaseConfig = "21.6.2"
