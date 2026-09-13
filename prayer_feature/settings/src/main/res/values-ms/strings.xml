@@ -124,4 +124,5 @@
     <string name="qibla_settings">Kiblat</string>
     <string name="lock_portrait">Kunci skrin ke mod potret</string>
     <string name="auto_rotate_compass">Putar kompas secara automatik</string>
+    <string name="privacy_policy">Dasar Privasi</string>
 </resources>

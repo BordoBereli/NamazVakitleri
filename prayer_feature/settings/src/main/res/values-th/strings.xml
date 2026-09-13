@@ -124,4 +124,5 @@
     <string name="qibla_settings">กิบลัต</string>
     <string name="lock_portrait">ล็อกหน้าจอเป็นแนวตั้ง</string>
     <string name="auto_rotate_compass">หมุนเข็มทิศอัตโนมัติ</string>
+    <string name="privacy_policy">นโยบายความเป็นส่วนตัว</string>
 </resources>

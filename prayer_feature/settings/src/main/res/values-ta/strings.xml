@@ -124,4 +124,5 @@
     <string name="qibla_settings">கிப்லா</string>
     <string name="lock_portrait">திரையை போர்ட்ரெய்ட்டில் பூட்டு</string>
     <string name="auto_rotate_compass">திசைகாட்டியை தானாக சுழற்று</string>
+    <string name="privacy_policy">தனியுரிமைக் கொள்கை</string>
 </resources>

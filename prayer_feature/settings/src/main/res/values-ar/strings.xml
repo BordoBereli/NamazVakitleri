@@ -124,4 +124,5 @@
     <string name="qibla_settings">القبلة</string>
     <string name="lock_portrait">قفل الشاشة في الوضع الرأسي</string>
     <string name="auto_rotate_compass">تدوير البوصلة تلقائياً</string>
+    <string name="privacy_policy">سياسة الخصوصية</string>
 </resources>

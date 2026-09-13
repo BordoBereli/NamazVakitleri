@@ -124,4 +124,5 @@
     <string name="qibla_settings">قبلہ</string>
     <string name="lock_portrait">اسکرین کو عمودی میں مقفل کریں</string>
     <string name="auto_rotate_compass">کمپاس خودکار گھمائیں</string>
+    <string name="privacy_policy">رازداری کی پالیسی</string>
 </resources>

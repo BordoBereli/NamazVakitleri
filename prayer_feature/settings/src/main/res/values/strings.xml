@@ -130,4 +130,5 @@
     <string name="qibla_settings">Qibla</string>
     <string name="lock_portrait">Lock screen to portrait</string>
     <string name="auto_rotate_compass">Auto rotate compass</string>
+    <string name="privacy_policy">Privacy Policy</string>
 </resources>

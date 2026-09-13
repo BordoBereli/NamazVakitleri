@@ -1,5 +1,7 @@
 package com.kutluoglu.prayer_feature.settings
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,6 +25,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Functions
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.ScreenRotation
@@ -50,6 +53,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -105,6 +109,7 @@ fun SettingsScreen(
                     )
                 }
                 is SettingsUiState.Success -> {
+                    val context = LocalContext.current
                     SettingsContent(
                         settings = state.settings,
                         version = state.version,
@@ -117,7 +122,14 @@ fun SettingsScreen(
                         onNavigateToThemeMode = onNavigateToThemeMode,
                         onNavigateToNotifications = onNavigateToNotifications,
                         onLockPortraitChange = { viewModel.onEvent(SettingsEvent.UpdateLockPortrait(it)) },
-                        onCompassAutoRotateChange = { viewModel.onEvent(SettingsEvent.UpdateCompassAutoRotate(it)) }
+                        onCompassAutoRotateChange = { viewModel.onEvent(SettingsEvent.UpdateCompassAutoRotate(it)) },
+                        onPrivacyPolicyClick = {
+                            runCatching {
+                                context.startActivity(
+                                    Intent(Intent.ACTION_VIEW, Uri.parse(PRIVACY_POLICY_URL))
+                                )
+                            }
+                        }
                     )
                 }
             }
@@ -148,7 +160,8 @@ private fun SettingsContent(
     onNavigateToThemeMode: () -> Unit,
     onNavigateToNotifications: () -> Unit,
     onLockPortraitChange: (Boolean) -> Unit,
-    onCompassAutoRotateChange: (Boolean) -> Unit
+    onCompassAutoRotateChange: (Boolean) -> Unit,
+    onPrivacyPolicyClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -301,7 +314,10 @@ private fun SettingsContent(
             }
         }
 
-        VersionFooter(version = version)
+        VersionFooter(
+            version = version,
+            onPrivacyPolicyClick = onPrivacyPolicyClick
+        )
     }
 }
 
@@ -469,8 +485,13 @@ private fun getThemeModeName(mode: String): String {
     }
 }
 
+private const val PRIVACY_POLICY_URL = "https://bordobereli.github.io/NamazVakitleri/privacy-policy"
+
 @Composable
-private fun VersionFooter(version: AppVersion) {
+private fun VersionFooter(
+    version: AppVersion,
+    onPrivacyPolicyClick: () -> Unit
+) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
@@ -505,6 +526,29 @@ private fun VersionFooter(version: AppVersion) {
             Text(
                 text = stringResource(SettingsR.string.version_format, version.name, version.code),
                 style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+
+        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onPrivacyPolicyClick)
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Lock,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(24.dp)
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Text(
+                text = stringResource(SettingsR.string.privacy_policy),
+                style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }

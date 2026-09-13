@@ -124,4 +124,5 @@
     <string name="qibla_settings">قبله</string>
     <string name="lock_portrait">قفل کردن صفحه در حالت عمودی</string>
     <string name="auto_rotate_compass">چرخش خودکار قطب‌نما</string>
+    <string name="privacy_policy">سیاست حفظ حریم خصوصی</string>
 </resources>

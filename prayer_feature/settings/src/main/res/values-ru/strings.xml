@@ -124,4 +124,5 @@
     <string name="qibla_settings">Кибла</string>
     <string name="lock_portrait">Заблокировать экран в портретной ориентации</string>
     <string name="auto_rotate_compass">Автоповорот компаса</string>
+    <string name="privacy_policy">Политика конфиденциальности</string>
 </resources>

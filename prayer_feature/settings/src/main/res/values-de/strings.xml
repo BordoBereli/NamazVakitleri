@@ -124,4 +124,5 @@
     <string name="qibla_settings">Qibla</string>
     <string name="lock_portrait">Bildschirm im Hochformat sperren</string>
     <string name="auto_rotate_compass">Kompass automatisch drehen</string>
+    <string name="privacy_policy">Datenschutzrichtlinie</string>
 </resources>
