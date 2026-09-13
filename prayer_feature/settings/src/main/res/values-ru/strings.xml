@@ -75,6 +75,11 @@
     <string name="language_ta">Тамильский</string>
     <string name="language_th">Тайский</string>
     <string name="language_ur">Урду</string>
+    <string name="theme">Тема</string>
+    <string name="select_theme">Выберите тему</string>
+    <string name="theme_dark">Тёмная</string>
+    <string name="theme_light">Светлая</string>
+    <string name="theme_system">Системная</string>
     <string name="notifications">Уведомления</string>
     <string name="notifications_enabled">Включить уведомления</string>
     <string name="notifications_master_subtitle">Главный переключатель для всех оповещений</string>

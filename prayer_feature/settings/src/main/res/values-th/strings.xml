@@ -75,6 +75,11 @@
     <string name="language_ta">ทมิฬ</string>
     <string name="language_th">ไทย</string>
     <string name="language_ur">อูรดู</string>
+    <string name="theme">ธีม</string>
+    <string name="select_theme">เลือกธีม</string>
+    <string name="theme_dark">มืด</string>
+    <string name="theme_light">สว่าง</string>
+    <string name="theme_system">ระบบ</string>
     <string name="notifications">การแจ้งเตือน</string>
     <string name="notifications_enabled">เปิดใช้งานการแจ้งเตือน</string>
     <string name="notifications_master_subtitle">สวิตช์หลักสำหรับการแจ้งเตือนทั้งหมด</string>

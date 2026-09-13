@@ -75,6 +75,11 @@
     <string name="language_ta">তামিল</string>
     <string name="language_th">থাই</string>
     <string name="language_ur">উর্দু</string>
+    <string name="theme">থিম</string>
+    <string name="select_theme">থিম নির্বাচন করুন</string>
+    <string name="theme_dark">ডার্ক</string>
+    <string name="theme_light">লাইট</string>
+    <string name="theme_system">সিস্টেম</string>
     <string name="notifications">বিজ্ঞপ্তি</string>
     <string name="notifications_enabled">বিজ্ঞপ্তি সক্রিয় করুন</string>
     <string name="notifications_master_subtitle">সব সতর্কতার জন্য মাস্টার সুইচ</string>
