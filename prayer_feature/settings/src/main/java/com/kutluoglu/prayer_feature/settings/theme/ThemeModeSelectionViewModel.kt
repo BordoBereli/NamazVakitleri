@@ -1,0 +1,82 @@
+package com.kutluoglu.prayer_feature.settings.theme
+
+import android.util.Log
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.kutluoglu.core.common.analytics.AnalyticsEvents
+import com.kutluoglu.core.common.analytics.AnalyticsParams
+import com.kutluoglu.core.common.analytics.AnalyticsTracker
+import com.kutluoglu.prayer_settings.domain.usecase.GetSettingsUseCase
+import com.kutluoglu.prayer_settings.domain.usecase.UpdateThemeModeUseCase
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import org.koin.android.annotation.KoinViewModel
+
+@KoinViewModel
+class ThemeModeSelectionViewModel(
+    private val getSettingsUseCase: GetSettingsUseCase,
+    private val updateThemeModeUseCase: UpdateThemeModeUseCase,
+    private val analyticsTracker: AnalyticsTracker
+) : ViewModel() {
+
+    private val _uiState = MutableStateFlow<ThemeModeUiState>(ThemeModeUiState.Loading)
+    val uiState: StateFlow<ThemeModeUiState> = _uiState.asStateFlow()
+
+    private val _selectedThemeMode = MutableSharedFlow<String>()
+    val selectedThemeMode: SharedFlow<String> = _selectedThemeMode.asSharedFlow()
+
+    private var currentThemeMode: String = "dark"
+
+    init {
+        loadCurrentThemeMode()
+    }
+
+    private fun loadCurrentThemeMode() {
+        viewModelScope.launch {
+            try {
+                currentThemeMode = getSettingsUseCase().themeMode
+            } catch (e: Exception) {
+                Log.e("ThemeModeSelectionVM", "Failed to load current theme mode -> ${e.message}")
+            }
+            loadThemeModes()
+        }
+    }
+
+    fun onEvent(event: ThemeModeEvent) {
+        when (event) {
+            is ThemeModeEvent.SelectThemeMode -> selectThemeMode(event.themeMode)
+        }
+    }
+
+    private fun loadThemeModes() {
+        _uiState.value = ThemeModeUiState.ThemeModesLoaded(
+            themeModes = themeModes,
+            selectedThemeMode = currentThemeMode
+        )
+    }
+
+    private fun selectThemeMode(themeMode: ThemeMode) {
+        val previousThemeMode = currentThemeMode
+        currentThemeMode = themeMode.id
+        _uiState.value = ThemeModeUiState.ThemeModesLoaded(
+            themeModes = themeModes,
+            selectedThemeMode = themeMode.id
+        )
+        viewModelScope.launch {
+            updateThemeModeUseCase(themeMode.id)
+            analyticsTracker.logEvent(
+                AnalyticsEvents.THEME_CHANGED,
+                mapOf(
+                    AnalyticsParams.FROM to previousThemeMode,
+                    AnalyticsParams.TO to themeMode.id
+                )
+            )
+            _selectedThemeMode.emit(themeMode.id)
+        }
+    }
+}

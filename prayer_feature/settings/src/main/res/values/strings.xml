@@ -76,6 +76,9 @@
     <string name="language_ta">தமிழ்</string>
     <string name="language_th">ไทย</string>
     <string name="language_ur">اردو</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_system">System</string>
     <string name="notifications">Notifications</string>
     <string name="notifications_enabled">Enable notifications</string>
     <string name="notifications_master_subtitle">Master switch for all alerts</string>
