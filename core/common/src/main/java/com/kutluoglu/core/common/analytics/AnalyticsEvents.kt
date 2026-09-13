@@ -31,6 +31,7 @@ object AnalyticsEvents {
     const val CALCULATION_METHOD_CHANGED = "calculation_method_changed"
     const val LANGUAGE_CHANGED = "language_changed"
     const val HIJRI_ADJUSTMENT_CHANGED = "hijri_adjustment_changed"
+    const val THEME_CHANGED = "theme_changed"
     const val CACHE_CLEARED = "cache_cleared"
 
     // Location management
