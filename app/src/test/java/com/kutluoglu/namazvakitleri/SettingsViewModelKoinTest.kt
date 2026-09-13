@@ -12,6 +12,7 @@ import com.kutluoglu.prayer_settings.domain.usecase.UpdateCompassAutoRotateUseCa
 import com.kutluoglu.prayer_settings.domain.usecase.UpdateHijriAdjustmentUseCase
 import com.kutluoglu.prayer_settings.domain.usecase.UpdateLanguageUseCase
 import com.kutluoglu.prayer_settings.domain.usecase.UpdateLocationUseCase
+import com.kutluoglu.prayer_settings.domain.usecase.UpdateThemeModeUseCase
 import com.kutluoglu.prayer_settings.domain.usecase.UpdateLockPortraitUseCase
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -51,6 +52,7 @@ class SettingsViewModelKoinTest {
                     single<UpdateLocationUseCase> { mockk(relaxed = true) }
                     single<UpdateCalculationMethodUseCase> { mockk(relaxed = true) }
                     single<UpdateLanguageUseCase> { mockk(relaxed = true) }
+                    single<UpdateThemeModeUseCase> { mockk(relaxed = true) }
                     single<UpdateHijriAdjustmentUseCase> { mockk(relaxed = true) }
                     single<UpdateLockPortraitUseCase> { mockk(relaxed = true) }
                     single<UpdateCompassAutoRotateUseCase> { mockk(relaxed = true) }
