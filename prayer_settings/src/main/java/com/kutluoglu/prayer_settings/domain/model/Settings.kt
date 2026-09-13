@@ -4,6 +4,7 @@ data class Settings(
     val location: LocationSettings = LocationSettings(),
     val calculationMethod: String = "TURKEY_DIYANET",
     val language: String = "system",
+    val themeMode: String = "dark",
     val hijriAdjustment: Int = 0,
     val juristicMethod: String = "STANDARD",
     val crashlyticsEnabled: Boolean = true,
