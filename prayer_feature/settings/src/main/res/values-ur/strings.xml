@@ -75,6 +75,11 @@
     <string name="language_ta">تمل</string>
     <string name="language_th">تھائی</string>
     <string name="language_ur">اردو</string>
+    <string name="theme">تھیم</string>
+    <string name="select_theme">تھیم منتخب کریں</string>
+    <string name="theme_dark">ڈارک</string>
+    <string name="theme_light">لائٹ</string>
+    <string name="theme_system">سسٹم</string>
     <string name="notifications">اطلاعات</string>
     <string name="notifications_enabled">اطلاعات فعال کریں</string>
     <string name="notifications_master_subtitle">تمام الرٹس کے لیے مین سوئچ</string>

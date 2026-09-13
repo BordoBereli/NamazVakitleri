@@ -15,6 +15,7 @@ import com.kutluoglu.prayer_settings.domain.usecase.UpdateHijriAdjustmentUseCase
 import com.kutluoglu.prayer_settings.domain.usecase.UpdateLanguageUseCase
 import com.kutluoglu.prayer_settings.domain.usecase.UpdateLockPortraitUseCase
 import com.kutluoglu.prayer_settings.domain.usecase.UpdateLocationUseCase
+import com.kutluoglu.prayer_settings.domain.usecase.UpdateThemeModeUseCase
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -35,6 +36,7 @@ class SettingsViewModelTest {
     private lateinit var updateLocationUseCase: UpdateLocationUseCase
     private lateinit var updateCalculationMethodUseCase: UpdateCalculationMethodUseCase
     private lateinit var updateLanguageUseCase: UpdateLanguageUseCase
+    private lateinit var updateThemeModeUseCase: UpdateThemeModeUseCase
     private lateinit var updateHijriAdjustmentUseCase: UpdateHijriAdjustmentUseCase
     private lateinit var updateLockPortraitUseCase: UpdateLockPortraitUseCase
     private lateinit var updateCompassAutoRotateUseCase: UpdateCompassAutoRotateUseCase
@@ -50,6 +52,7 @@ class SettingsViewModelTest {
         updateLocationUseCase = mockk(relaxed = true)
         updateCalculationMethodUseCase = mockk(relaxed = true)
         updateLanguageUseCase = mockk(relaxed = true)
+        updateThemeModeUseCase = mockk(relaxed = true)
         updateHijriAdjustmentUseCase = mockk(relaxed = true)
         updateLockPortraitUseCase = mockk(relaxed = true)
         updateCompassAutoRotateUseCase = mockk(relaxed = true)
@@ -63,6 +66,7 @@ class SettingsViewModelTest {
             updateLocationUseCase,
             updateCalculationMethodUseCase,
             updateLanguageUseCase,
+            updateThemeModeUseCase,
             updateHijriAdjustmentUseCase,
             updateLockPortraitUseCase,
             updateCompassAutoRotateUseCase,
@@ -176,6 +180,15 @@ class SettingsViewModelTest {
     fun `UpdateCompassAutoRotate should call updateCompassAutoRotateUseCase`() = runTest {
         viewModel.onEvent(SettingsEvent.UpdateCompassAutoRotate(false))
         coVerify { updateCompassAutoRotateUseCase(false) }
+    }
+
+    @Test
+    fun `UpdateThemeMode should call updateThemeModeUseCase`() = runTest {
+        // Act
+        viewModel.onEvent(SettingsEvent.UpdateThemeMode("light"))
+
+        // Assert
+        coVerify { updateThemeModeUseCase("light") }
     }
 
     @Test

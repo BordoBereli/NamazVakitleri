@@ -9,6 +9,7 @@ fun SettingsRoute(
     onNavigateToHijriAdjustment: () -> Unit,
     onNavigateToJuristicMethod: () -> Unit,
     onNavigateToLanguage: () -> Unit,
+    onNavigateToThemeMode: () -> Unit,
     onNavigateToNotifications: () -> Unit
 ) {
     SettingsScreen(
@@ -17,6 +18,7 @@ fun SettingsRoute(
         onNavigateToHijriAdjustment = onNavigateToHijriAdjustment,
         onNavigateToJuristicMethod = onNavigateToJuristicMethod,
         onNavigateToLanguage = onNavigateToLanguage,
+        onNavigateToThemeMode = onNavigateToThemeMode,
         onNavigateToNotifications = onNavigateToNotifications
     )
 }

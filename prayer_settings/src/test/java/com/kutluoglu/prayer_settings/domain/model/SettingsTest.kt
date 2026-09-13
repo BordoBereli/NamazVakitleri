@@ -17,6 +17,7 @@ class SettingsTest {
         assertThat(settings.location.country).isEqualTo("Turkey")
         assertThat(settings.calculationMethod).isEqualTo("TURKEY_DIYANET")
         assertThat(settings.language).isEqualTo("system")
+        assertThat(settings.themeMode).isEqualTo("dark")
         assertThat(settings.hijriAdjustment).isEqualTo(0)
     }
 
@@ -63,5 +64,14 @@ class SettingsTest {
 
         // Assert
         assertThat(displayName).isEqualTo("Istanbul, Turkey")
+    }
+
+    @Test
+    fun `Settings should allow custom themeMode`() {
+        // Arrange & Act
+        val settings = Settings(themeMode = "light")
+
+        // Assert
+        assertThat(settings.themeMode).isEqualTo("light")
     }
 }

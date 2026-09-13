@@ -14,6 +14,7 @@ sealed class Screen(val route: String) {
     data object LocationSelectionScreen: Screen("location_selection")
     data object CalculationMethodScreen: Screen("calculation_method")
     data object LanguageSelectionScreen: Screen("language_selection")
+    data object ThemeModeScreen: Screen("theme_mode")
     data object HijriAdjustmentScreen: Screen("hijri_adjustment")
     data object JuristicMethodScreen: Screen("juristic_method")
     data object NotificationsScreen: Screen("notifications")

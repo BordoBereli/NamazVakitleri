@@ -20,6 +20,8 @@
     <string name="juristic_shadow_twice_height">shadow = 2 × height</string>
     <string name="select_language">Select Language</string>
     <string name="language">Language</string>
+    <string name="theme">Theme</string>
+    <string name="select_theme">Select Theme</string>
     <string name="location">Location</string>
     <string name="select_location">Select Location</string>
     <string name="search">Search</string>
@@ -76,6 +78,9 @@
     <string name="language_ta">தமிழ்</string>
     <string name="language_th">ไทย</string>
     <string name="language_ur">اردو</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_system">System</string>
     <string name="notifications">Notifications</string>
     <string name="notifications_enabled">Enable notifications</string>
     <string name="notifications_master_subtitle">Master switch for all alerts</string>

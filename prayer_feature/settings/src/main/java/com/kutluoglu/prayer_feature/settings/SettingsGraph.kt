@@ -10,6 +10,7 @@ import com.kutluoglu.prayer_feature.settings.language.LanguageSelectionRoute
 import com.kutluoglu.prayer_feature.settings.location.LocationSelectionRoute
 import com.kutluoglu.prayer_feature.settings.location.MyLocationsRoute
 import com.kutluoglu.prayer_feature.settings.notifications.NotificationsRoute
+import com.kutluoglu.prayer_feature.settings.theme.ThemeModeSelectionRoute
 import com.kutluoglu.prayer_navigation.core.Screen
 import com.kutluoglu.prayer.model.location.City
 
@@ -33,6 +34,9 @@ fun NavGraphBuilder.settingsGraph(
             },
             onNavigateToLanguage = {
                 navController.navigate(Screen.LanguageSelectionScreen.route)
+            },
+            onNavigateToThemeMode = {
+                navController.navigate(Screen.ThemeModeScreen.route)
             },
             onNavigateToNotifications = {
                 navController.navigate(Screen.NotificationsScreen.route)
@@ -89,6 +93,15 @@ fun NavGraphBuilder.settingsGraph(
             onLanguageSelected = { language ->
                 navController.popBackStack()
                 onLanguageSelected(language)
+            }
+        )
+    }
+
+    composable(Screen.ThemeModeScreen.route) {
+        ThemeModeSelectionRoute(
+            onNavigateBack = { navController.popBackStack() },
+            onThemeModeSelected = { mode ->
+                navController.popBackStack()
             }
         )
     }

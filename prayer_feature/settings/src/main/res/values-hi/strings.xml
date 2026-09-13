@@ -75,6 +75,11 @@
     <string name="language_ta">तमिल</string>
     <string name="language_th">थाई</string>
     <string name="language_ur">उर्दू</string>
+    <string name="theme">थीम</string>
+    <string name="select_theme">थीम चुनें</string>
+    <string name="theme_dark">डार्क</string>
+    <string name="theme_light">लाइट</string>
+    <string name="theme_system">सिस्टम</string>
     <string name="notifications">सूचनाएं</string>
     <string name="notifications_enabled">सूचनाएं सक्षम करें</string>
     <string name="notifications_master_subtitle">सभी अलर्ट के लिए मुख्य स्विच</string>

@@ -10,6 +10,7 @@ interface SettingsRepository {
     suspend fun updateLocation(location: LocationSettings)
     suspend fun updateCalculationMethod(method: String)
     suspend fun updateLanguage(language: String)
+    suspend fun updateThemeMode(mode: String)
     suspend fun updateHijriAdjustment(days: Int)
     suspend fun updateCrashlyticsEnabled(enabled: Boolean)
     suspend fun updateLockPortrait(lockPortrait: Boolean)

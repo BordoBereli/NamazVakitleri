@@ -75,6 +75,11 @@
     <string name="language_ta">التاميلية</string>
     <string name="language_th">التايلاندية</string>
     <string name="language_ur">الأردية</string>
+    <string name="theme">المظهر</string>
+    <string name="select_theme">اختر المظهر</string>
+    <string name="theme_dark">داكن</string>
+    <string name="theme_light">فاتح</string>
+    <string name="theme_system">النظام</string>
     <string name="notifications">الإشعارات</string>
     <string name="notifications_enabled">تفعيل الإشعارات</string>
     <string name="notifications_master_subtitle">المفتاح الرئيسي لجميع التنبيهات</string>

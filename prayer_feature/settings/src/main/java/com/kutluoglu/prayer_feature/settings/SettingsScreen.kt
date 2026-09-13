@@ -18,6 +18,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.CompassCalibration
+import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Functions
 import androidx.compose.material.icons.filled.Info
@@ -70,6 +71,7 @@ fun SettingsScreen(
     onNavigateToHijriAdjustment: () -> Unit,
     onNavigateToJuristicMethod: () -> Unit,
     onNavigateToLanguage: () -> Unit,
+    onNavigateToThemeMode: () -> Unit,
     onNavigateToNotifications: () -> Unit,
     viewModel: SettingsViewModel = koinViewModel()
 ) {
@@ -112,6 +114,7 @@ fun SettingsScreen(
                         onNavigateToHijriAdjustment = onNavigateToHijriAdjustment,
                         onNavigateToJuristicMethod = onNavigateToJuristicMethod,
                         onNavigateToLanguage = onNavigateToLanguage,
+                        onNavigateToThemeMode = onNavigateToThemeMode,
                         onNavigateToNotifications = onNavigateToNotifications,
                         onLockPortraitChange = { viewModel.onEvent(SettingsEvent.UpdateLockPortrait(it)) },
                         onCompassAutoRotateChange = { viewModel.onEvent(SettingsEvent.UpdateCompassAutoRotate(it)) }
@@ -142,6 +145,7 @@ private fun SettingsContent(
     onNavigateToHijriAdjustment: () -> Unit,
     onNavigateToJuristicMethod: () -> Unit,
     onNavigateToLanguage: () -> Unit,
+    onNavigateToThemeMode: () -> Unit,
     onNavigateToNotifications: () -> Unit,
     onLockPortraitChange: (Boolean) -> Unit,
     onCompassAutoRotateChange: (Boolean) -> Unit
@@ -215,6 +219,15 @@ private fun SettingsContent(
                     onClick = onNavigateToLanguage
                 )
                 
+                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+                
+                SettingsItem(
+                    icon = Icons.Filled.DarkMode,
+                    title = stringResource(SettingsR.string.theme),
+                    subtitle = getThemeModeName(settings.themeMode),
+                    onClick = onNavigateToThemeMode
+                )
+
                 HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
                 
                 SettingsItem(
@@ -444,6 +457,15 @@ private fun getLanguageName(language: String): String {
         "th" -> stringResource(SettingsR.string.language_th)
         "ur" -> stringResource(SettingsR.string.language_ur)
         else -> language
+    }
+}
+
+@Composable
+private fun getThemeModeName(mode: String): String {
+    return when (mode) {
+        "dark" -> stringResource(SettingsR.string.theme_dark)
+        "light" -> stringResource(SettingsR.string.theme_light)
+        else -> stringResource(SettingsR.string.theme_system)
     }
 }
 
