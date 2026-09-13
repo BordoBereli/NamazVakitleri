@@ -1,0 +1,357 @@
+---
+layout: null
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy Policy</title>
+<style>
+  :root { color-scheme: light dark; }
+  body {
+    max-width: 42em;
+    margin: 0 auto;
+    padding: 1.5em;
+    font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    line-height: 1.6;
+    color: #1c1c1e;
+    background: #ffffff;
+  }
+  @media (prefers-color-scheme: dark) {
+    body { color: #f2f2f7; background: #1c1c1e; }
+    a { color: #8ab4f8; }
+  }
+  .lang-toggle { margin: 1.25em 0; display: flex; gap: 0.5em; }
+  .lang-toggle button {
+    font: inherit;
+    padding: 0.4em 1em;
+    border-radius: 999px;
+    border: 1px solid #007aff;
+    background: transparent;
+    color: #007aff;
+    cursor: pointer;
+  }
+  .lang-toggle button[aria-pressed="true"] {
+    background: #007aff;
+    color: #ffffff;
+  }
+  section[lang] { display: none; }
+  section[lang].active { display: block; }
+  table { border-collapse: collapse; width: 100%; }
+  th, td { border: 1px solid #ccc; padding: 0.4em 0.6em; text-align: left; vertical-align: top; }
+  @media (prefers-color-scheme: dark) { th, td { border-color: #555; } }
+</style>
+<script>
+(function () {
+  var SUPPORTED = { en: true, tr: true };
+  var STORAGE_KEY = "namazvakitleri-privacy-lang";
+
+  function getUrlLang() {
+    var m = window.location.search.match(/[?&]lang=([a-z]{2})(?:&|$)/i);
+    return m ? m[1].toLowerCase() : null;
+  }
+
+  function getSavedLang() {
+    try { return window.localStorage.getItem(STORAGE_KEY); } catch (e) { return null; }
+  }
+
+  function getBrowserLang() {
+    var langs = (navigator.languages || [navigator.language] || []);
+    for (var i = 0; i < langs.length; i++) {
+      var code = langs[i].toLowerCase().split("-")[0];
+      if (SUPPORTED[code]) return code;
+    }
+    return null;
+  }
+
+  function resolveLang() {
+    var candidates = [getUrlLang(), getSavedLang(), getBrowserLang(), "en"];
+    for (var i = 0; i < candidates.length; i++) {
+      var lang = candidates[i];
+      if (lang && SUPPORTED[lang]) return lang;
+    }
+    return "en";
+  }
+
+  function show(lang) {
+    var sections = document.querySelectorAll("section[lang]");
+    for (var i = 0; i < sections.length; i++) {
+      sections[i].classList.toggle("active", sections[i].getAttribute("lang") === lang);
+    }
+    var buttons = document.querySelectorAll(".lang-toggle button[data-lang]");
+    for (var j = 0; j < buttons.length; j++) {
+      buttons[j].setAttribute("aria-pressed", buttons[j].getAttribute("data-lang") === lang);
+    }
+    try { window.localStorage.setItem(STORAGE_KEY, lang); } catch (e) {}
+    var url = new URL(window.location.href);
+    url.searchParams.set("lang", lang);
+    window.history.replaceState(null, "", url.toString());
+  }
+
+  function init() {
+    var buttons = document.querySelectorAll(".lang-toggle button[data-lang]");
+    for (var i = 0; i < buttons.length; i++) {
+      buttons[i].addEventListener("click", function () { show(this.getAttribute("data-lang")); });
+    }
+    show(resolveLang());
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+})();
+</script>
+</head>
+<body>
+<h1>Privacy Policy</h1>
+
+<div class="lang-toggle" role="group" aria-label="Language">
+  <button type="button" data-lang="en">English</button>
+  <button type="button" data-lang="tr">Türkçe</button>
+</div>
+
+<section lang="en">
+  <p><em>Last updated: 13 September 2026</em></p>
+
+  <h2>1. Overview</h2>
+
+  <p>Fahri K. built the <strong>Namaz Vakitleri</strong> app as a free app. This service is provided by Fahri K. at no cost and is intended for use as is.</p>
+
+  <p>This page is used to inform visitors regarding the collection, use, and disclosure of personal information if anyone decides to use this service.</p>
+
+  <p>If you choose to use this service, you agree to the collection and use of information in relation to this policy. The personal information that is collected is used for providing and improving the service. Your information will not be used or shared with anyone except as described in this privacy policy.</p>
+
+  <h2>2. Information We Collect</h2>
+
+  <p><strong>Location Data (most sensitive).</strong> The app uses your device's approximate and precise location (GPS) to calculate prayer times and the Qibla direction, and to identify the city you are in. Location data is used to provide this service. When you search for a city or when the app identifies your location, the relevant location information is sent to our city-search provider (Nominatim, operated by OpenStreetMap) solely to return the matching city names. Location data is not sold and is not used to build a profile about you.</p>
+
+  <p><strong>Device and Crash Data.</strong> The app uses <strong>Firebase Crashlytics</strong> to collect crash and error reports. This data may include device type, operating system version, time and date of the error, app configuration, and other statistics. Crash reporting can be turned off in the app's settings at any time.</p>
+
+  <p><strong>Usage Analytics.</strong> The app uses <strong>Firebase Analytics</strong> to understand how the app is used. Analytics events and user properties (such as language preference, prayer calculation method, and Hijri calendar adjustment) help improve the service. Analytics can be turned off in the app's settings at any time.</p>
+
+  <p><strong>Notification Data.</strong> If you enable prayer-time reminders, the app uses <strong>Firebase Cloud Messaging (FCM)</strong> to deliver push notifications. This requires a device registration token that is used only to deliver notifications to your device. Notifications can be disabled at any time.</p>
+
+  <p><strong>Sensors.</strong> The Qibla direction feature uses your device's magnetometer (compass) and accelerometer sensors. This data is processed entirely on your device and is not collected, stored, or transmitted.</p>
+
+  <p>The app does <strong>not</strong> require an account, does <strong>not</strong> collect financial or payment information, does <strong>not</strong> show advertisements, and does <strong>not</strong> sell your personal information.</p>
+
+  <h2>3. Third-Party Service Providers</h2>
+
+  <p>The app uses third-party services that may collect information used to identify you. Each provider operates under its own privacy policy:</p>
+
+  <table>
+  <thead>
+  <tr><th>Service</th><th>Purpose</th></tr>
+  </thead>
+  <tbody>
+  <tr><td>Google Play Services</td><td>Core Android services, including the built-in geocoder used to derive a city name from your location</td></tr>
+  <tr><td>Firebase Analytics</td><td>Usage analytics</td></tr>
+  <tr><td>Firebase Crashlytics</td><td>Crash and error reporting</td></tr>
+  <tr><td>Firebase Cloud Messaging (FCM)</td><td>Push notifications for prayer-time reminders</td></tr>
+  <tr><td>Firebase Remote Config</td><td>Delivering certain app configuration/update information</td></tr>
+  <tr><td>Nominatim (OpenStreetMap)</td><td>City search and reverse geocoding — receives location data or a search query</td></tr>
+  <tr><td>alquran.cloud</td><td>Public Quran text content — no personal data is sent</td></tr>
+  </tbody>
+  </table>
+
+  <p>Links to the privacy policies of these providers:</p>
+
+  <ul>
+  <li>Google Play Services: <a href="https://policies.google.com/privacy">https://policies.google.com/privacy</a></li>
+  <li>Firebase: <a href="https://firebase.google.com/support/privacy">https://firebase.google.com/support/privacy</a></li>
+  <li>OpenStreetMap / Nominatim: <a href="https://operations.osmfoundation.org/policies/privacy/">https://operations.osmfoundation.org/policies/privacy/</a></li>
+  <li>alquran.cloud: operates on public-domain Quran text; see <a href="https://alquran.cloud/">https://alquran.cloud/</a></li>
+  </ul>
+
+  <h2>4. Log Data</h2>
+
+  <p>Whenever you use this service, in a case of an error in the app, data and information (through third-party products) may be collected on your phone called Log Data. This Log Data may include information such as your device Internet Protocol (IP) address, device name, operating system version, the configuration of the app when using this service, the time and date of use, and other statistics.</p>
+
+  <h2>5. Cookies</h2>
+
+  <p>Cookies are files with a small amount of data that are commonly used as anonymous unique identifiers. These are sent to your browser from the websites that you visit and are stored on your device's internal memory.</p>
+
+  <p>This service does not use cookies explicitly. However, the app may use third-party code and libraries that use cookies or similar technologies to collect information and improve their services. You may limit or refuse such technologies where your device or privacy settings allow. If you choose to refuse them, you may not be able to use some portions of this service.</p>
+
+  <h2>6. Service Providers</h2>
+
+  <p>Third-party companies and individuals may be employed for the following reasons:</p>
+
+  <ul>
+  <li>To facilitate the service;</li>
+  <li>To provide the service on our behalf;</li>
+  <li>To perform service-related services; or</li>
+  <li>To assist in analyzing how the service is used.</li>
+  </ul>
+
+  <p>We want to inform users of this service that these third parties have access to your personal information. The reason is to perform the tasks assigned to them on our behalf. However, they are obligated not to disclose or use the information for any other purpose.</p>
+
+  <h2>7. Security</h2>
+
+  <p>We value your trust in providing us your personal information, and we strive to use commercially acceptable means of protecting it. Remember that no method of transmission over the internet, or method of electronic storage, is 100% secure and reliable, and we cannot guarantee its absolute security.</p>
+
+  <h2>8. Retention</h2>
+
+  <p>Crash reports and analytics data are retained in accordance with the retention policies of Firebase. Because the app does not use accounts, there is no separate profile or account data stored by the developer that you need to request deletion of. You can delete app data (including saved prayer times and settings) by clearing the app's data in your device settings or uninstalling the app.</p>
+
+  <h2>9. Permissions</h2>
+
+  <table>
+  <thead>
+  <tr><th>Permission</th><th>Why the app uses it</th></tr>
+  </thead>
+  <tbody>
+  <tr><td>Location (precise and approximate)</td><td>Calculate prayer times and Qibla direction, identify your city</td></tr>
+  <tr><td>Notifications</td><td>Deliver prayer-time reminders, including via Firebase Cloud Messaging</td></tr>
+  <tr><td>Exact alarms / schedule</td><td>Schedule reliable prayer-time alarms</td></tr>
+  <tr><td>Foreground service</td><td>Keep reminder/alarm functionality reliable when the app is in the background</td></tr>
+  <tr><td>Internet / network state</td><td>Fetch prayer times and city data from the services described above</td></tr>
+  </tbody>
+  </table>
+
+  <h2>10. Links to Other Sites</h2>
+
+  <p>This service may contain links to other sites. If you click on a third-party link, you will be directed to that site. Note that these external sites are not operated by us. Therefore, we strongly advise you to review the privacy policy of these websites. We have no control over and assume no responsibility for the content, privacy policies, or practices of any third-party sites or services.</p>
+
+  <h2>11. Children's Privacy</h2>
+
+  <p>These services do not address anyone under the age of 13. We do not knowingly collect personally identifiable information from children under 13. In the case we discover that a child under 13 has provided us with personal information, we will delete it immediately. If you are a parent or guardian and you are aware that your child has provided us with personal information, please contact us so we will be able to take the necessary actions.</p>
+
+  <h2>12. Your Data Protection Rights (GDPR, CCPA and similar)</h2>
+
+  <p>Where applicable, you may have the following rights regarding your personal information: access, correction, deletion, restriction of processing, objection, data portability, and withdrawal of consent. Where a third-party service provider holds your data, you can exercise these rights through that provider (for example, Google's privacy controls and Firebase data-deletion options). For anything else, contact us using the details below.</p>
+
+  <h2>13. Changes to This Privacy Policy</h2>
+
+  <p>We may update our privacy policy from time to time. Thus, you are advised to review this page periodically for any changes. We will notify you of any changes by posting the new privacy policy on this page. These changes are effective immediately after they are posted on this page.</p>
+
+  <h2>14. Contact Us</h2>
+
+  <p>If you have any questions or suggestions about our privacy policy, do not hesitate to contact <a href="mailto:fahrippc@yahoo.com">fahrippc@yahoo.com</a>.</p>
+</section>
+
+<section lang="tr">
+  <p><em>Son güncelleme: 13 Eylül 2026</em></p>
+
+  <h2>1. Genel Bakış</h2>
+
+  <p>Fahri K., <strong>Namaz Vakitleri</strong> uygulamasını ücretsiz bir uygulama olarak geliştirmiştir. Bu hizmet Fahri K. tarafından ücretsiz olarak sunulmakta ve olduğu gibi kullanılması amaçlanmaktadır.</p>
+
+  <p>Bu sayfa, hizmetimizi kullanan kişilere, kişisel bilgilerin toplanması, kullanılması ve açıklanması ile ilgili politikalarımız hakkında bilgi vermek için kullanılır.</p>
+
+  <p>Hizmetimizi kullanmayı seçerseniz, bu politikayla ilgili bilgilerin toplanmasını ve kullanılmasını kabul etmiş olursunuz. Toplanan kişisel bilgiler, hizmetin sağlanması ve geliştirilmesi için kullanılır. Bilgileriniz, bu gizlilik politikasında açıklanan durumlar dışında hiç kimseyle paylaşılmaz.</p>
+
+  <h2>2. Toplanan Bilgiler</h2>
+
+  <p><strong>Konum Verisi (en hassas veri).</strong> Uygulama, namaz vakitlerini ve kıble yönünü hesaplamak ve içinde bulunduğunuz şehri belirlemek için cihazınızın yaklaşık ve hassas konumunu (GPS) kullanır. Konum verisi yalnızca bu hizmeti sağlamak için kullanılır. Bir şehir aradığınızda veya uygulama konumunuzu belirlediğinde, ilgili konum bilgisi yalnızca eşleşen şehir adlarını döndürmek amacıyla şehir arama sağlayıcımıza (OpenStreetMap'in işlettiği Nominatim) gönderilir. Konum verisi satılmaz ve sizin hakkınızda profil oluşturmak için kullanılmaz.</p>
+
+  <p><strong>Cihaz ve Çökme Verileri.</strong> Uygulama, çökme ve hata raporları toplamak için <strong>Firebase Crashlytics</strong> kullanır. Bu veriler cihaz türünü, işletim sistemi sürümünü, hatanın zamanını ve tarihini, uygulama yapılandırmasını ve diğer istatistikleri içerebilir. Çökme raporlaması istediğiniz zaman uygulama ayarlarından kapatılabilir.</p>
+
+  <p><strong>Kullanım Analitiği.</strong> Uygulama, uygulamanın nasıl kullanıldığını anlamak için <strong>Firebase Analytics</strong> kullanır. Analitik olayları ve kullanıcı özellikleri (dil tercihi, namaz hesaplama yöntemi ve Hicri takvim düzeltmesi gibi) hizmetin geliştirilmesine yardımcı olur. Analitikler istediğiniz zaman uygulama ayarlarından kapatılabilir.</p>
+
+  <p><strong>Bildirim Verileri.</strong> Namaz vakti hatırlatıcılarını etkinleştirirseniz, uygulama anlık bildirimler iletmek için <strong>Firebase Cloud Messaging (FCM)</strong> kullanır. Bu, yalnızca bildirimleri cihazınıza iletmek için kullanılan bir cihaz kayıt anahtarı gerektirir. Bildirimler istediğiniz zaman kapatılabilir.</p>
+
+  <p><strong>Sensörler.</strong> Kıble yönü özelliği, cihazınızın manyetometre (pusula) ve ivmeölçer sensörlerini kullanır. Bu veriler tamamen cihazınızda işlenir; toplanmaz, saklanmaz veya iletilmez.</p>
+
+  <p>Uygulama bir hesap gerektirmez, finansal veya ödeme bilgisi toplamaz, reklam göstermez ve kişisel bilgilerinizi satmaz.</p>
+
+  <h2>3. Üçüncü Taraf Hizmet Sağlayıcıları</h2>
+
+  <p>Uygulama, sizi tanımlamak için kullanılabilecek bilgileri toplayabilecek üçüncü taraf hizmetleri kullanır. Her sağlayıcı kendi gizlilik politikası kapsamında çalışır:</p>
+
+  <table>
+  <thead>
+  <tr><th>Hizmet</th><th>Amaç</th></tr>
+  </thead>
+  <tbody>
+  <tr><td>Google Play Hizmetleri</td><td>Çekirdek Android hizmetleri; konumunuzdan şehir adı türetmek için kullanılan yerleşik coğrafi kodlama dahil</td></tr>
+  <tr><td>Firebase Analytics</td><td>Kullanım analitiği</td></tr>
+  <tr><td>Firebase Crashlytics</td><td>Çökme ve hata raporlama</td></tr>
+  <tr><td>Firebase Cloud Messaging (FCM)</td><td>Namaz vakti hatırlatıcıları için anlık bildirimler</td></tr>
+  <tr><td>Firebase Remote Config</td><td>Belirli uygulama yapılandırma/güncelleme bilgilerini iletme</td></tr>
+  <tr><td>Nominatim (OpenStreetMap)</td><td>Şehir arama ve ters coğrafi kodlama — konum verisi veya arama sorgusu alır</td></tr>
+  <tr><td>alquran.cloud</td><td>Kamuya açık Kuran metni içeriği — kişisel veri gönderilmez</td></tr>
+  </tbody>
+  </table>
+
+  <p>Bu sağlayıcıların gizlilik politikalarına bağlantılar:</p>
+
+  <ul>
+  <li>Google Play Hizmetleri: <a href="https://policies.google.com/privacy">https://policies.google.com/privacy</a></li>
+  <li>Firebase: <a href="https://firebase.google.com/support/privacy">https://firebase.google.com/support/privacy</a></li>
+  <li>OpenStreetMap / Nominatim: <a href="https://operations.osmfoundation.org/policies/privacy/">https://operations.osmfoundation.org/policies/privacy/</a></li>
+  <li>alquran.cloud: kamuya açık Kuran metni üzerinde çalışır; bkz. <a href="https://alquran.cloud/">https://alquran.cloud/</a></li>
+  </ul>
+
+  <h2>4. Günlük Verileri</h2>
+
+  <p>Bu hizmeti her kullandığınızda, uygulamada bir hata oluşması durumunda telefonunuzda Günlük Verisi adı verilen veriler ve bilgiler (üçüncü taraf ürünler aracılığıyla) toplanabilir. Bu günlük verileri, cihazınızın İnternet Protokolü (IP) adresi, cihaz adı, işletim sistemi sürümü, bu hizmeti kullanırken uygulamanın yapılandırması, kullanımın saati ve tarihi ile diğer istatistikleri içerebilir.</p>
+
+  <h2>5. Çerezler</h2>
+
+  <p>Çerezler, genellikle anonim benzersiz tanımlayıcılar olarak kullanılan küçük veri dosyalarıdır. Bunlar ziyaret ettiğiniz web sitelerinden tarayıcınıza gönderilir ve cihazınızın dahili belleğinde saklanır.</p>
+
+  <p>Bu hizmet çerezleri açıkça kullanmaz. Ancak uygulama, bilgi toplamak ve hizmetlerini iyileştirmek için çerezleri veya benzer teknolojileri kullanan üçüncü taraf kodlar ve kitaplıklar kullanabilir. Cihazınızın veya gizlilik ayarlarınızın izin verdiği ölçüde bu teknolojileri sınırlandırabilir veya reddedebilirsiniz. Reddetmeyi seçerseniz, bu hizmetin bazı bölümlerini kullanamayabilirsiniz.</p>
+
+  <h2>6. Hizmet Sağlayıcıları</h2>
+
+  <p>Aşağıdaki nedenlerle üçüncü taraf şirketler ve kişiler görevlendirilebilir:</p>
+
+  <ul>
+  <li>Hizmeti kolaylaştırmak;</li>
+  <li>Hizmeti bizim adımıza sağlamak;</li>
+  <li>Hizmetle ilgili hizmetleri yerine getirmek; veya</li>
+  <li>Hizmetin nasıl kullanıldığını analiz etmeye yardımcı olmak.</li>
+  </ul>
+
+  <p>Bu hizmetin kullanıcılarına, bu üçüncü tarafların kişisel bilgilerinize erişebileceğini bildirmek isteriz. Bunun nedeni, kendilerine verilen görevleri bizim adımıza yerine getirmeleridir. Ancak, bilgileri başka bir amaçla açıklamamak veya kullanmamakla yükümlüdürler.</p>
+
+  <h2>7. Güvenlik</h2>
+
+  <p>Kişisel bilgilerinizi bize sağlama konusundaki güveninize değer veriyoruz ve bunları korumak için ticari olarak kabul edilebilir yöntemler kullanmaya çalışıyoruz. Ancak, internet üzerinden iletimin veya elektronik depolama yönteminin %100 güvenli ve güvenilir olmadığını ve mutlak güvenliğini garanti edemeyeceğimizi unutmayın.</p>
+
+  <h2>8. Veri Saklama</h2>
+
+  <p>Çökme raporları ve analitik verileri, Firebase'in saklama politikalarına uygun olarak saklanır. Uygulama hesap kullanmadığından, geliştirici tarafından silinmesini talep etmeniz gereken ayrı bir profil veya hesap verisi yoktur. Kayıtlı namaz vakitleri ve ayarlar dahil uygulama verilerini, cihaz ayarlarınızdan uygulama verilerini temizleyerek veya uygulamayı kaldırarak silebilirsiniz.</p>
+
+  <h2>9. İzinler</h2>
+
+  <table>
+  <thead>
+  <tr><th>İzin</th><th>Uygulamanın neden kullandığı</th></tr>
+  </thead>
+  <tbody>
+  <tr><td>Konum (hassas ve yaklaşık)</td><td>Namaz vakitlerini ve kıble yönünü hesaplamak, şehrinizi belirlemek</td></tr>
+  <tr><td>Bildirimler</td><td>Namaz vakti hatırlatıcılarını, Firebase Cloud Messaging dahil, iletmek</td></tr>
+  <tr><td>Kesin alarmlar / zamanlama</td><td>Güvenilir namaz vakti alarmları planlamak</td></tr>
+  <tr><td>Ön planda çalışan hizmet</td><td>Uygulama arka plandayken hatırlatıcı/alarm işlevini güvenilir tutmak</td></tr>
+  <tr><td>İnternet / ağ durumu</td><td>Yukarıda açıklanan hizmetlerden namaz vakitleri ve şehir verilerini almak</td></tr>
+  </tbody>
+  </table>
+
+  <h2>10. Diğer Sitelere Bağlantılar</h2>
+
+  <p>Bu hizmet, diğer sitelere bağlantılar içerebilir. Üçüncü taraf bir bağlantıya tıklarsanız, o siteye yönlendirilirsiniz. Bu harici sitelerin bizim tarafımızdan işletilmediğini unutmayın. Bu nedenle, bu web sitelerinin gizlilik politikalarını incelemenizi şiddetle tavsiye ederiz. Üçüncü taraf sitelerin veya hizmetlerin içeriği, gizlilik politikaları veya uygulamaları üzerinde hiçbir kontrolümüz yoktur ve hiçbir sorumluluk kabul etmeyiz.</p>
+
+  <h2>11. Çocukların Gizliliği</h2>
+
+  <p>Bu hizmetler 13 yaşın altındaki hiçbir kişiyi hedeflememektedir. 13 yaşın altındaki çocuklardan bilerek kişisel olarak tanımlanabilir bilgi toplamıyoruz. 13 yaşın altındaki bir çocuğun bize kişisel bilgi sağladığını fark edersek, bu bilgileri derhal sileriz. Ebeveyn veya vasi iseniz ve çocuğunuzun bize kişisel bilgi sağladığını biliyorsanız, gerekli işlemleri yapabilmemiz için lütfen bizimle iletişime geçin.</p>
+
+  <h2>12. Veri Koruma Haklarınız (GDPR, CCPA ve benzerleri)</h2>
+
+  <p>Uygulanabildiği durumlarda, kişisel bilgilerinizle ilgili şu haklara sahip olabilirsiniz: erişim, düzeltme, silme, işlemenin kısıtlanması, itiraz, veri taşınabilirliği ve rızanın geri çekilmesi. Verileriniz bir üçüncü taraf hizmet sağlayıcı tarafından tutuluyorsa, bu hakları o sağlayıcı aracılığıyla kullanabilirsiniz (örneğin Google'ın gizlilik kontrolleri ve Firebase veri silme seçenekleri). Diğer konular için aşağıdaki iletişim bilgilerini kullanarak bizimle iletişime geçin.</p>
+
+  <h2>13. Bu Gizlilik Politikasındaki Değişiklikler</h2>
+
+  <p>Gizlilik politikamızı zaman zaman güncelleyebiliriz. Bu nedenle, değişiklikler için bu sayfayı periyodik olarak incelemeniz önerilir. Yeni gizlilik politikasını bu sayfada yayınlayarak sizi değişikliklerden haberdar edeceğiz. Bu değişiklikler, bu sayfada yayınlandıktan hemen sonra geçerli olur.</p>
+
+  <h2>14. İletişim</h2>
+
+  <p>Gizlilik politikamızla ilgili sorularınız veya önerileriniz varsa, <a href="mailto:fahrippc@yahoo.com">fahrippc@yahoo.com</a> adresinden bizimle iletişime geçmekten çekinmeyin.</p>
+</section>
+
+</body>
+</html>
