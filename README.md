@@ -29,6 +29,9 @@ Bu proje, ölçeklenebilir, test edilebilir ve bakımı kolay bir uygulama oluş
     -   `:prayer_location`: Konum servisleri ile ilgili mantığı soyutlayan modül.
     -   `:prayer_settings`: Ayarlar veri modelleri, depo ve use case'ler.
     -   `:prayer_qibla`: Sensör/yönelim mantığı ve kıble veri deposu.
+    -   `:prayer_notifications`: Bildirimler (AlarmManager, WorkManager, FCM).
+    -   `:prayer_widget`: Glance ana ekran widget'ı.
+    -   `:app_update`: Uzaktan yapılandırma (Remote Config) ile yönlendirilen uygulama içi güncelleme akışı.
     -   `:prayer_feature:*`: Her bir özelliğe (`home`, `prayertimes`, `qibla`, `settings`, `common`) adanmış modüller.
 -   **MVVM Mimarisi**: Her özellik ekranı, durumu yöneten ve iş mantığını yürüten bir `ViewModel` tarafından desteklenmektedir.
 -   **Coroutines & Flow**: Asenkron işlemler ve reaktif durum yönetimi için kullanılır. `StateFlow`, UI durumunu `ViewModel`'den `Composable`'lara güvenli bir şekilde iletmek için kullanılır.

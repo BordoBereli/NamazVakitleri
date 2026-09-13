@@ -20,6 +20,7 @@ import androidx.compose.ui.test.performSemanticsAction
 import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
+import com.kutluoglu.prayer_feature.settings.BuildConfig
 import com.kutluoglu.prayer_feature.settings.R
 import com.kutluoglu.prayer_notifications.domain.NotificationSettings
 import com.kutluoglu.prayer_notifications.domain.usecases.GetNotificationSettingsUseCase
@@ -30,6 +31,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import io.mockk.verify
+import org.junit.Assume
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -442,6 +444,7 @@ class NotificationsScreenTest {
 
     @Test
     fun `renders test adhan section in debug build`() {
+        Assume.assumeTrue(BuildConfig.DEBUG)
         launchScreen(
             NotificationSettings(
                 enabled = true,
@@ -455,6 +458,7 @@ class NotificationsScreenTest {
 
     @Test
     fun `shows adhan-off warning when adhan is disabled`() {
+        Assume.assumeTrue(BuildConfig.DEBUG)
         launchScreen(
             NotificationSettings(
                 enabled = true,
@@ -488,6 +492,7 @@ class NotificationsScreenTest {
 
     @Test
     fun `scheduling a test adhan schedules an alarm with the selected delay`() {
+        Assume.assumeTrue(BuildConfig.DEBUG)
         launchScreen(
             NotificationSettings(
                 enabled = true,
@@ -503,6 +508,7 @@ class NotificationsScreenTest {
 
     @Test
     fun `does not schedule a test adhan without exact alarm permission`() {
+        Assume.assumeTrue(BuildConfig.DEBUG)
         ShadowAlarmManager.setCanScheduleExactAlarms(false)
         launchScreen(
             NotificationSettings(
