@@ -38,5 +38,5 @@ TODO.md
 NamazVakitleriTechnicalAnalysis
 .claude/
 docs/*
-!docs/privacy-policy.md
+!docs/privacy-policy.html
 prayer_settings/ANDROID_TECHNICAL_ANALYSIS_*.md
