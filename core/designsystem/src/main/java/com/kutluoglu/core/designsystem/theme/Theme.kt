@@ -37,18 +37,19 @@ private val DarkColorScheme = darkColorScheme(
 
 // Define the Light Color Scheme using your custom colors
 private val LightColorScheme = lightColorScheme(
-    primary = IslamicGold,              // Your new primary color
-    onPrimary = IslamicDarkBg,          // Use a dark color for text on the gold background
-    primaryContainer = IslamicGold,
-    onPrimaryContainer = IslamicDarkBg,
-    secondary = IslamicWhite,
-    onSecondary = IslamicDarkBg,
-    background = IslamicSurface,
-    onBackground = IslamicDarkBg,
-    surface = IslamicWhite,
-    onSurface = IslamicDarkBg,
-    surfaceContainerHigh = IslamicWhite,
-    onSurfaceVariant = IslamicTextSecondary,
+    primary = IslamicGoldDark,              // Deep gold — readable accents on light backgrounds
+    onPrimary = Color.White,                // White text/icons on the deep gold primary
+    primaryContainer = IslamicGoldSoft,     // Soft cream gold for selected items
+    onPrimaryContainer = IslamicGoldDark,
+    secondary = IslamicGoldSoft,            // Soft cream
+    onSecondary = IslamicGoldDark,
+    background = IslamicSurface,            // Warm off-white
+    onBackground = IslamicTextPrimary,
+    surface = Color.White,
+    onSurface = IslamicTextPrimary,
+    surfaceVariant = IslamicCreamCard,      // Warm cream cards
+    onSurfaceVariant = IslamicTextSecondaryLight,
+    surfaceContainerHigh = Color.White,
     error = Color.Red,
     onError = Color.White
 

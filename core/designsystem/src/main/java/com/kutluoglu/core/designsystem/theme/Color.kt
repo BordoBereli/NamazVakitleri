@@ -13,6 +13,9 @@ val IslamicGoldOlive = Color(0xFF5A501E)  // #5A501E olive — dark mode
 
 // Light
 val IslamicGoldSoft = Color(0xFFFFE9A8)   // #FFE9A8 cream — light mode
-val IslamicSurface = Color(0xFFF5F5F5)
+val IslamicGoldDark = Color(0xFF8C6D00)   // #8C6D00 deep gold — light mode primary
+val IslamicCreamCard = Color(0xFFF5EDDC)  // #F5EDDC warm cream — light mode cards
+val IslamicSurface = Color(0xFFFAF7F0)    // #FAF7F0 warm off-white — light mode background
 val IslamicTextPrimary = Color(0xFF000000)
+val IslamicTextSecondaryLight = Color(0xFF5F5F5F) // #5F5F5F readable gray — light mode secondary text
 

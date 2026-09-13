@@ -28,7 +28,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.kutluoglu.core.designsystem.R
-import com.kutluoglu.core.designsystem.theme.IslamicGoldOlive
 
 @Composable
 fun RoundedPageTitleBar(
@@ -46,7 +45,7 @@ fun RoundedPageTitleBar(
             .clip(RoundedCornerShape(topStart = cornerRadius, topEnd = cornerRadius))
             .background(MaterialTheme.colorScheme.primary)
     ) {
-        CompositionLocalProvider(LocalContentColor provides IslamicGoldOlive) {
+        CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onPrimary) {
             Row(
                 modifier = Modifier
                     .fillMaxSize()
@@ -61,7 +60,7 @@ fun RoundedPageTitleBar(
                     text = title,
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.SemiBold,
-                    color = IslamicGoldOlive
+                    color = MaterialTheme.colorScheme.onPrimary
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 actions()
