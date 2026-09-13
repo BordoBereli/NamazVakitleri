@@ -42,6 +42,7 @@ class SettingsDataStore(
         val TIME_ZONE = stringPreferencesKey("time_zone")
         val CALCULATION_METHOD = stringPreferencesKey("calculation_method")
         val LANGUAGE = stringPreferencesKey("language")
+        val THEME_MODE = stringPreferencesKey("theme_mode")
         val HIJRI_ADJUSTMENT = intPreferencesKey("hijri_adjustment")
         val JURISTIC_METHOD = stringPreferencesKey("juristic_method")
         val CRASHLYTICS_ENABLED = booleanPreferencesKey("crashlytics_enabled")
@@ -61,6 +62,7 @@ class SettingsDataStore(
             ),
             calculationMethod = preferences[PreferencesKeys.CALCULATION_METHOD] ?: "TURKEY_DIYANET",
             language = preferences[PreferencesKeys.LANGUAGE] ?: "system",
+            themeMode = preferences[PreferencesKeys.THEME_MODE] ?: "dark",
             hijriAdjustment = preferences[PreferencesKeys.HIJRI_ADJUSTMENT] ?: 0,
             juristicMethod = preferences[PreferencesKeys.JURISTIC_METHOD] ?: "STANDARD",
             crashlyticsEnabled = preferences[PreferencesKeys.CRASHLYTICS_ENABLED] ?: true,
@@ -82,6 +84,7 @@ class SettingsDataStore(
                 ),
                 calculationMethod = preferences[PreferencesKeys.CALCULATION_METHOD] ?: "TURKEY_DIYANET",
                 language = preferences[PreferencesKeys.LANGUAGE] ?: "system",
+                themeMode = preferences[PreferencesKeys.THEME_MODE] ?: "dark",
                 hijriAdjustment = preferences[PreferencesKeys.HIJRI_ADJUSTMENT] ?: 0,
                 juristicMethod = preferences[PreferencesKeys.JURISTIC_METHOD] ?: "STANDARD",
                 crashlyticsEnabled = preferences[PreferencesKeys.CRASHLYTICS_ENABLED] ?: true,
@@ -115,6 +118,12 @@ class SettingsDataStore(
     suspend fun updateLanguage(language: String) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.LANGUAGE] = language
+        }
+    }
+    
+    suspend fun updateThemeMode(mode: String) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.THEME_MODE] = mode
         }
     }
     

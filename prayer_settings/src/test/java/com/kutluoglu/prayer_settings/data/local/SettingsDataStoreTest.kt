@@ -116,4 +116,17 @@ class SettingsDataStoreTest {
         val settings = dataStore.getSettings()
         assertThat(settings.compassAutoRotate).isFalse()
     }
+
+    @Test
+    fun `default themeMode is dark`() = runBlocking {
+        val settings = dataStore.getSettings()
+        assertThat(settings.themeMode).isEqualTo("dark")
+    }
+
+    @Test
+    fun `updateThemeMode round-trips correctly`() = runBlocking {
+        dataStore.updateThemeMode("light")
+        val settings = dataStore.getSettings()
+        assertThat(settings.themeMode).isEqualTo("light")
+    }
 }
