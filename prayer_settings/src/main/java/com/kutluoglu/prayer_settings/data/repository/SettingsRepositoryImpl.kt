@@ -44,6 +44,10 @@ class SettingsRepositoryImpl(
     override suspend fun updateLanguage(language: String) {
         settingsDataStore.updateLanguage(language)
     }
+
+    override suspend fun updateThemeMode(mode: String) {
+        settingsDataStore.updateThemeMode(mode)
+    }
     
     override suspend fun updateHijriAdjustment(days: Int) {
         settingsDataStore.updateHijriAdjustment(days)

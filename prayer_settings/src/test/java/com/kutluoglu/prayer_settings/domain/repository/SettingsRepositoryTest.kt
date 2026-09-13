@@ -106,4 +106,16 @@ class SettingsRepositoryTest {
         // Assert
         coVerify { repository.updateHijriAdjustment(1) }
     }
+
+    @Test
+    fun `updateThemeMode should call repository`() = runTest {
+        // Arrange
+        coEvery { repository.updateThemeMode(any()) } returns Unit
+
+        // Act
+        repository.updateThemeMode("light")
+
+        // Assert
+        coVerify { repository.updateThemeMode("light") }
+    }
 }
