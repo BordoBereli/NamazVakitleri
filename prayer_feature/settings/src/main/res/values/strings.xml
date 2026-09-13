@@ -20,6 +20,8 @@
     <string name="juristic_shadow_twice_height">shadow = 2 × height</string>
     <string name="select_language">Select Language</string>
     <string name="language">Language</string>
+    <string name="theme">Theme</string>
+    <string name="select_theme">Select Theme</string>
     <string name="location">Location</string>
     <string name="select_location">Select Location</string>
     <string name="search">Search</string>
