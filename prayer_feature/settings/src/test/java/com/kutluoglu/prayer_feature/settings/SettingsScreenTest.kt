@@ -68,6 +68,7 @@ class SettingsScreenTest {
                 onNavigateToHijriAdjustment = {},
                 onNavigateToJuristicMethod = {},
                 onNavigateToLanguage = {},
+                onNavigateToThemeMode = {},
                 onNavigateToNotifications = {},
                 viewModel = viewModel
             )
