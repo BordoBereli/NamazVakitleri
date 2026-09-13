@@ -16,6 +16,7 @@ import com.kutluoglu.prayer_settings.domain.usecase.UpdateHijriAdjustmentUseCase
 import com.kutluoglu.prayer_settings.domain.usecase.UpdateLanguageUseCase
 import com.kutluoglu.prayer_settings.domain.usecase.UpdateLocationUseCase
 import com.kutluoglu.prayer_settings.domain.usecase.UpdateLockPortraitUseCase
+import com.kutluoglu.prayer_settings.domain.usecase.UpdateThemeModeUseCase
 import io.mockk.coEvery
 import io.mockk.mockk
 import org.junit.Rule
@@ -35,6 +36,7 @@ class SettingsScreenTest {
     private val updateLocationUseCase = mockk<UpdateLocationUseCase>(relaxed = true)
     private val updateCalculationMethodUseCase = mockk<UpdateCalculationMethodUseCase>(relaxed = true)
     private val updateLanguageUseCase = mockk<UpdateLanguageUseCase>(relaxed = true)
+    private val updateThemeModeUseCase = mockk<UpdateThemeModeUseCase>(relaxed = true)
     private val updateHijriAdjustmentUseCase = mockk<UpdateHijriAdjustmentUseCase>(relaxed = true)
     private val updateLockPortraitUseCase = mockk<UpdateLockPortraitUseCase>(relaxed = true)
     private val updateCompassAutoRotateUseCase = mockk<UpdateCompassAutoRotateUseCase>(relaxed = true)
@@ -50,6 +52,7 @@ class SettingsScreenTest {
             updateLocationUseCase,
             updateCalculationMethodUseCase,
             updateLanguageUseCase,
+            updateThemeModeUseCase,
             updateHijriAdjustmentUseCase,
             updateLockPortraitUseCase,
             updateCompassAutoRotateUseCase,

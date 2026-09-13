@@ -15,6 +15,7 @@ import com.kutluoglu.prayer_settings.domain.usecase.UpdateHijriAdjustmentUseCase
 import com.kutluoglu.prayer_settings.domain.usecase.UpdateLanguageUseCase
 import com.kutluoglu.prayer_settings.domain.usecase.UpdateLocationUseCase
 import com.kutluoglu.prayer_settings.domain.usecase.UpdateLockPortraitUseCase
+import com.kutluoglu.prayer_settings.domain.usecase.UpdateThemeModeUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -28,6 +29,7 @@ class SettingsViewModel(
     private val updateLocationUseCase: UpdateLocationUseCase,
     private val updateCalculationMethodUseCase: UpdateCalculationMethodUseCase,
     private val updateLanguageUseCase: UpdateLanguageUseCase,
+    private val updateThemeModeUseCase: UpdateThemeModeUseCase,
     private val updateHijriAdjustmentUseCase: UpdateHijriAdjustmentUseCase,
     private val updateLockPortraitUseCase: UpdateLockPortraitUseCase,
     private val updateCompassAutoRotateUseCase: UpdateCompassAutoRotateUseCase,
@@ -55,6 +57,7 @@ class SettingsViewModel(
             is SettingsEvent.UpdateLocation -> updateLocation(event.location)
             is SettingsEvent.UpdateCalculationMethod -> updateCalculationMethod(event.method)
             is SettingsEvent.UpdateLanguage -> updateLanguage(event.language)
+            is SettingsEvent.UpdateThemeMode -> updateThemeMode(event.mode)
             is SettingsEvent.UpdateHijriAdjustment -> updateHijriAdjustment(event.days)
             is SettingsEvent.UpdateLockPortrait -> updateLockPortrait(event.lockPortrait)
             is SettingsEvent.UpdateCompassAutoRotate -> updateCompassAutoRotate(event.compassAutoRotate)
@@ -103,6 +106,17 @@ class SettingsViewModel(
                 loadSettings()
             } catch (e: Exception) {
                 _uiState.value = SettingsUiState.Error(e.message ?: "Failed to update language")
+            }
+        }
+    }
+
+    private fun updateThemeMode(mode: String) {
+        viewModelScope.launch {
+            try {
+                updateThemeModeUseCase(mode)
+                loadSettings()
+            } catch (e: Exception) {
+                _uiState.value = SettingsUiState.Error(e.message ?: "Failed to update theme mode")
             }
         }
     }
