@@ -37,11 +37,11 @@ fun HomeEmptyContent(
                 icon = Icons.Default.LocationOn,
                 text = stringResource(R.string.no_location_selected)
             )
-            Button(onClick = onAddLocation) {
-                Text(stringResource(R.string.add_location))
-            }
-            OutlinedButton(onClick = onUseMyLocation) {
+            Button(onClick = onUseMyLocation) {
                 Text(stringResource(R.string.use_my_location))
+            }
+            OutlinedButton(onClick = onAddLocation) {
+                Text(stringResource(R.string.add_location))
             }
             if (permissionDenied) {
                 Text(
