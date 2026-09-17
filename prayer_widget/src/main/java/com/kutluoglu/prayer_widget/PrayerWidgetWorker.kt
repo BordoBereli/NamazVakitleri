@@ -7,9 +7,10 @@ import androidx.work.WorkerParameters
 
 class PrayerWidgetWorker(
     context: Context,
-    params: WorkerParameters,
-    private val syncWatchData: suspend () -> Unit = { WatchDataSync.sync() }
+    params: WorkerParameters
 ) : CoroutineWorker(context, params) {
+
+    internal var syncWatchData: suspend () -> Unit = { WatchDataSync.sync() }
 
     override suspend fun doWork(): Result {
         return runCatching {

@@ -20,18 +20,16 @@ class PrayerWidgetWorkerTest {
 
     @Test
     fun `worker returns success`() = runTest {
-        val worker = PrayerWidgetWorker(context, mockk<WorkerParameters>(relaxed = true), syncWatchData = {})
+        val worker = PrayerWidgetWorker(context, mockk<WorkerParameters>(relaxed = true))
+        worker.syncWatchData = {}
         assertThat(worker.doWork()).isEqualTo(ListenableWorker.Result.success())
     }
 
     @Test
     fun `worker syncs watch data`() = runTest {
         var synced = false
-        val worker = PrayerWidgetWorker(
-            context,
-            mockk<WorkerParameters>(relaxed = true),
-            syncWatchData = { synced = true }
-        )
+        val worker = PrayerWidgetWorker(context, mockk<WorkerParameters>(relaxed = true))
+        worker.syncWatchData = { synced = true }
         worker.doWork()
         assertThat(synced).isTrue()
     }
