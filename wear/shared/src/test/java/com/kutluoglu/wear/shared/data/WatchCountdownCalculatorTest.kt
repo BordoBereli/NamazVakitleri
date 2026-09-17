@@ -77,4 +77,14 @@ class WatchCountdownCalculatorTest {
         assertThat(WatchCountdownCalculator.ringProgress(current, next, current - 60_000L)).isEqualTo(0f)
         assertThat(WatchCountdownCalculator.ringProgress(current, next, next + 60_000L)).isEqualTo(1f)
     }
+
+    @Test
+    fun `ringProgress wraps overnight when next is before current`() {
+        val current = 1_700_000_000_000L
+        val next = current - 15 * 3_600_000L
+
+        assertThat(WatchCountdownCalculator.ringProgress(current, next, current)).isEqualTo(0f)
+        assertThat(WatchCountdownCalculator.ringProgress(current, next, current + 3 * 3_600_000L)).isEqualTo(1f / 3f)
+        assertThat(WatchCountdownCalculator.ringProgress(current, next, next + 24 * 3_600_000L)).isEqualTo(1f)
+    }
 }

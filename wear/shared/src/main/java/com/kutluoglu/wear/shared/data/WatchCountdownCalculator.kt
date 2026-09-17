@@ -24,9 +24,19 @@ object WatchCountdownCalculator {
         nextPrayerEpochMillis: Long,
         nowEpochMillis: Long
     ): Float {
+        val dayMillis = 24 * 60 * 60 * 1000L
         val total = nextPrayerEpochMillis - currentPrayerEpochMillis
-        if (total <= 0L) return 0f
-        val elapsed = (nowEpochMillis - currentPrayerEpochMillis).coerceIn(0L, total)
-        return (elapsed.toFloat() / total.toFloat()).coerceIn(0f, 1f)
+        val wrapped = total <= 0L
+        val effectiveTotal = if (wrapped) total + dayMillis else total
+        if (effectiveTotal <= 0L) return 0f
+        val elapsed = if (wrapped) {
+            positiveMod(nowEpochMillis - currentPrayerEpochMillis, dayMillis)
+        } else {
+            (nowEpochMillis - currentPrayerEpochMillis).coerceIn(0L, effectiveTotal)
+        }
+        return (elapsed.toFloat() / effectiveTotal.toFloat()).coerceIn(0f, 1f)
     }
+
+    private fun positiveMod(value: Long, modulus: Long): Long =
+        ((value % modulus) + modulus) % modulus
 }
