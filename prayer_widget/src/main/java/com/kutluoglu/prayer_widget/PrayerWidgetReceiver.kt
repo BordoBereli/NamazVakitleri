@@ -48,10 +48,14 @@ class PrayerWidgetReceiver : BasePrayerWidgetReceiver() {
 
     internal suspend fun refreshWidgets(
         context: Context,
-        refresh: suspend (Context) -> Unit = { PrayerWidget().updateAll(it) }
+        refresh: suspend (Context) -> Unit = { PrayerWidget().updateAll(it) },
+        syncWatchData: suspend () -> Unit = { WatchDataSync.sync() }
     ) {
         runCatching { refresh(context) }.onFailure {
             Log.e("PrayerWidget", "Failed to refresh widget on minute tick -> ${it.message}")
+        }
+        runCatching { syncWatchData() }.onFailure {
+            Log.e("PrayerWidget", "Failed to sync watch data on minute tick -> ${it.message}")
         }
     }
 

@@ -56,7 +56,10 @@ class WidgetRefresher(
         ): WidgetRefresher = WidgetRefresher(
             settingsRepository = settingsRepository,
             locationsCoordinator = locationsCoordinator,
-            refreshWidgets = { PrayerWidget().updateAll(context) }
+            refreshWidgets = {
+                PrayerWidget().updateAll(context)
+                WatchDataSync.sync()
+            }
         )
     }
 

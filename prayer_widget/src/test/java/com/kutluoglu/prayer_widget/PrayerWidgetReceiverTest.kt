@@ -132,8 +132,18 @@ class PrayerWidgetReceiverTest {
         val receiver = PrayerWidgetReceiver()
         var refreshed = false
 
-        receiver.refreshWidgets(context) { refreshed = true }
+        receiver.refreshWidgets(context, refresh = { refreshed = true }, syncWatchData = {})
 
         assertThat(refreshed).isTrue()
+    }
+
+    @Test
+    fun `refreshWidgets syncs watch data`() = runTest {
+        val receiver = PrayerWidgetReceiver()
+        var synced = false
+
+        receiver.refreshWidgets(context, refresh = {}, syncWatchData = { synced = true })
+
+        assertThat(synced).isTrue()
     }
 }
