@@ -71,10 +71,13 @@ dependencies {
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.platform.launcher)
+    testImplementation(libs.junit.vintage.engine)
+    testImplementation(libs.junit)
     testImplementation(libs.truth)
     testImplementation(libs.mockk)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.robolectric)
+    testImplementation("androidx.test:core:1.7.0")
     testImplementation(libs.androidx.wear.tiles.testing)
 }
 tasks.withType<Test> { useJUnitPlatform() }
