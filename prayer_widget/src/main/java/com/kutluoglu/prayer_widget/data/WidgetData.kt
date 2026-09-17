@@ -9,7 +9,9 @@ data class WidgetData(
     val gregorianDate: String,
     val hijriDate: String,
     val prayers: List<WidgetPrayer>,
-    val isJumuah: Boolean = false
+    val isJumuah: Boolean = false,
+    val currentPrayerEpochMillis: Long = 0L,
+    val nextPrayerEpochMillis: Long = 0L
 )
 
 data class WidgetPrayer(

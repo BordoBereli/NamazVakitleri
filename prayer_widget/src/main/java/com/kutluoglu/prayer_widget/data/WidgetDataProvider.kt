@@ -13,9 +13,13 @@ import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
 import kotlinx.datetime.toKotlinLocalTime
 import org.koin.core.annotation.Factory
 import java.time.Clock
+import java.time.ZoneId
+import kotlin.time.ExperimentalTime
 import kotlin.time.toKotlinDuration
 
 private const val DHUHR_ARABIC_NAME = "الظهر"
@@ -49,6 +53,8 @@ class WidgetDataProvider(
 
         val (current, next) = calculator.findCurrentAndNextPrayer(localizedPrayers, zoneId)
         val nextPrayer = next ?: return WidgetResult.Error
+        val currentPrayerEpochMillis = current?.let { toEpochMillis(it, zoneId) } ?: 0L
+        val nextPrayerEpochMillis = toEpochMillis(nextPrayer, zoneId)
         val duration = calculator.calculateTimeRemaining(nextPrayer.time, zoneId)
         val countdownText = duration.toKotlinDuration().toComponents { _, hours, minutes, _, _ ->
             countdownFormatter.format(hours, minutes)
@@ -78,10 +84,18 @@ class WidgetDataProvider(
                         isJumuah = isJumuahPrayer(p)
                     )
                 },
-                isJumuah = isJumuahPrayer(nextPrayer)
+                isJumuah = isJumuahPrayer(nextPrayer),
+                currentPrayerEpochMillis = currentPrayerEpochMillis,
+                nextPrayerEpochMillis = nextPrayerEpochMillis
             )
         )
     }
+
+    @OptIn(ExperimentalTime::class)
+    private fun toEpochMillis(prayer: Prayer, zoneId: ZoneId): Long =
+        LocalDateTime(prayer.date, prayer.time)
+            .toInstant(TimeZone.of(zoneId.id))
+            .toEpochMilliseconds()
 
     private fun formatClockTime(time: LocalTime): String =
         "${time.hour.toString().padStart(2, '0')}:${time.minute.toString().padStart(2, '0')}"

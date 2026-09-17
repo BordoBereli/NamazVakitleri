@@ -83,6 +83,40 @@ class WidgetDataProviderTest {
     }
 
     @Test
+    fun `load populates current and next prayer epoch millis`() = runTest {
+        withSystemDefaultZone("Europe/Istanbul") {
+            val useCase = mockk<GetPrayerTimesUseCase>(relaxed = true)
+            val locations = mockk<LocationsCoordinator>(relaxed = true)
+            val settings = mockk<GetSettingsUseCase>(relaxed = true)
+            val clock = Clock.fixed(Instant.parse("2026-09-02T11:15:00Z"), ZoneOffset.UTC)
+            val calculator = PrayerLogicEngine(clock)
+            val formatter = mockk<com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter>(relaxed = true)
+            val countdown = countdownFormatter()
+
+            coEvery { locations.resolveSelected() } returns LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", null)
+            coEvery { settings() } returns Settings()
+            coEvery { useCase.invoke(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
+                listOf(
+                    prayer("Dhuhr", LocalTime(12, 30)),
+                    prayer("Asr", LocalTime(16, 0))
+                )
+            )
+            coEvery { formatter.withLocalizedNames(any()) } returns listOf(
+                prayer("Dhuhr", LocalTime(12, 30)),
+                prayer("Asr", LocalTime(16, 0))
+            )
+            coEvery { countdown.format(any(), any()) } returns "2s 15d"
+
+            val provider = WidgetDataProvider(useCase, locations, settings, calculator, formatter, countdown, clock)
+            val result = provider.load()
+            assertTrue(result is WidgetResult.Success)
+            val data = (result as WidgetResult.Success).data
+            assertTrue(data.nextPrayerEpochMillis > 0L)
+            assertTrue(data.currentPrayerEpochMillis > 0L)
+        }
+    }
+
+    @Test
     fun `load computes ring progress between current and next prayer`() = runTest {
         withSystemDefaultZone("Europe/Istanbul") {
             val useCase = mockk<GetPrayerTimesUseCase>(relaxed = true)
