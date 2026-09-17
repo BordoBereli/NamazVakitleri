@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Namaz Vakitleri</string>
+    <string name="wear_countdown_hour_short">s</string>
+    <string name="wear_countdown_minute_short">d</string>
+    <string name="wear_tile_no_data_title">Telefonunuzda uygulamayı açın</string>
+    <string name="wear_tile_no_data_subtitle">Namaz kartını bulmak için kaydırın</string>
+    <string name="wear_tile_last_synced">Son senkron: %1$s</string>
+    <string name="wear_main_title">Namaz Vakitleri</string>
+    <string name="wear_main_subtitle">Kart kuruldu — saat yüzünde sola kaydırarak bulun.</string>
+</resources>

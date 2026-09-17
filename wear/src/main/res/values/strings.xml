@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Namaz Vakitleri</string>
+    <string name="wear_countdown_hour_short">h</string>
+    <string name="wear_countdown_minute_short">m</string>
+    <string name="wear_tile_no_data_title">Open app on your phone</string>
+    <string name="wear_tile_no_data_subtitle">Swipe to find the prayer tile</string>
+    <string name="wear_tile_last_synced">Last synced %1$s</string>
+    <string name="wear_main_title">Prayer Times</string>
+    <string name="wear_main_subtitle">Tile installed — swipe left on your watch face to find it.</string>
+</resources>
