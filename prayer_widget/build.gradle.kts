@@ -42,6 +42,9 @@ dependencies {
     implementation(project(":prayer_settings"))
     implementation(project(":prayer_feature:common"))
     implementation(project(":core:common"))
+    implementation(project(":wear:shared"))
+    implementation(libs.play.services.wearable)
+    implementation(libs.kotlinx.coroutines.play.services)
 
     implementation(libs.androidx.glance.appwidget)
     implementation(libs.androidx.glance.material3)
