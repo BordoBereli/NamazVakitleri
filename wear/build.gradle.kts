@@ -42,6 +42,9 @@ android {
 dependencies {
     implementation(project(":wear:shared"))
     implementation(project(":core:common"))
+    implementation(project(":prayer:domain"))
+
+    implementation(libs.kotlinx.datetime)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)
