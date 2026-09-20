@@ -29,66 +29,114 @@ class WatchTileDataBuilderTest {
         zoneId
     )
 
-    private val builder = WatchTileDataBuilder(
-        prayerTimeEngine = PrayerTimeEngine(),
-        prayerLogicEngine = PrayerLogicEngine(clock)
-    )
+    private val builder = builderWith(clock)
 
     @Test
     fun `build returns six prayers with localized names`() {
         val data = buildData()
-
         assertThat(data).isNotNull()
-        assertThat(data!!.prayers).hasSize(6)
-        assertThat(data.prayers.map { it.name }).containsExactlyElementsIn(prayerNames)
-        assertThat(data.locationName).isEqualTo(locationName)
+        val result = data!!
+
+        assertThat(result.prayers).hasSize(6)
+        assertThat(result.prayers.map { it.name }).containsExactlyElementsIn(prayerNames)
+        assertThat(result.locationName).isEqualTo(locationName)
     }
 
     @Test
     fun `next prayer is after current time`() {
-        val data = buildData()!!
+        val data = buildData()
+        assertThat(data).isNotNull()
+        val result = data!!
 
         val currentTimeMillis = clock.instant().toEpochMilli()
-        assertThat(data.nextPrayerEpochMillis).isGreaterThan(currentTimeMillis)
-        assertThat(data.nextPrayerName).isIn(prayerNames)
+        assertThat(result.nextPrayerEpochMillis).isGreaterThan(currentTimeMillis)
+        assertThat(result.nextPrayerName).isIn(prayerNames)
     }
 
     @Test
     fun `isJumuah is true when next prayer is Dhuhr on Friday`() {
-        val data = buildData()!!
+        val data = buildData()
+        assertThat(data).isNotNull()
+        val result = data!!
 
-        assertThat(data.nextPrayerName).isEqualTo("Öğle")
-        assertThat(data.isJumuah).isTrue()
-        assertThat(data.prayers.first { it.name == "Öğle" }.isJumuah).isTrue()
-        assertThat(data.prayers.first { it.name == "Öğle" }.isNext).isTrue()
+        assertThat(result.nextPrayerName).isEqualTo("Öğle")
+        assertThat(result.isJumuah).isTrue()
+        assertThat(result.prayers.first { it.name == "Öğle" }.isJumuah).isTrue()
+        assertThat(result.prayers.first { it.name == "Öğle" }.isNext).isTrue()
     }
 
     @Test
     fun `isJumuah is false when next prayer is Dhuhr on a non-Friday`() {
-        val data = buildData(date = LocalDateTime(2026, 9, 17, 10, 0))!!
+        val data = buildData(date = LocalDateTime(2026, 9, 17, 10, 0))
+        assertThat(data).isNotNull()
+        val result = data!!
 
-        assertThat(data.nextPrayerName).isEqualTo("Öğle")
-        assertThat(data.isJumuah).isFalse()
+        assertThat(result.nextPrayerName).isEqualTo("Öğle")
+        assertThat(result.isJumuah).isFalse()
     }
 
     @Test
     fun `prayer times are formatted as HH mm`() {
-        val data = buildData()!!
+        val data = buildData()
+        assertThat(data).isNotNull()
+        val result = data!!
 
-        data.prayers.forEach { prayer ->
+        result.prayers.forEach { prayer ->
             assertThat(prayer.time).matches("\\d{2}:\\d{2}")
         }
     }
 
     @Test
     fun `syncedAtEpochMillis is approximately now`() {
-        val data = buildData()!!
+        val data = buildData()
+        assertThat(data).isNotNull()
+        val result = data!!
 
         val now = System.currentTimeMillis()
-        assertThat(Math.abs(data.syncedAtEpochMillis - now)).isLessThan(5_000L)
+        assertThat(Math.abs(result.syncedAtEpochMillis - now)).isLessThan(5_000L)
     }
 
-    private fun buildData(date: LocalDateTime = this.date): WatchTileData? = builder.build(
+    @Test
+    fun `before first prayer returns sunrise as next and isha as current`() {
+        // 03:00 in Istanbul, before Sunrise.
+        val beforeSunriseClock = Clock.fixed(Instant.parse("2026-09-18T00:00:00Z"), zoneId)
+        val data = buildData(builder = builderWith(beforeSunriseClock))
+        assertThat(data).isNotNull()
+        val result = data!!
+
+        val nowMillis = beforeSunriseClock.instant().toEpochMilli()
+        assertThat(result.nextPrayerName).isEqualTo("Güneş")
+        assertThat(result.nextPrayerEpochMillis).isGreaterThan(nowMillis)
+        // The engine reports Isha (today) as the "current" prayer before Sunrise.
+        assertThat(result.currentPrayerEpochMillis).isGreaterThan(nowMillis)
+    }
+
+    @Test
+    fun `after last prayer returns tomorrow sunrise as next`() {
+        // 23:00 in Istanbul, after Isha.
+        val afterIshaClock = Clock.fixed(Instant.parse("2026-09-18T20:00:00Z"), zoneId)
+        val data = buildData(builder = builderWith(afterIshaClock))
+        assertThat(data).isNotNull()
+        val result = data!!
+
+        val nowMillis = afterIshaClock.instant().toEpochMilli()
+        assertThat(result.nextPrayerName).isEqualTo("Güneş")
+        assertThat(result.nextPrayerEpochMillis).isGreaterThan(nowMillis)
+        val nextDate = Instant.ofEpochMilli(result.nextPrayerEpochMillis)
+            .atZone(zoneId)
+            .toLocalDate()
+        assertThat(nextDate).isEqualTo(java.time.LocalDate.of(2026, 9, 19))
+    }
+
+    private fun builderWith(clock: Clock): WatchTileDataBuilder = WatchTileDataBuilder(
+        prayerTimeEngine = PrayerTimeEngine(),
+        prayerLogicEngine = PrayerLogicEngine(clock)
+    )
+
+    private fun buildData(
+        builder: WatchTileDataBuilder = this.builder,
+        date: LocalDateTime = this.date
+    ): WatchTileData? = builder.build(
         latitude = latitude,
         longitude = longitude,
         zoneId = zoneId,

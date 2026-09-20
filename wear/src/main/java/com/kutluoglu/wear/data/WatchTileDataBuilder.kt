@@ -31,6 +31,15 @@ class WatchTileDataBuilder(
     private val prayerLogicEngine: PrayerLogicEngine
 ) {
 
+    /**
+     * Computes [WatchTileData] for the given location and date.
+     *
+     * The caller must pass [date] as the watch's current date in [zoneId]
+     * (e.g. `LocalDateTime.now(zoneId)`), consistent with the engine's internal
+     * clock used to select the current/next prayer. The phone's
+     * `WidgetDataProvider` derives its date from the same clock; if the two
+     * disagree, current/next selection will not match the computed date.
+     */
     fun build(
         latitude: Double,
         longitude: Double,
