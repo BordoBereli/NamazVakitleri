@@ -30,6 +30,11 @@ object TileLayouts {
 
     private val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
+    // Ring diameter in dp. A fixed DpProp (not expand()) is required so the ring
+    // renders full-size even on renderers without dashed-arc support, where an
+    // expand() size silently falls back to the tiny 52dp default.
+    private const val RING_SIZE_DP = 168f
+
     // Brand gold palette (matches the phone widget's gold-on-dark).
     private val Gold: LayoutColor = LayoutColor(0xFFFFD700.toInt(), null)
     private val GoldDim: LayoutColor = LayoutColor(0xFFB8A24A.toInt(), null)
@@ -58,6 +63,7 @@ object TileLayouts {
                             trackColor = TrackColor,
                             trackOverflowColor = TrackColor,
                         ),
+                        size = DimensionBuilders.dp(RING_SIZE_DP),
                     )
                 )
                 .addContent(
