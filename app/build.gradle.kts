@@ -109,6 +109,7 @@ dependencies {
     implementation(project(":prayer_remote"))
     implementation(project(":app_update"))
     implementation(project(":prayer_widget"))
+    implementation(libs.play.services.wearable)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.core.splashscreen)

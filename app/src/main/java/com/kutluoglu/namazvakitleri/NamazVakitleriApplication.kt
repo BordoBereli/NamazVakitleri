@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.os.Bundle
+import com.google.android.gms.wearable.MessageClient
 import com.google.firebase.FirebaseApp
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.kutluoglu.core.designsystem.utils.DisplayProvider
@@ -13,6 +14,7 @@ import com.kutluoglu.namazvakitleri.notifications.NotificationRescheduler
 import com.kutluoglu.namazvakitleri.push.PushTopicCoordinator
 import com.kutluoglu.prayer_settings.data.local.SettingsDataStore
 import com.kutluoglu.prayer_settings.domain.repository.SettingsRepository
+import com.kutluoglu.prayer_widget.WatchSyncRequestListener
 import com.kutluoglu.prayer_widget.WidgetMinuteScheduler
 import com.kutluoglu.prayer_widget.WidgetRefresher
 import com.kutluoglu.prayer_widget.hasAnyWidget
@@ -30,6 +32,8 @@ import org.koin.ksp.generated.*
 class NamazVakitleriApplication : Application() {
 
     private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+
+    private var watchSyncRequestListener: WatchSyncRequestListener? = null
 
     /**
      * Applies the persisted locale before any activity is created.
@@ -66,6 +70,7 @@ class NamazVakitleriApplication : Application() {
         startPushTopicCoordinator()
         startWidgetRefresher()
         startWidgetMinuteRefresh()
+        startWatchSyncRequestListener()
     }
 
     private fun applyCrashlyticsConsent() {
@@ -131,6 +136,28 @@ class NamazVakitleriApplication : Application() {
             }.onFailure {
                 // Widget refresh must never crash the app.
                 android.util.Log.e("NamazVakitleriApp", "Failed to start widget minute refresh -> ${it.message}")
+            }
+        }
+    }
+
+    /**
+     * Registers a runtime [MessageClient.OnMessageReceivedListener] so the app
+     * receives the watch's tile sync-request messages while its process is alive.
+     * This bypasses GMS's manifest listener-service routing, which is only enabled
+     * for Play Store / OEM apps and therefore never delivers messages to sideloaded
+     * installs. The manifest-declared [WatchDataSyncListenerService] is kept as the
+     * long-term path for Play Store distribution.
+     */
+    private fun startWatchSyncRequestListener() {
+        applicationScope.launch {
+            runCatching {
+                val messageClient: MessageClient = get()
+                val listener: WatchSyncRequestListener = get()
+                watchSyncRequestListener = listener
+                messageClient.addListener(listener)
+            }.onFailure {
+                // Wear sync listener must never crash the app.
+                android.util.Log.e("NamazVakitleriApp", "Failed to register watch sync request listener -> ${it.message}")
             }
         }
     }
