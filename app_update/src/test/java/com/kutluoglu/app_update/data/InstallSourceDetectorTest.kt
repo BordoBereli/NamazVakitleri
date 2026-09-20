@@ -44,6 +44,60 @@ class InstallSourceDetectorTest {
     }
 
     @Test
+    fun `isStoreInstall returns true for vending installer`() {
+        setInstallerPackageName("com.android.vending")
+
+        val detector = InstallSourceDetector(context)
+
+        assertThat(detector.isStoreInstall()).isTrue()
+    }
+
+    @Test
+    fun `isStoreInstall returns true for samsung galaxy store installer`() {
+        setInstallerPackageName("com.sec.android.app.samsungapps")
+
+        val detector = InstallSourceDetector(context)
+
+        assertThat(detector.isStoreInstall()).isTrue()
+    }
+
+    @Test
+    fun `isStoreInstall returns true for amazon appstore installer`() {
+        setInstallerPackageName("com.amazon.venezia")
+
+        val detector = InstallSourceDetector(context)
+
+        assertThat(detector.isStoreInstall()).isTrue()
+    }
+
+    @Test
+    fun `isStoreInstall returns true for huawei appgallery installer`() {
+        setInstallerPackageName("com.huawei.appmarket")
+
+        val detector = InstallSourceDetector(context)
+
+        assertThat(detector.isStoreInstall()).isTrue()
+    }
+
+    @Test
+    fun `isStoreInstall returns false for null installer`() {
+        setInstallerPackageName(null)
+
+        val detector = InstallSourceDetector(context)
+
+        assertThat(detector.isStoreInstall()).isFalse()
+    }
+
+    @Test
+    fun `isStoreInstall returns false for unknown sideload installer`() {
+        setInstallerPackageName("com.example.sideloader")
+
+        val detector = InstallSourceDetector(context)
+
+        assertThat(detector.isStoreInstall()).isFalse()
+    }
+
+    @Test
     fun `getPlayStoreUrl returns market url for package`() {
         val detector = InstallSourceDetector(context)
 

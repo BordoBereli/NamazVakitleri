@@ -148,16 +148,17 @@ class NamazVakitleriApplication : Application() {
      * for Play Store / OEM apps and therefore never delivers messages to sideloaded
      * installs.
      *
-     * Only registered for sideloaded installs: Play Store builds are served by the
-     * manifest-declared [WatchDataSyncListenerService], so registering the runtime
-     * listener there too would trigger [WatchDataSync.sync] twice per sync request.
+     * Only registered for sideloaded installs: store installs (Play Store and
+     * known OEM stores) are served by the manifest-declared
+     * [WatchDataSyncListenerService], so registering the runtime listener there
+     * too would trigger [WatchDataSync.sync] twice per sync request.
      */
     private fun startWatchSyncRequestListener() {
         applicationScope.launch {
             runCatching {
                 val installSourceDetector: InstallSourceDetector = get()
-                if (installSourceDetector.isPlayStoreInstall()) {
-                    android.util.Log.d("NamazVakitleriApp", "Skipping runtime watch sync listener (Play Store install)")
+                if (installSourceDetector.isStoreInstall()) {
+                    android.util.Log.d("NamazVakitleriApp", "Skipping runtime watch sync listener (store install)")
                 } else {
                     val messageClient: MessageClient = get()
                     val listener: WatchSyncRequestListener = get()
