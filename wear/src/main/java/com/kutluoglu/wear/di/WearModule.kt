@@ -1,6 +1,12 @@
 package com.kutluoglu.wear.di
 
 import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.emptyPreferences
+import androidx.datastore.preferences.preferencesDataStoreFile
 import com.google.android.gms.wearable.DataClient
 import com.google.android.gms.wearable.MessageClient
 import com.google.android.gms.wearable.NodeClient
@@ -28,6 +34,13 @@ class WearModule {
 
     @Single
     fun provideTileDataStore(context: Context): TileDataStore = TileDataStore.create(context)
+
+    @Single
+    fun provideWatchSettingsDataStore(context: Context): DataStore<Preferences> =
+        PreferenceDataStoreFactory.create(
+            corruptionHandler = ReplaceFileCorruptionHandler { emptyPreferences() },
+            produceFile = { context.preferencesDataStoreFile("watch_settings") }
+        )
 
     @Single
     fun provideTileDataRepository(
