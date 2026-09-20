@@ -13,6 +13,9 @@ import com.google.android.gms.wearable.NodeClient
 import com.google.android.gms.wearable.Wearable
 import com.kutluoglu.wear.data.TileDataRepository
 import com.kutluoglu.wear.data.TileDataStore
+import com.kutluoglu.wear.data.WatchLocationProvider
+import com.kutluoglu.wear.data.WatchSettingsProvider
+import com.kutluoglu.wear.data.WatchTileDataBuilder
 import org.koin.core.annotation.ComponentScan
 import org.koin.core.annotation.Configuration
 import org.koin.core.annotation.Module
@@ -47,6 +50,19 @@ class WearModule {
         dataClient: DataClient,
         dataStore: TileDataStore,
         messageClient: MessageClient,
-        nodeClient: NodeClient
-    ): TileDataRepository = TileDataRepository(dataClient, dataStore, messageClient, nodeClient)
+        nodeClient: NodeClient,
+        tileDataBuilder: WatchTileDataBuilder,
+        locationProvider: WatchLocationProvider,
+        settingsProvider: WatchSettingsProvider,
+        context: Context
+    ): TileDataRepository = TileDataRepository(
+        dataClient,
+        dataStore,
+        messageClient,
+        nodeClient,
+        tileDataBuilder,
+        locationProvider,
+        settingsProvider,
+        context
+    )
 }

@@ -8,4 +8,12 @@
     <string name="wear_tile_last_synced">Last synced %1$s</string>
     <string name="wear_main_title">Prayer Times</string>
     <string name="wear_main_subtitle">Tile installed — swipe left on your watch face to find it.</string>
+    <string-array name="prayers">
+        <item>Imsak</item>
+        <item>Sunrise</item>
+        <item>Dhuhr</item>
+        <item>Asr</item>
+        <item>Maghrib</item>
+        <item>Isha</item>
+    </string-array>
 </resources>

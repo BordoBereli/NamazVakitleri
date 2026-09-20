@@ -1,5 +1,7 @@
 package com.kutluoglu.wear.data
 
+import android.content.Context
+import android.content.res.Resources
 import com.google.android.gms.tasks.Tasks
 import com.google.android.gms.wearable.DataClient
 import com.google.android.gms.wearable.DataItem
@@ -9,6 +11,9 @@ import com.google.android.gms.wearable.MessageClient
 import com.google.android.gms.wearable.Node
 import com.google.android.gms.wearable.NodeClient
 import com.google.common.truth.Truth.assertThat
+import com.kutluoglu.prayer.model.prayer.CalculationMethod
+import com.kutluoglu.prayer.model.prayer.JuristicMethod
+import com.kutluoglu.wear.R
 import com.kutluoglu.wear.shared.data.WatchTileDataCodec
 import com.kutluoglu.wear.shared.model.WatchPrayer
 import com.kutluoglu.wear.shared.model.WatchTileData
@@ -17,8 +22,11 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import io.mockk.verify
 import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.time.ZoneId
 
 class TileDataRepositoryTest {
 
@@ -26,7 +34,22 @@ class TileDataRepositoryTest {
     private val dataStore = mockk<TileDataStore>(relaxed = true)
     private val messageClient = mockk<MessageClient>(relaxed = true)
     private val nodeClient = mockk<NodeClient>(relaxed = true)
-    private val repository = TileDataRepository(dataClient, dataStore, messageClient, nodeClient)
+    private val tileDataBuilder = mockk<WatchTileDataBuilder>(relaxed = true)
+    private val locationProvider = mockk<WatchLocationProvider>(relaxed = true)
+    private val settingsProvider = mockk<WatchSettingsProvider>(relaxed = true)
+    private val resources = mockk<Resources>(relaxed = true)
+    private val context = mockk<Context>(relaxed = true)
+
+    private val repository = TileDataRepository(
+        dataClient,
+        dataStore,
+        messageClient,
+        nodeClient,
+        tileDataBuilder,
+        locationProvider,
+        settingsProvider,
+        context
+    )
 
     private val sampleData = WatchTileData(
         locationName = "İstanbul",
@@ -37,6 +60,24 @@ class TileDataRepositoryTest {
         prayers = listOf(WatchPrayer(name = "Öğle", time = "13:00", isNext = false)),
         syncedAtEpochMillis = 1_700_000_000_000
     )
+
+    @BeforeEach
+    fun setUp() {
+        every { context.resources } returns resources
+        every { resources.getStringArray(R.array.prayers) } returns
+            arrayOf("İmsak", "Güneş", "Öğle", "İkindi", "Akşam", "Yatsı")
+        every { locationProvider.getLocation() } returns WatchLocation(
+            latitude = 41.0082,
+            longitude = 28.9784,
+            zoneId = ZoneId.of("Europe/Istanbul"),
+            locationName = "İstanbul"
+        )
+        coEvery { settingsProvider.getSettings() } returns WatchSettings(
+            calculationMethod = CalculationMethod.TURKEY_DIYANET,
+            juristicMethod = JuristicMethod.STANDARD
+        )
+        every { tileDataBuilder.build(any(), any(), any(), any(), any(), any(), any(), any()) } returns null
+    }
 
     @Test
     fun `returns data from data client and caches it`() = runTest {
@@ -68,7 +109,48 @@ class TileDataRepositoryTest {
     }
 
     @Test
-    fun `returns null when client empty and no cache`() = runTest {
+    fun `computes locally when data client and cache are empty`() = runTest {
+        val buffer = mockk<DataItemBuffer>(relaxed = true)
+        every { buffer.count } returns 0
+        coEvery { dataClient.getDataItems(any(), any()) } returns Tasks.forResult(buffer)
+        coEvery { dataStore.read() } returns null
+        every { tileDataBuilder.build(any(), any(), any(), any(), any(), any(), any(), any()) } returns sampleData
+
+        val result = repository.getTileData()
+
+        assertThat(result).isEqualTo(sampleData)
+        coVerify { dataStore.save(WatchTileDataCodec.toJson(sampleData)) }
+        verify {
+            tileDataBuilder.build(
+                latitude = 41.0082,
+                longitude = 28.9784,
+                zoneId = ZoneId.of("Europe/Istanbul"),
+                date = any(),
+                calculationMethod = CalculationMethod.TURKEY_DIYANET,
+                juristicMethod = JuristicMethod.STANDARD,
+                locationName = "İstanbul",
+                prayerNames = listOf("İmsak", "Güneş", "Öğle", "İkindi", "Akşam", "Yatsı")
+            )
+        }
+    }
+
+    @Test
+    fun `returns null when local computation fails`() = runTest {
+        val buffer = mockk<DataItemBuffer>(relaxed = true)
+        every { buffer.count } returns 0
+        coEvery { dataClient.getDataItems(any(), any()) } returns Tasks.forResult(buffer)
+        coEvery { dataStore.read() } returns null
+        every { tileDataBuilder.build(any(), any(), any(), any(), any(), any(), any(), any()) } throws
+            RuntimeException("boom")
+
+        val result = repository.getTileData()
+
+        assertThat(result).isNull()
+        coVerify(exactly = 0) { dataStore.save(any()) }
+    }
+
+    @Test
+    fun `returns null when client empty and no cache and no local data`() = runTest {
         val buffer = mockk<DataItemBuffer>(relaxed = true)
         every { buffer.count } returns 0
         coEvery { dataClient.getDataItems(any(), any()) } returns Tasks.forResult(buffer)

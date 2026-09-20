@@ -1,21 +1,29 @@
 package com.kutluoglu.wear.data
 
+import android.content.Context
 import android.net.Uri
 import android.util.Log
 import com.google.android.gms.wearable.DataClient
 import com.google.android.gms.wearable.DataMapItem
 import com.google.android.gms.wearable.MessageClient
 import com.google.android.gms.wearable.NodeClient
+import com.kutluoglu.core.common.now
+import com.kutluoglu.wear.R
 import com.kutluoglu.wear.shared.data.WatchTileDataCodec
 import com.kutluoglu.wear.shared.model.WatchTileData
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.tasks.await
+import kotlinx.datetime.LocalDateTime
 
 class TileDataRepository(
     private val dataClient: DataClient,
     private val dataStore: TileDataStore,
     private val messageClient: MessageClient,
-    private val nodeClient: NodeClient
+    private val nodeClient: NodeClient,
+    private val tileDataBuilder: WatchTileDataBuilder,
+    private val locationProvider: WatchLocationProvider,
+    private val settingsProvider: WatchSettingsProvider,
+    private val context: Context
 ) {
 
     private var lastSyncRequestAt = 0L
@@ -26,8 +34,42 @@ class TileDataRepository(
             dataStore.save(WatchTileDataCodec.toJson(fromClient))
             return fromClient
         }
-        return dataStore.read()?.let { WatchTileDataCodec.fromJson(it) }
+        val fromCache = dataStore.read()?.let { WatchTileDataCodec.fromJson(it) }
+        if (fromCache != null) return fromCache
+        return computeLocally()
     }
+
+    /**
+     * Computes tile data on-device as a last-resort fallback for devices where
+     * the Google data layer is unavailable (e.g. some Samsung Galaxy Watches
+     * report the wearable network as DISCONNECTED), so the tile always shows
+     * prayer times without a phone round-trip. Best-effort: never throws, and
+     * returns null only if computation genuinely fails.
+     */
+    private suspend fun computeLocally(): WatchTileData? = runCatching {
+        val location = locationProvider.getLocation()
+        val settings = settingsProvider.getSettings()
+        val date = LocalDateTime.now(location.zoneId)
+        val prayerNames = context.resources.getStringArray(R.array.prayers).toList()
+        val data = tileDataBuilder.build(
+            latitude = location.latitude,
+            longitude = location.longitude,
+            zoneId = location.zoneId,
+            date = date,
+            calculationMethod = settings.calculationMethod,
+            juristicMethod = settings.juristicMethod,
+            locationName = location.locationName,
+            prayerNames = prayerNames
+        )
+        if (data != null) {
+            dataStore.save(WatchTileDataCodec.toJson(data))
+            Log.d(TAG, "computed locally -> location=${data.locationName} next=${data.nextPrayerName}")
+        }
+        data
+    }.onFailure { e ->
+        if (e is CancellationException) throw e
+        Log.e(TAG, "computeLocally failed -> ${e.message}")
+    }.getOrNull()
 
     /**
      * Asks the phone to push fresh tile data. Best-effort: on devices where the

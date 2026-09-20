@@ -8,4 +8,12 @@
     <string name="wear_tile_last_synced">Son senkron: %1$s</string>
     <string name="wear_main_title">Namaz Vakitleri</string>
     <string name="wear_main_subtitle">Kart kuruldu — saat yüzünde sola kaydırarak bulun.</string>
+    <string-array name="prayers">
+        <item>İmsak</item>
+        <item>Güneş</item>
+        <item>Öğle</item>
+        <item>İkindi</item>
+        <item>Akşam</item>
+        <item>Yatsı</item>
+    </string-array>
 </resources>
