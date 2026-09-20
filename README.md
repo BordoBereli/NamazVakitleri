@@ -73,6 +73,53 @@ Proje, iş mantığının doğruluğunu sağlamak için birim testleri (unit tes
 Bu komut, projenizdeki tüm modüllerde bulunan "debug" derleme varyantına ait birim testlerini (unit tests) çalıştıracaktır.
 
 
+## ⌚ Wear OS Tile (Akıllı Saat Kartı)
+
+Uygulama, telefonla eşleştirilmiş bir Wear OS akıllı saatte bir **namaz kartı (tile)** sunar. Kart; bir sonraki namazı, canlı geri sayımı ve tam namaz listesini gösterir. Veriler, telefonun `WatchDataSyncer` bileşeni tarafından Wearable Data Layer üzerinden saate iletilir.
+
+### Mimari
+
+-   `:wear:shared` — `WatchTileData` modeli, JSON/DataMap codec'i ve geri sayım/ring hesaplamaları.
+-   `:prayer_widget` — `WatchDataSyncer` ile mevcut widget yenileme hattı üzerinden veriyi saate gönderir.
+-   `:wear` — `PrayerTileService` (Material3TileService) iki sayfalı kartı çizer; `TileDataRepository` veriyi DataClient'tan okur ve yerel DataStore önbelleğine düşer.
+
+### Gerçek Saatte Test Etme
+
+1.  **ADB Bağlantısı**:
+    -   Saatte: **Ayarlar → Sistem → Hakkında → "Derleme numarası"na 7 kez dokunun** (geliştirici seçeneklerini açar).
+    -   **Ayarlar → Geliştirici seçenekleri → ADB hata ayıklamayı etkinleştirin** (ve kablosuz hata ayıklamayı).
+    -   Mac'inizden eşleştirin ve bağlanın (Wear OS 3+ kablosuz eşleştirme kullanır):
+        ```shell
+        adb pair <saat-ip>:<eşleştirme-portu>   # saatte görünür
+        adb connect <saat-ip>:<port>
+        adb devices                              # "device" olarak göründüğünü doğrulayın
+        ```
+
+2.  **Her İki Uygulamayı Kurun** (aynı imza anahtarı gerekir):
+    ```shell
+    ./gradlew :wear:installDebug    # saate kurar (bağlı cihaz)
+    ./gradlew :app:installDebug     # telefona kurar
+    ```
+    > Her iki cihaz da bağlıysa hedefi belirtin: `adb -s <saat-serial> install -r wear/build/outputs/apk/debug/wear-debug.apk`.
+
+3.  **Veri Senkronizasyonunu Tetikleyin**:
+    -   Telefonda uygulamayı açın, **bir konum seçin** ve **ana ekran widget'ını yerleştirin** (dakikalık tick + worker'ı programlar) **veya** bir ayarı/konumu değiştirin (`WidgetRefresher`'ı tetikler).
+    -   Telefonda logcat ile doğrulayın: `adb logcat -s WatchDataSyncer`.
+
+4.  **Kartı Saate Ekleyin**:
+    -   Saat yüzünden **sola kaydırın** → kart karuselinde **"+"** simgesine gidin → **Namaz Vakitleri** kartını bulun → ekleyin.
+    -   Sayfa 1: sonraki namaz + geri sayım + halka. Yukarı kaydırın: tam namaz listesi.
+
+5.  **Doğrulama**:
+    -   Geri sayım her dakika güncellenmeli (yenileme aralığı 60 sn).
+    -   Telefon uygulamasını kapatın / menzil dışına çıkın → kart, "Son senkron: HH:mm" satırıyla (5 dk sonra bayat gösterge) önbelleğe alınmış veriyi göstermeli.
+
+### Önemli Notlar
+
+-   **Wear OS 2'de kart çalışmaz** — kartlar Wear OS 3+ (API 30+) gerektirir.
+-   **Veri katmanı aynı imza anahtarını gerektirir** — iki debug APK sorunsuzdur; debug telefon + release saat karıştırmayın.
+-   **Widget hattı olmadan senkronizasyon olmaz** — widget'ı hiç yerleştirmezseniz veri yalnızca ayar/konum değişikliklerinde senkronize olur. Kart "Telefonunuzda uygulamayı açın" gösteriyorsa 3. adımdaki senkronizasyonu tetikleyin.
+
 ## 🤝 Katkıda Bulunma
 
 Katkılarınız projeyi daha da geliştirmemize yardımcı olur! Katkıda bulunmak isterseniz, lütfen bir `pull request` açın veya bir `issue` oluşturun.
