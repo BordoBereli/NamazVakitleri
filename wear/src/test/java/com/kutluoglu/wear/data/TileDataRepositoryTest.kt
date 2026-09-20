@@ -5,6 +5,9 @@ import com.google.android.gms.wearable.DataClient
 import com.google.android.gms.wearable.DataItem
 import com.google.android.gms.wearable.DataItemBuffer
 import com.google.android.gms.wearable.DataMapItem
+import com.google.android.gms.wearable.MessageClient
+import com.google.android.gms.wearable.Node
+import com.google.android.gms.wearable.NodeClient
 import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.wear.shared.data.WatchTileDataCodec
 import com.kutluoglu.wear.shared.model.WatchPrayer
@@ -21,7 +24,9 @@ class TileDataRepositoryTest {
 
     private val dataClient = mockk<DataClient>(relaxed = true)
     private val dataStore = mockk<TileDataStore>(relaxed = true)
-    private val repository = TileDataRepository(dataClient, dataStore)
+    private val messageClient = mockk<MessageClient>(relaxed = true)
+    private val nodeClient = mockk<NodeClient>(relaxed = true)
+    private val repository = TileDataRepository(dataClient, dataStore, messageClient, nodeClient)
 
     private val sampleData = WatchTileData(
         locationName = "İstanbul",
@@ -72,5 +77,26 @@ class TileDataRepositoryTest {
         val result = repository.getTileData()
 
         assertThat(result).isNull()
+    }
+
+    @Test
+    fun `requestSync sends message to first connected node`() = runTest {
+        val node = mockk<Node>()
+        every { node.id } returns "phone-node"
+        coEvery { nodeClient.connectedNodes } returns Tasks.forResult(listOf(node))
+        coEvery { messageClient.sendMessage(any(), any(), any()) } returns Tasks.forResult(0)
+
+        repository.requestSync()
+
+        coVerify { messageClient.sendMessage("phone-node", WatchTileDataCodec.SYNC_REQUEST_PATH, ByteArray(0)) }
+    }
+
+    @Test
+    fun `requestSync does nothing when no nodes connected`() = runTest {
+        coEvery { nodeClient.connectedNodes } returns Tasks.forResult(emptyList())
+
+        repository.requestSync()
+
+        coVerify(exactly = 0) { messageClient.sendMessage(any(), any(), any()) }
     }
 }

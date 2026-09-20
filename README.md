@@ -80,8 +80,15 @@ Uygulama, telefonla eşleştirilmiş bir Wear OS akıllı saatte bir **namaz kar
 ### Mimari
 
 -   `:wear:shared` — `WatchTileData` modeli, JSON/DataMap codec'i ve geri sayım/ring hesaplamaları.
--   `:prayer_widget` — `WatchDataSyncer` ile mevcut widget yenileme hattı üzerinden veriyi saate gönderir.
--   `:wear` — `PrayerTileService` (Material3TileService) iki sayfalı kartı çizer; `TileDataRepository` veriyi DataClient'tan okur ve yerel DataStore önbelleğine düşer.
+-   `:prayer_widget` — `WatchDataSyncer` ile mevcut widget yenileme hattı üzerinden veriyi saate gönderir; `WatchDataSyncListenerService` saatten gelen senkron isteklerini dinler ve yeniden gönderir.
+-   `:wear` — `PrayerTileService` (Material3TileService) iki sayfalı kartı çizer; `TileDataRepository` veriyi DataClient'tan okur ve yerel DataStore önbelleğine düşer. Kartta veri yoksa telefona `MessageClient` ile senkron isteği gönderir (pull).
+
+### Önemli Notlar
+
+-   **Wear OS 2'de kart çalışmaz** — kartlar Wear OS 3+ (API 30+) gerektirir.
+-   **Veri katmanı aynı imza anahtarını gerektirir** — iki debug APK sorunsuzdur; debug telefon + release saat karıştırmayın.
+-   **Widget hattı olmadan senkronizasyon olmaz** — widget'ı hiç yerleştirmezseniz veri yalnızca ayar/konum değişikliklerinde senkronize olur. Kart "Telefonunuzda uygulamayı açın" gösteriyorsa 3. adımdaki senkronizasyonu tetikleyin.
+-   **Samsung Galaxy Watch'ta Google veri katmanı kararsız olabilir** — bazı Samsung Galaxy Watch cihazlarında (ör. Galaxy Watch 8) Google Play Services, Bluetooth bağlı olsa bile veri katmanı ağını `DISCONNECTED` olarak raporlar. Bu durumda `getDataItems()` boş döner ve `WatchDataListener` tetiklenmez; kart yerel DataStore önbelleğine düşer. Uygulama kodu doğrudur (emülatörde çalışır) ve bu, cihazın GMS veri katmanı bağlantısıyla ilgili Samsung'a özgü bir sorundur. Kartın senkron isteği (pull) bu bağlantı kullanılabilir olduğunda çalışır; bağlantı tamamen kopuksa cihaz düzeyinde çözüm gerekir (eşleştirmeyi sıfırlama, GMS güncellemesi, Wi-Fi üzerinden bağlanma).
 
 ### Gerçek Saatte Test Etme
 
@@ -113,12 +120,6 @@ Uygulama, telefonla eşleştirilmiş bir Wear OS akıllı saatte bir **namaz kar
 5.  **Doğrulama**:
     -   Geri sayım her dakika güncellenmeli (yenileme aralığı 60 sn).
     -   Telefon uygulamasını kapatın / menzil dışına çıkın → kart, "Son senkron: HH:mm" satırıyla (5 dk sonra bayat gösterge) önbelleğe alınmış veriyi göstermeli.
-
-### Önemli Notlar
-
--   **Wear OS 2'de kart çalışmaz** — kartlar Wear OS 3+ (API 30+) gerektirir.
--   **Veri katmanı aynı imza anahtarını gerektirir** — iki debug APK sorunsuzdur; debug telefon + release saat karıştırmayın.
--   **Widget hattı olmadan senkronizasyon olmaz** — widget'ı hiç yerleştirmezseniz veri yalnızca ayar/konum değişikliklerinde senkronize olur. Kart "Telefonunuzda uygulamayı açın" gösteriyorsa 3. adımdaki senkronizasyonu tetikleyin.
 
 ## 🤝 Katkıda Bulunma
 

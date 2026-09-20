@@ -31,6 +31,9 @@ class PrayerTileService(
 
     override suspend fun MaterialScope.tileResponse(requestParams: TileRequest): Tile {
         val data = activeRepository.getTileData()
+        if (data == null) {
+            activeRepository.requestSync()
+        }
         return buildTile(this, data)
     }
 

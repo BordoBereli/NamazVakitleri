@@ -8,6 +8,13 @@ object WatchTileDataCodec {
 
     const val PATH = "/prayer-tile"
 
+    /**
+     * Message path the watch uses to ask the phone to push fresh tile data.
+     * The phone listens via a WearableListenerService and re-runs the watch
+     * data sync on receipt.
+     */
+    const val SYNC_REQUEST_PATH = "/prayer-tile-sync-request"
+
     private const val KEY_PAYLOAD = "payload"
 
     private val json = Json { ignoreUnknownKeys = true }
