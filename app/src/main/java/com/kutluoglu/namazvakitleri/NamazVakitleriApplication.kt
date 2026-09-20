@@ -7,6 +7,7 @@ import android.os.Bundle
 import com.google.android.gms.wearable.MessageClient
 import com.google.firebase.FirebaseApp
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.kutluoglu.app_update.data.InstallSourceDetector
 import com.kutluoglu.core.designsystem.utils.DisplayProvider
 import com.kutluoglu.namazvakitleri.analytics.AnalyticsUserPropertiesManager
 import com.kutluoglu.namazvakitleri.locale.LocaleManager
@@ -154,7 +155,8 @@ class NamazVakitleriApplication : Application() {
     private fun startWatchSyncRequestListener() {
         applicationScope.launch {
             runCatching {
-                if (isInstalledFromPlayStore()) {
+                val installSourceDetector: InstallSourceDetector = get()
+                if (installSourceDetector.isPlayStoreInstall()) {
                     android.util.Log.d("NamazVakitleriApp", "Skipping runtime watch sync listener (Play Store install)")
                 } else {
                     val messageClient: MessageClient = get()
@@ -167,14 +169,6 @@ class NamazVakitleriApplication : Application() {
                 android.util.Log.e("NamazVakitleriApp", "Failed to register watch sync request listener -> ${it.message}")
             }
         }
-    }
-
-    private fun isInstalledFromPlayStore(): Boolean =
-        runCatching { packageManager.getInstallerPackageName(packageName) == PLAY_STORE_INSTALLER }
-            .getOrDefault(false)
-
-    private companion object {
-        const val PLAY_STORE_INSTALLER = "com.android.vending"
     }
 
     private fun setupActivityLifecycleCallbacks() {
