@@ -74,7 +74,7 @@ class WatchTileDataBuilder(
                 WatchPrayer(
                     name = prayer.name,
                     time = formatClockTime(prayer.time),
-                    isNext = prayer.name == nextPrayer.name,
+                    isNext = prayer.date == nextPrayer.date && prayer.time == nextPrayer.time,
                     isJumuah = isJumuahPrayer(prayer)
                 )
             },

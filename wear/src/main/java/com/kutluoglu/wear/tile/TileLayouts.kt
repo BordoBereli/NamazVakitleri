@@ -200,7 +200,14 @@ object TileLayouts {
     }
 
     private fun nextPrayerTime(data: WatchTileData): String =
-        data.prayers.firstOrNull { it.isNext }?.time.orEmpty()
+        data.prayers.firstOrNull { it.isNext }?.time
+            ?: formatEpochTime(data.nextPrayerEpochMillis)
+
+    private fun formatEpochTime(epochMillis: Long): String =
+        Instant.ofEpochMilli(epochMillis)
+            .atZone(ZoneId.systemDefault())
+            .toLocalTime()
+            .format(timeFormatter)
 
     internal fun isStale(syncedAtEpochMillis: Long, nowEpochMillis: Long): Boolean =
         nowEpochMillis - syncedAtEpochMillis > 5 * 60_000L
