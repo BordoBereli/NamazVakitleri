@@ -54,11 +54,11 @@ class TileDataRepositoryTest {
     private val sampleData = WatchTileData(
         locationName = "İstanbul",
         nextPrayerName = "Akşam",
-        nextPrayerEpochMillis = 1_700_000_000_000,
-        currentPrayerEpochMillis = 1_699_999_000_000,
+        nextPrayerEpochMillis = 4_100_000_000_000,
+        currentPrayerEpochMillis = 4_099_999_000_000,
         isJumuah = false,
         prayers = listOf(WatchPrayer(name = "Öğle", time = "13:00", isNext = false)),
-        syncedAtEpochMillis = 1_700_000_000_000
+        syncedAtEpochMillis = 4_100_000_000_000
     )
 
     @BeforeEach
@@ -97,6 +97,23 @@ class TileDataRepositoryTest {
     }
 
     @Test
+    fun `does not compute locally when data client returns data`() = runTest {
+        val dataItem = mockk<DataItem>()
+        val dataMap = WatchTileDataCodec.toDataMap(sampleData)
+        val buffer = mockk<DataItemBuffer>(relaxed = true)
+        every { buffer.count } returns 1
+        every { buffer[0] } returns dataItem
+        mockkStatic(DataMapItem::class)
+        every { DataMapItem.fromDataItem(dataItem).dataMap } returns dataMap
+        coEvery { dataClient.getDataItems(any(), any()) } returns Tasks.forResult(buffer)
+
+        val result = repository.getTileData()
+
+        assertThat(result).isEqualTo(sampleData)
+        verify(exactly = 0) { tileDataBuilder.build(any(), any(), any(), any(), any(), any(), any(), any()) }
+    }
+
+    @Test
     fun `falls back to cache when data client empty`() = runTest {
         val buffer = mockk<DataItemBuffer>(relaxed = true)
         every { buffer.count } returns 0
@@ -106,6 +123,21 @@ class TileDataRepositoryTest {
         val result = repository.getTileData()
 
         assertThat(result).isEqualTo(sampleData)
+    }
+
+    @Test
+    fun `recomputes locally when cached data is stale`() = runTest {
+        val buffer = mockk<DataItemBuffer>(relaxed = true)
+        every { buffer.count } returns 0
+        coEvery { dataClient.getDataItems(any(), any()) } returns Tasks.forResult(buffer)
+        val staleData = sampleData.copy(nextPrayerEpochMillis = 1_000_000_000_000)
+        coEvery { dataStore.read() } returns WatchTileDataCodec.toJson(staleData)
+        every { tileDataBuilder.build(any(), any(), any(), any(), any(), any(), any(), any()) } returns sampleData
+
+        val result = repository.getTileData()
+
+        assertThat(result).isEqualTo(sampleData)
+        verify { tileDataBuilder.build(any(), any(), any(), any(), any(), any(), any(), any()) }
     }
 
     @Test
@@ -135,6 +167,24 @@ class TileDataRepositoryTest {
     }
 
     @Test
+    fun `serves locally computed result from cache on subsequent call`() = runTest {
+        val buffer = mockk<DataItemBuffer>(relaxed = true)
+        every { buffer.count } returns 0
+        coEvery { dataClient.getDataItems(any(), any()) } returns Tasks.forResult(buffer)
+        var cachedJson: String? = null
+        coEvery { dataStore.read() } answers { cachedJson }
+        coEvery { dataStore.save(any()) } answers { cachedJson = firstArg() }
+        every { tileDataBuilder.build(any(), any(), any(), any(), any(), any(), any(), any()) } returns sampleData
+
+        val first = repository.getTileData()
+        val second = repository.getTileData()
+
+        assertThat(first).isEqualTo(sampleData)
+        assertThat(second).isEqualTo(sampleData)
+        verify(exactly = 1) { tileDataBuilder.build(any(), any(), any(), any(), any(), any(), any(), any()) }
+    }
+
+    @Test
     fun `returns null when local computation fails`() = runTest {
         val buffer = mockk<DataItemBuffer>(relaxed = true)
         every { buffer.count } returns 0
@@ -147,6 +197,20 @@ class TileDataRepositoryTest {
 
         assertThat(result).isNull()
         coVerify(exactly = 0) { dataStore.save(any()) }
+    }
+
+    @Test
+    fun `returns computed data even when cache save fails`() = runTest {
+        val buffer = mockk<DataItemBuffer>(relaxed = true)
+        every { buffer.count } returns 0
+        coEvery { dataClient.getDataItems(any(), any()) } returns Tasks.forResult(buffer)
+        coEvery { dataStore.read() } returns null
+        every { tileDataBuilder.build(any(), any(), any(), any(), any(), any(), any(), any()) } returns sampleData
+        coEvery { dataStore.save(any()) } throws RuntimeException("io error")
+
+        val result = repository.getTileData()
+
+        assertThat(result).isEqualTo(sampleData)
     }
 
     @Test

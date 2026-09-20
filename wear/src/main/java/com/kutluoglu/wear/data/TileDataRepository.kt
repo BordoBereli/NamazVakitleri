@@ -28,6 +28,16 @@ class TileDataRepository(
 
     private var lastSyncRequestAt = 0L
 
+    /**
+     * Returns the tile data to render, preferring the freshest source available:
+     * 1. the Google data layer ([DataClient]), 2. the local DataStore cache when
+     * it is still current, 3. on-device computation as a last-resort fallback.
+     *
+     * The cache is treated as stale once its next prayer time has passed
+     * ([WatchTileData.nextPrayerEpochMillis] < now), so on devices with a broken
+     * data layer the local computation re-runs daily instead of serving
+     * yesterday's prayer times forever.
+     */
     suspend fun getTileData(): WatchTileData? {
         val fromClient = readFromDataClient()
         if (fromClient != null) {
@@ -35,41 +45,53 @@ class TileDataRepository(
             return fromClient
         }
         val fromCache = dataStore.read()?.let { WatchTileDataCodec.fromJson(it) }
-        if (fromCache != null) return fromCache
+        if (fromCache != null && !isStale(fromCache)) return fromCache
         return computeLocally()
     }
+
+    private fun isStale(data: WatchTileData): Boolean =
+        data.nextPrayerEpochMillis < System.currentTimeMillis()
 
     /**
      * Computes tile data on-device as a last-resort fallback for devices where
      * the Google data layer is unavailable (e.g. some Samsung Galaxy Watches
      * report the wearable network as DISCONNECTED), so the tile always shows
      * prayer times without a phone round-trip. Best-effort: never throws, and
-     * returns null only if computation genuinely fails.
+     * returns null only if computation genuinely fails. A cache-write failure
+     * is logged but does not discard the successfully computed data.
      */
-    private suspend fun computeLocally(): WatchTileData? = runCatching {
-        val location = locationProvider.getLocation()
-        val settings = settingsProvider.getSettings()
-        val date = LocalDateTime.now(location.zoneId)
-        val prayerNames = context.resources.getStringArray(R.array.prayers).toList()
-        val data = tileDataBuilder.build(
-            latitude = location.latitude,
-            longitude = location.longitude,
-            zoneId = location.zoneId,
-            date = date,
-            calculationMethod = settings.calculationMethod,
-            juristicMethod = settings.juristicMethod,
-            locationName = location.locationName,
-            prayerNames = prayerNames
-        )
+    private suspend fun computeLocally(): WatchTileData? {
+        val data = runCatching {
+            val location = locationProvider.getLocation()
+            val settings = settingsProvider.getSettings()
+            val date = LocalDateTime.now(location.zoneId)
+            val prayerNames = context.resources.getStringArray(R.array.prayers).toList()
+            tileDataBuilder.build(
+                latitude = location.latitude,
+                longitude = location.longitude,
+                zoneId = location.zoneId,
+                date = date,
+                calculationMethod = settings.calculationMethod,
+                juristicMethod = settings.juristicMethod,
+                locationName = location.locationName,
+                prayerNames = prayerNames
+            )
+        }.onFailure { e ->
+            if (e is CancellationException) throw e
+            Log.e(TAG, "computeLocally failed -> ${e.message}")
+        }.getOrNull()
+
         if (data != null) {
-            dataStore.save(WatchTileDataCodec.toJson(data))
+            runCatching {
+                dataStore.save(WatchTileDataCodec.toJson(data))
+            }.onFailure { e ->
+                if (e is CancellationException) throw e
+                Log.e(TAG, "cache save failed -> ${e.message}")
+            }
             Log.d(TAG, "computed locally -> location=${data.locationName} next=${data.nextPrayerName}")
         }
-        data
-    }.onFailure { e ->
-        if (e is CancellationException) throw e
-        Log.e(TAG, "computeLocally failed -> ${e.message}")
-    }.getOrNull()
+        return data
+    }
 
     /**
      * Asks the phone to push fresh tile data. Best-effort: on devices where the
