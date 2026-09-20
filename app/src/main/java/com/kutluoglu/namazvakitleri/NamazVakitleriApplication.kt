@@ -145,21 +145,36 @@ class NamazVakitleriApplication : Application() {
      * receives the watch's tile sync-request messages while its process is alive.
      * This bypasses GMS's manifest listener-service routing, which is only enabled
      * for Play Store / OEM apps and therefore never delivers messages to sideloaded
-     * installs. The manifest-declared [WatchDataSyncListenerService] is kept as the
-     * long-term path for Play Store distribution.
+     * installs.
+     *
+     * Only registered for sideloaded installs: Play Store builds are served by the
+     * manifest-declared [WatchDataSyncListenerService], so registering the runtime
+     * listener there too would trigger [WatchDataSync.sync] twice per sync request.
      */
     private fun startWatchSyncRequestListener() {
         applicationScope.launch {
             runCatching {
-                val messageClient: MessageClient = get()
-                val listener: WatchSyncRequestListener = get()
-                watchSyncRequestListener = listener
-                messageClient.addListener(listener)
+                if (isInstalledFromPlayStore()) {
+                    android.util.Log.d("NamazVakitleriApp", "Skipping runtime watch sync listener (Play Store install)")
+                } else {
+                    val messageClient: MessageClient = get()
+                    val listener: WatchSyncRequestListener = get()
+                    watchSyncRequestListener = listener
+                    messageClient.addListener(listener)
+                }
             }.onFailure {
                 // Wear sync listener must never crash the app.
                 android.util.Log.e("NamazVakitleriApp", "Failed to register watch sync request listener -> ${it.message}")
             }
         }
+    }
+
+    private fun isInstalledFromPlayStore(): Boolean =
+        runCatching { packageManager.getInstallerPackageName(packageName) == PLAY_STORE_INSTALLER }
+            .getOrDefault(false)
+
+    private companion object {
+        const val PLAY_STORE_INSTALLER = "com.android.vending"
     }
 
     private fun setupActivityLifecycleCallbacks() {
