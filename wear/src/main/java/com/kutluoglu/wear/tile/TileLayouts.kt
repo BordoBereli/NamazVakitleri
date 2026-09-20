@@ -9,12 +9,15 @@ import androidx.wear.protolayout.LayoutElementBuilders.Row
 import androidx.wear.protolayout.LayoutElementBuilders.Spacer
 import androidx.wear.protolayout.LayoutElementBuilders.TEXT_ALIGN_CENTER
 import androidx.wear.protolayout.LayoutElementBuilders.VERTICAL_ALIGN_CENTER
+import androidx.wear.protolayout.ModifiersBuilders
 import androidx.wear.protolayout.material3.CircularProgressIndicatorDefaults
 import androidx.wear.protolayout.material3.MaterialScope
+import androidx.wear.protolayout.material3.ProgressIndicatorColors
 import androidx.wear.protolayout.material3.Typography
 import androidx.wear.protolayout.material3.circularProgressIndicator
 import androidx.wear.protolayout.material3.primaryLayout
 import androidx.wear.protolayout.material3.text
+import androidx.wear.protolayout.types.LayoutColor
 import androidx.wear.protolayout.types.LayoutString
 import com.kutluoglu.wear.R
 import com.kutluoglu.wear.shared.model.WatchPrayer
@@ -26,6 +29,13 @@ import java.time.format.DateTimeFormatter
 object TileLayouts {
 
     private val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+
+    // Brand gold palette (matches the phone widget's gold-on-dark).
+    private val Gold: LayoutColor = LayoutColor(0xFFFFD700.toInt(), null)
+    private val GoldDim: LayoutColor = LayoutColor(0xFFB8A24A.toInt(), null)
+    private val TrackColor: LayoutColor = LayoutColor(0xFF33333A.toInt(), null)
+    private val OnDark: LayoutColor = LayoutColor(0xFFFFFFFF.toInt(), null)
+    private val OnDarkMuted: LayoutColor = LayoutColor(0xFFB0B0B8.toInt(), null)
 
     fun nextPrayerPage(
         scope: MaterialScope,
@@ -43,6 +53,11 @@ object TileLayouts {
                     circularProgressIndicator(
                         staticProgress = ring,
                         strokeWidth = CircularProgressIndicatorDefaults.LARGE_STROKE_WIDTH,
+                        colors = ProgressIndicatorColors(
+                            indicatorColor = Gold,
+                            trackColor = TrackColor,
+                            trackOverflowColor = TrackColor,
+                        ),
                     )
                 )
                 .addContent(
@@ -51,25 +66,29 @@ object TileLayouts {
                         .addContent(
                             text(
                                 LayoutString(data.locationName),
-                                typography = Typography.TITLE_SMALL,
+                                typography = Typography.LABEL_SMALL,
+                                color = OnDarkMuted,
                             )
                         )
                         .addContent(
                             text(
                                 LayoutString(data.nextPrayerName),
-                                typography = Typography.TITLE_LARGE,
+                                typography = Typography.TITLE_MEDIUM,
+                                color = Gold,
                             )
                         )
                         .addContent(
                             text(
                                 LayoutString(nextPrayerTime(data)),
-                                typography = Typography.BODY_MEDIUM,
+                                typography = Typography.DISPLAY_SMALL,
+                                color = OnDark,
                             )
                         )
                         .addContent(
                             text(
                                 LayoutString(countdown),
-                                typography = Typography.BODY_SMALL,
+                                typography = Typography.TITLE_SMALL,
+                                color = Gold,
                             )
                         )
                         .apply {
@@ -83,7 +102,7 @@ object TileLayouts {
                                             )
                                         ),
                                         typography = Typography.BODY_EXTRA_SMALL,
-                                        color = scope.colorScheme.onSurfaceVariant,
+                                        color = OnDarkMuted,
                                     )
                                 )
                             }
@@ -96,7 +115,7 @@ object TileLayouts {
 
     fun prayerListPage(scope: MaterialScope, data: WatchTileData): LayoutElement = scope.primaryLayout(
         titleSlot = {
-            text(LayoutString(data.locationName), typography = Typography.TITLE_SMALL)
+            text(LayoutString(data.locationName), typography = Typography.LABEL_SMALL, color = OnDarkMuted)
         },
         mainSlot = {
             Column.Builder()
@@ -125,6 +144,7 @@ object TileLayouts {
                             text(
                                 LayoutString(scope.context.getString(R.string.wear_tile_no_data_title)),
                                 typography = Typography.TITLE_SMALL,
+                                color = OnDark,
                                 alignment = TEXT_ALIGN_CENTER,
                             )
                         )
@@ -132,6 +152,7 @@ object TileLayouts {
                             text(
                                 LayoutString(scope.context.getString(R.string.wear_tile_no_data_subtitle)),
                                 typography = Typography.BODY_SMALL,
+                                color = OnDarkMuted,
                                 alignment = TEXT_ALIGN_CENTER,
                             )
                         )
@@ -142,15 +163,40 @@ object TileLayouts {
     )
 
     private fun MaterialScope.prayerRow(prayer: WatchPrayer): LayoutElement {
-        val typography = if (prayer.isNext) Typography.TITLE_SMALL else Typography.BODY_MEDIUM
-        val color = if (prayer.isNext) colorScheme.primary else colorScheme.onSurface
-        return Row.Builder()
+        val isNext = prayer.isNext
+        val typography = if (isNext) Typography.TITLE_SMALL else Typography.BODY_MEDIUM
+        val color = if (isNext) Gold else OnDarkMuted
+        val row = Row.Builder()
             .setWidth(DimensionBuilders.expand())
             .setVerticalAlignment(VERTICAL_ALIGN_CENTER)
             .addContent(text(LayoutString(prayer.name), typography = typography, color = color))
             .addContent(Spacer.Builder().setWidth(DimensionBuilders.dp(8f)).build())
             .addContent(text(LayoutString(prayer.time), typography = typography, color = color))
-            .build()
+        if (isNext) {
+            row.setModifiers(
+                ModifiersBuilders.Modifiers.Builder()
+                    .setBackground(
+                        ModifiersBuilders.Background.Builder()
+                            .setColor(GoldDim.prop)
+                            .setCorner(
+                                ModifiersBuilders.Corner.Builder()
+                                    .setRadius(DimensionBuilders.dp(16f))
+                                    .build()
+                            )
+                            .build()
+                    )
+                    .setPadding(
+                        ModifiersBuilders.Padding.Builder()
+                            .setStart(DimensionBuilders.dp(8f))
+                            .setEnd(DimensionBuilders.dp(8f))
+                            .setTop(DimensionBuilders.dp(2f))
+                            .setBottom(DimensionBuilders.dp(2f))
+                            .build()
+                    )
+                    .build()
+            )
+        }
+        return row.build()
     }
 
     private fun nextPrayerTime(data: WatchTileData): String =
