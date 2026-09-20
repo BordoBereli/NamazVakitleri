@@ -59,6 +59,23 @@ class WatchLocationProviderTest {
         assertThat(location.locationName).isEqualTo("Konum")
     }
 
+    @Test
+    fun `falls back to network location when GPS has no fix`() {
+        grantLocationPermissions()
+        val locationManager = application.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        val networkLocation = Location(LocationManager.NETWORK_PROVIDER).apply {
+            latitude = 39.9208
+            longitude = 32.8541
+        }
+        shadowOf(locationManager).setLastKnownLocation(LocationManager.NETWORK_PROVIDER, networkLocation)
+
+        val location = provider.getLocation()
+
+        assertThat(location.latitude).isEqualTo(39.9208)
+        assertThat(location.longitude).isEqualTo(32.8541)
+        assertThat(location.locationName).isEqualTo("Konum")
+    }
+
     private fun grantLocationPermissions() {
         shadowOf(application).grantPermissions(
             Manifest.permission.ACCESS_FINE_LOCATION,

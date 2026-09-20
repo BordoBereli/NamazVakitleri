@@ -1,6 +1,7 @@
 package com.kutluoglu.wear.data
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
@@ -24,6 +25,12 @@ data class WatchLocation(
  * known GPS/network fix when the watch has location permission. Uses the
  * platform [LocationManager] (not Google Play Services) to stay dependency-light
  * on devices where GMS is unreliable.
+ *
+ * Timezone note: the GPS path uses [ZoneId.systemDefault] (the watch's own
+ * zone), while the default location pins `Europe/Istanbul`. The phone derives
+ * the timezone from coordinates; `systemDefault` is defensible for a watch
+ * whose clock follows the local zone, but the divergence is intentional and
+ * should be revisited if the watch is expected to travel across zones.
  */
 @Factory
 class WatchLocationProvider(
@@ -60,6 +67,8 @@ class WatchLocationProvider(
             ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) ==
             PackageManager.PERMISSION_GRANTED
 
+    // Permission is checked by the caller (hasLocationPermission) before this is invoked.
+    @SuppressLint("MissingPermission")
     private fun getLastKnownLocation(): Location? {
         val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as? LocationManager
             ?: return null
@@ -70,7 +79,7 @@ class WatchLocationProvider(
     companion object {
         private const val TAG = "WatchLocationProvider"
         private const val GPS_LOCATION_NAME = "Konum"
-        val DEFAULT_LOCATION = WatchLocation(
+        private val DEFAULT_LOCATION = WatchLocation(
             latitude = 41.0082,
             longitude = 28.9784,
             zoneId = ZoneId.of("Europe/Istanbul"),
