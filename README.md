@@ -75,13 +75,13 @@ Bu komut, projenizdeki tüm modüllerde bulunan "debug" derleme varyantına ait 
 
 ## ⌚ Wear OS Tile (Akıllı Saat Kartı)
 
-Uygulama, telefonla eşleştirilmiş bir Wear OS akıllı saatte bir **namaz kartı (tile)** sunar. Kart; bir sonraki namazı, canlı geri sayımı ve tam namaz listesini gösterir. Veriler, telefonun `WatchDataSyncer` bileşeni tarafından Wearable Data Layer üzerinden saate iletilir.
+Uygulama, telefonla eşleştirilmiş bir Wear OS akıllı saatte bir **namaz kartı (tile)** sunar. Kart; bir sonraki namazı, canlı geri sayımı ve altın geri sayım halkasını gösterir. Veriler, telefonun `WatchDataSyncer` bileşeni tarafından Wearable Data Layer üzerinden saate iletilir.
 
 ### Mimari
 
 -   `:wear:shared` — `WatchTileData` modeli, JSON/DataMap codec'i ve geri sayım/ring hesaplamaları.
 -   `:prayer_widget` — `WatchDataSyncer` ile mevcut widget yenileme hattı üzerinden veriyi saate gönderir; `WatchDataSyncListenerService` saatten gelen senkron isteklerini dinler ve yeniden gönderir.
--   `:wear` — `PrayerTileService` (Material3TileService) iki sayfalı kartı çizer; `TileDataRepository` veriyi DataClient'tan okur ve yerel DataStore önbelleğine düşer. Kartta veri yoksa telefona `MessageClient` ile senkron isteği gönderir (pull).
+-   `:wear` — `PrayerTileService` (Material3TileService) tek sayfalı kartı çizer (altın geri sayım halkası + sonraki namaz); `TileDataRepository` veriyi DataClient'tan okur ve yerel DataStore önbelleğine düşer. Kartta veri yoksa telefona `MessageClient` ile senkron isteği gönderir (pull).
 
 ### Önemli Notlar
 
@@ -115,7 +115,7 @@ Uygulama, telefonla eşleştirilmiş bir Wear OS akıllı saatte bir **namaz kar
 
 4.  **Kartı Saate Ekleyin**:
     -   Saat yüzünden **sola kaydırın** → kart karuselinde **"+"** simgesine gidin → **Namaz Vakitleri** kartını bulun → ekleyin.
-    -   Sayfa 1: sonraki namaz + geri sayım + halka. Yukarı kaydırın: tam namaz listesi.
+    -   Kart: sonraki namaz + canlı geri sayım + altın halka (tek sayfa).
 
 5.  **Doğrulama**:
     -   Geri sayım her dakika güncellenmeli (yenileme aralığı 60 sn).
