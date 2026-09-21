@@ -33,7 +33,7 @@ object TileLayouts {
     // Ring diameter in dp. A fixed DpProp (not expand()) is required so the ring
     // renders full-size even on renderers without dashed-arc support, where an
     // expand() size silently falls back to the tiny 52dp default.
-    private const val RING_SIZE_DP = 168f
+    private const val RING_SIZE_DP = 136f
 
     // Brand gold palette (matches the phone widget's gold-on-dark).
     private val Gold: LayoutColor = LayoutColor(0xFFFFD700.toInt(), null)
@@ -42,6 +42,11 @@ object TileLayouts {
     private val OnDark: LayoutColor = LayoutColor(0xFFFFFFFF.toInt(), null)
     private val OnDarkMuted: LayoutColor = LayoutColor(0xFFB0B0B8.toInt(), null)
 
+    /**
+     * Ring page: gold countdown ring + next prayer name/time/countdown. This is
+     * the default page (added LAST in the timeline because this Samsung watch's
+     * renderer shows the last timeline entry by default).
+     */
     fun nextPrayerPage(
         scope: MaterialScope,
         data: WatchTileData,
@@ -97,22 +102,6 @@ object TileLayouts {
                                 color = Gold,
                             )
                         )
-                        .apply {
-                            if (isStale(data.syncedAtEpochMillis, System.currentTimeMillis())) {
-                                addContent(
-                                    text(
-                                        LayoutString(
-                                            scope.context.getString(
-                                                R.string.wear_tile_last_synced,
-                                                formatTime(data.syncedAtEpochMillis)
-                                            )
-                                        ),
-                                        typography = Typography.BODY_EXTRA_SMALL,
-                                        color = OnDarkMuted,
-                                    )
-                                )
-                            }
-                        }
                         .build()
                 )
                 .build()

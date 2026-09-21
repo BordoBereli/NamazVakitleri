@@ -51,6 +51,7 @@ dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.wear.compose.material)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.play.services.wearable)
     implementation(libs.kotlinx.coroutines.play.services)
