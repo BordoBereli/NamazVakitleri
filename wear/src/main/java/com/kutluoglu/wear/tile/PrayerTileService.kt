@@ -56,28 +56,17 @@ class PrayerTileService(
         val now = System.currentTimeMillis()
         // 1f - progress => the ring depletes as time passes, showing the
         // REMAINING time until the next prayer (a true countdown ring).
-        val ringPage = if (data != null) {
+        val page = if (data != null) {
             TileLayouts.nextPrayerPage(scope, data, countdownText(scope, data, now), 1f - ringProgress(data, now))
         } else {
             TileLayouts.emptyPage(scope)
         }
-        val listPage = if (data != null) {
-            TileLayouts.prayerListPage(scope, data)
-        } else {
-            TileLayouts.emptyPage(scope)
-        }
-        // This Samsung watch's renderer shows the LAST timeline entry by default,
-        // so the ring page is added LAST to make it the default view; the prayer
-        // list is the first entry and is reached by swiping.
+        // Single page: only the ring and its data. This Samsung watch's renderer
+        // shows a single page and does not scroll between timeline entries.
         val timeline = Timeline.Builder()
             .addTimelineEntry(
                 TimelineEntry.Builder()
-                    .setLayout(Layout.Builder().setRoot(listPage).build())
-                    .build()
-            )
-            .addTimelineEntry(
-                TimelineEntry.Builder()
-                    .setLayout(Layout.Builder().setRoot(ringPage).build())
+                    .setLayout(Layout.Builder().setRoot(page).build())
                     .build()
             )
             .build()

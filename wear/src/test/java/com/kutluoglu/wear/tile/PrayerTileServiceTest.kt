@@ -31,7 +31,7 @@ class PrayerTileServiceTest {
     )
 
     @Test
-    fun `tile response has two timeline entries and freshness interval`() = runTest {
+    fun `tile response has a single ring page and freshness interval`() = runTest {
         coEvery { repository.getTileData() } returns sampleData
         val service = PrayerTileService(repositoryOverride = repository)
 
@@ -41,7 +41,7 @@ class PrayerTileServiceTest {
         )
 
         val timeline = checkNotNull(tile.tileTimeline)
-        assertThat(timeline.timelineEntries).hasSize(2)
+        assertThat(timeline.timelineEntries).hasSize(1)
         assertThat(tile.freshnessIntervalMillis).isEqualTo(60_000L)
     }
 
@@ -56,7 +56,7 @@ class PrayerTileServiceTest {
         )
 
         val timeline = checkNotNull(tile.tileTimeline)
-        assertThat(timeline.timelineEntries).hasSize(2)
+        assertThat(timeline.timelineEntries).hasSize(1)
     }
 
     @Test
