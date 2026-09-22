@@ -1,11 +1,12 @@
 package com.kutluoglu.prayer_widget.data
 
+import com.kutluoglu.prayer.domain.DailyPrayerTimes
+import com.kutluoglu.prayer.domain.DailyPrayerTimesLoader
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.location.resolveZoneId
 import com.kutluoglu.prayer.model.prayer.JuristicMethod
 import com.kutluoglu.prayer.model.prayer.Prayer
-import com.kutluoglu.prayer.usecases.prayer.GetPrayerTimesUseCase
 import com.kutluoglu.prayer_location.LocationsCoordinator
 import com.kutluoglu.prayer_settings.domain.model.Settings
 import com.kutluoglu.prayer_settings.domain.usecase.GetSettingsUseCase
@@ -34,6 +35,15 @@ class WidgetDataProviderTest {
     private fun dhuhrPrayer(time: LocalTime, date: LocalDate) =
         Prayer(name = "Dhuhr", arabicName = "الظهر", time = time, date = date)
 
+    private fun dailyTimes(
+        prayers: List<Prayer>,
+        current: Prayer?,
+        next: Prayer?,
+        currentEpoch: Long = 0L,
+        nextEpoch: Long = 0L,
+        isJumuah: Boolean = false
+    ) = DailyPrayerTimes(prayers, current, next, currentEpoch, nextEpoch, isJumuah)
+
     private fun countdownFormatter() = mockk<WidgetCountdownFormatter>(relaxed = true)
 
     private suspend fun withSystemDefaultZone(zoneId: String, block: suspend () -> Unit) {
@@ -49,7 +59,7 @@ class WidgetDataProviderTest {
     @Test
     fun `load returns next prayer and countdown`() = runTest {
         withSystemDefaultZone("Europe/Istanbul") {
-            val useCase = mockk<GetPrayerTimesUseCase>(relaxed = true)
+            val dailyLoader = mockk<DailyPrayerTimesLoader>(relaxed = true)
             val locations = mockk<LocationsCoordinator>(relaxed = true)
             val settings = mockk<GetSettingsUseCase>(relaxed = true)
             val calculator = PrayerLogicEngine(Clock.fixed(Instant.parse("2026-09-02T08:00:00Z"), ZoneOffset.UTC))
@@ -58,11 +68,15 @@ class WidgetDataProviderTest {
 
             coEvery { locations.resolveSelected() } returns LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", null)
             coEvery { settings() } returns Settings()
-            coEvery { useCase.invoke(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
-                listOf(
-                    prayer("Dhuhr", LocalTime(12, 30)),
-                    prayer("Maghrib", LocalTime(19, 30)),
-                    prayer("Asr", LocalTime(16, 0))
+            coEvery { dailyLoader.load(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
+                dailyTimes(
+                    prayers = listOf(
+                        prayer("Dhuhr", LocalTime(12, 30)),
+                        prayer("Maghrib", LocalTime(19, 30)),
+                        prayer("Asr", LocalTime(16, 0))
+                    ),
+                    current = prayer("Asr", LocalTime(16, 0)),
+                    next = prayer("Dhuhr", LocalTime(12, 30))
                 )
             )
             coEvery { formatter.withLocalizedNames(any()) } returns listOf(
@@ -72,7 +86,7 @@ class WidgetDataProviderTest {
             )
             coEvery { countdown.format(any(), any()) } returns "2s 15d"
 
-            val provider = WidgetDataProvider(useCase, locations, settings, calculator, formatter, countdown)
+            val provider = WidgetDataProvider(dailyLoader, locations, settings, calculator, formatter, countdown)
             val result = provider.load()
             assertTrue(result is WidgetResult.Success)
             val data = (result as WidgetResult.Success).data
@@ -85,7 +99,7 @@ class WidgetDataProviderTest {
     @Test
     fun `load populates current and next prayer epoch millis`() = runTest {
         withSystemDefaultZone("Europe/Istanbul") {
-            val useCase = mockk<GetPrayerTimesUseCase>(relaxed = true)
+            val dailyLoader = mockk<DailyPrayerTimesLoader>(relaxed = true)
             val locations = mockk<LocationsCoordinator>(relaxed = true)
             val settings = mockk<GetSettingsUseCase>(relaxed = true)
             val clock = Clock.fixed(Instant.parse("2026-09-02T11:15:00Z"), ZoneOffset.UTC)
@@ -95,10 +109,16 @@ class WidgetDataProviderTest {
 
             coEvery { locations.resolveSelected() } returns LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", null)
             coEvery { settings() } returns Settings()
-            coEvery { useCase.invoke(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
-                listOf(
-                    prayer("Dhuhr", LocalTime(12, 30)),
-                    prayer("Asr", LocalTime(16, 0))
+            coEvery { dailyLoader.load(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
+                dailyTimes(
+                    prayers = listOf(
+                        prayer("Dhuhr", LocalTime(12, 30)),
+                        prayer("Asr", LocalTime(16, 0))
+                    ),
+                    current = prayer("Dhuhr", LocalTime(12, 30)),
+                    next = prayer("Asr", LocalTime(16, 0)),
+                    currentEpoch = Instant.parse("2026-09-02T09:30:00Z").toEpochMilli(),
+                    nextEpoch = Instant.parse("2026-09-02T13:00:00Z").toEpochMilli()
                 )
             )
             coEvery { formatter.withLocalizedNames(any()) } returns listOf(
@@ -107,7 +127,7 @@ class WidgetDataProviderTest {
             )
             coEvery { countdown.format(any(), any()) } returns "2s 15d"
 
-            val provider = WidgetDataProvider(useCase, locations, settings, calculator, formatter, countdown, clock)
+            val provider = WidgetDataProvider(dailyLoader, locations, settings, calculator, formatter, countdown, clock)
             val result = provider.load()
             assertTrue(result is WidgetResult.Success)
             val data = (result as WidgetResult.Success).data
@@ -119,7 +139,7 @@ class WidgetDataProviderTest {
     @Test
     fun `load computes ring progress between current and next prayer`() = runTest {
         withSystemDefaultZone("Europe/Istanbul") {
-            val useCase = mockk<GetPrayerTimesUseCase>(relaxed = true)
+            val dailyLoader = mockk<DailyPrayerTimesLoader>(relaxed = true)
             val locations = mockk<LocationsCoordinator>(relaxed = true)
             val settings = mockk<GetSettingsUseCase>(relaxed = true)
             val clock = Clock.fixed(Instant.parse("2026-09-02T11:15:00Z"), ZoneOffset.UTC)
@@ -129,10 +149,14 @@ class WidgetDataProviderTest {
 
             coEvery { locations.resolveSelected() } returns LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", null)
             coEvery { settings() } returns Settings()
-            coEvery { useCase.invoke(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
-                listOf(
-                    prayer("Dhuhr", LocalTime(12, 30)),
-                    prayer("Asr", LocalTime(16, 0))
+            coEvery { dailyLoader.load(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
+                dailyTimes(
+                    prayers = listOf(
+                        prayer("Dhuhr", LocalTime(12, 30)),
+                        prayer("Asr", LocalTime(16, 0))
+                    ),
+                    current = prayer("Dhuhr", LocalTime(12, 30)),
+                    next = prayer("Asr", LocalTime(16, 0))
                 )
             )
             coEvery { formatter.withLocalizedNames(any()) } returns listOf(
@@ -141,7 +165,7 @@ class WidgetDataProviderTest {
             )
             coEvery { countdown.format(any(), any()) } returns "2s 15d"
 
-            val provider = WidgetDataProvider(useCase, locations, settings, calculator, formatter, countdown, clock)
+            val provider = WidgetDataProvider(dailyLoader, locations, settings, calculator, formatter, countdown, clock)
             val result = provider.load()
             assertTrue(result is WidgetResult.Success)
             val data = (result as WidgetResult.Success).data
@@ -152,7 +176,7 @@ class WidgetDataProviderTest {
 
     @Test
     fun `load returns error when no location`() = runTest {
-        val useCase = mockk<GetPrayerTimesUseCase>(relaxed = true)
+        val dailyLoader = mockk<DailyPrayerTimesLoader>(relaxed = true)
         val locations = mockk<LocationsCoordinator>(relaxed = true)
         val settings = mockk<GetSettingsUseCase>(relaxed = true)
         val calculator = mockk<PrayerLogicEngine>(relaxed = true)
@@ -161,7 +185,7 @@ class WidgetDataProviderTest {
 
         coEvery { locations.resolveSelected() } returns null
 
-        val provider = WidgetDataProvider(useCase, locations, settings, calculator, formatter, countdown)
+        val provider = WidgetDataProvider(dailyLoader, locations, settings, calculator, formatter, countdown)
         val result = provider.load()
         assertTrue(result is WidgetResult.Error)
     }
@@ -169,7 +193,7 @@ class WidgetDataProviderTest {
     @Test
     fun `load resolves zone from location and skips daily cache persist`() = runTest {
         withSystemDefaultZone("Europe/Berlin") {
-            val useCase = mockk<GetPrayerTimesUseCase>(relaxed = true)
+            val dailyLoader = mockk<DailyPrayerTimesLoader>(relaxed = true)
             val locations = mockk<LocationsCoordinator>(relaxed = true)
             val settings = mockk<GetSettingsUseCase>(relaxed = true)
             val calculator = mockk<PrayerLogicEngine>(relaxed = true)
@@ -178,30 +202,30 @@ class WidgetDataProviderTest {
 
             coEvery { locations.resolveSelected() } returns LocationData(41.0, 29.0, "United States", "US", "New York", null)
             coEvery { settings() } returns Settings()
-            coEvery { useCase.invoke(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
-                listOf(prayer("Dhuhr", LocalTime(12, 30)))
-            )
-            coEvery { calculator.findCurrentAndNextPrayer(any(), any()) } returns Pair(
-                prayer("Dhuhr", LocalTime(12, 30)),
-                prayer("Dhuhr", LocalTime(12, 30))
+            coEvery { dailyLoader.load(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
+                dailyTimes(
+                    prayers = listOf(prayer("Dhuhr", LocalTime(12, 30))),
+                    current = prayer("Dhuhr", LocalTime(12, 30)),
+                    next = prayer("Dhuhr", LocalTime(12, 30))
+                )
             )
             coEvery { formatter.withLocalizedNames(any()) } returns listOf(prayer("Dhuhr", LocalTime(12, 30)))
 
-            val provider = WidgetDataProvider(useCase, locations, settings, calculator, formatter, countdown)
+            val provider = WidgetDataProvider(dailyLoader, locations, settings, calculator, formatter, countdown)
             provider.load()
 
             val expectedZone = resolveZoneId(LocationData(41.0, 29.0, "United States", "US", "New York", null))
             assertNotEquals(ZoneId.of("Europe/Berlin"), expectedZone)
             coVerify {
-                useCase.invoke(any(), any(), any(), eq(expectedZone), any(), any(), eq(false))
+                dailyLoader.load(any(), any(), any(), eq(expectedZone), any(), any(), eq(false))
             }
         }
     }
 
     @Test
-    fun `load forwards juristic method from settings to use case`() = runTest {
+    fun `load forwards juristic method from settings to daily loader`() = runTest {
         withSystemDefaultZone("Europe/Istanbul") {
-            val useCase = mockk<GetPrayerTimesUseCase>(relaxed = true)
+            val dailyLoader = mockk<DailyPrayerTimesLoader>(relaxed = true)
             val locations = mockk<LocationsCoordinator>(relaxed = true)
             val settings = mockk<GetSettingsUseCase>(relaxed = true)
             val calculator = mockk<PrayerLogicEngine>(relaxed = true)
@@ -210,20 +234,20 @@ class WidgetDataProviderTest {
 
             coEvery { locations.resolveSelected() } returns LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", null)
             coEvery { settings() } returns Settings(juristicMethod = "HANAFI")
-            coEvery { useCase.invoke(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
-                listOf(prayer("Dhuhr", LocalTime(12, 30)))
-            )
-            coEvery { calculator.findCurrentAndNextPrayer(any(), any()) } returns Pair(
-                prayer("Dhuhr", LocalTime(12, 30)),
-                prayer("Dhuhr", LocalTime(12, 30))
+            coEvery { dailyLoader.load(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
+                dailyTimes(
+                    prayers = listOf(prayer("Dhuhr", LocalTime(12, 30))),
+                    current = prayer("Dhuhr", LocalTime(12, 30)),
+                    next = prayer("Dhuhr", LocalTime(12, 30))
+                )
             )
             coEvery { formatter.withLocalizedNames(any()) } returns listOf(prayer("Dhuhr", LocalTime(12, 30)))
 
-            val provider = WidgetDataProvider(useCase, locations, settings, calculator, formatter, countdown)
+            val provider = WidgetDataProvider(dailyLoader, locations, settings, calculator, formatter, countdown)
             provider.load()
 
             coVerify {
-                useCase.invoke(any(), any(), any(), any(), any(), JuristicMethod.HANAFI, any())
+                dailyLoader.load(any(), any(), any(), any(), any(), JuristicMethod.HANAFI, any())
             }
         }
     }
@@ -231,7 +255,7 @@ class WidgetDataProviderTest {
     @Test
     fun `load marks isJumuah true when next prayer is Dhuhr on Friday`() = runTest {
         withSystemDefaultZone("Europe/Istanbul") {
-            val useCase = mockk<GetPrayerTimesUseCase>(relaxed = true)
+            val dailyLoader = mockk<DailyPrayerTimesLoader>(relaxed = true)
             val locations = mockk<LocationsCoordinator>(relaxed = true)
             val settings = mockk<GetSettingsUseCase>(relaxed = true)
             val calculator = PrayerLogicEngine(Clock.fixed(Instant.parse("2026-09-02T08:00:00Z"), ZoneOffset.UTC))
@@ -240,11 +264,16 @@ class WidgetDataProviderTest {
 
             coEvery { locations.resolveSelected() } returns LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", null)
             coEvery { settings() } returns Settings()
-            coEvery { useCase.invoke(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
-                listOf(
-                    dhuhrPrayer(LocalTime(12, 30), LocalDate(2026, 8, 28)), // Friday
-                    prayer("Asr", LocalTime(16, 0), LocalDate(2026, 8, 28)),
-                    prayer("Maghrib", LocalTime(19, 30), LocalDate(2026, 8, 28))
+            coEvery { dailyLoader.load(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
+                dailyTimes(
+                    prayers = listOf(
+                        dhuhrPrayer(LocalTime(12, 30), LocalDate(2026, 8, 28)), // Friday
+                        prayer("Asr", LocalTime(16, 0), LocalDate(2026, 8, 28)),
+                        prayer("Maghrib", LocalTime(19, 30), LocalDate(2026, 8, 28))
+                    ),
+                    current = dhuhrPrayer(LocalTime(12, 30), LocalDate(2026, 8, 28)),
+                    next = dhuhrPrayer(LocalTime(12, 30), LocalDate(2026, 8, 28)),
+                    isJumuah = true
                 )
             )
             coEvery { formatter.withLocalizedNames(any()) } returns listOf(
@@ -254,7 +283,7 @@ class WidgetDataProviderTest {
             )
             coEvery { countdown.format(any(), any()) } returns "2s 15d"
 
-            val provider = WidgetDataProvider(useCase, locations, settings, calculator, formatter, countdown)
+            val provider = WidgetDataProvider(dailyLoader, locations, settings, calculator, formatter, countdown)
             val result = provider.load()
             assertTrue(result is WidgetResult.Success)
             val data = (result as WidgetResult.Success).data
@@ -267,7 +296,7 @@ class WidgetDataProviderTest {
     @Test
     fun `load marks isJumuah false when next prayer is Dhuhr on non-Friday`() = runTest {
         withSystemDefaultZone("Europe/Istanbul") {
-            val useCase = mockk<GetPrayerTimesUseCase>(relaxed = true)
+            val dailyLoader = mockk<DailyPrayerTimesLoader>(relaxed = true)
             val locations = mockk<LocationsCoordinator>(relaxed = true)
             val settings = mockk<GetSettingsUseCase>(relaxed = true)
             val calculator = PrayerLogicEngine(Clock.fixed(Instant.parse("2026-09-02T08:00:00Z"), ZoneOffset.UTC))
@@ -276,11 +305,16 @@ class WidgetDataProviderTest {
 
             coEvery { locations.resolveSelected() } returns LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", null)
             coEvery { settings() } returns Settings()
-            coEvery { useCase.invoke(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
-                listOf(
-                    dhuhrPrayer(LocalTime(12, 30), LocalDate(2026, 9, 2)), // Wednesday
-                    prayer("Asr", LocalTime(16, 0), LocalDate(2026, 9, 2)),
-                    prayer("Maghrib", LocalTime(19, 30), LocalDate(2026, 9, 2))
+            coEvery { dailyLoader.load(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
+                dailyTimes(
+                    prayers = listOf(
+                        dhuhrPrayer(LocalTime(12, 30), LocalDate(2026, 9, 2)), // Wednesday
+                        prayer("Asr", LocalTime(16, 0), LocalDate(2026, 9, 2)),
+                        prayer("Maghrib", LocalTime(19, 30), LocalDate(2026, 9, 2))
+                    ),
+                    current = dhuhrPrayer(LocalTime(12, 30), LocalDate(2026, 9, 2)),
+                    next = dhuhrPrayer(LocalTime(12, 30), LocalDate(2026, 9, 2)),
+                    isJumuah = false
                 )
             )
             coEvery { formatter.withLocalizedNames(any()) } returns listOf(
@@ -290,7 +324,7 @@ class WidgetDataProviderTest {
             )
             coEvery { countdown.format(any(), any()) } returns "2s 15d"
 
-            val provider = WidgetDataProvider(useCase, locations, settings, calculator, formatter, countdown)
+            val provider = WidgetDataProvider(dailyLoader, locations, settings, calculator, formatter, countdown)
             val result = provider.load()
             assertTrue(result is WidgetResult.Success)
             val data = (result as WidgetResult.Success).data
@@ -302,7 +336,7 @@ class WidgetDataProviderTest {
     @Test
     fun `load marks isJumuah false when next prayer is not Dhuhr on Friday`() = runTest {
         withSystemDefaultZone("Europe/Istanbul") {
-            val useCase = mockk<GetPrayerTimesUseCase>(relaxed = true)
+            val dailyLoader = mockk<DailyPrayerTimesLoader>(relaxed = true)
             val locations = mockk<LocationsCoordinator>(relaxed = true)
             val settings = mockk<GetSettingsUseCase>(relaxed = true)
             // 10:00 UTC = 13:00 Istanbul, after Dhuhr 12:30 -> next is Asr
@@ -312,11 +346,16 @@ class WidgetDataProviderTest {
 
             coEvery { locations.resolveSelected() } returns LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", null)
             coEvery { settings() } returns Settings()
-            coEvery { useCase.invoke(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
-                listOf(
-                    dhuhrPrayer(LocalTime(12, 30), LocalDate(2026, 8, 28)), // Friday
-                    prayer("Asr", LocalTime(16, 0), LocalDate(2026, 8, 28)),
-                    prayer("Maghrib", LocalTime(19, 30), LocalDate(2026, 8, 28))
+            coEvery { dailyLoader.load(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
+                dailyTimes(
+                    prayers = listOf(
+                        dhuhrPrayer(LocalTime(12, 30), LocalDate(2026, 8, 28)), // Friday
+                        prayer("Asr", LocalTime(16, 0), LocalDate(2026, 8, 28)),
+                        prayer("Maghrib", LocalTime(19, 30), LocalDate(2026, 8, 28))
+                    ),
+                    current = dhuhrPrayer(LocalTime(12, 30), LocalDate(2026, 8, 28)),
+                    next = prayer("Asr", LocalTime(16, 0), LocalDate(2026, 8, 28)),
+                    isJumuah = false
                 )
             )
             coEvery { formatter.withLocalizedNames(any()) } returns listOf(
@@ -326,7 +365,7 @@ class WidgetDataProviderTest {
             )
             coEvery { countdown.format(any(), any()) } returns "2s 15d"
 
-            val provider = WidgetDataProvider(useCase, locations, settings, calculator, formatter, countdown)
+            val provider = WidgetDataProvider(dailyLoader, locations, settings, calculator, formatter, countdown)
             val result = provider.load()
             assertTrue(result is WidgetResult.Success)
             val data = (result as WidgetResult.Success).data

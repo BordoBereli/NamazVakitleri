@@ -7,6 +7,7 @@ import com.kutluoglu.core.common.analytics.AnalyticsParams
 import com.kutluoglu.core.common.analytics.AnalyticsTracker
 import com.kutluoglu.core.common.gregorianDayAndNameFormatter
 import com.kutluoglu.core.common.now
+import com.kutluoglu.prayer.domain.DailyPrayerTimesLoader
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.location.resolveZoneId
@@ -14,7 +15,6 @@ import com.kutluoglu.prayer.model.prayer.CalculationMethod
 import com.kutluoglu.prayer.model.prayer.DailyPrayer
 import com.kutluoglu.prayer.model.prayer.JuristicMethod
 import com.kutluoglu.prayer.usecases.prayer.GetMonthlyPrayerTimesUseCase
-import com.kutluoglu.prayer.usecases.prayer.GetPrayerTimesUseCase
 import com.kutluoglu.prayer.usecases.prayer.SaveMonthlyPrayerTimesUseCase
 import com.kutluoglu.prayer_location.ActiveLocationProvider
 import com.kutluoglu.prayer_settings.domain.repository.SettingsRepository
@@ -59,7 +59,7 @@ private const val LOCATION_RESOLUTION_TIMEOUT_MS = 15_000L
 
 @KoinViewModel
 class PrayerTimesViewModel(
-        private val getPrayerTimesUseCase: GetPrayerTimesUseCase,
+        private val dailyLoader: DailyPrayerTimesLoader,
         private val getMonthlyPrayerTimesUseCase: GetMonthlyPrayerTimesUseCase,
         private val saveMonthlyPrayerTimesUseCase: SaveMonthlyPrayerTimesUseCase,
         private val activeLocationProvider: ActiveLocationProvider,
@@ -322,7 +322,7 @@ class PrayerTimesViewModel(
         juristicMethod: JuristicMethod
     ): DailyPrayer {
         val date = month.onDay(day)
-        val prayerTimes = getPrayerTimesUseCase(
+        val result = dailyLoader.load(
             date = date.atTime(0, 0),
             latitude = location.latitude,
             longitude = location.longitude,
@@ -331,15 +331,14 @@ class PrayerTimesViewModel(
             juristicMethod = juristicMethod,
             persistDailyCache = false
         ).getOrElse { throw it }
-        val langDetectedPrayerTimes = formatter.withLocalizedNames(prayerTimes)
+        val langDetectedPrayerTimes = formatter.withLocalizedNames(result.prayers)
         val isToday = date == today.date
-        val (currentPrayer, _) = if (isToday) {
-            calculator.findCurrentAndNextPrayer(langDetectedPrayerTimes, resolvedZoneId)
-        } else {
-            Pair(null, null)
-        }
-        val prayersWithCurrent = langDetectedPrayerTimes.map {
-            it.copy(isCurrent = isToday && it.name == currentPrayer?.name)
+        val prayersWithCurrent = langDetectedPrayerTimes.map { prayer ->
+            prayer.copy(
+                isCurrent = isToday && (result.currentPrayer?.let {
+                    prayer.time == it.time && prayer.date == it.date
+                } ?: false)
+            )
         }
         val timeState = formatter.getInitialTimeInfo(
             resolvedZoneId,

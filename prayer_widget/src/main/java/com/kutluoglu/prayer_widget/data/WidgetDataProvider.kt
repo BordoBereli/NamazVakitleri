@@ -1,32 +1,26 @@
 package com.kutluoglu.prayer_widget.data
 
 import com.kutluoglu.core.common.now
+import com.kutluoglu.prayer.domain.DailyPrayerTimesLoader
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
+import com.kutluoglu.prayer.domain.formatClockTime
+import com.kutluoglu.prayer.domain.isJumuahPrayer
 import com.kutluoglu.prayer.model.location.resolveZoneId
 import com.kutluoglu.prayer.model.prayer.CalculationMethod
 import com.kutluoglu.prayer.model.prayer.JuristicMethod
-import com.kutluoglu.prayer.model.prayer.Prayer
-import com.kutluoglu.prayer.usecases.prayer.GetPrayerTimesUseCase
 import com.kutluoglu.prayer_location.LocationsCoordinator
 import com.kutluoglu.prayer_settings.domain.usecase.GetSettingsUseCase
 import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
-import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.LocalTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toInstant
 import kotlinx.datetime.toKotlinLocalTime
 import org.koin.core.annotation.Factory
 import java.time.Clock
 import java.time.ZoneId
-import kotlin.time.ExperimentalTime
 import kotlin.time.toKotlinDuration
-
-private const val DHUHR_ARABIC_NAME = "الظهر"
 
 @Factory
 class WidgetDataProvider(
-    private val getPrayerTimesUseCase: GetPrayerTimesUseCase,
+    private val dailyLoader: DailyPrayerTimesLoader,
     private val locationsCoordinator: LocationsCoordinator,
     private val getSettingsUseCase: GetSettingsUseCase,
     private val calculator: PrayerLogicEngine,
@@ -40,7 +34,7 @@ class WidgetDataProvider(
         val settings = runCatching { getSettingsUseCase() }.getOrNull() ?: return WidgetResult.Error
         val method = CalculationMethod.fromSettingsId(settings.calculationMethod)
         val juristicMethod = JuristicMethod.fromSettingsId(settings.juristicMethod)
-        val prayers = getPrayerTimesUseCase(
+        val result = dailyLoader.load(
             date = LocalDateTime.now(zoneId),
             latitude = location.latitude,
             longitude = location.longitude,
@@ -49,17 +43,18 @@ class WidgetDataProvider(
             juristicMethod = juristicMethod,
             persistDailyCache = false
         ).getOrNull() ?: return WidgetResult.Error
-        val localizedPrayers = formatter.withLocalizedNames(prayers)
-
-        val (current, next) = calculator.findCurrentAndNextPrayer(localizedPrayers, zoneId)
-        val nextPrayer = next ?: return WidgetResult.Error
-        val currentPrayerEpochMillis = current?.let { toEpochMillis(it, zoneId) } ?: 0L
-        val nextPrayerEpochMillis = toEpochMillis(nextPrayer, zoneId)
+        val localizedPrayers = formatter.withLocalizedNames(result.prayers)
+        val nextPrayer = result.nextPrayer?.let { raw ->
+            localizedPrayers.firstOrNull { it.time == raw.time }?.copy(date = raw.date)
+        } ?: return WidgetResult.Error
+        val currentPrayer = result.currentPrayer?.let { raw ->
+            localizedPrayers.firstOrNull { it.time == raw.time }?.copy(date = raw.date)
+        }
         val duration = calculator.calculateTimeRemaining(nextPrayer.time, zoneId)
         val countdownText = duration.toKotlinDuration().toComponents { _, hours, minutes, _, _ ->
             countdownFormatter.format(hours, minutes)
         }
-        val ringProgress = current?.let {
+        val ringProgress = currentPrayer?.let {
             WidgetProgressCalculator.computeRingProgress(
                 current = it.time,
                 next = nextPrayer.time,
@@ -84,22 +79,10 @@ class WidgetDataProvider(
                         isJumuah = isJumuahPrayer(p)
                     )
                 },
-                isJumuah = isJumuahPrayer(nextPrayer),
-                currentPrayerEpochMillis = currentPrayerEpochMillis,
-                nextPrayerEpochMillis = nextPrayerEpochMillis
+                isJumuah = result.isJumuah,
+                currentPrayerEpochMillis = result.currentPrayerEpochMillis,
+                nextPrayerEpochMillis = result.nextPrayerEpochMillis
             )
         )
     }
-
-    @OptIn(ExperimentalTime::class)
-    private fun toEpochMillis(prayer: Prayer, zoneId: ZoneId): Long =
-        LocalDateTime(prayer.date, prayer.time)
-            .toInstant(TimeZone.of(zoneId.id))
-            .toEpochMilliseconds()
-
-    private fun formatClockTime(time: LocalTime): String =
-        "${time.hour.toString().padStart(2, '0')}:${time.minute.toString().padStart(2, '0')}"
-
-    private fun isJumuahPrayer(prayer: Prayer): Boolean =
-        prayer.arabicName == DHUHR_ARABIC_NAME && prayer.date.dayOfWeek == DayOfWeek.FRIDAY
 }

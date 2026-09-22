@@ -1,8 +1,10 @@
 package com.kutluoglu.wear.data
 
 import com.google.common.truth.Truth.assertThat
+import com.kutluoglu.prayer.domain.DailyPrayerTimesLoader
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
 import com.kutluoglu.prayer.domain.PrayerTimeEngine
+import com.kutluoglu.prayer.domain.PrayerTimeEngineSource
 import com.kutluoglu.prayer.model.prayer.CalculationMethod
 import com.kutluoglu.prayer.model.prayer.JuristicMethod
 import com.kutluoglu.wear.shared.model.WatchTileData
@@ -129,8 +131,10 @@ class WatchTileDataBuilderTest {
     }
 
     private fun builderWith(clock: Clock): WatchTileDataBuilder = WatchTileDataBuilder(
-        prayerTimeEngine = PrayerTimeEngine(),
-        prayerLogicEngine = PrayerLogicEngine(clock)
+        dailyLoader = DailyPrayerTimesLoader(
+            source = PrayerTimeEngineSource(PrayerTimeEngine()),
+            logicEngine = PrayerLogicEngine(clock)
+        )
     )
 
     private fun buildData(

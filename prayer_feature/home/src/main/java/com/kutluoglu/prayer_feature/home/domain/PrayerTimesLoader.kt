@@ -1,5 +1,6 @@
 package com.kutluoglu.prayer_feature.home.domain
 
+import com.kutluoglu.prayer.domain.DailyPrayerTimesLoader
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.location.resolveZoneId
@@ -36,6 +37,7 @@ data class LoadedPrayerData(
 @Factory
 class PrayerTimesLoader(
     private val getPrayerTimesUseCase: GetPrayerTimesUseCase,
+    private val dailyLoader: DailyPrayerTimesLoader,
     private val calculator: PrayerLogicEngine,
     private val formatter: PrayerFormatter,
     private val clock: Clock = Clock.systemDefaultZone()
@@ -48,17 +50,18 @@ class PrayerTimesLoader(
     ): Result<LoadedPrayerData> {
         val zoneId = resolveZoneId(location)
         val locationDateTime = java.time.LocalDateTime.now(clock.withZone(zoneId)).toKotlinLocalDateTime()
-        return getPrayerTimesUseCase(
+        return dailyLoader.load(
             date = locationDateTime,
             latitude = location.latitude,
             longitude = location.longitude,
             zoneId = zoneId,
             calculationMethod = calculationMethod,
-            juristicMethod = juristicMethod
-        ).map { prayerTimes ->
-            val localized = formatter.withLocalizedNames(prayerTimes)
+            juristicMethod = juristicMethod,
+            persistDailyCache = true
+        ).map { result ->
+            val localized = formatter.withLocalizedNames(result.prayers)
             LoadedPrayerData(
-                prayerState = computePrayerState(localized, zoneId),
+                prayerState = buildPrayerState(localized, result.currentPrayer, result.nextPrayer),
                 timeState = formatter.getInitialTimeInfo(zoneId, hijriAdjustment = hijriAdjustment),
                 locationState = LocationUiState(
                     locationData = location,
@@ -74,6 +77,36 @@ class PrayerTimesLoader(
                 )
             )
         }
+    }
+
+    /**
+     * Builds the [PrayerUiState] from the loader's current/next prayers. The loader
+     * returns raw (English-named) prayers, so the current/next are mapped back onto the
+     * localized list by time (preserving the date, which may be tomorrow for the next
+     * prayer after Isha). The [isCurrent] flag is computed by time + date, not by name,
+     * so it stays correct across languages.
+     */
+    private fun buildPrayerState(
+        localized: List<Prayer>,
+        currentPrayer: Prayer?,
+        nextPrayer: Prayer?
+    ): PrayerUiState {
+        val localizedCurrent = currentPrayer?.let { raw ->
+            localized.firstOrNull { it.time == raw.time }?.copy(date = raw.date)
+        }
+        val localizedNext = nextPrayer?.let { raw ->
+            localized.firstOrNull { it.time == raw.time }?.copy(date = raw.date)
+        }
+        val prayersWithCurrent = localized.map { prayer ->
+            prayer.copy(
+                isCurrent = currentPrayer?.let { prayer.time == it.time && prayer.date == it.date } ?: false
+            )
+        }
+        return PrayerUiState(
+            prayers = prayersWithCurrent,
+            currentPrayer = localizedCurrent,
+            nextPrayer = localizedNext
+        )
     }
 
     private suspend fun loadNextImsakTime(
