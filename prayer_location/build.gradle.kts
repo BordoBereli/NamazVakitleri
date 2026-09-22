@@ -41,7 +41,6 @@ android {
 dependencies {
     implementation(project(":core:designsystem"))
     implementation(project(":prayer:model"))
-    implementation(project(":prayer:data"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.kotlinx.serialization.json)

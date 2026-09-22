@@ -1,18 +1,14 @@
-package com.kutluoglu.prayer.data.mapper.location
+package com.kutluoglu.prayer_location.data.legacy
 
-import com.kutluoglu.prayer.data.mapper.Mapper
-import com.kutluoglu.prayer.data.model.LocationDataModel
 import com.kutluoglu.prayer.model.location.LocationData
 import org.koin.core.annotation.Factory
 
 /**
- * Created by F.K. on 30.11.2025.
- *
+ * Maps between the legacy persistence DTO and the domain [LocationData].
  */
-
 @Factory
-class LocationMapper() : Mapper<LocationDataModel, LocationData>  {
-    override fun mapToDomain(type: LocationDataModel) = LocationData(
+class LegacyLocationMapper : LegacyMapper<LegacyLocationDataModel, LocationData> {
+    override fun mapToDomain(type: LegacyLocationDataModel) = LocationData(
         latitude = type.latitude,
         longitude = type.longitude,
         country = type.country,
@@ -22,7 +18,7 @@ class LocationMapper() : Mapper<LocationDataModel, LocationData>  {
         timeZoneId = type.timeZoneId
     )
 
-    override fun mapFromDomain(type: LocationData) = LocationDataModel(
+    override fun mapFromDomain(type: LocationData) = LegacyLocationDataModel(
         latitude = type.latitude,
         longitude = type.longitude,
         country = type.country,

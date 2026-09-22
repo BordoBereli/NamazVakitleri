@@ -1,8 +1,8 @@
 package com.kutluoglu.prayer_location.data
 
 import com.google.common.truth.Truth.assertThat
-import com.kutluoglu.prayer.data.model.LocationDataModel
-import com.kutluoglu.prayer.data.repository.location.LocationDataStore
+import com.kutluoglu.prayer_location.data.legacy.LegacyLocationDataModel
+import com.kutluoglu.prayer_location.data.legacy.LegacyLocationDataStore
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.location.LocationEntry
 import io.mockk.coEvery
@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test
 
 class LocationsMigrationTest {
 
-    private val legacyStore = mockk<LocationDataStore>(relaxed = true)
+    private val legacyStore = mockk<LegacyLocationDataStore>(relaxed = true)
     private val locationsStore = mockk<LocationsDataStore>(relaxed = true)
 
     @Test
@@ -38,7 +38,7 @@ class LocationsMigrationTest {
     @Test
     fun `migrates legacy saved location when list is empty and backfills timeZoneId`() = runBlocking<Unit> {
         coEvery { locationsStore.getLocations() } returns LocationsState()
-        coEvery { legacyStore.getSavedLocation() } returns LocationDataModel(
+        coEvery { legacyStore.getSavedLocation() } returns LegacyLocationDataModel(
             latitude = 41.0082,
             longitude = 28.9784,
             country = "Turkey",

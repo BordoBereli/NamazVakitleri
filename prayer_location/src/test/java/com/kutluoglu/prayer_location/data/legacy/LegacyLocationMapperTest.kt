@@ -1,18 +1,17 @@
-package com.kutluoglu.prayer.data.mapper.location
+package com.kutluoglu.prayer_location.data.legacy
 
-import com.kutluoglu.prayer.data.model.LocationDataModel
 import com.kutluoglu.prayer.model.location.LocationData
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 
-class LocationMapperTest {
+class LegacyLocationMapperTest {
 
-    private val mapper = LocationMapper()
+    private val mapper = LegacyLocationMapper()
 
     @Test
     fun `mapToDomain passes timeZoneId through`() {
-        val model = LocationDataModel(
+        val model = LegacyLocationDataModel(
             latitude = 41.0082,
             longitude = 28.9784,
             country = "Turkey",
@@ -29,7 +28,7 @@ class LocationMapperTest {
 
     @Test
     fun `mapToDomain defaults timeZoneId to null for old data`() {
-        val model = LocationDataModel(
+        val model = LegacyLocationDataModel(
             latitude = 41.0082,
             longitude = 28.9784,
             country = "Turkey",

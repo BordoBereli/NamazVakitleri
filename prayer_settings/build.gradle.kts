@@ -45,7 +45,6 @@ android {
 
 dependencies {
     implementation(project(":prayer:model"))
-    implementation(project(":prayer:data"))
     implementation(project(":core:common"))
     implementation(project(":prayer_location"))
     implementation(project(":prayer_remote"))

@@ -1,8 +1,8 @@
 package com.kutluoglu.prayer_settings.data.repository
 
 import com.kutluoglu.core.common.utils.countryCodeFromTimeZone
-import com.kutluoglu.prayer.data.model.LocationDataModel
-import com.kutluoglu.prayer.data.repository.location.LocationDataStore
+import com.kutluoglu.prayer.model.location.LocationData
+import com.kutluoglu.prayer_location.SavedLocationStore
 import com.kutluoglu.prayer_settings.domain.model.LocationSettings
 import com.kutluoglu.prayer_settings.domain.model.Settings
 import com.kutluoglu.prayer_settings.domain.repository.SettingsRepository
@@ -14,7 +14,7 @@ import org.koin.core.annotation.Single
 @Single(binds = [SettingsRepository::class])
 class SettingsRepositoryImpl(
     private val settingsDataStore: SettingsDataStore,
-    private val locationDataStore: LocationDataStore
+    private val savedLocationStore: SavedLocationStore
 ) : SettingsRepository {
 
     override fun observeSettings(): Flow<Settings> = settingsDataStore.observeSettings()
@@ -26,15 +26,16 @@ class SettingsRepositoryImpl(
     override suspend fun updateLocation(location: LocationSettings) {
         settingsDataStore.updateLocation(location)
         
-        val locationDataModel = LocationDataModel(
+        val locationData = LocationData(
             latitude = location.latitude,
             longitude = location.longitude,
             country = location.country,
             countryCode = countryCodeFromTimeZone(location.timeZone),
             city = location.cityName,
-            county = location.district
+            county = location.district,
+            timeZoneId = location.timeZone
         )
-        locationDataStore.saveLocation(locationDataModel)
+        savedLocationStore.saveLocation(locationData)
     }
     
     override suspend fun updateCalculationMethod(method: String) {

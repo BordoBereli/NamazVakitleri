@@ -1,4 +1,4 @@
-package com.kutluoglu.prayer.data.repository.location
+package com.kutluoglu.prayer_location.data.legacy
 
 import android.content.Context
 import androidx.datastore.core.DataStore
@@ -6,7 +6,6 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.kutluoglu.prayer.data.model.LocationDataModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
@@ -17,9 +16,9 @@ import org.koin.core.annotation.Single
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "location_cache")
 
 @Single
-class LocationDataStoreImp(
+class LegacyLocationDataStoreImp(
     private val context: Context
-): LocationDataStore {
+) : LegacyLocationDataStore {
 
     companion object {
         // Define a key for storing the location data as a JSON string
@@ -27,10 +26,10 @@ class LocationDataStoreImp(
     }
 
     /**
-     * Saves the provided [LocationDataModel] to DataStore.
+     * Saves the provided [LegacyLocationDataModel] to DataStore.
      * It serializes the object into a JSON string for storage.
      */
-    override suspend fun saveLocation(locationDataModel: LocationDataModel) {
+    override suspend fun saveLocation(locationDataModel: LegacyLocationDataModel) {
         context.dataStore.edit { preferences ->
             val jsonString = Json.Default.encodeToString(locationDataModel)
             preferences[KEY_LOCATION_DATA] = jsonString
@@ -38,16 +37,16 @@ class LocationDataStoreImp(
     }
 
     /**
-     * Retrieves the last saved [LocationDataModel] from DataStore.
+     * Retrieves the last saved [LegacyLocationDataModel] from DataStore.
      * It reads the JSON string and deserializes it back into a LocationData object.
      * Returns null if no location has been saved yet.
      */
-    override suspend fun getSavedLocation(): LocationDataModel? {
+    override suspend fun getSavedLocation(): LegacyLocationDataModel? {
         return context.dataStore.data
             .map { preferences ->
                 preferences[KEY_LOCATION_DATA]?.let { jsonString ->
                     try {
-                        Json.Default.decodeFromString<LocationDataModel>(jsonString)
+                        Json.Default.decodeFromString<LegacyLocationDataModel>(jsonString)
                     } catch (e: Exception) {
                         // Handle potential deserialization errors, e.g., if the data class changes
                         null
@@ -61,11 +60,11 @@ class LocationDataStoreImp(
      * Emits the saved location whenever it changes.
      * Returns null if no location has been saved yet.
      */
-    override fun observeLocation(): Flow<LocationDataModel?> {
+    override fun observeLocation(): Flow<LegacyLocationDataModel?> {
         return context.dataStore.data.map { preferences ->
             preferences[KEY_LOCATION_DATA]?.let { jsonString ->
                 try {
-                    Json.Default.decodeFromString<LocationDataModel>(jsonString)
+                    Json.Default.decodeFromString<LegacyLocationDataModel>(jsonString)
                 } catch (e: Exception) {
                     null
                 }

@@ -1,18 +1,18 @@
 package com.kutluoglu.prayer_location.data
 
-import com.kutluoglu.prayer.data.mapper.location.LocationMapper
-import com.kutluoglu.prayer.data.repository.location.LocationDataStore
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.location.LocationEntry
 import com.kutluoglu.prayer.model.location.timeZoneIdFor
+import com.kutluoglu.prayer_location.data.legacy.LegacyLocationDataStore
+import com.kutluoglu.prayer_location.data.legacy.LegacyLocationMapper
 import org.koin.core.annotation.Factory
 import java.util.UUID
 
 @Factory
 class LocationsMigration(
     private val locationsDataStore: LocationsDataStore,
-    private val legacyLocationDataStore: LocationDataStore,
-    private val locationMapper: LocationMapper = LocationMapper()
+    private val legacyLocationDataStore: LegacyLocationDataStore,
+    private val locationMapper: LegacyLocationMapper = LegacyLocationMapper()
 ) {
     suspend fun migrateIfNeeded() {
         val state = locationsDataStore.getLocations()

@@ -1,9 +1,4 @@
-package com.kutluoglu.prayer.data.mapper
-
-/**
- * Created by F.K. on 30.11.2025.
- *
- */
+package com.kutluoglu.prayer_location.data.legacy
 
 /**
  * Interface for model mappers. It provides helper methods that facilitate
@@ -12,8 +7,7 @@ package com.kutluoglu.prayer.data.mapper
  * @param <E> the data(entity) model input type
  * @param <D> the domain model return type
  */
-
-interface Mapper<E, D> {
-    fun mapToDomain(type: E) : D
-    fun mapFromDomain(type: D) : E
+interface LegacyMapper<E, D> {
+    fun mapToDomain(type: E): D
+    fun mapFromDomain(type: D): E
 }
