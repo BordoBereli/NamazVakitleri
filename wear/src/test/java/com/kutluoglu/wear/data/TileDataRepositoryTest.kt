@@ -76,7 +76,7 @@ class TileDataRepositoryTest {
             calculationMethod = CalculationMethod.TURKEY_DIYANET,
             juristicMethod = JuristicMethod.STANDARD
         )
-        every { tileDataBuilder.build(any(), any(), any(), any(), any(), any(), any(), any()) } returns null
+        coEvery { tileDataBuilder.build(any(), any(), any(), any(), any(), any(), any(), any()) } returns null
     }
 
     @Test
@@ -110,7 +110,7 @@ class TileDataRepositoryTest {
         val result = repository.getTileData()
 
         assertThat(result).isEqualTo(sampleData)
-        verify(exactly = 0) { tileDataBuilder.build(any(), any(), any(), any(), any(), any(), any(), any()) }
+        coVerify(exactly = 0) { tileDataBuilder.build(any(), any(), any(), any(), any(), any(), any(), any()) }
     }
 
     @Test
@@ -132,12 +132,12 @@ class TileDataRepositoryTest {
         coEvery { dataClient.getDataItems(any(), any()) } returns Tasks.forResult(buffer)
         val staleData = sampleData.copy(nextPrayerEpochMillis = 1_000_000_000_000)
         coEvery { dataStore.read() } returns WatchTileDataCodec.toJson(staleData)
-        every { tileDataBuilder.build(any(), any(), any(), any(), any(), any(), any(), any()) } returns sampleData
+        coEvery { tileDataBuilder.build(any(), any(), any(), any(), any(), any(), any(), any()) } returns sampleData
 
         val result = repository.getTileData()
 
         assertThat(result).isEqualTo(sampleData)
-        verify { tileDataBuilder.build(any(), any(), any(), any(), any(), any(), any(), any()) }
+        coVerify { tileDataBuilder.build(any(), any(), any(), any(), any(), any(), any(), any()) }
     }
 
     @Test
@@ -146,13 +146,13 @@ class TileDataRepositoryTest {
         every { buffer.count } returns 0
         coEvery { dataClient.getDataItems(any(), any()) } returns Tasks.forResult(buffer)
         coEvery { dataStore.read() } returns null
-        every { tileDataBuilder.build(any(), any(), any(), any(), any(), any(), any(), any()) } returns sampleData
+        coEvery { tileDataBuilder.build(any(), any(), any(), any(), any(), any(), any(), any()) } returns sampleData
 
         val result = repository.getTileData()
 
         assertThat(result).isEqualTo(sampleData)
         coVerify { dataStore.save(WatchTileDataCodec.toJson(sampleData)) }
-        verify {
+        coVerify {
             tileDataBuilder.build(
                 latitude = 41.0082,
                 longitude = 28.9784,
@@ -174,14 +174,14 @@ class TileDataRepositoryTest {
         var cachedJson: String? = null
         coEvery { dataStore.read() } answers { cachedJson }
         coEvery { dataStore.save(any()) } answers { cachedJson = firstArg() }
-        every { tileDataBuilder.build(any(), any(), any(), any(), any(), any(), any(), any()) } returns sampleData
+        coEvery { tileDataBuilder.build(any(), any(), any(), any(), any(), any(), any(), any()) } returns sampleData
 
         val first = repository.getTileData()
         val second = repository.getTileData()
 
         assertThat(first).isEqualTo(sampleData)
         assertThat(second).isEqualTo(sampleData)
-        verify(exactly = 1) { tileDataBuilder.build(any(), any(), any(), any(), any(), any(), any(), any()) }
+        coVerify(exactly = 1) { tileDataBuilder.build(any(), any(), any(), any(), any(), any(), any(), any()) }
     }
 
     @Test
@@ -190,7 +190,7 @@ class TileDataRepositoryTest {
         every { buffer.count } returns 0
         coEvery { dataClient.getDataItems(any(), any()) } returns Tasks.forResult(buffer)
         coEvery { dataStore.read() } returns null
-        every { tileDataBuilder.build(any(), any(), any(), any(), any(), any(), any(), any()) } throws
+        coEvery { tileDataBuilder.build(any(), any(), any(), any(), any(), any(), any(), any()) } throws
             RuntimeException("boom")
 
         val result = repository.getTileData()
@@ -205,7 +205,7 @@ class TileDataRepositoryTest {
         every { buffer.count } returns 0
         coEvery { dataClient.getDataItems(any(), any()) } returns Tasks.forResult(buffer)
         coEvery { dataStore.read() } returns null
-        every { tileDataBuilder.build(any(), any(), any(), any(), any(), any(), any(), any()) } returns sampleData
+        coEvery { tileDataBuilder.build(any(), any(), any(), any(), any(), any(), any(), any()) } returns sampleData
         coEvery { dataStore.save(any()) } throws RuntimeException("io error")
 
         val result = repository.getTileData()

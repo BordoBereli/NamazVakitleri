@@ -82,6 +82,38 @@ class PrayerTimesLoaderTest {
     }
 
     @Test
+    fun `load maps current and next to localized prayers when names diverge`() = runTest {
+        val date = LocalDate(2026, 8, 2)
+        val rawFajr = Prayer(name = "Imsak", arabicName = "الفجر", time = LocalTime(5, 0), date = date)
+        val rawDhuhr = Prayer(name = "Dhuhr", arabicName = "الظهر", time = LocalTime(12, 30), date = date)
+        val localizedFajr = rawFajr.copy(name = "İmsak")
+        val localizedDhuhr = rawDhuhr.copy(name = "Öğle")
+
+        coEvery { dailyLoader.load(any(), any(), any(), any(), any(), any(), any()) } returns success(
+            DailyPrayerTimes(
+                prayers = listOf(rawFajr, rawDhuhr),
+                currentPrayer = rawFajr,
+                nextPrayer = rawDhuhr,
+                currentPrayerEpochMillis = 0L,
+                nextPrayerEpochMillis = 0L,
+                isJumuah = false
+            )
+        )
+        coEvery { getPrayerTimesUseCase.invoke(any(), any(), any(), any(), any(), any(), any()) } returns success(emptyList())
+        every { formatter.withLocalizedNames(any()) } returns listOf(localizedFajr, localizedDhuhr)
+        every { formatter.getInitialTimeInfo(any(), any(), any(), any()) } returns TimeUiState()
+        every { formatter.locationInfo(any()) } returns "Istanbul, TR"
+
+        val loader = PrayerTimesLoader(getPrayerTimesUseCase, dailyLoader, calculator, formatter)
+        val loaded = loader.load(location, CalculationMethod.TURKEY_DIYANET).getOrThrow()
+
+        assertThat(loaded.prayerState.currentPrayer?.name).isEqualTo("İmsak")
+        assertThat(loaded.prayerState.nextPrayer?.name).isEqualTo("Öğle")
+        assertThat(loaded.prayerState.prayers[0].isCurrent).isTrue()
+        assertThat(loaded.prayerState.prayers[1].isCurrent).isFalse()
+    }
+
+    @Test
     fun `load maps failure to a failed Result`() = runTest {
         coEvery { dailyLoader.load(any(), any(), any(), any(), any(), any(), any()) } returns
             Result.failure(RuntimeException("fetch failed"))

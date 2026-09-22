@@ -8,6 +8,7 @@ import com.kutluoglu.prayer.domain.PrayerTimeEngineSource
 import com.kutluoglu.prayer.model.prayer.CalculationMethod
 import com.kutluoglu.prayer.model.prayer.JuristicMethod
 import com.kutluoglu.wear.shared.model.WatchTileData
+import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.LocalDateTime
 import org.junit.jupiter.api.Test
 import java.time.Clock
@@ -34,7 +35,7 @@ class WatchTileDataBuilderTest {
     private val builder = builderWith(clock)
 
     @Test
-    fun `build returns six prayers with localized names`() {
+    fun `build returns six prayers with localized names`() = runTest {
         val data = buildData()
         assertThat(data).isNotNull()
         val result = data!!
@@ -45,7 +46,7 @@ class WatchTileDataBuilderTest {
     }
 
     @Test
-    fun `next prayer is after current time`() {
+    fun `next prayer is after current time`() = runTest {
         val data = buildData()
         assertThat(data).isNotNull()
         val result = data!!
@@ -56,7 +57,7 @@ class WatchTileDataBuilderTest {
     }
 
     @Test
-    fun `isJumuah is true when next prayer is Dhuhr on Friday`() {
+    fun `isJumuah is true when next prayer is Dhuhr on Friday`() = runTest {
         val data = buildData()
         assertThat(data).isNotNull()
         val result = data!!
@@ -68,7 +69,7 @@ class WatchTileDataBuilderTest {
     }
 
     @Test
-    fun `isJumuah is false when next prayer is Dhuhr on a non-Friday`() {
+    fun `isJumuah is false when next prayer is Dhuhr on a non-Friday`() = runTest {
         val data = buildData(date = LocalDateTime(2026, 9, 17, 10, 0))
         assertThat(data).isNotNull()
         val result = data!!
@@ -78,7 +79,7 @@ class WatchTileDataBuilderTest {
     }
 
     @Test
-    fun `prayer times are formatted as HH mm`() {
+    fun `prayer times are formatted as HH mm`() = runTest {
         val data = buildData()
         assertThat(data).isNotNull()
         val result = data!!
@@ -89,7 +90,7 @@ class WatchTileDataBuilderTest {
     }
 
     @Test
-    fun `syncedAtEpochMillis is approximately now`() {
+    fun `syncedAtEpochMillis is approximately now`() = runTest {
         val data = buildData()
         assertThat(data).isNotNull()
         val result = data!!
@@ -99,7 +100,7 @@ class WatchTileDataBuilderTest {
     }
 
     @Test
-    fun `before first prayer returns sunrise as next and isha as current`() {
+    fun `before first prayer returns sunrise as next and isha as current`() = runTest {
         // 03:00 in Istanbul, before Sunrise.
         val beforeSunriseClock = Clock.fixed(Instant.parse("2026-09-18T00:00:00Z"), zoneId)
         val data = buildData(builder = builderWith(beforeSunriseClock))
@@ -114,7 +115,7 @@ class WatchTileDataBuilderTest {
     }
 
     @Test
-    fun `after last prayer returns tomorrow sunrise as next`() {
+    fun `after last prayer returns tomorrow sunrise as next`() = runTest {
         // 23:00 in Istanbul, after Isha.
         val afterIshaClock = Clock.fixed(Instant.parse("2026-09-18T20:00:00Z"), zoneId)
         val data = buildData(builder = builderWith(afterIshaClock))
@@ -137,7 +138,7 @@ class WatchTileDataBuilderTest {
         )
     )
 
-    private fun buildData(
+    private suspend fun buildData(
         builder: WatchTileDataBuilder = this.builder,
         date: LocalDateTime = this.date
     ): WatchTileData? = builder.build(

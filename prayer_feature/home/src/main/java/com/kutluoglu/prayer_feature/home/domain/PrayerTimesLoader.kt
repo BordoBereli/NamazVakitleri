@@ -61,7 +61,7 @@ class PrayerTimesLoader(
         ).map { result ->
             val localized = formatter.withLocalizedNames(result.prayers)
             LoadedPrayerData(
-                prayerState = buildPrayerState(localized, result.currentPrayer, result.nextPrayer),
+                prayerState = buildPrayerState(result.prayers, localized, result.currentPrayer, result.nextPrayer),
                 timeState = formatter.getInitialTimeInfo(zoneId, hijriAdjustment = hijriAdjustment),
                 locationState = LocationUiState(
                     locationData = location,
@@ -81,21 +81,23 @@ class PrayerTimesLoader(
 
     /**
      * Builds the [PrayerUiState] from the loader's current/next prayers. The loader
-     * returns raw (English-named) prayers, so the current/next are mapped back onto the
-     * localized list by time (preserving the date, which may be tomorrow for the next
-     * prayer after Isha). The [isCurrent] flag is computed by time + date, not by name,
-     * so it stays correct across languages.
+     * returns raw (English-named) prayers. The raw current/next are elements of
+     * [rawPrayers] (or a date-shifted copy after Isha), so they are mapped by index
+     * into the localized list (same size/order guaranteed by `withLocalizedNames`),
+     * preserving the raw date. The [isCurrent] flag is computed by time + date, not
+     * by name, so it stays correct across languages.
      */
     private fun buildPrayerState(
+        rawPrayers: List<Prayer>,
         localized: List<Prayer>,
         currentPrayer: Prayer?,
         nextPrayer: Prayer?
     ): PrayerUiState {
         val localizedCurrent = currentPrayer?.let { raw ->
-            localized.firstOrNull { it.time == raw.time }?.copy(date = raw.date)
+            localized.getOrNull(rawPrayers.indexOfFirst { it.time == raw.time })?.copy(date = raw.date)
         }
         val localizedNext = nextPrayer?.let { raw ->
-            localized.firstOrNull { it.time == raw.time }?.copy(date = raw.date)
+            localized.getOrNull(rawPrayers.indexOfFirst { it.time == raw.time })?.copy(date = raw.date)
         }
         val prayersWithCurrent = localized.map { prayer ->
             prayer.copy(

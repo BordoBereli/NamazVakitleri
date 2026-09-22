@@ -8,7 +8,6 @@ import com.kutluoglu.prayer.model.prayer.JuristicMethod
 import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.wear.shared.model.WatchPrayer
 import com.kutluoglu.wear.shared.model.WatchTileData
-import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.LocalDateTime
 import org.koin.core.annotation.Factory
 import java.time.ZoneId
@@ -34,7 +33,7 @@ class WatchTileDataBuilder(
      * `WidgetDataProvider` derives its date from the same clock; if the two
      * disagree, current/next selection will not match the computed date.
      */
-    fun build(
+    suspend fun build(
         latitude: Double,
         longitude: Double,
         zoneId: ZoneId,
@@ -44,23 +43,22 @@ class WatchTileDataBuilder(
         locationName: String,
         prayerNames: List<String>
     ): WatchTileData? {
-        val result = runBlocking {
-            dailyLoader.load(
-                date = date,
-                latitude = latitude,
-                longitude = longitude,
-                zoneId = zoneId,
-                calculationMethod = calculationMethod,
-                juristicMethod = juristicMethod,
-                persistDailyCache = false
-            )
-        }.getOrNull() ?: return null
+        val result = dailyLoader.load(
+            date = date,
+            latitude = latitude,
+            longitude = longitude,
+            zoneId = zoneId,
+            calculationMethod = calculationMethod,
+            juristicMethod = juristicMethod,
+            persistDailyCache = false
+        ).getOrNull() ?: return null
         val localizedPrayers = localizeNames(result.prayers, prayerNames)
-        // The loader returns raw (English-named) prayers; map the next prayer back
-        // onto the localized list by time, preserving its date (which may be
-        // tomorrow for the next prayer after Isha).
+        // The loader returns raw (English-named) prayers. The raw current/next are
+        // elements of result.prayers (or a date-shifted copy after Isha), so map by
+        // index into the localized list (same size/order guaranteed by localizeNames),
+        // preserving the raw date.
         val nextPrayer = result.nextPrayer?.let { raw ->
-            localizedPrayers.firstOrNull { it.time == raw.time }?.copy(date = raw.date)
+            localizedPrayers.getOrNull(result.prayers.indexOfFirst { it.time == raw.time })?.copy(date = raw.date)
         } ?: return null
         return WatchTileData(
             locationName = locationName,

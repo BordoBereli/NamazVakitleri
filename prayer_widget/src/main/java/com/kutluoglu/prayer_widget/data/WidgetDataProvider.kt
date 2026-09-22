@@ -44,11 +44,15 @@ class WidgetDataProvider(
             persistDailyCache = false
         ).getOrNull() ?: return WidgetResult.Error
         val localizedPrayers = formatter.withLocalizedNames(result.prayers)
+        // The loader returns raw (English-named) prayers. The raw current/next are
+        // elements of result.prayers (or a date-shifted copy after Isha), so map by
+        // index into the localized list (same size/order guaranteed by
+        // withLocalizedNames), preserving the raw date.
         val nextPrayer = result.nextPrayer?.let { raw ->
-            localizedPrayers.firstOrNull { it.time == raw.time }?.copy(date = raw.date)
+            localizedPrayers.getOrNull(result.prayers.indexOfFirst { it.time == raw.time })?.copy(date = raw.date)
         } ?: return WidgetResult.Error
         val currentPrayer = result.currentPrayer?.let { raw ->
-            localizedPrayers.firstOrNull { it.time == raw.time }?.copy(date = raw.date)
+            localizedPrayers.getOrNull(result.prayers.indexOfFirst { it.time == raw.time })?.copy(date = raw.date)
         }
         val duration = calculator.calculateTimeRemaining(nextPrayer.time, zoneId)
         val countdownText = duration.toKotlinDuration().toComponents { _, hours, minutes, _, _ ->
