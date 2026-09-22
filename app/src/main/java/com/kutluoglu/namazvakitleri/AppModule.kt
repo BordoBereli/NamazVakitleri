@@ -4,12 +4,15 @@ import android.content.Context
 import com.kutluoglu.core.common.AppVersion
 import com.kutluoglu.namazvakitleri.locale.LocaleManager
 import com.kutluoglu.namazvakitleri.notifications.NotificationRescheduler
+import com.kutluoglu.namazvakitleri.notifications.PrayerCalculationSettingsProviderImpl
 import com.kutluoglu.namazvakitleri.push.PushTopicCoordinator
 import com.kutluoglu.prayer_location.LocationsCoordinator
+import com.kutluoglu.prayer_notifications.domain.PrayerCalculationSettingsProvider
 import com.kutluoglu.prayer_notifications.push.TopicSubscriptionManager
 import com.kutluoglu.prayer_notifications.scheduler.AlarmScheduler
 import com.kutluoglu.prayer_settings.data.local.SettingsDataStore
 import com.kutluoglu.prayer_settings.domain.repository.SettingsRepository
+import com.kutluoglu.prayer_settings.domain.usecase.GetSettingsUseCase
 import com.kutluoglu.prayer_widget.WidgetRefresher
 import org.koin.core.annotation.Configuration
 import org.koin.core.annotation.Module
@@ -41,6 +44,11 @@ object AppModule {
         settingsRepository: SettingsRepository,
         locationsCoordinator: LocationsCoordinator
     ): NotificationRescheduler = NotificationRescheduler(scheduler, settingsRepository, locationsCoordinator)
+
+    @Single
+    fun providePrayerCalculationSettingsProvider(
+        getSettingsUseCase: GetSettingsUseCase
+    ): PrayerCalculationSettingsProvider = PrayerCalculationSettingsProviderImpl(getSettingsUseCase)
 
     @Single
     fun providePushTopicCoordinator(

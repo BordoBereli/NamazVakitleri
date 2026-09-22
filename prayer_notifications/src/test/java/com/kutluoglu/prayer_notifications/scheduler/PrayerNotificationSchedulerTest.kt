@@ -14,13 +14,12 @@ import com.kutluoglu.prayer_location.LocationsCoordinator
 import com.kutluoglu.prayer_notifications.data.NotificationSettingsDataStore
 import com.kutluoglu.prayer_notifications.domain.AlarmType
 import com.kutluoglu.prayer_notifications.domain.NotificationSettings
+import com.kutluoglu.prayer_notifications.domain.PrayerCalculationSettings
+import com.kutluoglu.prayer_notifications.domain.PrayerCalculationSettingsProvider
 import com.kutluoglu.prayer_notifications.domain.SchedulePlan
 import com.kutluoglu.prayer_notifications.domain.SpecialDay
 import com.kutluoglu.prayer_notifications.domain.SpecialDaysCalculator
 import com.kutluoglu.prayer_notifications.manager.NotificationDisplayer
-import com.kutluoglu.prayer_settings.domain.model.LocationSettings
-import com.kutluoglu.prayer_settings.domain.model.Settings
-import com.kutluoglu.prayer_settings.domain.usecase.GetSettingsUseCase
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -53,7 +52,7 @@ class PrayerNotificationSchedulerTest {
     private val schedulePlan = SchedulePlan()
     private val getPrayerTimesUseCase = mockk<GetPrayerTimesUseCase>(relaxed = true)
     private val locationsCoordinator = mockk<LocationsCoordinator>(relaxed = true)
-    private val getSettingsUseCase = mockk<GetSettingsUseCase>(relaxed = true)
+    private val prayerCalculationSettingsProvider = mockk<PrayerCalculationSettingsProvider>(relaxed = true)
     private val notificationDisplayer = mockk<NotificationDisplayer>(relaxed = true)
 
     private fun scheduler(
@@ -65,7 +64,7 @@ class PrayerNotificationSchedulerTest {
         schedulePlan = schedulePlan,
         getPrayerTimesUseCase = getPrayerTimesUseCase,
         locationsCoordinator = locationsCoordinator,
-        getSettingsUseCase = getSettingsUseCase,
+        prayerCalculationSettingsProvider = prayerCalculationSettingsProvider,
         notificationDisplayer = notificationDisplayer,
         specialDaysCalculator = specialDaysCalculator,
         scope = scope
@@ -131,9 +130,10 @@ class PrayerNotificationSchedulerTest {
             county = null,
             timeZoneId = "Europe/Istanbul"
         )
-        coEvery { getSettingsUseCase() } returns Settings(
-            location = LocationSettings(timeZone = "Europe/Istanbul"),
-            calculationMethod = "TURKEY_DIYANET"
+        coEvery { prayerCalculationSettingsProvider.getSettings() } returns PrayerCalculationSettings(
+            calculationMethod = "TURKEY_DIYANET",
+            juristicMethod = "STANDARD",
+            hijriAdjustment = 0
         )
         coEvery { getPrayerTimesUseCase(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
             listOf(
@@ -165,9 +165,10 @@ class PrayerNotificationSchedulerTest {
             county = null,
             timeZoneId = "Not/AZone"
         )
-        coEvery { getSettingsUseCase() } returns Settings(
-            location = LocationSettings(timeZone = "Europe/Istanbul"),
-            calculationMethod = "TURKEY_DIYANET"
+        coEvery { prayerCalculationSettingsProvider.getSettings() } returns PrayerCalculationSettings(
+            calculationMethod = "TURKEY_DIYANET",
+            juristicMethod = "STANDARD",
+            hijriAdjustment = 0
         )
         coEvery { getPrayerTimesUseCase(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
             listOf(
@@ -270,9 +271,10 @@ class PrayerNotificationSchedulerTest {
             county = null,
             timeZoneId = "Europe/Istanbul"
         )
-        coEvery { getSettingsUseCase() } returns Settings(
-            location = LocationSettings(timeZone = "Europe/Istanbul"),
-            calculationMethod = "TURKEY_DIYANET"
+        coEvery { prayerCalculationSettingsProvider.getSettings() } returns PrayerCalculationSettings(
+            calculationMethod = "TURKEY_DIYANET",
+            juristicMethod = "STANDARD",
+            hijriAdjustment = 0
         )
         coEvery { getPrayerTimesUseCase(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
             listOf(
@@ -316,9 +318,10 @@ class PrayerNotificationSchedulerTest {
             county = null,
             timeZoneId = "Europe/Istanbul"
         )
-        coEvery { getSettingsUseCase() } returns Settings(
-            location = LocationSettings(timeZone = "Europe/Istanbul"),
-            calculationMethod = "TURKEY_DIYANET"
+        coEvery { prayerCalculationSettingsProvider.getSettings() } returns PrayerCalculationSettings(
+            calculationMethod = "TURKEY_DIYANET",
+            juristicMethod = "STANDARD",
+            hijriAdjustment = 0
         )
         coEvery { getPrayerTimesUseCase(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
             listOf(
@@ -367,9 +370,10 @@ class PrayerNotificationSchedulerTest {
             county = null,
             timeZoneId = "Europe/Istanbul"
         )
-        coEvery { getSettingsUseCase() } returns Settings(
-            location = LocationSettings(timeZone = "Europe/Istanbul"),
-            calculationMethod = "TURKEY_DIYANET"
+        coEvery { prayerCalculationSettingsProvider.getSettings() } returns PrayerCalculationSettings(
+            calculationMethod = "TURKEY_DIYANET",
+            juristicMethod = "STANDARD",
+            hijriAdjustment = 0
         )
         coEvery { getPrayerTimesUseCase(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
             listOf(
@@ -416,9 +420,10 @@ class PrayerNotificationSchedulerTest {
             county = null,
             timeZoneId = "Europe/Istanbul"
         )
-        coEvery { getSettingsUseCase() } returns Settings(
-            location = LocationSettings(timeZone = "Europe/Istanbul"),
-            calculationMethod = "TURKEY_DIYANET"
+        coEvery { prayerCalculationSettingsProvider.getSettings() } returns PrayerCalculationSettings(
+            calculationMethod = "TURKEY_DIYANET",
+            juristicMethod = "STANDARD",
+            hijriAdjustment = 0
         )
         coEvery { getPrayerTimesUseCase(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
             listOf(
@@ -450,9 +455,10 @@ class PrayerNotificationSchedulerTest {
             county = null,
             timeZoneId = "Europe/Istanbul"
         )
-        coEvery { getSettingsUseCase() } returns Settings(
-            location = LocationSettings(timeZone = "Europe/Istanbul"),
-            calculationMethod = "TURKEY_DIYANET"
+        coEvery { prayerCalculationSettingsProvider.getSettings() } returns PrayerCalculationSettings(
+            calculationMethod = "TURKEY_DIYANET",
+            juristicMethod = "STANDARD",
+            hijriAdjustment = 0
         )
         coEvery { getPrayerTimesUseCase(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
             listOf(
@@ -503,9 +509,10 @@ class PrayerNotificationSchedulerTest {
             county = null,
             timeZoneId = "Europe/Istanbul"
         )
-        coEvery { getSettingsUseCase() } returns Settings(
-            location = LocationSettings(timeZone = "Europe/Istanbul"),
-            calculationMethod = "TURKEY_DIYANET"
+        coEvery { prayerCalculationSettingsProvider.getSettings() } returns PrayerCalculationSettings(
+            calculationMethod = "TURKEY_DIYANET",
+            juristicMethod = "STANDARD",
+            hijriAdjustment = 0
         )
         coEvery { getPrayerTimesUseCase(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
             listOf(

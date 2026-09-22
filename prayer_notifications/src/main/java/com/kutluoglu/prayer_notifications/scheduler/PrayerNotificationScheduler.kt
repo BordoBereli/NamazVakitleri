@@ -18,11 +18,11 @@ import com.kutluoglu.prayer.usecases.prayer.GetPrayerTimesUseCase
 import com.kutluoglu.prayer_location.LocationsCoordinator
 import com.kutluoglu.prayer_notifications.data.NotificationSettingsDataStore
 import com.kutluoglu.prayer_notifications.domain.AlarmType
+import com.kutluoglu.prayer_notifications.domain.PrayerCalculationSettingsProvider
 import com.kutluoglu.prayer_notifications.domain.SchedulePlan
 import com.kutluoglu.prayer_notifications.domain.ScheduledAlarm
 import com.kutluoglu.prayer_notifications.domain.SpecialDaysCalculator
 import com.kutluoglu.prayer_notifications.manager.NotificationDisplayer
-import com.kutluoglu.prayer_settings.domain.usecase.GetSettingsUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -40,7 +40,7 @@ class PrayerNotificationScheduler(
     private val schedulePlan: SchedulePlan,
     private val getPrayerTimesUseCase: GetPrayerTimesUseCase,
     private val locationsCoordinator: LocationsCoordinator,
-    private val getSettingsUseCase: GetSettingsUseCase,
+    private val prayerCalculationSettingsProvider: PrayerCalculationSettingsProvider,
     private val notificationDisplayer: NotificationDisplayer,
     private val specialDaysCalculator: SpecialDaysCalculator = SpecialDaysCalculator(),
     private val scope: CoroutineScope = CoroutineScope(Dispatchers.IO)
@@ -83,7 +83,7 @@ class PrayerNotificationScheduler(
             return
         }
         notificationDisplayer.createChannels(settings)
-        val appSettings = runCatching { getSettingsUseCase() }.getOrElse {
+        val appSettings = runCatching { prayerCalculationSettingsProvider.getSettings() }.getOrElse {
             cancelAll()
             cancelDailyReschedule()
             return
@@ -313,7 +313,7 @@ class PrayerNotificationScheduler(
         val settings = dataStore.getSettings()
         if (!settings.dailyReminderEnabled) return
         val location = locationsCoordinator.resolveSelected() ?: return
-        val appSettings = runCatching { getSettingsUseCase() }.getOrNull() ?: return
+        val appSettings = runCatching { prayerCalculationSettingsProvider.getSettings() }.getOrNull() ?: return
         val zoneId = resolveZoneId(location)
         val tomorrow = LocalDate.now(zoneId).plusDays(1)
         val method = CalculationMethod.fromSettingsId(appSettings.calculationMethod)
