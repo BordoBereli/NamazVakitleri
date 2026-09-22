@@ -51,6 +51,7 @@ dependencies {
     implementation(project(":core:common"))
     implementation(project(":core:designsystem"))
     implementation(project(":prayer:model"))
+    implementation(project(":prayer:domain"))
     implementation(project(":prayer_location"))
     //endregion
 

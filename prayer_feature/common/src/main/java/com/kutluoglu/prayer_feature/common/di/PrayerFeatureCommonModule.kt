@@ -1,7 +1,11 @@
 package com.kutluoglu.prayer_feature.common.di
 
+import com.kutluoglu.prayer.domain.DailyPrayerTimesSource
+import com.kutluoglu.prayer.domain.GetPrayerTimesSource
+import com.kutluoglu.prayer.usecases.prayer.GetPrayerTimesUseCase
 import org.koin.core.annotation.ComponentScan
 import org.koin.core.annotation.Configuration
+import org.koin.core.annotation.Factory
 import org.koin.core.annotation.Module
 
 /**
@@ -12,4 +16,9 @@ import org.koin.core.annotation.Module
 @Module
 @ComponentScan("com.kutluoglu.prayer_feature.common**")
 @Configuration
-object PrayerFeatureCommonModule
+object PrayerFeatureCommonModule {
+
+    @Factory
+    fun provideDailyPrayerTimesSource(getPrayerTimesUseCase: GetPrayerTimesUseCase): DailyPrayerTimesSource =
+        GetPrayerTimesSource(getPrayerTimesUseCase)
+}

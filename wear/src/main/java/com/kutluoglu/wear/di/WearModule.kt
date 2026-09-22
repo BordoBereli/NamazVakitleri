@@ -11,6 +11,9 @@ import com.google.android.gms.wearable.DataClient
 import com.google.android.gms.wearable.MessageClient
 import com.google.android.gms.wearable.NodeClient
 import com.google.android.gms.wearable.Wearable
+import com.kutluoglu.prayer.domain.DailyPrayerTimesSource
+import com.kutluoglu.prayer.domain.PrayerTimeEngine
+import com.kutluoglu.prayer.domain.PrayerTimeEngineSource
 import com.kutluoglu.wear.data.TileDataRepository
 import com.kutluoglu.wear.data.TileDataStore
 import com.kutluoglu.wear.data.WatchLocationProvider
@@ -25,6 +28,10 @@ import org.koin.core.annotation.Single
 @Configuration
 @ComponentScan("com.kutluoglu.wear")
 class WearModule {
+
+    @Single
+    fun provideDailyPrayerTimesSource(prayerTimeEngine: PrayerTimeEngine): DailyPrayerTimesSource =
+        PrayerTimeEngineSource(prayerTimeEngine)
 
     @Single
     fun provideDataClient(context: Context): DataClient = Wearable.getDataClient(context)
