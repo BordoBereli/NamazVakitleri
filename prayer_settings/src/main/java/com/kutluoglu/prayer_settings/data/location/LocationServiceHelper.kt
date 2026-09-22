@@ -6,7 +6,12 @@ import android.content.pm.PackageManager
 import android.location.Address
 import android.location.Geocoder
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import androidx.core.content.ContextCompat
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
@@ -16,7 +21,6 @@ import kotlinx.coroutines.withContext
 import org.koin.core.annotation.Single
 import java.util.Locale
 import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 
 @Single
 class LocationServiceHelper(
@@ -46,19 +50,40 @@ class LocationServiceHelper(
     @SuppressLint("MissingPermission")
     private suspend fun awaitLastLocation(): android.location.Location? {
         return suspendCancellableCoroutine { continuation ->
-            val cancellationTokenSource = CancellationTokenSource()
-            fusedLocationClient.getCurrentLocation(
-                Priority.PRIORITY_HIGH_ACCURACY,
-                cancellationTokenSource.token
-            ).addOnSuccessListener { location: android.location.Location? ->
-                if (continuation.isActive) {
-                    continuation.resume(location)
+            val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000)
+                .setWaitForAccurateLocation(true)
+                .build()
+            val callback = object : LocationCallback() {
+                override fun onLocationResult(result: LocationResult) {
+                    val location = result.lastLocation
+                    if (location != null && continuation.isActive) {
+                        fusedLocationClient.removeLocationUpdates(this)
+                        continuation.resume(location)
+                    }
                 }
-            }.addOnFailureListener { e ->
-                continuation.resumeWithException(e)
             }
+            val handler = Handler(Looper.getMainLooper())
+            val timeoutRunnable = Runnable {
+                if (continuation.isActive) {
+                    fusedLocationClient.removeLocationUpdates(callback)
+                    fusedLocationClient.lastLocation
+                        .addOnSuccessListener { location ->
+                            if (continuation.isActive) continuation.resume(location)
+                        }
+                        .addOnFailureListener {
+                            if (continuation.isActive) continuation.resume(null)
+                        }
+                }
+            }
+            handler.postDelayed(timeoutRunnable, FRESH_FIX_TIMEOUT_MS)
+            fusedLocationClient.requestLocationUpdates(locationRequest, callback, Looper.getMainLooper())
+                .addOnFailureListener {
+                    handler.removeCallbacks(timeoutRunnable)
+                    if (continuation.isActive) continuation.resume(null)
+                }
             continuation.invokeOnCancellation {
-                cancellationTokenSource.cancel()
+                handler.removeCallbacks(timeoutRunnable)
+                fusedLocationClient.removeLocationUpdates(callback)
             }
         }
     }
@@ -94,6 +119,10 @@ class LocationServiceHelper(
                 }
             }
         }
+    }
+
+    companion object {
+        private const val FRESH_FIX_TIMEOUT_MS = 10_000L
     }
 }
 
