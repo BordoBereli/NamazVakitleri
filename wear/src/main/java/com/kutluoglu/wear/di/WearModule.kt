@@ -21,6 +21,7 @@ import com.kutluoglu.wear.data.WatchSettingsProvider
 import com.kutluoglu.wear.data.WatchTileDataBuilder
 import org.koin.core.annotation.ComponentScan
 import org.koin.core.annotation.Configuration
+import org.koin.core.annotation.Factory
 import org.koin.core.annotation.Module
 import org.koin.core.annotation.Single
 
@@ -29,7 +30,7 @@ import org.koin.core.annotation.Single
 @ComponentScan("com.kutluoglu.wear")
 class WearModule {
 
-    @Single
+    @Factory
     fun provideDailyPrayerTimesSource(prayerTimeEngine: PrayerTimeEngine): DailyPrayerTimesSource =
         PrayerTimeEngineSource(prayerTimeEngine)
 

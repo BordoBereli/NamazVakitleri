@@ -17,8 +17,9 @@ class PrayerTimeEngineSource(
         calculationMethod: CalculationMethod,
         juristicMethod: JuristicMethod,
         persistDailyCache: Boolean
-    ): Result<List<Prayer>> =
-        runCatching {
+    ): Result<List<Prayer>> = try {
+        // The pure engine has no cache; persistDailyCache is intentionally ignored.
+        Result.success(
             engine.calculateDailyPrayerTimes(
                 latitude = latitude,
                 longitude = longitude,
@@ -27,5 +28,8 @@ class PrayerTimeEngineSource(
                 calculationMethod = calculationMethod,
                 juristicMethod = juristicMethod
             )
-        }
+        )
+    } catch (e: Exception) {
+        Result.failure(e)
+    }
 }
