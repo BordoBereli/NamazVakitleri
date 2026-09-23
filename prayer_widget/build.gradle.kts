@@ -39,7 +39,6 @@ dependencies {
     implementation(project(":prayer:domain"))
     implementation(project(":prayer:model"))
     implementation(project(":prayer_location"))
-    implementation(project(":prayer_settings"))
     implementation(project(":prayer_feature:common"))
     implementation(project(":core:common"))
     implementation(project(":wear:shared"))

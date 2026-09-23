@@ -7,9 +7,10 @@ import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.location.resolveZoneId
 import com.kutluoglu.prayer.model.prayer.JuristicMethod
 import com.kutluoglu.prayer.model.prayer.Prayer
+import com.kutluoglu.prayer.settings.AppLocation
+import com.kutluoglu.prayer.settings.AppSettings
+import com.kutluoglu.prayer.settings.SettingsProvider
 import com.kutluoglu.prayer_location.LocationsCoordinator
-import com.kutluoglu.prayer_settings.domain.model.Settings
-import com.kutluoglu.prayer_settings.domain.usecase.GetSettingsUseCase
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -46,6 +47,31 @@ class WidgetDataProviderTest {
 
     private fun countdownFormatter() = mockk<WidgetCountdownFormatter>(relaxed = true)
 
+    private fun appSettings(
+        calculationMethod: String = "TURKEY_DIYANET",
+        juristicMethod: String = "STANDARD",
+        hijriAdjustment: Int = 0,
+        language: String = "system",
+        lockPortrait: Boolean = true,
+        compassAutoRotate: Boolean = true,
+        location: AppLocation = AppLocation(
+            latitude = 41.0082,
+            longitude = 28.9784,
+            cityName = "Istanbul",
+            district = null,
+            country = "Turkey",
+            timeZone = "Europe/Istanbul"
+        )
+    ): AppSettings = AppSettings(
+        calculationMethod = calculationMethod,
+        juristicMethod = juristicMethod,
+        hijriAdjustment = hijriAdjustment,
+        language = language,
+        lockPortrait = lockPortrait,
+        compassAutoRotate = compassAutoRotate,
+        location = location
+    )
+
     private suspend fun withSystemDefaultZone(zoneId: String, block: suspend () -> Unit) {
         val original = TimeZone.getDefault()
         TimeZone.setDefault(TimeZone.getTimeZone(zoneId))
@@ -61,13 +87,13 @@ class WidgetDataProviderTest {
         withSystemDefaultZone("Europe/Istanbul") {
             val dailyLoader = mockk<DailyPrayerTimesLoader>(relaxed = true)
             val locations = mockk<LocationsCoordinator>(relaxed = true)
-            val settings = mockk<GetSettingsUseCase>(relaxed = true)
+            val settings = mockk<SettingsProvider>(relaxed = true)
             val calculator = PrayerLogicEngine(Clock.fixed(Instant.parse("2026-09-02T08:00:00Z"), ZoneOffset.UTC))
             val formatter = mockk<com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter>(relaxed = true)
             val countdown = countdownFormatter()
 
             coEvery { locations.resolveSelected() } returns LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", null)
-            coEvery { settings() } returns Settings()
+            coEvery { settings.getSettings() } returns appSettings()
             coEvery { dailyLoader.load(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
                 dailyTimes(
                     prayers = listOf(
@@ -101,14 +127,14 @@ class WidgetDataProviderTest {
         withSystemDefaultZone("Europe/Istanbul") {
             val dailyLoader = mockk<DailyPrayerTimesLoader>(relaxed = true)
             val locations = mockk<LocationsCoordinator>(relaxed = true)
-            val settings = mockk<GetSettingsUseCase>(relaxed = true)
+            val settings = mockk<SettingsProvider>(relaxed = true)
             val clock = Clock.fixed(Instant.parse("2026-09-02T11:15:00Z"), ZoneOffset.UTC)
             val calculator = PrayerLogicEngine(clock)
             val formatter = mockk<com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter>(relaxed = true)
             val countdown = countdownFormatter()
 
             coEvery { locations.resolveSelected() } returns LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", null)
-            coEvery { settings() } returns Settings()
+            coEvery { settings.getSettings() } returns appSettings()
             coEvery { dailyLoader.load(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
                 dailyTimes(
                     prayers = listOf(
@@ -141,14 +167,14 @@ class WidgetDataProviderTest {
         withSystemDefaultZone("Europe/Istanbul") {
             val dailyLoader = mockk<DailyPrayerTimesLoader>(relaxed = true)
             val locations = mockk<LocationsCoordinator>(relaxed = true)
-            val settings = mockk<GetSettingsUseCase>(relaxed = true)
+            val settings = mockk<SettingsProvider>(relaxed = true)
             val clock = Clock.fixed(Instant.parse("2026-09-02T11:15:00Z"), ZoneOffset.UTC)
             val calculator = PrayerLogicEngine(clock)
             val formatter = mockk<com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter>(relaxed = true)
             val countdown = countdownFormatter()
 
             coEvery { locations.resolveSelected() } returns LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", null)
-            coEvery { settings() } returns Settings()
+            coEvery { settings.getSettings() } returns appSettings()
             coEvery { dailyLoader.load(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
                 dailyTimes(
                     prayers = listOf(
@@ -178,7 +204,7 @@ class WidgetDataProviderTest {
     fun `load returns error when no location`() = runTest {
         val dailyLoader = mockk<DailyPrayerTimesLoader>(relaxed = true)
         val locations = mockk<LocationsCoordinator>(relaxed = true)
-        val settings = mockk<GetSettingsUseCase>(relaxed = true)
+        val settings = mockk<SettingsProvider>(relaxed = true)
         val calculator = mockk<PrayerLogicEngine>(relaxed = true)
         val formatter = mockk<com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter>(relaxed = true)
         val countdown = countdownFormatter()
@@ -195,13 +221,13 @@ class WidgetDataProviderTest {
         withSystemDefaultZone("Europe/Berlin") {
             val dailyLoader = mockk<DailyPrayerTimesLoader>(relaxed = true)
             val locations = mockk<LocationsCoordinator>(relaxed = true)
-            val settings = mockk<GetSettingsUseCase>(relaxed = true)
+            val settings = mockk<SettingsProvider>(relaxed = true)
             val calculator = mockk<PrayerLogicEngine>(relaxed = true)
             val formatter = mockk<com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter>(relaxed = true)
             val countdown = countdownFormatter()
 
             coEvery { locations.resolveSelected() } returns LocationData(41.0, 29.0, "United States", "US", "New York", null)
-            coEvery { settings() } returns Settings()
+            coEvery { settings.getSettings() } returns appSettings()
             coEvery { dailyLoader.load(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
                 dailyTimes(
                     prayers = listOf(prayer("Dhuhr", LocalTime(12, 30))),
@@ -227,13 +253,13 @@ class WidgetDataProviderTest {
         withSystemDefaultZone("Europe/Istanbul") {
             val dailyLoader = mockk<DailyPrayerTimesLoader>(relaxed = true)
             val locations = mockk<LocationsCoordinator>(relaxed = true)
-            val settings = mockk<GetSettingsUseCase>(relaxed = true)
+            val settings = mockk<SettingsProvider>(relaxed = true)
             val calculator = mockk<PrayerLogicEngine>(relaxed = true)
             val formatter = mockk<com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter>(relaxed = true)
             val countdown = countdownFormatter()
 
             coEvery { locations.resolveSelected() } returns LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", null)
-            coEvery { settings() } returns Settings(juristicMethod = "HANAFI")
+            coEvery { settings.getSettings() } returns appSettings(juristicMethod = "HANAFI")
             coEvery { dailyLoader.load(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
                 dailyTimes(
                     prayers = listOf(prayer("Dhuhr", LocalTime(12, 30))),
@@ -257,13 +283,13 @@ class WidgetDataProviderTest {
         withSystemDefaultZone("Europe/Istanbul") {
             val dailyLoader = mockk<DailyPrayerTimesLoader>(relaxed = true)
             val locations = mockk<LocationsCoordinator>(relaxed = true)
-            val settings = mockk<GetSettingsUseCase>(relaxed = true)
+            val settings = mockk<SettingsProvider>(relaxed = true)
             val calculator = PrayerLogicEngine(Clock.fixed(Instant.parse("2026-09-02T08:00:00Z"), ZoneOffset.UTC))
             val formatter = mockk<com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter>(relaxed = true)
             val countdown = countdownFormatter()
 
             coEvery { locations.resolveSelected() } returns LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", null)
-            coEvery { settings() } returns Settings()
+            coEvery { settings.getSettings() } returns appSettings()
             coEvery { dailyLoader.load(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
                 dailyTimes(
                     prayers = listOf(
@@ -298,13 +324,13 @@ class WidgetDataProviderTest {
         withSystemDefaultZone("Europe/Istanbul") {
             val dailyLoader = mockk<DailyPrayerTimesLoader>(relaxed = true)
             val locations = mockk<LocationsCoordinator>(relaxed = true)
-            val settings = mockk<GetSettingsUseCase>(relaxed = true)
+            val settings = mockk<SettingsProvider>(relaxed = true)
             val calculator = PrayerLogicEngine(Clock.fixed(Instant.parse("2026-09-02T08:00:00Z"), ZoneOffset.UTC))
             val formatter = mockk<com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter>(relaxed = true)
             val countdown = countdownFormatter()
 
             coEvery { locations.resolveSelected() } returns LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", null)
-            coEvery { settings() } returns Settings()
+            coEvery { settings.getSettings() } returns appSettings()
             coEvery { dailyLoader.load(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
                 dailyTimes(
                     prayers = listOf(
@@ -338,14 +364,14 @@ class WidgetDataProviderTest {
         withSystemDefaultZone("Europe/Istanbul") {
             val dailyLoader = mockk<DailyPrayerTimesLoader>(relaxed = true)
             val locations = mockk<LocationsCoordinator>(relaxed = true)
-            val settings = mockk<GetSettingsUseCase>(relaxed = true)
+            val settings = mockk<SettingsProvider>(relaxed = true)
             // 10:00 UTC = 13:00 Istanbul, after Dhuhr 12:30 -> next is Asr
             val calculator = PrayerLogicEngine(Clock.fixed(Instant.parse("2026-09-02T10:00:00Z"), ZoneOffset.UTC))
             val formatter = mockk<com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter>(relaxed = true)
             val countdown = countdownFormatter()
 
             coEvery { locations.resolveSelected() } returns LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", null)
-            coEvery { settings() } returns Settings()
+            coEvery { settings.getSettings() } returns appSettings()
             coEvery { dailyLoader.load(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
                 dailyTimes(
                     prayers = listOf(

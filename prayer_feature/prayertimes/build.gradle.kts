@@ -54,7 +54,6 @@ dependencies {
     implementation(project(":prayer_navigation:core"))
     implementation(project(":prayer_feature:common"))
     implementation(project(":prayer_location"))
-    implementation(project(":prayer_settings"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

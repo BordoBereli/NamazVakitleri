@@ -16,9 +16,8 @@ import com.kutluoglu.prayer.model.prayer.DailyPrayer
 import com.kutluoglu.prayer.model.prayer.JuristicMethod
 import com.kutluoglu.prayer.usecases.prayer.GetMonthlyPrayerTimesUseCase
 import com.kutluoglu.prayer.usecases.prayer.SaveMonthlyPrayerTimesUseCase
+import com.kutluoglu.prayer.settings.SettingsProvider
 import com.kutluoglu.prayer_location.ActiveLocationProvider
-import com.kutluoglu.prayer_settings.domain.repository.SettingsRepository
-import com.kutluoglu.prayer_settings.domain.usecase.GetSettingsUseCase
 import com.kutluoglu.prayer_feature.common.states.LocationUiState
 import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
 import com.kutluoglu.prayer_feature.common.states.TimeUiState
@@ -65,8 +64,7 @@ class PrayerTimesViewModel(
         private val activeLocationProvider: ActiveLocationProvider,
         private val calculator: PrayerLogicEngine,
         private val formatter: PrayerFormatter,
-        private val getSettingsUseCase: GetSettingsUseCase,
-        private val settingsRepository: SettingsRepository,
+        private val settingsProvider: SettingsProvider,
         private val analyticsTracker: AnalyticsTracker,
         @Named("prayerSaveScope") private val backgroundSaveScope: CoroutineScope,
         private val computationDispatcher: CoroutineDispatcher = Dispatchers.Default,
@@ -114,7 +112,7 @@ class PrayerTimesViewModel(
                 }
         }
         settingsObserverJob = viewModelScope.launch {
-            settingsRepository.observeSettings()
+            settingsProvider.observeSettings()
                 .map { SettingsKey(it.calculationMethod, it.hijriAdjustment, it.language, it.juristicMethod) }
                 .distinctUntilChanged()
                 .drop(1)
@@ -209,7 +207,7 @@ class PrayerTimesViewModel(
                 isLoading = false
                 return@launch
             }
-            val settings = getSettingsUseCase()
+            val settings = settingsProvider.getSettings()
             val calculationMethod = CalculationMethod.fromSettingsId(settings.calculationMethod)
             val hijriAdjustment = settings.hijriAdjustment
             val juristicMethod = JuristicMethod.fromSettingsId(settings.juristicMethod)

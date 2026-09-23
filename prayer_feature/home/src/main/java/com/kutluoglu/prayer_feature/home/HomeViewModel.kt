@@ -10,8 +10,7 @@ import com.kutluoglu.prayer_location.LocationsCoordinator
 import com.kutluoglu.prayer_location.data.LocationsState
 import com.kutluoglu.prayer.model.prayer.CalculationMethod
 import com.kutluoglu.prayer.model.prayer.JuristicMethod
-import com.kutluoglu.prayer_settings.domain.repository.SettingsRepository
-import com.kutluoglu.prayer_settings.domain.usecase.GetSettingsUseCase
+import com.kutluoglu.prayer.settings.SettingsProvider
 import com.kutluoglu.prayer_feature.home.domain.CountdownEngine
 import com.kutluoglu.prayer_feature.home.domain.LoadedPrayerData
 import com.kutluoglu.prayer_feature.home.domain.PrayerTimesLoader
@@ -44,8 +43,7 @@ class HomeViewModel(
     private val prayerTimesLoader: PrayerTimesLoader,
     private val countdownEngine: CountdownEngine,
     private val quranVerseLoader: QuranVerseLoader,
-    private val getSettingsUseCase: GetSettingsUseCase,
-    private val settingsRepository: SettingsRepository,
+    private val settingsProvider: SettingsProvider,
     private val analyticsTracker: AnalyticsTracker
 ) : ViewModel() {
 
@@ -87,7 +85,7 @@ class HomeViewModel(
             countdownEngine.dayChangedSignal.collect { loadPrayerTimesForCurrentLocation() }
         }
         settingsObserverJob = viewModelScope.launch {
-            settingsRepository.observeSettings()
+            settingsProvider.observeSettings()
                 .map { SettingsKey(it.calculationMethod, it.language, it.juristicMethod) }
                 .distinctUntilChanged()
                 .drop(1)
@@ -369,7 +367,7 @@ class HomeViewModel(
     )
 
     private suspend fun currentSettings(): HomeSettings {
-        val settings = getSettingsUseCase()
+        val settings = settingsProvider.getSettings()
         return HomeSettings(
             method = CalculationMethod.fromSettingsId(settings.calculationMethod),
             hijriAdjustment = settings.hijriAdjustment,

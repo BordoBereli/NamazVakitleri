@@ -44,6 +44,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":prayer:domain"))
     implementation(project(":prayer:model"))
     implementation(project(":core:common"))
     implementation(project(":prayer_location"))

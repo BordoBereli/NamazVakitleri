@@ -8,11 +8,11 @@ import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.location.LocationEntry
 import com.kutluoglu.prayer.model.prayer.CalculationMethod
 import com.kutluoglu.prayer.model.prayer.JuristicMethod
+import com.kutluoglu.prayer.settings.AppLocation
+import com.kutluoglu.prayer.settings.AppSettings
+import com.kutluoglu.prayer.settings.SettingsProvider
 import com.kutluoglu.prayer_location.LocationsCoordinator
 import com.kutluoglu.prayer_location.data.LocationsState
-import com.kutluoglu.prayer_settings.domain.model.Settings
-import com.kutluoglu.prayer_settings.domain.repository.SettingsRepository
-import com.kutluoglu.prayer_settings.domain.usecase.GetSettingsUseCase
 import com.kutluoglu.prayer_feature.common.states.LocationUiState
 import com.kutluoglu.prayer_feature.common.states.TimeUiState
 import com.kutluoglu.prayer_feature.home.domain.CountdownEngine
@@ -52,8 +52,7 @@ class HomeViewModelTest {
     private val prayerTimesLoader: PrayerTimesLoader = mockk(relaxed = true)
     private val countdownEngine: CountdownEngine = mockk(relaxed = true)
     private val quranVerseLoader: QuranVerseLoader = mockk(relaxed = true)
-    private val getSettingsUseCase: GetSettingsUseCase = mockk(relaxed = true)
-    private val settingsRepository: SettingsRepository = mockk(relaxed = true)
+    private val settingsProvider: SettingsProvider = mockk(relaxed = true)
     private val analyticsTracker: AnalyticsTracker = mockk(relaxed = true)
 
     private val location = LocationData(
@@ -78,13 +77,37 @@ class HomeViewModelTest {
         zoneId = ZoneId.of("Europe/Istanbul")
     )
 
+    private fun appSettings(
+        calculationMethod: String = "TURKEY_DIYANET",
+        juristicMethod: String = "STANDARD",
+        hijriAdjustment: Int = 0,
+        language: String = "system",
+        lockPortrait: Boolean = true,
+        compassAutoRotate: Boolean = true,
+        location: AppLocation = AppLocation(
+            latitude = 41.0082,
+            longitude = 28.9784,
+            cityName = "Istanbul",
+            district = null,
+            country = "Turkey",
+            timeZone = "Europe/Istanbul"
+        )
+    ): AppSettings = AppSettings(
+        calculationMethod = calculationMethod,
+        juristicMethod = juristicMethod,
+        hijriAdjustment = hijriAdjustment,
+        language = language,
+        lockPortrait = lockPortrait,
+        compassAutoRotate = compassAutoRotate,
+        location = location
+    )
+
     private fun viewModel() = HomeViewModel(
         locationsCoordinator,
         prayerTimesLoader,
         countdownEngine,
         quranVerseLoader,
-        getSettingsUseCase,
-        settingsRepository,
+        settingsProvider,
         analyticsTracker
     )
 
@@ -95,8 +118,8 @@ class HomeViewModelTest {
         every { Log.e(any<String>(), any<String>()) } returns 0
         every { countdownEngine.prayerPassedSignal } returns kotlinx.coroutines.flow.MutableSharedFlow()
         every { countdownEngine.dayChangedSignal } returns kotlinx.coroutines.flow.MutableSharedFlow()
-        coEvery { getSettingsUseCase() } returns Settings(calculationMethod = "TURKEY_DIYANET")
-        every { settingsRepository.observeSettings() } returns flowOf(Settings())
+        coEvery { settingsProvider.getSettings() } returns appSettings(calculationMethod = "TURKEY_DIYANET")
+        every { settingsProvider.observeSettings() } returns flowOf(appSettings())
     }
 
     @AfterEach
@@ -419,22 +442,22 @@ class HomeViewModelTest {
 
     @Test
     fun `calculation method change clears cache and reloads with new method`() = runTest {
-        val settingsFlow = MutableStateFlow(Settings(calculationMethod = "TURKEY_DIYANET"))
+        val settingsFlow = MutableStateFlow(appSettings(calculationMethod = "TURKEY_DIYANET"))
         coEvery { locationsCoordinator.observeState() } returns flowOf(
             LocationsState(entries = listOf(entry), selectedId = "loc-1")
         )
         coEvery { locationsCoordinator.resolveInitial() } returns location
         coEvery { locationsCoordinator.resolveSelected() } returns location
-        coEvery { getSettingsUseCase() } returns Settings(calculationMethod = "TURKEY_DIYANET")
-        every { settingsRepository.observeSettings() } returns settingsFlow
+        coEvery { settingsProvider.getSettings() } returns appSettings(calculationMethod = "TURKEY_DIYANET")
+        every { settingsProvider.observeSettings() } returns settingsFlow
         coEvery { prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET, any()) } returns success(loadedData())
 
         val vm = viewModel()
         coVerify(exactly = 1) { prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET, any()) }
 
-        coEvery { getSettingsUseCase() } returns Settings(calculationMethod = "MWL")
+        coEvery { settingsProvider.getSettings() } returns appSettings(calculationMethod = "MWL")
         coEvery { prayerTimesLoader.load(location, CalculationMethod.MWL, any()) } returns success(loadedData())
-        settingsFlow.value = Settings(calculationMethod = "MWL")
+        settingsFlow.value = appSettings(calculationMethod = "MWL")
 
         coVerify { prayerTimesLoader.load(location, CalculationMethod.MWL, any()) }
     }
@@ -442,15 +465,15 @@ class HomeViewModelTest {
     @Test
     fun `juristic method change clears cache and reloads with new method`() = runTest {
         val settingsFlow = MutableStateFlow(
-            Settings(calculationMethod = "TURKEY_DIYANET", juristicMethod = "STANDARD")
+            appSettings(calculationMethod = "TURKEY_DIYANET", juristicMethod = "STANDARD")
         )
         coEvery { locationsCoordinator.observeState() } returns flowOf(
             LocationsState(entries = listOf(entry), selectedId = "loc-1")
         )
         coEvery { locationsCoordinator.resolveInitial() } returns location
         coEvery { locationsCoordinator.resolveSelected() } returns location
-        coEvery { getSettingsUseCase() } returns Settings(calculationMethod = "TURKEY_DIYANET", juristicMethod = "STANDARD")
-        every { settingsRepository.observeSettings() } returns settingsFlow
+        coEvery { settingsProvider.getSettings() } returns appSettings(calculationMethod = "TURKEY_DIYANET", juristicMethod = "STANDARD")
+        every { settingsProvider.observeSettings() } returns settingsFlow
         coEvery {
             prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET, any(), JuristicMethod.STANDARD)
         } returns success(loadedData())
@@ -460,11 +483,11 @@ class HomeViewModelTest {
             prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET, any(), JuristicMethod.STANDARD)
         }
 
-        coEvery { getSettingsUseCase() } returns Settings(calculationMethod = "TURKEY_DIYANET", juristicMethod = "HANAFI")
+        coEvery { settingsProvider.getSettings() } returns appSettings(calculationMethod = "TURKEY_DIYANET", juristicMethod = "HANAFI")
         coEvery {
             prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET, any(), JuristicMethod.HANAFI)
         } returns success(loadedData())
-        settingsFlow.value = Settings(calculationMethod = "TURKEY_DIYANET", juristicMethod = "HANAFI")
+        settingsFlow.value = appSettings(calculationMethod = "TURKEY_DIYANET", juristicMethod = "HANAFI")
 
         coVerify {
             prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET, any(), JuristicMethod.HANAFI)
@@ -473,46 +496,46 @@ class HomeViewModelTest {
 
     @Test
     fun `language change clears cache and reloads`() = runTest {
-        val settingsFlow = MutableStateFlow(Settings(language = "system"))
+        val settingsFlow = MutableStateFlow(appSettings(language = "system"))
         coEvery { locationsCoordinator.observeState() } returns flowOf(
             LocationsState(entries = listOf(entry), selectedId = "loc-1")
         )
         coEvery { locationsCoordinator.resolveInitial() } returns location
         coEvery { locationsCoordinator.resolveSelected() } returns location
-        coEvery { getSettingsUseCase() } returns Settings(language = "system")
-        every { settingsRepository.observeSettings() } returns settingsFlow
+        coEvery { settingsProvider.getSettings() } returns appSettings(language = "system")
+        every { settingsProvider.observeSettings() } returns settingsFlow
         coEvery { prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET, any()) } returns success(loadedData())
 
         val vm = viewModel()
         coVerify(exactly = 1) { prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET, any()) }
 
-        coEvery { getSettingsUseCase() } returns Settings(language = "en")
-        settingsFlow.value = Settings(language = "en")
+        coEvery { settingsProvider.getSettings() } returns appSettings(language = "en")
+        settingsFlow.value = appSettings(language = "en")
 
         coVerify(atLeast = 2) { prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET, any()) }
     }
 
     @Test
     fun `calculation method change keeps gate Loading while data is cleared and reloading`() = runTest {
-        val settingsFlow = MutableStateFlow(Settings(calculationMethod = "TURKEY_DIYANET"))
+        val settingsFlow = MutableStateFlow(appSettings(calculationMethod = "TURKEY_DIYANET"))
         coEvery { locationsCoordinator.observeState() } returns flowOf(
             LocationsState(entries = listOf(entry), selectedId = "loc-1")
         )
         coEvery { locationsCoordinator.resolveInitial() } returns location
         coEvery { locationsCoordinator.resolveSelected() } returns location
-        coEvery { getSettingsUseCase() } returns Settings(calculationMethod = "TURKEY_DIYANET")
-        every { settingsRepository.observeSettings() } returns settingsFlow
+        coEvery { settingsProvider.getSettings() } returns appSettings(calculationMethod = "TURKEY_DIYANET")
+        every { settingsProvider.observeSettings() } returns settingsFlow
         coEvery { prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET, any()) } returns success(loadedData())
 
         val vm = viewModel()
         assertThat(vm.screenGate.value).isEqualTo(HomeScreenGate.Ready)
 
         val gate = CompletableDeferred<LoadedPrayerData>()
-        coEvery { getSettingsUseCase() } returns Settings(calculationMethod = "MWL")
+        coEvery { settingsProvider.getSettings() } returns appSettings(calculationMethod = "MWL")
         coEvery { prayerTimesLoader.load(location, CalculationMethod.MWL, any()) } coAnswers {
             Result.success(gate.await())
         }
-        settingsFlow.value = Settings(calculationMethod = "MWL")
+        settingsFlow.value = appSettings(calculationMethod = "MWL")
 
         assertThat(vm.screenGate.value).isEqualTo(HomeScreenGate.Loading)
         assertThat(vm.prayerDataByLocation.value).isEmpty()

@@ -7,13 +7,11 @@ import com.kutluoglu.core.common.analytics.AnalyticsTracker
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.qibla.QiblaState
 import com.kutluoglu.prayer.usecases.qibla.CalculateQiblaUseCase
+import com.kutluoglu.prayer.settings.AppLocation
+import com.kutluoglu.prayer.settings.AppSettings
+import com.kutluoglu.prayer.settings.SettingsProvider
 import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
 import com.kutluoglu.prayer_location.ActiveLocationProvider
-import com.kutluoglu.prayer_settings.domain.model.Settings
-import com.kutluoglu.prayer_settings.domain.usecase.GetSettingsUseCase
-import com.kutluoglu.prayer_settings.domain.usecase.ObserveSettingsUseCase
-import com.kutluoglu.prayer_settings.domain.usecase.UpdateCompassAutoRotateUseCase
-import com.kutluoglu.prayer_settings.domain.usecase.UpdateLockPortraitUseCase
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -38,11 +36,8 @@ class QiblaViewModelTest {
     private val provider = ActiveLocationProvider()
     private val analyticsTracker = mockk<AnalyticsTracker>(relaxed = true)
     private val formatter = mockk<PrayerFormatter>(relaxed = true)
-    private val getSettingsUseCase = mockk<GetSettingsUseCase>(relaxed = true)
-    private val observeSettingsUseCase = mockk<ObserveSettingsUseCase>(relaxed = true)
-    private val updateLockPortraitUseCase = mockk<UpdateLockPortraitUseCase>(relaxed = true)
-    private val updateCompassAutoRotateUseCase = mockk<UpdateCompassAutoRotateUseCase>(relaxed = true)
-    private val settingsFlow = MutableStateFlow(Settings())
+    private val settingsProvider = mockk<SettingsProvider>(relaxed = true)
+    private val settingsFlow = MutableStateFlow(appSettings())
     private lateinit var viewModel: QiblaViewModel
 
     private val location = LocationData(
@@ -52,6 +47,31 @@ class QiblaViewModelTest {
         countryCode = "TR",
         city = "Istanbul",
         county = null
+    )
+
+    private fun appSettings(
+        calculationMethod: String = "TURKEY_DIYANET",
+        juristicMethod: String = "STANDARD",
+        hijriAdjustment: Int = 0,
+        language: String = "system",
+        lockPortrait: Boolean = true,
+        compassAutoRotate: Boolean = true,
+        location: AppLocation = AppLocation(
+            latitude = 41.0082,
+            longitude = 28.9784,
+            cityName = "Istanbul",
+            district = null,
+            country = "Turkey",
+            timeZone = "Europe/Istanbul"
+        )
+    ): AppSettings = AppSettings(
+        calculationMethod = calculationMethod,
+        juristicMethod = juristicMethod,
+        hijriAdjustment = hijriAdjustment,
+        language = language,
+        lockPortrait = lockPortrait,
+        compassAutoRotate = compassAutoRotate,
+        location = location
     )
 
     @BeforeEach
@@ -64,8 +84,8 @@ class QiblaViewModelTest {
             "${loc.city ?: ""}, ${loc.countryCode ?: ""}"
         }
 
-        coEvery { getSettingsUseCase() } returns Settings()
-        every { observeSettingsUseCase() } returns settingsFlow
+        coEvery { settingsProvider.getSettings() } returns appSettings()
+        every { settingsProvider.observeSettings() } returns settingsFlow
 
         Dispatchers.setMain(UnconfinedTestDispatcher())
         provider.set(location)
@@ -74,10 +94,7 @@ class QiblaViewModelTest {
             calculateQiblaUseCase,
             analyticsTracker,
             formatter,
-            getSettingsUseCase,
-            observeSettingsUseCase,
-            updateLockPortraitUseCase,
-            updateCompassAutoRotateUseCase
+            settingsProvider
         )
     }
 
@@ -152,8 +169,8 @@ class QiblaViewModelTest {
 
     @Test
     fun `OnStart loads persisted lockPortrait and compassAutoRotate from settings`() = runTest {
-        coEvery { getSettingsUseCase() } returns Settings(lockPortrait = false, compassAutoRotate = false)
-        settingsFlow.value = Settings(lockPortrait = false, compassAutoRotate = false)
+        coEvery { settingsProvider.getSettings() } returns appSettings(lockPortrait = false, compassAutoRotate = false)
+        settingsFlow.value = appSettings(lockPortrait = false, compassAutoRotate = false)
 
         viewModel.onEvent(QiblaEvent.OnStart)
 
@@ -169,7 +186,7 @@ class QiblaViewModelTest {
     fun `observeSettings flow updates lockPortrait and compassAutoRotate in ui state`() = runTest {
         viewModel.onEvent(QiblaEvent.OnStart)
 
-        settingsFlow.value = Settings(lockPortrait = false, compassAutoRotate = false)
+        settingsFlow.value = appSettings(lockPortrait = false, compassAutoRotate = false)
 
         viewModel.uiState.test {
             val state = awaitItem()
@@ -182,12 +199,12 @@ class QiblaViewModelTest {
     @Test
     fun `ToggleLockPortrait writes false to use case`() = runTest {
         viewModel.onEvent(QiblaEvent.ToggleLockPortrait)
-        coVerify { updateLockPortraitUseCase(false) }
+        coVerify { settingsProvider.updateLockPortrait(false) }
     }
 
     @Test
     fun `ToggleCompassAutoRotate writes false to use case`() = runTest {
         viewModel.onEvent(QiblaEvent.ToggleCompassAutoRotate)
-        coVerify { updateCompassAutoRotateUseCase(false) }
+        coVerify { settingsProvider.updateCompassAutoRotate(false) }
     }
 }

@@ -8,8 +8,8 @@ import com.kutluoglu.prayer.domain.isJumuahPrayer
 import com.kutluoglu.prayer.model.location.resolveZoneId
 import com.kutluoglu.prayer.model.prayer.CalculationMethod
 import com.kutluoglu.prayer.model.prayer.JuristicMethod
+import com.kutluoglu.prayer.settings.SettingsProvider
 import com.kutluoglu.prayer_location.LocationsCoordinator
-import com.kutluoglu.prayer_settings.domain.usecase.GetSettingsUseCase
 import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.toKotlinLocalTime
@@ -22,7 +22,7 @@ import kotlin.time.toKotlinDuration
 class WidgetDataProvider(
     private val dailyLoader: DailyPrayerTimesLoader,
     private val locationsCoordinator: LocationsCoordinator,
-    private val getSettingsUseCase: GetSettingsUseCase,
+    private val settingsProvider: SettingsProvider,
     private val calculator: PrayerLogicEngine,
     private val formatter: PrayerFormatter,
     private val countdownFormatter: WidgetCountdownFormatter,
@@ -31,7 +31,7 @@ class WidgetDataProvider(
     suspend fun load(): WidgetResult {
         val location = locationsCoordinator.resolveSelected() ?: return WidgetResult.Error
         val zoneId = resolveZoneId(location)
-        val settings = runCatching { getSettingsUseCase() }.getOrNull() ?: return WidgetResult.Error
+        val settings = runCatching { settingsProvider.getSettings() }.getOrNull() ?: return WidgetResult.Error
         val method = CalculationMethod.fromSettingsId(settings.calculationMethod)
         val juristicMethod = JuristicMethod.fromSettingsId(settings.juristicMethod)
         val result = dailyLoader.load(

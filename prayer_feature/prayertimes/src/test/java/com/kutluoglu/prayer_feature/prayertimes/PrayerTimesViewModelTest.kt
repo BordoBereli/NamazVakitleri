@@ -20,10 +20,10 @@ import com.kutluoglu.prayer.model.prayer.DailyPrayer
 import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer.usecases.prayer.GetMonthlyPrayerTimesUseCase
 import com.kutluoglu.prayer.usecases.prayer.SaveMonthlyPrayerTimesUseCase
+import com.kutluoglu.prayer.settings.AppLocation
+import com.kutluoglu.prayer.settings.AppSettings
+import com.kutluoglu.prayer.settings.SettingsProvider
 import com.kutluoglu.prayer_location.ActiveLocationProvider
-import com.kutluoglu.prayer_settings.domain.model.Settings
-import com.kutluoglu.prayer_settings.domain.repository.SettingsRepository
-import com.kutluoglu.prayer_settings.domain.usecase.GetSettingsUseCase
 import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
 import com.kutluoglu.prayer_feature.common.states.TimeUiState
 import io.mockk.coEvery
@@ -73,8 +73,7 @@ class PrayerTimesViewModelTest {
     private lateinit var activeLocationProvider: ActiveLocationProvider
     private lateinit var calculator: PrayerLogicEngine
     private lateinit var formatter: PrayerFormatter
-    private lateinit var getSettingsUseCase: GetSettingsUseCase
-    private lateinit var settingsRepository: SettingsRepository
+    private lateinit var settingsProvider: SettingsProvider
     private val analyticsTracker = mockk<AnalyticsTracker>(relaxed = true)
     private val backgroundSaveScope = CoroutineScope(SupervisorJob() + UnconfinedTestDispatcher())
     private lateinit var viewModel: PrayerTimesViewModel
@@ -98,6 +97,31 @@ class PrayerTimesViewModelTest {
         Prayer(name = "Isha", arabicName = "العشاء", time = LocalTime(19, 30), date = LocalDate(2026, 8, 1))
     )
 
+    private fun appSettings(
+        calculationMethod: String = "TURKEY_DIYANET",
+        juristicMethod: String = "STANDARD",
+        hijriAdjustment: Int = 0,
+        language: String = "system",
+        lockPortrait: Boolean = true,
+        compassAutoRotate: Boolean = true,
+        location: AppLocation = AppLocation(
+            latitude = 41.0082,
+            longitude = 28.9784,
+            cityName = "Istanbul",
+            district = null,
+            country = "Turkey",
+            timeZone = "Europe/Istanbul"
+        )
+    ): AppSettings = AppSettings(
+        calculationMethod = calculationMethod,
+        juristicMethod = juristicMethod,
+        hijriAdjustment = hijriAdjustment,
+        language = language,
+        lockPortrait = lockPortrait,
+        compassAutoRotate = compassAutoRotate,
+        location = location
+    )
+
     @BeforeEach
     fun setUp() {
         mockkStatic(Log::class)
@@ -110,16 +134,15 @@ class PrayerTimesViewModelTest {
         activeLocationProvider.set(mockLocation)
         calculator = mockk(relaxed = true)
         formatter = mockk(relaxed = true)
-        getSettingsUseCase = mockk()
-        settingsRepository = mockk()
+        settingsProvider = mockk()
 
         coEvery { dailyLoader.load(any(), any(), any(), any(), any(), any(), any()) } returns success(
             DailyPrayerTimes(mockPrayerList, null, null, 0L, 0L, false)
         )
         coEvery { getMonthlyPrayerTimesUseCase.invoke(any(), any(), any(), any(), any(), any()) } returns null
         coEvery { saveMonthlyPrayerTimesUseCase.invoke(any(), any(), any(), any(), any(), any(), any()) } returns Unit
-        coEvery { getSettingsUseCase() } returns Settings(calculationMethod = "TURKEY_DIYANET")
-        every { settingsRepository.observeSettings() } returns flowOf(Settings())
+        coEvery { settingsProvider.getSettings() } returns appSettings(calculationMethod = "TURKEY_DIYANET")
+        every { settingsProvider.observeSettings() } returns flowOf(appSettings())
         every { calculator.findCurrentAndNextPrayer(any(), any()) } returns Pair(null, null)
         every { formatter.withLocalizedNames(any()) } answers { firstArg() }
         every { formatter.getInitialTimeInfo(any(), any(), any(), any()) } returns TimeUiState(
@@ -142,8 +165,7 @@ class PrayerTimesViewModelTest {
             activeLocationProvider,
             calculator,
             formatter,
-            getSettingsUseCase,
-            settingsRepository,
+            settingsProvider,
             analyticsTracker,
             backgroundSaveScope,
             UnconfinedTestDispatcher(),
@@ -176,7 +198,7 @@ class PrayerTimesViewModelTest {
 
     @Test
     fun `month load requests daily times without persisting per-day cache`() = runTest {
-        coEvery { getSettingsUseCase() } returns Settings(calculationMethod = "TURKEY_DIYANET")
+        coEvery { settingsProvider.getSettings() } returns appSettings(calculationMethod = "TURKEY_DIYANET")
         viewModel.loadMonthlyPrayerTimes()
 
         coVerify(atLeast = currentMonthDays()) {
@@ -328,7 +350,7 @@ class PrayerTimesViewModelTest {
 
     @Test
     fun `loads month with hijri adjustment from settings`() = runTest {
-        coEvery { getSettingsUseCase() } returns Settings(calculationMethod = "TURKEY_DIYANET", hijriAdjustment = 5)
+        coEvery { settingsProvider.getSettings() } returns appSettings(calculationMethod = "TURKEY_DIYANET", hijriAdjustment = 5)
 
         viewModel.loadMonthlyPrayerTimes()
 
@@ -478,7 +500,7 @@ class PrayerTimesViewModelTest {
             )
         }
         coEvery { getMonthlyPrayerTimesUseCase.invoke(any(), any(), any(), any(), any(), any()) } returns cachedMonth
-        coEvery { getSettingsUseCase() } returns Settings(calculationMethod = "TURKEY_DIYANET", hijriAdjustment = 5)
+        coEvery { settingsProvider.getSettings() } returns appSettings(calculationMethod = "TURKEY_DIYANET", hijriAdjustment = 5)
         every { formatter.formatHijriDate(any(), any()) } returns "06 Muharram 1448"
 
         viewModel.loadMonthlyPrayerTimes()
@@ -495,8 +517,8 @@ class PrayerTimesViewModelTest {
 
     @Test
     fun `changing hijri adjustment reloads the month`() = runTest {
-        val settingsFlow = MutableStateFlow(Settings(calculationMethod = "TURKEY_DIYANET", hijriAdjustment = 0))
-        every { settingsRepository.observeSettings() } returns settingsFlow
+        val settingsFlow = MutableStateFlow(appSettings(calculationMethod = "TURKEY_DIYANET", hijriAdjustment = 0))
+        every { settingsProvider.observeSettings() } returns settingsFlow
         var loadCount = 0
         coEvery { getMonthlyPrayerTimesUseCase.invoke(any(), any(), any(), any(), any(), any()) } answers {
             loadCount++
@@ -504,7 +526,7 @@ class PrayerTimesViewModelTest {
         }
 
         viewModel.loadMonthlyPrayerTimes()
-        settingsFlow.value = Settings(calculationMethod = "TURKEY_DIYANET", hijriAdjustment = 3)
+        settingsFlow.value = appSettings(calculationMethod = "TURKEY_DIYANET", hijriAdjustment = 3)
         runCurrent()
 
         assertThat(loadCount).isGreaterThan(1)
@@ -742,8 +764,7 @@ class PrayerTimesViewModelTest {
             activeLocationProvider,
             calculator,
             formatter,
-            getSettingsUseCase,
-            settingsRepository,
+            settingsProvider,
             analyticsTracker,
             backgroundSaveScope,
             Dispatchers.Default
@@ -769,8 +790,8 @@ class PrayerTimesViewModelTest {
 
     @Test
     fun `calculation method change clears month cache and reloads`() = runTest {
-        val settingsFlow = MutableStateFlow(Settings(calculationMethod = "TURKEY_DIYANET"))
-        every { settingsRepository.observeSettings() } returns settingsFlow
+        val settingsFlow = MutableStateFlow(appSettings(calculationMethod = "TURKEY_DIYANET"))
+        every { settingsProvider.observeSettings() } returns settingsFlow
         var callCount = 0
         coEvery { dailyLoader.load(any(), any(), any(), any(), any(), any(), any()) } answers {
             callCount++
@@ -780,8 +801,8 @@ class PrayerTimesViewModelTest {
         viewModel.loadMonthlyPrayerTimes()
         val callsAfterInitial = callCount
 
-        coEvery { getSettingsUseCase() } returns Settings(calculationMethod = "MWL")
-        settingsFlow.value = Settings(calculationMethod = "MWL")
+        coEvery { settingsProvider.getSettings() } returns appSettings(calculationMethod = "MWL")
+        settingsFlow.value = appSettings(calculationMethod = "MWL")
 
         viewModel.uiState.test {
             val state = awaitItem()
@@ -793,8 +814,8 @@ class PrayerTimesViewModelTest {
 
     @Test
     fun `language change clears month cache and reloads`() = runTest {
-        val settingsFlow = MutableStateFlow(Settings(language = "system"))
-        every { settingsRepository.observeSettings() } returns settingsFlow
+        val settingsFlow = MutableStateFlow(appSettings(language = "system"))
+        every { settingsProvider.observeSettings() } returns settingsFlow
         var callCount = 0
         coEvery { dailyLoader.load(any(), any(), any(), any(), any(), any(), any()) } answers {
             callCount++
@@ -804,8 +825,8 @@ class PrayerTimesViewModelTest {
         viewModel.loadMonthlyPrayerTimes()
         val callsAfterInitial = callCount
 
-        coEvery { getSettingsUseCase() } returns Settings(language = "en")
-        settingsFlow.value = Settings(language = "en")
+        coEvery { settingsProvider.getSettings() } returns appSettings(language = "en")
+        settingsFlow.value = appSettings(language = "en")
 
         viewModel.uiState.test {
             val state = awaitItem()

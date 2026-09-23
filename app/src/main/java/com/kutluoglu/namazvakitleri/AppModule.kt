@@ -10,6 +10,7 @@ import com.kutluoglu.prayer_location.LocationsCoordinator
 import com.kutluoglu.prayer_notifications.domain.PrayerCalculationSettingsProvider
 import com.kutluoglu.prayer_notifications.push.TopicSubscriptionManager
 import com.kutluoglu.prayer_notifications.scheduler.AlarmScheduler
+import com.kutluoglu.prayer.settings.SettingsProvider
 import com.kutluoglu.prayer_settings.data.local.SettingsDataStore
 import com.kutluoglu.prayer_settings.domain.repository.SettingsRepository
 import com.kutluoglu.prayer_settings.domain.usecase.GetSettingsUseCase
@@ -58,10 +59,10 @@ object AppModule {
 
     @Single
     fun provideWidgetRefresher(
-        settingsRepository: SettingsRepository,
+        settingsProvider: SettingsProvider,
         locationsCoordinator: LocationsCoordinator,
         context: Context
-    ): WidgetRefresher = WidgetRefresher.create(settingsRepository, locationsCoordinator, context)
+    ): WidgetRefresher = WidgetRefresher.create(settingsProvider, locationsCoordinator, context)
 
     @Single
     fun provideSettingsDataStore(context: Context): SettingsDataStore = SettingsDataStore.create(context)

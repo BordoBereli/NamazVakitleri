@@ -3,10 +3,11 @@ package com.kutluoglu.prayer_widget
 import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.location.LocationEntry
+import com.kutluoglu.prayer.settings.AppLocation
+import com.kutluoglu.prayer.settings.AppSettings
+import com.kutluoglu.prayer.settings.SettingsProvider
 import com.kutluoglu.prayer_location.LocationsCoordinator
 import com.kutluoglu.prayer_location.data.LocationsState
-import com.kutluoglu.prayer_settings.domain.model.Settings
-import com.kutluoglu.prayer_settings.domain.repository.SettingsRepository
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -19,22 +20,47 @@ import org.junit.jupiter.api.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 class WidgetRefresherTest {
 
-    private val settingsRepository = mockk<SettingsRepository>(relaxed = true)
+    private val settingsProvider = mockk<SettingsProvider>(relaxed = true)
     private val locationsCoordinator = mockk<LocationsCoordinator>(relaxed = true)
 
-    private val settingsFlow = MutableStateFlow(Settings())
+    private val settingsFlow = MutableStateFlow(appSettings())
     private val locationsFlow = MutableStateFlow(LocationsState())
 
     private var refreshCount = 0
     private lateinit var refresher: WidgetRefresher
 
+    private fun appSettings(
+        calculationMethod: String = "TURKEY_DIYANET",
+        juristicMethod: String = "STANDARD",
+        hijriAdjustment: Int = 0,
+        language: String = "system",
+        lockPortrait: Boolean = true,
+        compassAutoRotate: Boolean = true,
+        location: AppLocation = AppLocation(
+            latitude = 41.0082,
+            longitude = 28.9784,
+            cityName = "Istanbul",
+            district = null,
+            country = "Turkey",
+            timeZone = "Europe/Istanbul"
+        )
+    ): AppSettings = AppSettings(
+        calculationMethod = calculationMethod,
+        juristicMethod = juristicMethod,
+        hijriAdjustment = hijriAdjustment,
+        language = language,
+        lockPortrait = lockPortrait,
+        compassAutoRotate = compassAutoRotate,
+        location = location
+    )
+
     @BeforeEach
     fun setUp() {
-        every { settingsRepository.observeSettings() } returns settingsFlow
+        every { settingsProvider.observeSettings() } returns settingsFlow
         every { locationsCoordinator.observeState() } returns locationsFlow
         refreshCount = 0
         refresher = WidgetRefresher(
-            settingsRepository = settingsRepository,
+            settingsProvider = settingsProvider,
             locationsCoordinator = locationsCoordinator,
             refreshWidgets = { refreshCount++ },
             debounceMillis = 0
@@ -46,7 +72,7 @@ class WidgetRefresherTest {
         refresher.start(backgroundScope)
         runCurrent()
 
-        settingsFlow.value = Settings(calculationMethod = "ISNA")
+        settingsFlow.value = appSettings(calculationMethod = "ISNA")
         runCurrent()
 
         assertThat(refreshCount).isEqualTo(1)
@@ -94,7 +120,7 @@ class WidgetRefresherTest {
         refresher.start(backgroundScope)
         runCurrent()
 
-        settingsFlow.value = Settings(language = "tr")
+        settingsFlow.value = appSettings(language = "tr")
         runCurrent()
 
         assertThat(refreshCount).isEqualTo(1)

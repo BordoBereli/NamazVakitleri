@@ -2,9 +2,9 @@ package com.kutluoglu.prayer_widget
 
 import android.content.Context
 import androidx.glance.appwidget.updateAll
+import com.kutluoglu.prayer.settings.AppLocation
+import com.kutluoglu.prayer.settings.SettingsProvider
 import com.kutluoglu.prayer_location.LocationsCoordinator
-import com.kutluoglu.prayer_settings.domain.model.LocationSettings
-import com.kutluoglu.prayer_settings.domain.repository.SettingsRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collect
@@ -24,7 +24,7 @@ import kotlinx.coroutines.launch
  */
 @OptIn(FlowPreview::class)
 class WidgetRefresher(
-    private val settingsRepository: SettingsRepository,
+    private val settingsProvider: SettingsProvider,
     private val locationsCoordinator: LocationsCoordinator,
     private val refreshWidgets: suspend () -> Unit,
     private val debounceMillis: Long = 500
@@ -32,7 +32,7 @@ class WidgetRefresher(
 
     fun start(scope: CoroutineScope) {
         scope.launch {
-            settingsRepository.observeSettings()
+            settingsProvider.observeSettings()
                 .map { SettingsKey(it.location, it.calculationMethod, it.juristicMethod, it.hijriAdjustment, it.language) }
                 .distinctUntilChanged()
                 .drop(1)
@@ -50,11 +50,11 @@ class WidgetRefresher(
 
     companion object {
         fun create(
-            settingsRepository: SettingsRepository,
+            settingsProvider: SettingsProvider,
             locationsCoordinator: LocationsCoordinator,
             context: Context
         ): WidgetRefresher = WidgetRefresher(
-            settingsRepository = settingsRepository,
+            settingsProvider = settingsProvider,
             locationsCoordinator = locationsCoordinator,
             refreshWidgets = {
                 PrayerWidget().updateAll(context)
@@ -64,7 +64,7 @@ class WidgetRefresher(
     }
 
     private data class SettingsKey(
-        val location: LocationSettings,
+        val location: AppLocation,
         val calculationMethod: String,
         val juristicMethod: String,
         val hijriAdjustment: Int,
