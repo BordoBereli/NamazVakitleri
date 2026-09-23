@@ -79,7 +79,7 @@ Uygulama, telefonla eşleştirilmiş bir Wear OS akıllı saatte bir **namaz kar
 
 ### Mimari
 
--   `:wear:shared` — `WatchTileData` modeli, JSON/DataMap codec'i ve geri sayım/ring hesaplamaları.
+-   `:prayer_wear_shared` — `WatchTileData` modeli, JSON/DataMap codec'i ve geri sayım/ring hesaplamaları.
 -   `:prayer_widget` — `WatchDataSyncer` ile mevcut widget yenileme hattı üzerinden veriyi saate gönderir; `WatchDataSyncListenerService` saatten gelen senkron isteklerini dinler ve yeniden gönderir.
 -   `:wear` — `PrayerTileService` (Material3TileService) tek sayfalı kartı çizer (altın geri sayım halkası + sonraki namaz); `TileDataRepository` veriyi DataClient'tan okur ve yerel DataStore önbelleğine düşer. Kartta veri yoksa telefona `MessageClient` ile senkron isteği gönderir (pull).
 
