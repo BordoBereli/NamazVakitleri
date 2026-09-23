@@ -47,7 +47,6 @@ dependencies {
     implementation(project(":core:common"))
     implementation(project(":prayer:model"))
     implementation(project(":prayer:domain"))
-    implementation(project(":prayer:data"))
     implementation(project(":prayer_location"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.datastore.preferences)
