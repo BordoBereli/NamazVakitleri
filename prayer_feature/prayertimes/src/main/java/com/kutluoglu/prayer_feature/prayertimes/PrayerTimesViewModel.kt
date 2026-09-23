@@ -7,6 +7,8 @@ import com.kutluoglu.core.common.analytics.AnalyticsParams
 import com.kutluoglu.core.common.analytics.AnalyticsTracker
 import com.kutluoglu.core.common.gregorianDayAndNameFormatter
 import com.kutluoglu.core.common.now
+import com.kutluoglu.core.designsystem.prayerUtils.PrayerFormatter
+import com.kutluoglu.core.designsystem.states.TimeUiState
 import com.kutluoglu.prayer.domain.DailyPrayerTimesLoader
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
 import com.kutluoglu.prayer.model.location.LocationData
@@ -14,13 +16,11 @@ import com.kutluoglu.prayer.model.location.resolveZoneId
 import com.kutluoglu.prayer.model.prayer.CalculationMethod
 import com.kutluoglu.prayer.model.prayer.DailyPrayer
 import com.kutluoglu.prayer.model.prayer.JuristicMethod
+import com.kutluoglu.prayer.settings.SettingsProvider
 import com.kutluoglu.prayer.usecases.prayer.GetMonthlyPrayerTimesUseCase
 import com.kutluoglu.prayer.usecases.prayer.SaveMonthlyPrayerTimesUseCase
-import com.kutluoglu.prayer.settings.SettingsProvider
-import com.kutluoglu.prayer_location.ActiveLocationProvider
 import com.kutluoglu.prayer_feature.common.states.LocationUiState
-import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
-import com.kutluoglu.prayer_feature.common.states.TimeUiState
+import com.kutluoglu.prayer_location.ActiveLocationProvider
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope

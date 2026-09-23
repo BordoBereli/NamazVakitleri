@@ -1,8 +1,8 @@
 package com.kutluoglu.prayer_feature.prayertimes
 
+import com.kutluoglu.core.designsystem.states.TimeUiState
 import com.kutluoglu.prayer.model.prayer.DailyPrayer
 import com.kutluoglu.prayer_feature.common.states.LocationUiState
-import com.kutluoglu.prayer_feature.common.states.TimeUiState
 import kotlinx.datetime.YearMonth
 
 /**

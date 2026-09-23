@@ -2,11 +2,11 @@ package com.kutluoglu.prayer_feature.prayertimes
 
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import com.kutluoglu.core.designsystem.states.TimeUiState
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.prayer.DailyPrayer
 import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer_feature.common.states.LocationUiState
-import com.kutluoglu.prayer_feature.common.states.TimeUiState
 import com.kutluoglu.prayer_feature.prayertimes.components.PrayerContainer
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime

@@ -49,6 +49,7 @@ android {
 dependencies {
     //region --- Project Dependencies ---
     implementation(project(":core:common"))
+    implementation(project(":core:designsystem"))
     implementation(project(":prayer_feature:common"))
     implementation(project(":prayer:domain"))
     implementation(project(":prayer_navigation:core"))

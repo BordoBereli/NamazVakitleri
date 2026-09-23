@@ -4,6 +4,7 @@ import android.util.Log
 import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.core.common.analytics.AnalyticsEvents
 import com.kutluoglu.core.common.analytics.AnalyticsTracker
+import com.kutluoglu.core.designsystem.states.TimeUiState
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.location.LocationEntry
 import com.kutluoglu.prayer.model.prayer.CalculationMethod
@@ -11,10 +12,7 @@ import com.kutluoglu.prayer.model.prayer.JuristicMethod
 import com.kutluoglu.prayer.settings.AppLocation
 import com.kutluoglu.prayer.settings.AppSettings
 import com.kutluoglu.prayer.settings.SettingsProvider
-import com.kutluoglu.prayer_location.LocationsCoordinator
-import com.kutluoglu.prayer_location.data.LocationsState
 import com.kutluoglu.prayer_feature.common.states.LocationUiState
-import com.kutluoglu.prayer_feature.common.states.TimeUiState
 import com.kutluoglu.prayer_feature.home.domain.CountdownEngine
 import com.kutluoglu.prayer_feature.home.domain.LoadedPrayerData
 import com.kutluoglu.prayer_feature.home.domain.PrayerTimesLoader
@@ -22,6 +20,8 @@ import com.kutluoglu.prayer_feature.home.domain.QuranVerseLoader
 import com.kutluoglu.prayer_feature.home.state.HomeScreenGate
 import com.kutluoglu.prayer_feature.home.state.PrayerUiState
 import com.kutluoglu.prayer_feature.home.state.QuranUiState
+import com.kutluoglu.prayer_location.LocationsCoordinator
+import com.kutluoglu.prayer_location.data.LocationsState
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every

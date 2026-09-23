@@ -89,7 +89,7 @@ class WidgetDataProviderTest {
             val locations = mockk<LocationsCoordinator>(relaxed = true)
             val settings = mockk<SettingsProvider>(relaxed = true)
             val calculator = PrayerLogicEngine(Clock.fixed(Instant.parse("2026-09-02T08:00:00Z"), ZoneOffset.UTC))
-            val formatter = mockk<com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter>(relaxed = true)
+            val formatter = mockk<com.kutluoglu.core.designsystem.prayerUtils.PrayerFormatter>(relaxed = true)
             val countdown = countdownFormatter()
 
             coEvery { locations.resolveSelected() } returns LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", null)
@@ -130,7 +130,7 @@ class WidgetDataProviderTest {
             val settings = mockk<SettingsProvider>(relaxed = true)
             val clock = Clock.fixed(Instant.parse("2026-09-02T11:15:00Z"), ZoneOffset.UTC)
             val calculator = PrayerLogicEngine(clock)
-            val formatter = mockk<com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter>(relaxed = true)
+            val formatter = mockk<com.kutluoglu.core.designsystem.prayerUtils.PrayerFormatter>(relaxed = true)
             val countdown = countdownFormatter()
 
             coEvery { locations.resolveSelected() } returns LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", null)
@@ -170,7 +170,7 @@ class WidgetDataProviderTest {
             val settings = mockk<SettingsProvider>(relaxed = true)
             val clock = Clock.fixed(Instant.parse("2026-09-02T11:15:00Z"), ZoneOffset.UTC)
             val calculator = PrayerLogicEngine(clock)
-            val formatter = mockk<com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter>(relaxed = true)
+            val formatter = mockk<com.kutluoglu.core.designsystem.prayerUtils.PrayerFormatter>(relaxed = true)
             val countdown = countdownFormatter()
 
             coEvery { locations.resolveSelected() } returns LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", null)
@@ -206,7 +206,7 @@ class WidgetDataProviderTest {
         val locations = mockk<LocationsCoordinator>(relaxed = true)
         val settings = mockk<SettingsProvider>(relaxed = true)
         val calculator = mockk<PrayerLogicEngine>(relaxed = true)
-        val formatter = mockk<com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter>(relaxed = true)
+        val formatter = mockk<com.kutluoglu.core.designsystem.prayerUtils.PrayerFormatter>(relaxed = true)
         val countdown = countdownFormatter()
 
         coEvery { locations.resolveSelected() } returns null
@@ -223,7 +223,7 @@ class WidgetDataProviderTest {
             val locations = mockk<LocationsCoordinator>(relaxed = true)
             val settings = mockk<SettingsProvider>(relaxed = true)
             val calculator = mockk<PrayerLogicEngine>(relaxed = true)
-            val formatter = mockk<com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter>(relaxed = true)
+            val formatter = mockk<com.kutluoglu.core.designsystem.prayerUtils.PrayerFormatter>(relaxed = true)
             val countdown = countdownFormatter()
 
             coEvery { locations.resolveSelected() } returns LocationData(41.0, 29.0, "United States", "US", "New York", null)
@@ -255,7 +255,7 @@ class WidgetDataProviderTest {
             val locations = mockk<LocationsCoordinator>(relaxed = true)
             val settings = mockk<SettingsProvider>(relaxed = true)
             val calculator = mockk<PrayerLogicEngine>(relaxed = true)
-            val formatter = mockk<com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter>(relaxed = true)
+            val formatter = mockk<com.kutluoglu.core.designsystem.prayerUtils.PrayerFormatter>(relaxed = true)
             val countdown = countdownFormatter()
 
             coEvery { locations.resolveSelected() } returns LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", null)
@@ -285,7 +285,7 @@ class WidgetDataProviderTest {
             val locations = mockk<LocationsCoordinator>(relaxed = true)
             val settings = mockk<SettingsProvider>(relaxed = true)
             val calculator = PrayerLogicEngine(Clock.fixed(Instant.parse("2026-09-02T08:00:00Z"), ZoneOffset.UTC))
-            val formatter = mockk<com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter>(relaxed = true)
+            val formatter = mockk<com.kutluoglu.core.designsystem.prayerUtils.PrayerFormatter>(relaxed = true)
             val countdown = countdownFormatter()
 
             coEvery { locations.resolveSelected() } returns LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", null)
@@ -326,7 +326,7 @@ class WidgetDataProviderTest {
             val locations = mockk<LocationsCoordinator>(relaxed = true)
             val settings = mockk<SettingsProvider>(relaxed = true)
             val calculator = PrayerLogicEngine(Clock.fixed(Instant.parse("2026-09-02T08:00:00Z"), ZoneOffset.UTC))
-            val formatter = mockk<com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter>(relaxed = true)
+            val formatter = mockk<com.kutluoglu.core.designsystem.prayerUtils.PrayerFormatter>(relaxed = true)
             val countdown = countdownFormatter()
 
             coEvery { locations.resolveSelected() } returns LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", null)
@@ -367,7 +367,7 @@ class WidgetDataProviderTest {
             val settings = mockk<SettingsProvider>(relaxed = true)
             // 10:00 UTC = 13:00 Istanbul, after Dhuhr 12:30 -> next is Asr
             val calculator = PrayerLogicEngine(Clock.fixed(Instant.parse("2026-09-02T10:00:00Z"), ZoneOffset.UTC))
-            val formatter = mockk<com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter>(relaxed = true)
+            val formatter = mockk<com.kutluoglu.core.designsystem.prayerUtils.PrayerFormatter>(relaxed = true)
             val countdown = countdownFormatter()
 
             coEvery { locations.resolveSelected() } returns LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", null)

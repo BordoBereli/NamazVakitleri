@@ -1,5 +1,6 @@
 package com.kutluoglu.prayer_feature.home.domain
 
+import com.kutluoglu.core.designsystem.prayerUtils.PrayerFormatter
 import com.kutluoglu.prayer.domain.DailyPrayerTimes
 import com.kutluoglu.prayer.domain.DailyPrayerTimesLoader
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
@@ -7,7 +8,6 @@ import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.prayer.CalculationMethod
 import com.kutluoglu.prayer.model.prayer.JuristicMethod
 import com.kutluoglu.prayer.usecases.prayer.GetPrayerTimesUseCase
-import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every

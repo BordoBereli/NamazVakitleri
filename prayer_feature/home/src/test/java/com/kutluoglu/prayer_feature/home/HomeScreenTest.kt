@@ -12,10 +12,10 @@ import androidx.compose.ui.test.performSemanticsAction
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavController
 import com.google.common.truth.Truth.assertThat
+import com.kutluoglu.core.designsystem.prayerUtils.PrayerFormatter
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.location.LocationEntry
-import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
 import com.kutluoglu.prayer_feature.home.common.QuranVerseFormatter
 import com.kutluoglu.prayer_feature.home.components.HomeEmptyContent
 import com.kutluoglu.prayer_feature.home.state.HomeUiState

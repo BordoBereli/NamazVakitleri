@@ -1,4 +1,4 @@
-package com.kutluoglu.prayer_feature.common.states
+package com.kutluoglu.core.designsystem.states
 
 import java.time.ZoneId
 

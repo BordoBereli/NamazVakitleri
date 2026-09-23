@@ -1,7 +1,7 @@
 package com.kutluoglu.prayer_feature.home.domain
 
+import com.kutluoglu.core.designsystem.prayerUtils.PrayerFormatter
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
-import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
 import com.kutluoglu.prayer_feature.home.state.CountdownUiState
 import com.kutluoglu.prayer_feature.home.state.PrayerUiState
 import kotlinx.coroutines.CoroutineScope

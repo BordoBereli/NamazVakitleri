@@ -5,9 +5,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.navigation.NavController
+import com.kutluoglu.core.designsystem.prayerUtils.PrayerFormatter
 import com.kutluoglu.core.designsystem.utils.LanguageProvider
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
-import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
 import com.kutluoglu.prayer_feature.home.HomeScreen
 import com.kutluoglu.prayer_feature.home.HomeViewModel
 import com.kutluoglu.prayer_feature.home.common.QuranVerseFormatter

@@ -1,9 +1,9 @@
 package com.kutluoglu.prayer_feature.home.prayerUtils
 
 import com.google.common.truth.Truth.assertThat
+import com.kutluoglu.core.designsystem.prayerUtils.PrayerFormatter
+import com.kutluoglu.core.designsystem.prayerUtils.ResourcesProvider
 import com.kutluoglu.prayer.model.prayer.Prayer
-import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
-import com.kutluoglu.prayer_feature.common.prayerUtils.ResourcesProvider
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner

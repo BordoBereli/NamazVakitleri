@@ -40,7 +40,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":wear:shared"))
+    implementation(project(":prayer_wear_shared"))
     implementation(project(":core:common"))
     implementation(project(":prayer:domain"))
 

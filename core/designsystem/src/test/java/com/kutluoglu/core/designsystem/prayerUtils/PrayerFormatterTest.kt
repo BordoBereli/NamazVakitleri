@@ -1,4 +1,4 @@
-package com.kutluoglu.prayer_feature.common.prayerUtils
+package com.kutluoglu.core.designsystem.prayerUtils
 
 import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.prayer.model.prayer.Prayer

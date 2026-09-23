@@ -39,9 +39,9 @@ dependencies {
     implementation(project(":prayer:domain"))
     implementation(project(":prayer:model"))
     implementation(project(":prayer_location"))
-    implementation(project(":prayer_feature:common"))
+    implementation(project(":core:designsystem"))
     implementation(project(":core:common"))
-    implementation(project(":wear:shared"))
+    implementation(project(":prayer_wear_shared"))
     implementation(libs.play.services.wearable)
     implementation(libs.kotlinx.coroutines.play.services)
 

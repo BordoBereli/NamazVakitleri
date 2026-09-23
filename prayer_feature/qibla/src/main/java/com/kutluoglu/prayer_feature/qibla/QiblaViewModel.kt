@@ -7,9 +7,9 @@ import androidx.lifecycle.viewModelScope
 import com.kutluoglu.core.common.analytics.AnalyticsEvents
 import com.kutluoglu.core.common.analytics.AnalyticsParams
 import com.kutluoglu.core.common.analytics.AnalyticsTracker
-import com.kutluoglu.prayer.usecases.qibla.CalculateQiblaUseCase
+import com.kutluoglu.core.designsystem.prayerUtils.PrayerFormatter
 import com.kutluoglu.prayer.settings.SettingsProvider
-import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
+import com.kutluoglu.prayer.usecases.qibla.CalculateQiblaUseCase
 import com.kutluoglu.prayer_location.ActiveLocationProvider
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job

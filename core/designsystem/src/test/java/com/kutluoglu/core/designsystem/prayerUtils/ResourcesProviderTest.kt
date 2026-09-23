@@ -1,4 +1,4 @@
-package com.kutluoglu.prayer_feature.common.prayerUtils
+package com.kutluoglu.core.designsystem.prayerUtils
 
 import android.content.Context
 import android.content.res.Configuration

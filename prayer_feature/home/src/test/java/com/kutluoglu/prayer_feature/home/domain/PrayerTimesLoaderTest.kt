@@ -1,6 +1,8 @@
 package com.kutluoglu.prayer_feature.home.domain
 
 import com.google.common.truth.Truth.assertThat
+import com.kutluoglu.core.designsystem.prayerUtils.PrayerFormatter
+import com.kutluoglu.core.designsystem.states.TimeUiState
 import com.kutluoglu.prayer.domain.DailyPrayerTimes
 import com.kutluoglu.prayer.domain.DailyPrayerTimesLoader
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
@@ -9,8 +11,6 @@ import com.kutluoglu.prayer.model.location.resolveZoneId
 import com.kutluoglu.prayer.model.prayer.CalculationMethod
 import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer.usecases.prayer.GetPrayerTimesUseCase
-import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
-import com.kutluoglu.prayer_feature.common.states.TimeUiState
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every

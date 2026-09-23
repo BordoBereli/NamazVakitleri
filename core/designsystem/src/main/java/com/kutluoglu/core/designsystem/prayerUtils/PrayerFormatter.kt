@@ -1,4 +1,4 @@
-package com.kutluoglu.prayer_feature.common.prayerUtils
+package com.kutluoglu.core.designsystem.prayerUtils
 
 import com.kutluoglu.core.common.gregorianDayAndNameFormatter
 import com.kutluoglu.core.common.gregorianFullFormatter
@@ -6,9 +6,9 @@ import com.kutluoglu.core.common.gregorianShortFormatter
 import com.kutluoglu.core.common.hijriFormatter
 import com.kutluoglu.core.common.timeFormatter
 import com.kutluoglu.core.designsystem.R
+import com.kutluoglu.core.designsystem.states.TimeUiState
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.prayer.Prayer
-import com.kutluoglu.prayer_feature.common.states.TimeUiState
 import org.koin.core.annotation.Factory
 import java.time.Duration
 import java.time.LocalDate

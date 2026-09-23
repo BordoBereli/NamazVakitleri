@@ -28,9 +28,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.kutluoglu.core.designsystem.states.TimeUiState
 import com.kutluoglu.prayer_feature.common.components.LocationInfoSection
 import com.kutluoglu.prayer_feature.common.components.TopContainer
-import com.kutluoglu.prayer_feature.common.states.TimeUiState
 import com.kutluoglu.prayer_feature.common.prayerUtils.getPrayerDrawableIdFrom
 import com.kutluoglu.prayer_feature.home.R
 import com.kutluoglu.prayer_feature.home.domain.RamadanCountdownState

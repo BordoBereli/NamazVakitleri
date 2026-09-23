@@ -1,7 +1,7 @@
 package com.kutluoglu.prayer_feature.home.state
 
+import com.kutluoglu.core.designsystem.states.TimeUiState
 import com.kutluoglu.prayer_feature.common.states.LocationUiState
-import com.kutluoglu.prayer_feature.common.states.TimeUiState
 import kotlinx.datetime.LocalTime
 
 /**

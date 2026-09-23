@@ -1,6 +1,7 @@
 package com.kutluoglu.prayer_widget.data
 
 import com.kutluoglu.core.common.now
+import com.kutluoglu.core.designsystem.prayerUtils.PrayerFormatter
 import com.kutluoglu.prayer.domain.DailyPrayerTimesLoader
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
 import com.kutluoglu.prayer.domain.formatClockTime
@@ -10,7 +11,6 @@ import com.kutluoglu.prayer.model.prayer.CalculationMethod
 import com.kutluoglu.prayer.model.prayer.JuristicMethod
 import com.kutluoglu.prayer.settings.SettingsProvider
 import com.kutluoglu.prayer_location.LocationsCoordinator
-import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.toKotlinLocalTime
 import org.koin.core.annotation.Factory

@@ -4,13 +4,13 @@ import android.util.Log
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.core.common.analytics.AnalyticsTracker
+import com.kutluoglu.core.designsystem.prayerUtils.PrayerFormatter
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.qibla.QiblaState
-import com.kutluoglu.prayer.usecases.qibla.CalculateQiblaUseCase
 import com.kutluoglu.prayer.settings.AppLocation
 import com.kutluoglu.prayer.settings.AppSettings
 import com.kutluoglu.prayer.settings.SettingsProvider
-import com.kutluoglu.prayer_feature.common.prayerUtils.PrayerFormatter
+import com.kutluoglu.prayer.usecases.qibla.CalculateQiblaUseCase
 import com.kutluoglu.prayer_location.ActiveLocationProvider
 import io.mockk.coEvery
 import io.mockk.coVerify

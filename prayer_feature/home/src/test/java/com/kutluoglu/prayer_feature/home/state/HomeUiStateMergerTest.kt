@@ -1,9 +1,9 @@
 package com.kutluoglu.prayer_feature.home.state
 
 import com.google.common.truth.Truth.assertThat
+import com.kutluoglu.core.designsystem.states.TimeUiState
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer_feature.common.states.LocationUiState
-import com.kutluoglu.prayer_feature.common.states.TimeUiState
 import org.junit.jupiter.api.Test
 
 class HomeUiStateMergerTest {
