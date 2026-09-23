@@ -1,4 +1,4 @@
-package com.kutluoglu.prayer.data.qibla
+package com.kutluoglu.prayer.services
 
 import com.kutluoglu.prayer.model.qibla.QiblaState
 import kotlinx.coroutines.flow.Flow

@@ -1,7 +1,7 @@
 package com.kutluoglu.prayer.data.source.qibla
 
-import com.kutluoglu.prayer.data.qibla.QiblaDataStore
 import com.kutluoglu.prayer.model.qibla.QiblaState
+import com.kutluoglu.prayer.services.QiblaDataStore
 import com.kutluoglu.prayer.services.QiblaService
 import kotlinx.coroutines.flow.Flow
 import org.koin.core.annotation.Single

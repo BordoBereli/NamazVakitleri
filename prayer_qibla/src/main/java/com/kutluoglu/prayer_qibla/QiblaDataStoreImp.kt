@@ -1,7 +1,7 @@
 package com.kutluoglu.prayer_qibla
 
-import com.kutluoglu.prayer.data.qibla.QiblaDataStore
 import com.kutluoglu.prayer.model.qibla.QiblaState
+import com.kutluoglu.prayer.services.QiblaDataStore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose

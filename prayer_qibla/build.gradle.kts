@@ -41,7 +41,7 @@ dependencies {
     implementation(project(":core:designsystem"))
     implementation(project(":core:common"))
     implementation(project(":prayer:model"))
-    implementation(project(":prayer:data"))
+    implementation(project(":prayer:domain"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
 
