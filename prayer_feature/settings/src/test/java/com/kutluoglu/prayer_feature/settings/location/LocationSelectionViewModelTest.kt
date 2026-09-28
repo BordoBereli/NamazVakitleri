@@ -294,6 +294,63 @@ class LocationSelectionViewModelTest {
     }
 
     @Test
+    fun `Search failure with unexpected exception should log fixed reason without internal details`() = runTest {
+        coEvery { searchLocationUseCase("Berlin") } throws
+            RuntimeException("HTTP 500 https://nominatim.openstreetmap.org/search failed")
+
+        viewModel.onEvent(LocationSelectionEvent.Search("Berlin"))
+
+        viewModel.uiState.test {
+            awaitItem()
+            val errorState = awaitItem()
+            assertThat(errorState).isInstanceOf(LocationSelectionUiState.Error::class.java)
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        val paramsSlot = slot<Map<String, Any?>>()
+        verify { analyticsTracker.logEvent(AnalyticsEvents.LOCATION_SEARCH_ERROR, capture(paramsSlot)) }
+        assertThat(paramsSlot.captured).containsEntry(AnalyticsParams.REASON, "unknown")
+        assertThat(paramsSlot.captured.values.toString()).doesNotContain("nominatim")
+    }
+
+    @Test
+    fun `Search failure with timeout should log timeout reason`() = runTest {
+        coEvery { searchLocationUseCase("Berlin") } throws RuntimeException("Socket timeout after 30000ms")
+
+        viewModel.onEvent(LocationSelectionEvent.Search("Berlin"))
+
+        viewModel.uiState.test {
+            awaitItem()
+            val errorState = awaitItem()
+            assertThat(errorState).isInstanceOf(LocationSelectionUiState.Error::class.java)
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        val paramsSlot = slot<Map<String, Any?>>()
+        verify { analyticsTracker.logEvent(AnalyticsEvents.LOCATION_SEARCH_ERROR, capture(paramsSlot)) }
+        assertThat(paramsSlot.captured).containsEntry(AnalyticsParams.REASON, "timeout")
+    }
+
+    @Test
+    fun `Search failure with network exception should log network reason`() = runTest {
+        coEvery { searchLocationUseCase("Berlin") } throws NetworkException("No internet")
+
+        viewModel.onEvent(LocationSelectionEvent.Search("Berlin"))
+
+        viewModel.uiState.test {
+            awaitItem()
+            val errorState = awaitItem()
+            assertThat(errorState).isInstanceOf(LocationSelectionUiState.Error::class.java)
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        val paramsSlot = slot<Map<String, Any?>>()
+        verify { analyticsTracker.logEvent(AnalyticsEvents.LOCATION_SEARCH_ERROR, capture(paramsSlot)) }
+        assertThat(paramsSlot.captured).containsEntry(AnalyticsParams.REASON, "network")
+        assertThat(paramsSlot.captured.values).doesNotContain("No internet")
+    }
+
+    @Test
     fun `Search with query shorter than minimum length should not trigger search`() = runTest {
         viewModel.onEvent(LocationSelectionEvent.Search("A"))
 

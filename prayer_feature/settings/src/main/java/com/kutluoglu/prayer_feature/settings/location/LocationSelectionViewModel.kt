@@ -237,7 +237,7 @@ class LocationSelectionViewModel(
             } catch (e: Exception) {
                 analyticsTracker.logEvent(
                     AnalyticsEvents.LOCATION_SEARCH_ERROR,
-                    mapOf(AnalyticsParams.REASON to (e.message ?: "unknown"))
+                    mapOf(AnalyticsParams.REASON to errorReason(e))
                 )
                 _uiState.value = LocationSelectionUiState.Error(getUserFriendlyErrorMessage(e))
             }
@@ -256,6 +256,11 @@ class LocationSelectionViewModel(
                 }
             } ?: "An unexpected error occurred. Please try again."
         }
+    }
+
+    private fun errorReason(exception: Throwable): String = when {
+        exception.message?.contains("timeout", ignoreCase = true) == true -> "timeout"
+        else -> "unknown"
     }
 
     private fun changeSortOrder(sortOrder: SortOrder) {
