@@ -23,7 +23,6 @@ object AnalyticsParams {
     const val TO = "to"
     const val VALUE = "value"
     const val TAB = "tab"
-    const val QUERY = "query"
     const val QUERY_LENGTH_BUCKET = "query_length_bucket"
     const val RESULT_COUNTRY = "result_country"
     const val RESULT_ADMIN_LEVEL = "result_admin_level"
