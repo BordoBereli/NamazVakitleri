@@ -2,7 +2,9 @@ package com.kutluoglu.namazvakitleri
 
 import android.content.Context
 import com.kutluoglu.core.common.AppVersion
+import com.kutluoglu.namazvakitleri.locale.AppLocaleController
 import com.kutluoglu.namazvakitleri.locale.LocaleManager
+import com.kutluoglu.namazvakitleri.locale.LocaleMigration
 import com.kutluoglu.namazvakitleri.notifications.NotificationRescheduler
 import com.kutluoglu.namazvakitleri.notifications.PrayerCalculationSettingsProviderImpl
 import com.kutluoglu.namazvakitleri.push.PushTopicCoordinator
@@ -38,6 +40,16 @@ object AppModule {
 
     @Single
     fun provideAppVersion(): AppVersion = AppVersion(BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE)
+
+    @Single
+    fun provideAppLocaleController(): AppLocaleController = AppLocaleController()
+
+    @Single
+    fun provideLocaleMigration(
+        context: Context,
+        controller: AppLocaleController,
+        settingsDataStore: SettingsDataStore
+    ): LocaleMigration = LocaleMigration(context, controller, settingsDataStore)
 
     @Single
     fun provideNotificationRescheduler(
