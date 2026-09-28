@@ -3,6 +3,8 @@ package com.kutluoglu.namazvakitleri.locale
 import android.content.Context
 import com.kutluoglu.prayer_settings.data.local.SettingsDataStore
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 /**
  * One-time migration of the persisted DataStore language preference into the
@@ -33,7 +35,9 @@ class LocaleMigration(
             if (language != AppLocaleController.SYSTEM_LANGUAGE &&
                 controller.getApplicationLocales() != language
             ) {
-                controller.setApplicationLocales(language)
+                withContext(Dispatchers.Main) {
+                    controller.setApplicationLocales(language)
+                }
             }
         } catch (e: CancellationException) {
             throw e
