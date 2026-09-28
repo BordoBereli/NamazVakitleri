@@ -21,7 +21,7 @@ val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
  *
  * Built as a function so the locale is resolved at format time. Top-level vals
  * would capture Locale.getDefault() once and stay stale after a runtime language
- * change (LocaleManager.setLanguage + activity recreate).
+ * change (per-app language API + activity recreate).
  */
 fun hijriFormatter(): DateTimeFormatter =
     DateTimeFormatter

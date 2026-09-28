@@ -23,7 +23,7 @@ class TimeFormatterLocaleTest {
         // First access initializes the formatter under English.
         assertThat(date.format(gregorianFullFormatter())).contains("August")
 
-        // Simulate a runtime language change (LocaleManager.setLanguage + recreate).
+        // Simulate a runtime language change (per-app language API + recreate).
         Locale.setDefault(Locale.forLanguageTag("tr"))
 
         // The formatter must now resolve the current locale.

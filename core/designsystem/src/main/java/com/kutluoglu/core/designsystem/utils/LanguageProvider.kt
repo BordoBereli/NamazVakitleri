@@ -8,8 +8,9 @@ import java.util.Locale
 class LanguageProvider {
     /**
      * Uygulamanın geçerli dil kodunu (örn: "en", "tr") döndürür.
-     * LocaleManager, kalıcı Settings.language tercihini Locale.setDefault ile senkronize ettiği
-     * için bu değer cihaz dilini değil uygulama içi dil tercihini yansıtır.
+     * Per-app language API (AppCompatDelegate), Locale.setDefault değerini
+     * uygulama diline senkronize ettiği için bu değer cihaz dilini değil
+     * uygulama içi dil tercihini yansıtır.
      */
     fun getLanguageCode(): String = Locale.getDefault().language
 }

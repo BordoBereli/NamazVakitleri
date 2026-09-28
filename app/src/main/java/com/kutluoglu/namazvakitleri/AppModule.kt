@@ -3,7 +3,6 @@ package com.kutluoglu.namazvakitleri
 import android.content.Context
 import com.kutluoglu.core.common.AppVersion
 import com.kutluoglu.namazvakitleri.locale.AppLocaleController
-import com.kutluoglu.namazvakitleri.locale.LocaleManager
 import com.kutluoglu.namazvakitleri.locale.LocaleMigration
 import com.kutluoglu.namazvakitleri.notifications.NotificationRescheduler
 import com.kutluoglu.namazvakitleri.notifications.PrayerCalculationSettingsProviderImpl
@@ -34,9 +33,6 @@ import org.koin.core.annotation.Single
 @Module
 @Configuration
 object AppModule {
-
-    @Single
-    fun provideLocaleManager(): LocaleManager = LocaleManager()
 
     @Single
     fun provideAppVersion(): AppVersion = AppVersion(BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE)
