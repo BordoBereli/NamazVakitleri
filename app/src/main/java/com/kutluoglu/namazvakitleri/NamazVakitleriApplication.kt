@@ -2,7 +2,6 @@ package com.kutluoglu.namazvakitleri
 
 import android.app.Activity
 import android.app.Application
-import android.content.Context
 import android.os.Bundle
 import com.google.android.gms.wearable.MessageClient
 import com.google.firebase.FirebaseApp
@@ -10,10 +9,9 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.kutluoglu.app_update.data.InstallSourceDetector
 import com.kutluoglu.core.designsystem.utils.DisplayProvider
 import com.kutluoglu.namazvakitleri.analytics.AnalyticsUserPropertiesManager
-import com.kutluoglu.namazvakitleri.locale.LocaleManager
+import com.kutluoglu.namazvakitleri.locale.LocaleMigration
 import com.kutluoglu.namazvakitleri.notifications.NotificationRescheduler
 import com.kutluoglu.namazvakitleri.push.PushTopicCoordinator
-import com.kutluoglu.prayer_settings.data.local.SettingsDataStore
 import com.kutluoglu.prayer_settings.domain.repository.SettingsRepository
 import com.kutluoglu.prayer_widget.WatchSyncRequestListener
 import com.kutluoglu.prayer_widget.WidgetMinuteScheduler
@@ -36,26 +34,6 @@ class NamazVakitleriApplication : Application() {
 
     private var watchSyncRequestListener: WatchSyncRequestListener? = null
 
-    /**
-     * Applies the persisted locale before any activity is created.
-     *
-     * NOTE: This deliberately creates a LOCAL [SettingsDataStore] instance via
-     * [SettingsDataStore.create] because `attachBaseContext` runs BEFORE Koin is
-     * started in [onCreate]. The persisted locale must be applied to the base
-     * context before the activity context exists, so we cannot resolve the Koin
-     * singleton here.
-     *
-     * The Koin singleton registered by `AppModule.provideSettingsDataStore` is the
-     * canonical instance used by the rest of the app (see [MainActivity]).
-     *
-     * This dual-instantiation is a deliberate, documented exception. Do NOT "fix"
-     * it by removing the local instance — that would break locale application.
-     */
-    override fun attachBaseContext(base: Context) {
-        val localeManager = LocaleManager()
-        super.attachBaseContext(localeManager.applyPersistedLocale(base, SettingsDataStore.create(base)))
-    }
-
     override fun onCreate() {
         super.onCreate()
         FirebaseApp.initializeApp(this)
@@ -64,6 +42,7 @@ class NamazVakitleriApplication : Application() {
             androidContext(this@NamazVakitleriApplication)
             modules(configurationModules)
         }
+        startLocaleMigration()
         applyCrashlyticsConsent()
         setupActivityLifecycleCallbacks()
         startAnalyticsUserProperties()
@@ -81,6 +60,16 @@ class NamazVakitleriApplication : Application() {
                 FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(settings.crashlyticsEnabled)
             }.onFailure {
                 android.util.Log.e("NamazVakitleriApp", "Failed to apply crashlytics consent -> ${it.message}")
+            }
+        }
+    }
+
+    private fun startLocaleMigration() {
+        applicationScope.launch {
+            runCatching {
+                get<LocaleMigration>().migrateIfNeeded()
+            }.onFailure {
+                android.util.Log.e("NamazVakitleriApp", "Locale migration failed -> ${it.message}")
             }
         }
     }
