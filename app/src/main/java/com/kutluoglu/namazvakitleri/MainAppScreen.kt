@@ -1,8 +1,5 @@
 package com.kutluoglu.namazvakitleri
 
-import android.app.Activity
-import android.content.Context
-import android.content.ContextWrapper
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,7 +14,6 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -43,8 +39,7 @@ import androidx.navigation.compose.navigation
 import com.kutluoglu.prayer_feature.prayertimes.navigation.prayerTimesGraph
 import com.kutluoglu.prayer_feature.qibla.navigation.qiblaGraph
 import com.kutluoglu.prayer_feature.settings.settingsGraph
-import com.kutluoglu.namazvakitleri.locale.LocaleManager
-import org.koin.android.ext.android.get
+import com.kutluoglu.namazvakitleri.locale.AppLocaleController
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
@@ -58,6 +53,7 @@ fun MainAppScreen() {
     val currentGraph = navBackStackEntry?.destination?.parent?.route
     val currentRoute = navBackStackEntry?.destination?.route
     val analyticsTracker: AnalyticsTracker = koinInject()
+    val appLocaleController: AppLocaleController = koinInject()
 
     // Track screen views for analytics
     LaunchedEffect(currentRoute) {
@@ -68,9 +64,6 @@ fun MainAppScreen() {
             )
         }
     }
-
-    val context = LocalContext.current
-    val activity = context.findActivity()
 
     val updateViewModel: UpdateViewModel = koinViewModel()
     val updateState by updateViewModel.uiState.collectAsState()
@@ -87,8 +80,7 @@ fun MainAppScreen() {
     }
 
     fun applyLanguage(language: String) {
-        activity?.get<LocaleManager>()?.setLanguage(language)
-        activity?.recreate()
+        appLocaleController.setApplicationLocales(language)
     }
 
     Scaffold(
@@ -174,8 +166,3 @@ fun MainAppScreen() {
     }
 }
 
-private tailrec fun Context.findActivity(): Activity? = when (this) {
-    is Activity -> this
-    is ContextWrapper -> baseContext.findActivity()
-    else -> null
-}
