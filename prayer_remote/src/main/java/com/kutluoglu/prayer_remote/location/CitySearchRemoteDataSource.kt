@@ -6,6 +6,7 @@ import com.kutluoglu.prayer.model.location.timeZoneIdFor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.koin.core.annotation.Single
@@ -25,7 +26,13 @@ class CitySearchRemoteDataSource(
     }
 
     suspend fun searchCities(query: String): List<City> = withContext(Dispatchers.IO) {
-        val url = "$baseUrl/search?q=$query&format=json&limit=10&addressdetails=1"
+        val url = baseUrl.toHttpUrl().newBuilder()
+            .addPathSegment("search")
+            .addQueryParameter("q", query)
+            .addQueryParameter("format", "json")
+            .addQueryParameter("limit", "10")
+            .addQueryParameter("addressdetails", "1")
+            .build()
         val request = Request.Builder()
             .url(url)
             .header("User-Agent", "NamazVakitleri/1.0")
@@ -61,7 +68,13 @@ class CitySearchRemoteDataSource(
     }
 
     suspend fun reverseGeocode(latitude: Double, longitude: Double): City? = withContext(Dispatchers.IO) {
-        val url = "$baseUrl/reverse?lat=$latitude&lon=$longitude&format=json&addressdetails=1"
+        val url = baseUrl.toHttpUrl().newBuilder()
+            .addPathSegment("reverse")
+            .addQueryParameter("lat", latitude.toString())
+            .addQueryParameter("lon", longitude.toString())
+            .addQueryParameter("format", "json")
+            .addQueryParameter("addressdetails", "1")
+            .build()
         val request = Request.Builder()
             .url(url)
             .header("User-Agent", "NamazVakitleri/1.0")

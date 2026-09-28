@@ -99,6 +99,16 @@ class CitySearchRemoteDataSourceTest {
     }
 
     @Test
+    fun `searchCities encodes special characters in query`() = runBlocking {
+        mockWebServer.enqueue(MockResponse().setResponseCode(200).setBody("[]"))
+
+        dataSource.searchCities("Kadıköy & vicinity #1")
+
+        val recorded = mockWebServer.takeRequest()
+        assertEquals("Kadıköy & vicinity #1", recorded.requestUrl!!.queryParameter("q"))
+    }
+
+    @Test
     fun `searchCities parses province as city and town as county`() = runBlocking {
         mockWebServer.enqueue(
             MockResponse()
