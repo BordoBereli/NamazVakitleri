@@ -16,6 +16,9 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import io.mockk.slot
+import com.kutluoglu.core.common.analytics.AnalyticsEvents
+import com.kutluoglu.core.common.analytics.AnalyticsParams
+import io.mockk.verify
 import com.kutluoglu.core.designsystem.utils.LanguageProvider
 import io.mockk.every
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -140,6 +143,32 @@ class LocationSelectionViewModelTest {
             assertThat(resultsState.query).isEqualTo("Berlin")
             cancelAndIgnoreRemainingEvents()
         }
+    }
+
+    @Test
+    fun `Search should log derived params without raw query`() = runTest {
+        val searchResults = listOf(
+            City("Berlin", "Germany", 52.52, 13.405, "Europe/Berlin", "Berlin")
+        )
+        coEvery { searchLocationUseCase("Berlin") } returns searchResults
+
+        viewModel.onEvent(LocationSelectionEvent.Search("Berlin"))
+
+        viewModel.uiState.test {
+            awaitItem()
+            val state = awaitItem()
+            assertThat(state).isInstanceOf(LocationSelectionUiState.SearchResults::class.java)
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        val paramsSlot = slot<Map<String, Any?>>()
+        verify { analyticsTracker.logEvent(AnalyticsEvents.LOCATION_SEARCH, capture(paramsSlot)) }
+        val params = paramsSlot.captured
+        assertThat(params).doesNotContainKey("query") // literal: AnalyticsParams.QUERY is removed in Task 4
+        assertThat(params).containsEntry(AnalyticsParams.QUERY_LENGTH_BUCKET, "4-6")
+        assertThat(params).containsEntry(AnalyticsParams.RESULT_COUNT, 1)
+        assertThat(params).containsEntry(AnalyticsParams.RESULT_COUNTRY, "Germany")
+        assertThat(params).containsEntry(AnalyticsParams.RESULT_ADMIN_LEVEL, "city")
     }
 
     @Test

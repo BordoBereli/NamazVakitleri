@@ -217,8 +217,10 @@ class LocationSelectionViewModel(
                 analyticsTracker.logEvent(
                     AnalyticsEvents.LOCATION_SEARCH,
                     mapOf(
-                        AnalyticsParams.QUERY to query,
-                        AnalyticsParams.RESULT_COUNT to results.size
+                        AnalyticsParams.QUERY_LENGTH_BUCKET to SearchAnalyticsMapper.queryLengthBucket(query),
+                        AnalyticsParams.RESULT_COUNT to results.size,
+                        AnalyticsParams.RESULT_COUNTRY to SearchAnalyticsMapper.topResultCountry(results),
+                        AnalyticsParams.RESULT_ADMIN_LEVEL to SearchAnalyticsMapper.topResultAdminLevel(results)
                     )
                 )
                 _uiState.value = LocationSelectionUiState.SearchResults(
