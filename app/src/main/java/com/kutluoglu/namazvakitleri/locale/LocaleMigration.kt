@@ -2,6 +2,7 @@ package com.kutluoglu.namazvakitleri.locale
 
 import android.content.Context
 import com.kutluoglu.prayer_settings.data.local.SettingsDataStore
+import kotlinx.coroutines.CancellationException
 
 /**
  * One-time migration of the persisted DataStore language preference into the
@@ -16,6 +17,7 @@ class LocaleMigration(
     private val settingsDataStore: SettingsDataStore
 ) {
 
+    @Volatile
     private var migrated = false
 
     suspend fun migrateIfNeeded() {
@@ -33,6 +35,8 @@ class LocaleMigration(
             ) {
                 controller.setApplicationLocales(language)
             }
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             // Migration must never crash the app; the flag is still set so we
             // don't retry a permanently failing read.

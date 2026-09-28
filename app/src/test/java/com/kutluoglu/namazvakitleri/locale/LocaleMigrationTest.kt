@@ -10,6 +10,7 @@ import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
@@ -71,6 +72,23 @@ class LocaleMigrationTest {
         LocaleMigration(context, controller, dataStore).migrateIfNeeded()
 
         coVerify(exactly = 0) { controller.setApplicationLocales(any()) }
+    }
+
+    @Test
+    fun `persists flag and skips on fresh instance after migration`() = runTest {
+        val realContext = Robolectric.buildActivity(android.app.Activity::class.java).create().get()
+        val dataStore = mockk<SettingsDataStore>()
+        coEvery { dataStore.getSettings() } returns settingsWith(language = "de")
+
+        LocaleMigration(realContext, controller, dataStore).migrateIfNeeded()
+
+        val prefs = realContext.getSharedPreferences("locale_migration", Context.MODE_PRIVATE)
+        assertThat(prefs.getBoolean("locale_migrated", false)).isTrue()
+
+        val freshController = mockk<AppLocaleController>(relaxed = true)
+        LocaleMigration(realContext, freshController, dataStore).migrateIfNeeded()
+
+        coVerify(exactly = 0) { freshController.setApplicationLocales(any()) }
     }
 
     private fun settingsWith(language: String): com.kutluoglu.prayer_settings.domain.model.Settings =
