@@ -7,6 +7,9 @@ import com.kutluoglu.prayer.model.location.City
  *
  * Raw query text must never reach analytics; only these derived,
  * non-identifying signals are logged (see Architecture Review P0).
+ *
+ * [queryLengthBucket] assumes queries of >= 2 chars (enforced by
+ * LocationSelectionViewModel.MIN_QUERY_LENGTH); shorter inputs bucket as "11+".
  */
 object SearchAnalyticsMapper {
 
