@@ -113,6 +113,7 @@ dependencies {
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.core.splashscreen)
+    implementation(libs.androidx.appcompat)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
@@ -151,6 +152,8 @@ dependencies {
     testImplementation(libs.truth) // For readable assertions
     testImplementation(libs.mockk) // MockK for creating mock objects in tests
     testImplementation(libs.assertj.core) // AssertJ for more readable assertions (optional, but recommended)
+    testImplementation(libs.robolectric)
+    testRuntimeOnly(libs.junit.vintage.engine)
 
     // Test Suite
     testImplementation(libs.junit.platform.suite)
