@@ -1,5 +1,6 @@
 package com.kutluoglu.prayer_feature.home.state
 
+import android.app.PendingIntent
 import com.kutluoglu.core.designsystem.states.TimeUiState
 import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.prayer.model.quran.AyahData
@@ -18,6 +19,7 @@ sealed class HomeUiState {
     data object Loading : HomeUiState()
     data object Empty : HomeUiState()
     data class Error(val message: String) : HomeUiState()
+    data class GpsDisabled(val resolution: PendingIntent? = null) : HomeUiState()
     data class Success(
         val timeState: TimeUiState = TimeUiState(),
         val prayerState: PrayerUiState = PrayerUiState(),

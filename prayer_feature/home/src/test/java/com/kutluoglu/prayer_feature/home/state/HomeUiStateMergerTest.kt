@@ -144,4 +144,17 @@ class HomeUiStateMergerTest {
 
         assertThat(result.isVerseSaved).isTrue()
     }
+
+    @Test
+    fun `merge with GpsDisabled gate returns HomeUiState GpsDisabled carrying resolution`() {
+        val result = mergeToHomeUiState(
+            gate = HomeScreenGate.GpsDisabled(resolution = null),
+            location = null,
+            time = null,
+            prayer = null,
+            countdown = countdown,
+            quran = quran
+        )
+        assertThat(result).isEqualTo(HomeUiState.GpsDisabled(resolution = null))
+    }
 }

@@ -41,6 +41,7 @@ fun mergeToHomeUiState(
         HomeScreenGate.Loading -> HomeUiState.Loading
         HomeScreenGate.Empty -> HomeUiState.Empty
         is HomeScreenGate.Error -> HomeUiState.Error(gate.message)
+        is HomeScreenGate.GpsDisabled -> HomeUiState.GpsDisabled(gate.resolution)
         HomeScreenGate.Ready -> {
             if (time == null || prayer == null || location == null) {
                 HomeUiState.Loading
