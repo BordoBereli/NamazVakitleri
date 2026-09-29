@@ -147,4 +147,7 @@
     <string name="gps_disabled_message">شغّله لاستخدام موقعك الحالي.</string>
     <string name="enable_location">تشغيل الموقع</string>
 
+    <string name="locating_getting_location">جارٍ الحصول على موقعك…</string>
+    <string name="locating_loading_prayer_times">جارٍ تحميل أوقات الصلاة…</string>
+
 </resources>

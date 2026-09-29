@@ -32,4 +32,7 @@
     <string name="gps_disabled_message">اپنا موجودہ مقام استعمال کرنے کے لیے اسے آن کریں۔</string>
     <string name="enable_location">مقام آن کریں</string>
 
+    <string name="locating_getting_location">آپ کا مقام حاصل کیا جا رہا ہے…</string>
+    <string name="locating_loading_prayer_times">نماز کے اوقات لوڈ ہو رہے ہیں…</string>
+
 </resources>

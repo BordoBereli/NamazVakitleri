@@ -32,4 +32,7 @@
     <string name="gps_disabled_message">உங்கள் தற்போதைய இருப்பிடத்தைப் பயன்படுத்த அதை இயக்கவும்.</string>
     <string name="enable_location">இருப்பிடத்தை இயக்கு</string>
 
+    <string name="locating_getting_location">உங்கள் இருப்பிடம் பெறப்படுகிறது…</string>
+    <string name="locating_loading_prayer_times">தொழுகை நேரங்கள் ஏற்றப்படுகின்றன…</string>
+
 </resources>

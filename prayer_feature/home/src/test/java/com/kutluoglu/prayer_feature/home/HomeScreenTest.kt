@@ -338,4 +338,24 @@ class HomeScreenTest {
         composeTestRule.onNodeWithText("Choose Location").assertIsDisplayed()
         composeTestRule.onNodeWithText("Open Location Settings").assertDoesNotExist()
     }
+
+    @Test
+    fun `renders locating state with message`() {
+        composeTestRule.setContent {
+            HomeScreen(
+                navController = mockk<NavController>(relaxed = true),
+                uiState = HomeUiState.Locating(android.R.string.ok),
+                locationsState = LocationsState(),
+                prayerDataByLocation = emptyMap(),
+                activeLocationId = null,
+                quranVerseFormatter = mockk<QuranVerseFormatter>(relaxed = true),
+                calculator = mockk<PrayerLogicEngine>(relaxed = true),
+                formatter = mockk<PrayerFormatter>(relaxed = true),
+                languageCode = "en",
+                onEvent = {}
+            )
+        }
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText("OK").assertIsDisplayed()
+    }
 }

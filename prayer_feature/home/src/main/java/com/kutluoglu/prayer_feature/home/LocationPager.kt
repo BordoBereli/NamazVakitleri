@@ -37,6 +37,7 @@ import com.kutluoglu.prayer_feature.home.components.GpsDisabledContent
 import com.kutluoglu.prayer_feature.home.components.HomeEmptyContent
 import com.kutluoglu.prayer_feature.home.components.HomeErrorContent
 import com.kutluoglu.prayer_feature.home.components.HomeTopContainer
+import com.kutluoglu.prayer_feature.home.components.LocatingContent
 import com.kutluoglu.prayer_feature.home.components.LocationChipsRow
 import com.kutluoglu.prayer_feature.home.domain.LoadedPrayerData
 import com.kutluoglu.prayer_feature.home.feature.CustomBottomSheet
@@ -72,6 +73,7 @@ fun LocationPager(
     if (entries.isEmpty()) {
         when {
             uiState is HomeUiState.Loading -> LoadingIndicator()
+            uiState is HomeUiState.Locating -> LocatingContent(messageRes = uiState.messageRes)
             uiState is HomeUiState.GpsDisabled -> GpsDisabledContent(
                 resolution = uiState.resolution,
                 onRetry = { onEvent(HomeEvent.OnUseMyLocation) },
@@ -265,6 +267,12 @@ private fun PrayerContent(
         modifier = Modifier.fillMaxSize(),
         containerColor = Color.Transparent
     ) { innerPadding ->
+        val locatingState = uiState as? HomeUiState.Locating
+        if (locatingState != null) {
+            LocatingContent(messageRes = locatingState.messageRes)
+            return@Scaffold
+        }
+
         val gpsDisabledState = uiState as? HomeUiState.GpsDisabled
         if (gpsDisabledState != null) {
             GpsDisabledContent(

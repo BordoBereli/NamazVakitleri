@@ -32,4 +32,7 @@
     <string name="gps_disabled_message">Включите его, чтобы использовать текущее местоположение.</string>
     <string name="enable_location">Включить геолокацию</string>
 
+    <string name="locating_getting_location">Определяем ваше местоположение…</string>
+    <string name="locating_loading_prayer_times">Загружаем время намаза…</string>
+
 </resources>

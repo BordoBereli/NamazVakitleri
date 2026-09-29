@@ -161,4 +161,7 @@
     <string name="gps_disabled_message">Turn it on to use your current location.</string>
     <string name="enable_location">Turn On Location</string>
 
+    <string name="locating_getting_location">Getting your location…</string>
+    <string name="locating_loading_prayer_times">Loading prayer times…</string>
+
 </resources>

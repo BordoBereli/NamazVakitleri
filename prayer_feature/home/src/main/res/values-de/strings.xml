@@ -32,4 +32,7 @@
     <string name="gps_disabled_message">Aktivieren Sie ihn, um Ihren aktuellen Standort zu verwenden.</string>
     <string name="enable_location">Standort aktivieren</string>
 
+    <string name="locating_getting_location">Ihr Standort wird ermittelt…</string>
+    <string name="locating_loading_prayer_times">Gebetszeiten werden geladen…</string>
+
 </resources>

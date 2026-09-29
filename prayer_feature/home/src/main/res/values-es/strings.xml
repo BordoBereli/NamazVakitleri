@@ -147,4 +147,7 @@
     <string name="gps_disabled_message">Actívela para usar su ubicación actual.</string>
     <string name="enable_location">Activar ubicación</string>
 
+    <string name="locating_getting_location">Obteniendo tu ubicación…</string>
+    <string name="locating_loading_prayer_times">Cargando horarios de oración…</string>
+
 </resources>

@@ -32,4 +32,7 @@
     <string name="gps_disabled_message">Aktifkan untuk menggunakan lokasi Anda saat ini.</string>
     <string name="enable_location">Aktifkan Lokasi</string>
 
+    <string name="locating_getting_location">Mendapatkan lokasi Anda…</string>
+    <string name="locating_loading_prayer_times">Memuat waktu salat…</string>
+
 </resources>

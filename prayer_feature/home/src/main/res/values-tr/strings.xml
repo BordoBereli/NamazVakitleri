@@ -158,4 +158,7 @@
     <string name="gps_disabled_message">Mevcut konumunuzu kullanmak için açın.</string>
     <string name="enable_location">Konumu Aç</string>
 
+    <string name="locating_getting_location">Konumunuz alınıyor…</string>
+    <string name="locating_loading_prayer_times">Namaz vakitleri yükleniyor…</string>
+
 </resources>
