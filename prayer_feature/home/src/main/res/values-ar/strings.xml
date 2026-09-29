@@ -143,8 +143,8 @@
     <string name="surah_name_112">الإخلاص</string>
     <string name="surah_name_113">الفلق</string>
     <string name="surah_name_114">الناس</string>
-    <string name="gps_disabled_message">الموقع مغلق. شغّله لاستخدام موقعك الحالي.</string>
+    <string name="gps_disabled_headline">الموقع مغلق</string>
+    <string name="gps_disabled_message">شغّله لاستخدام موقعك الحالي.</string>
     <string name="enable_location">تشغيل الموقع</string>
-    <string name="open_location_settings">فتح إعدادات الموقع</string>
 
 </resources>

@@ -28,8 +28,8 @@
     <string name="reorder">Neu anordnen</string>
     <string name="save_verse">Vers speichern</string>
     <string name="unsave_verse">Vers-Speicherung aufheben</string>
-    <string name="gps_disabled_message">Standort ist deaktiviert. Aktivieren Sie ihn, um Ihren aktuellen Standort zu verwenden.</string>
+    <string name="gps_disabled_headline">Standort ist deaktiviert</string>
+    <string name="gps_disabled_message">Aktivieren Sie ihn, um Ihren aktuellen Standort zu verwenden.</string>
     <string name="enable_location">Standort aktivieren</string>
-    <string name="open_location_settings">Standorteinstellungen öffnen</string>
 
 </resources>

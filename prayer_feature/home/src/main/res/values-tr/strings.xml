@@ -154,8 +154,8 @@
     <string name="sort_surah_name">Sure adı</string>
     <string name="sort_verse_count">Ayet sayısı</string>
     <string name="sort_date_saved">Kayıt tarihi</string>
-    <string name="gps_disabled_message">Konum kapalı. Mevcut konumunuzu kullanmak için açın.</string>
+    <string name="gps_disabled_headline">Konum kapalı</string>
+    <string name="gps_disabled_message">Mevcut konumunuzu kullanmak için açın.</string>
     <string name="enable_location">Konumu Aç</string>
-    <string name="open_location_settings">Konum Ayarlarını Aç</string>
 
 </resources>

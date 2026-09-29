@@ -157,8 +157,8 @@
     <string name="no_matching_verses">No saved verses match your search.</string>
     <string name="clear">Clear</string>
 
-    <string name="gps_disabled_message">Location is turned off. Turn it on to use your current location.</string>
+    <string name="gps_disabled_headline">Location is off</string>
+    <string name="gps_disabled_message">Turn it on to use your current location.</string>
     <string name="enable_location">Turn On Location</string>
-    <string name="open_location_settings">Open Location Settings</string>
 
 </resources>

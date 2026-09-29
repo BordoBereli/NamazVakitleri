@@ -28,8 +28,8 @@
     <string name="reorder">จัดเรียงใหม่</string>
     <string name="save_verse">บันทึกโองการ</string>
     <string name="unsave_verse">ยกเลิกการบันทึกโองการ</string>
-    <string name="gps_disabled_message">ตำแหน่งปิดอยู่ เปิดเพื่อใช้ตำแหน่งปัจจุบันของคุณ</string>
+    <string name="gps_disabled_headline">ตำแหน่งปิดอยู่</string>
+    <string name="gps_disabled_message">เปิดเพื่อใช้ตำแหน่งปัจจุบันของคุณ</string>
     <string name="enable_location">เปิดตำแหน่ง</string>
-    <string name="open_location_settings">เปิดการตั้งค่าตำแหน่ง</string>
 
 </resources>

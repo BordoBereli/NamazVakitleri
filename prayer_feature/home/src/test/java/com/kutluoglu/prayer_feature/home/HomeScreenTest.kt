@@ -332,8 +332,10 @@ class HomeScreenTest {
             )
         }
         composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText("Location is off").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Turn it on to use your current location.").assertIsDisplayed()
         composeTestRule.onNodeWithText("Turn On Location").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Open Location Settings").assertIsDisplayed()
         composeTestRule.onNodeWithText("Choose Location").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Open Location Settings").assertDoesNotExist()
     }
 }
