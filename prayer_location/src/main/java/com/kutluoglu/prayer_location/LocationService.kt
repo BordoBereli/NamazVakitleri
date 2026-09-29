@@ -147,7 +147,7 @@ class LocationService(private val context: Context) {
     private suspend fun awaitLastLocation(): Location? {
         return suspendCancellableCoroutine { continuation ->
             val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000)
-                .setWaitForAccurateLocation(true)
+                .setWaitForAccurateLocation(false)
                 .build()
             val callback = object : LocationCallback() {
                 override fun onLocationResult(result: LocationResult) {
