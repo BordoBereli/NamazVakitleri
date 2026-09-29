@@ -28,4 +28,8 @@
     <string name="reorder">পুনরায় সাজান</string>
     <string name="save_verse">আয়াত সংরক্ষণ করুন</string>
     <string name="unsave_verse">আয়াত সংরক্ষণ বাতিল করুন</string>
+    <string name="gps_disabled_message">লোকেশন বন্ধ আছে। আপনার বর্তমান অবস্থান ব্যবহার করতে এটি চালু করুন।</string>
+    <string name="enable_location">লোকেশন চালু করুন</string>
+    <string name="open_location_settings">লোকেশন সেটিংস খুলুন</string>
+
 </resources>

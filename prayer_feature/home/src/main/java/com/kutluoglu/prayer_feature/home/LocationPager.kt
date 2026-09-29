@@ -33,6 +33,7 @@ import com.kutluoglu.prayer_feature.home.R
 import com.kutluoglu.prayer_feature.home.common.QuranVerseFormatter
 import com.kutluoglu.prayer_feature.home.components.BottomContainer
 import com.kutluoglu.prayer_feature.home.components.DailyPrayers
+import com.kutluoglu.prayer_feature.home.components.GpsDisabledContent
 import com.kutluoglu.prayer_feature.home.components.HomeEmptyContent
 import com.kutluoglu.prayer_feature.home.components.HomeErrorContent
 import com.kutluoglu.prayer_feature.home.components.HomeTopContainer
@@ -69,10 +70,14 @@ fun LocationPager(
     languageCode: String
 ) {
     if (entries.isEmpty()) {
-        if (uiState is HomeUiState.Loading) {
-            LoadingIndicator()
-        } else {
-            HomeEmptyContent(
+        when {
+            uiState is HomeUiState.Loading -> LoadingIndicator()
+            uiState is HomeUiState.GpsDisabled -> GpsDisabledContent(
+                resolution = uiState.resolution,
+                onRetry = { onEvent(HomeEvent.OnUseMyLocation) },
+                onChooseLocation = onChooseLocation
+            )
+            else -> HomeEmptyContent(
                 onAddLocation = onAddLocation,
                 onUseMyLocation = onUseMyLocation,
                 permissionDenied = permissionDenied
@@ -260,6 +265,16 @@ private fun PrayerContent(
         modifier = Modifier.fillMaxSize(),
         containerColor = Color.Transparent
     ) { innerPadding ->
+        val gpsDisabledState = uiState as? HomeUiState.GpsDisabled
+        if (gpsDisabledState != null) {
+            GpsDisabledContent(
+                resolution = gpsDisabledState.resolution,
+                onRetry = { onEvent(HomeEvent.OnUseMyLocation) },
+                onChooseLocation = onChooseLocation
+            )
+            return@Scaffold
+        }
+
         val errorState = uiState as? HomeUiState.Error
         if (errorState != null) {
             HomeErrorContent(

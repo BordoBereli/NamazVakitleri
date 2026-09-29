@@ -28,4 +28,8 @@
     <string name="reorder">மறுவரிசைப்படுத்து</string>
     <string name="save_verse">வசனத்தைச் சேமி</string>
     <string name="unsave_verse">வசனச் சேமிப்பை நீக்கு</string>
+    <string name="gps_disabled_message">இருப்பிடம் முடக்கப்பட்டுள்ளது. உங்கள் தற்போதைய இருப்பிடத்தைப் பயன்படுத்த அதை இயக்கவும்.</string>
+    <string name="enable_location">இருப்பிடத்தை இயக்கு</string>
+    <string name="open_location_settings">இருப்பிட அமைப்புகளைத் திற</string>
+
 </resources>

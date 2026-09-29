@@ -28,4 +28,8 @@
     <string name="reorder">Urutkan ulang</string>
     <string name="save_verse">Simpan Ayat</string>
     <string name="unsave_verse">Batalkan Simpan Ayat</string>
+    <string name="gps_disabled_message">Lokasi dimatikan. Aktifkan untuk menggunakan lokasi Anda saat ini.</string>
+    <string name="enable_location">Aktifkan Lokasi</string>
+    <string name="open_location_settings">Buka Pengaturan Lokasi</string>
+
 </resources>

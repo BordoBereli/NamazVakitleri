@@ -28,4 +28,8 @@
     <string name="reorder">دوبارہ ترتیب دیں</string>
     <string name="save_verse">آیت محفوظ کریں</string>
     <string name="unsave_verse">آیت کی حفاظت ختم کریں</string>
+    <string name="gps_disabled_message">مقام بند ہے۔ اپنا موجودہ مقام استعمال کرنے کے لیے اسے آن کریں۔</string>
+    <string name="enable_location">مقام آن کریں</string>
+    <string name="open_location_settings">مقام کی ترتیبات کھولیں</string>
+
 </resources>

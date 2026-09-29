@@ -28,4 +28,8 @@
     <string name="reorder">مرتب‌سازی مجدد</string>
     <string name="save_verse">ذخیره آیه</string>
     <string name="unsave_verse">لغو ذخیره آیه</string>
+    <string name="gps_disabled_message">موقعیت مکانی خاموش است. برای استفاده از موقعیت فعلی خود آن را روشن کنید.</string>
+    <string name="enable_location">روشن کردن موقعیت</string>
+    <string name="open_location_settings">باز کردن تنظیمات موقعیت</string>
+
 </resources>

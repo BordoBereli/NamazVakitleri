@@ -28,4 +28,8 @@
     <string name="reorder">Изменить порядок</string>
     <string name="save_verse">Сохранить аят</string>
     <string name="unsave_verse">Убрать из сохранённых</string>
+    <string name="gps_disabled_message">Определение местоположения отключено. Включите его, чтобы использовать текущее местоположение.</string>
+    <string name="enable_location">Включить геолокацию</string>
+    <string name="open_location_settings">Открыть настройки местоположения</string>
+
 </resources>

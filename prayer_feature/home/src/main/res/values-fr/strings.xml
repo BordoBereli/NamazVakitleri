@@ -28,4 +28,8 @@
     <string name="reorder">Réorganiser</string>
     <string name="save_verse">Enregistrer le verset</string>
     <string name="unsave_verse">Retirer le verset enregistré</string>
+    <string name="gps_disabled_message">La localisation est désactivée. Activez-la pour utiliser votre position actuelle.</string>
+    <string name="enable_location">Activer la localisation</string>
+    <string name="open_location_settings">Ouvrir les paramètres de localisation</string>
+
 </resources>

@@ -314,4 +314,26 @@ class HomeScreenTest {
         composeTestRule.waitForIdle()
         assertThat(navigated).isTrue()
     }
+
+    @Test
+    fun `renders gps disabled state with enable location button`() {
+        composeTestRule.setContent {
+            HomeScreen(
+                navController = mockk<NavController>(relaxed = true),
+                uiState = HomeUiState.GpsDisabled(),
+                locationsState = LocationsState(),
+                prayerDataByLocation = emptyMap(),
+                activeLocationId = null,
+                quranVerseFormatter = mockk<QuranVerseFormatter>(relaxed = true),
+                calculator = mockk<PrayerLogicEngine>(relaxed = true),
+                formatter = mockk<PrayerFormatter>(relaxed = true),
+                languageCode = "en",
+                onEvent = {}
+            )
+        }
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText("Turn On Location").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Open Location Settings").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Choose Location").assertIsDisplayed()
+    }
 }

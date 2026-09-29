@@ -28,4 +28,8 @@
     <string name="reorder">पुनः क्रमबद्ध करें</string>
     <string name="save_verse">आयत सहेजें</string>
     <string name="unsave_verse">आयत सहेजना हटाएं</string>
+    <string name="gps_disabled_message">स्थान बंद है। अपना वर्तमान स्थान उपयोग करने के लिए इसे चालू करें।</string>
+    <string name="enable_location">स्थान चालू करें</string>
+    <string name="open_location_settings">स्थान सेटिंग खोलें</string>
+
 </resources>

@@ -143,4 +143,8 @@
     <string name="surah_name_112">Al-Ijlas</string>
     <string name="surah_name_113">Al-Falaq</string>
     <string name="surah_name_114">An-Nas</string>
+    <string name="gps_disabled_message">La ubicación está desactivada. Actívela para usar su ubicación actual.</string>
+    <string name="enable_location">Activar ubicación</string>
+    <string name="open_location_settings">Abrir ajustes de ubicación</string>
+
 </resources>
