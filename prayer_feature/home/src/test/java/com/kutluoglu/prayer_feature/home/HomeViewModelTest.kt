@@ -20,7 +20,9 @@ import com.kutluoglu.prayer_feature.home.domain.QuranVerseLoader
 import com.kutluoglu.prayer_feature.home.state.HomeScreenGate
 import com.kutluoglu.prayer_feature.home.state.PrayerUiState
 import com.kutluoglu.prayer_feature.home.state.QuranUiState
+import com.kutluoglu.prayer_location.GpsRefreshResult
 import com.kutluoglu.prayer_location.LocationsCoordinator
+import com.kutluoglu.prayer_location.LocationSettingsResult
 import com.kutluoglu.prayer_location.data.LocationsState
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -318,7 +320,7 @@ class HomeViewModelTest {
             )
         )
         coEvery { locationsCoordinator.resolveInitial() } returns null
-        coEvery { locationsCoordinator.refreshGps() } returns location
+        coEvery { locationsCoordinator.refreshGpsWithSettings() } returns GpsRefreshResult.Success(location)
         coEvery { locationsCoordinator.resolveSelected() } returns location
         coEvery { prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET, any()) } returns success(loadedData())
 
@@ -326,7 +328,7 @@ class HomeViewModelTest {
         vm.onEvent(HomeEvent.OnUseMyLocation)
 
         coVerify { locationsCoordinator.setGpsEnabled(true) }
-        coVerify { locationsCoordinator.refreshGps() }
+        coVerify { locationsCoordinator.refreshGpsWithSettings() }
         coVerify { locationsCoordinator.selectLocation(LocationsCoordinator.GPS_LOCATION_ID) }
         assertThat(vm.screenGate.value).isEqualTo(HomeScreenGate.Ready)
     }
@@ -335,7 +337,7 @@ class HomeViewModelTest {
     fun `OnUseMyLocation when gps resolution fails shows error`() = runTest {
         coEvery { locationsCoordinator.observeState() } returns flowOf(LocationsState())
         coEvery { locationsCoordinator.resolveInitial() } returns null
-        coEvery { locationsCoordinator.refreshGps() } returns null
+        coEvery { locationsCoordinator.refreshGpsWithSettings() } returns GpsRefreshResult.Unavailable
 
         val vm = viewModel()
         vm.onEvent(HomeEvent.OnUseMyLocation)
@@ -344,12 +346,26 @@ class HomeViewModelTest {
     }
 
     @Test
+    fun `OnUseMyLocation with gps disabled shows GpsDisabled gate`() = runTest {
+        coEvery { locationsCoordinator.observeState() } returns flowOf(LocationsState())
+        coEvery { locationsCoordinator.resolveInitial() } returns null
+        coEvery { locationsCoordinator.refreshGpsWithSettings() } returns GpsRefreshResult.GpsDisabled(
+            LocationSettingsResult.ResolutionRequired(null)
+        )
+
+        val vm = viewModel()
+        vm.onEvent(HomeEvent.OnUseMyLocation)
+
+        assertThat(vm.screenGate.value).isInstanceOf(HomeScreenGate.GpsDisabled::class.java)
+    }
+
+    @Test
     fun `OnUseMyLocation triggers loadPrayerTimesForCurrentLocation`() = runTest {
         coEvery { locationsCoordinator.observeState() } returns flowOf(
             LocationsState(entries = listOf(entry), selectedId = "loc-1")
         )
         coEvery { locationsCoordinator.resolveInitial() } returns location
-        coEvery { locationsCoordinator.refreshGps() } returns location
+        coEvery { locationsCoordinator.refreshGpsWithSettings() } returns GpsRefreshResult.Success(location)
         coEvery { locationsCoordinator.resolveSelected() } returns location
         coEvery { prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET, any()) } returns success(loadedData())
 
@@ -365,7 +381,7 @@ class HomeViewModelTest {
             LocationsState(entries = listOf(entry), selectedId = "loc-1")
         )
         coEvery { locationsCoordinator.resolveInitial() } returns location
-        coEvery { locationsCoordinator.refreshGps() } returns location
+        coEvery { locationsCoordinator.refreshGpsWithSettings() } returns GpsRefreshResult.Success(location)
         coEvery { locationsCoordinator.resolveSelected() } returns location
         coEvery { prayerTimesLoader.load(location, CalculationMethod.TURKEY_DIYANET, any()) } returns success(loadedData())
 

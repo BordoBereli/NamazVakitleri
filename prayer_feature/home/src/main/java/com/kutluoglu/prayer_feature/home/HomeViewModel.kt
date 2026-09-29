@@ -6,7 +6,9 @@ import androidx.lifecycle.viewModelScope
 import com.kutluoglu.core.common.analytics.AnalyticsEvents
 import com.kutluoglu.core.common.analytics.AnalyticsParams
 import com.kutluoglu.core.common.analytics.AnalyticsTracker
+import com.kutluoglu.prayer_location.GpsRefreshResult
 import com.kutluoglu.prayer_location.LocationsCoordinator
+import com.kutluoglu.prayer_location.LocationSettingsResult
 import com.kutluoglu.prayer_location.data.LocationsState
 import com.kutluoglu.prayer.model.prayer.CalculationMethod
 import com.kutluoglu.prayer.model.prayer.JuristicMethod
@@ -230,12 +232,15 @@ class HomeViewModel(
         viewModelScope.launch {
             _screenGate.value = HomeScreenGate.Loading
             locationsCoordinator.setGpsEnabled(true)
-            val location = locationsCoordinator.refreshGps()
-            if (location != null) {
-                locationsCoordinator.selectLocation(LocationsCoordinator.GPS_LOCATION_ID)
-                loadPrayerTimesForCurrentLocation()
-            } else {
-                fail(HomeErrorMapper.getUserFriendlyErrorMessage(null))
+            when (val result = locationsCoordinator.refreshGpsWithSettings()) {
+                is GpsRefreshResult.Success -> {
+                    locationsCoordinator.selectLocation(LocationsCoordinator.GPS_LOCATION_ID)
+                    loadPrayerTimesForCurrentLocation()
+                }
+                is GpsRefreshResult.GpsDisabled -> _screenGate.value = HomeScreenGate.GpsDisabled(
+                    resolution = (result.settings as? LocationSettingsResult.ResolutionRequired)?.resolution
+                )
+                GpsRefreshResult.Unavailable -> fail(HomeErrorMapper.getUserFriendlyErrorMessage(null))
             }
         }
     }
