@@ -10,6 +10,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -253,5 +254,37 @@ class LocationsCoordinatorTest {
         coordinator.selectLocation(LocationsCoordinator.GPS_LOCATION_ID)
 
         coVerify(exactly = 0) { locationService.getCurrentLocation() }
+    }
+
+    @Test
+    fun `refreshGpsWithSettings returns GpsDisabled when settings unsatisfied`() = runBlocking<Unit> {
+        coEvery { locationService.checkLocationSettings() } returns
+            LocationSettingsResult.ResolutionRequired(null)
+
+        val result = coordinator.refreshGpsWithSettings()
+
+        assertThat(result).isInstanceOf(GpsRefreshResult.GpsDisabled::class.java)
+        coVerify(exactly = 0) { locationService.getCurrentLocation() }
+    }
+
+    @Test
+    fun `refreshGpsWithSettings returns Success and persists location`() = runBlocking<Unit> {
+        coEvery { locationService.checkLocationSettings() } returns LocationSettingsResult.Satisfied
+        coEvery { locationService.getCurrentLocation() } returns gpsBursa
+
+        val result = coordinator.refreshGpsWithSettings()
+
+        assertThat(result).isEqualTo(GpsRefreshResult.Success(gpsBursa))
+        coVerify { dataStore.setLastGpsLocation(gpsBursa) }
+    }
+
+    @Test
+    fun `refreshGpsWithSettings returns Unavailable when location is null`() = runBlocking<Unit> {
+        coEvery { locationService.checkLocationSettings() } returns LocationSettingsResult.Satisfied
+        coEvery { locationService.getCurrentLocation() } returns null
+
+        val result = coordinator.refreshGpsWithSettings()
+
+        assertThat(result).isEqualTo(GpsRefreshResult.Unavailable)
     }
 }

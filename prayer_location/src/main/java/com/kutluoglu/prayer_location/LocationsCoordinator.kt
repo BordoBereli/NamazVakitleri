@@ -120,6 +120,15 @@ class LocationsCoordinator(
         return gps
     }
 
+    suspend fun refreshGpsWithSettings(): GpsRefreshResult {
+        val settings = locationService.checkLocationSettings()
+        if (settings !is LocationSettingsResult.Satisfied) {
+            return GpsRefreshResult.GpsDisabled(settings)
+        }
+        val gps = refreshGps() ?: return GpsRefreshResult.Unavailable
+        return GpsRefreshResult.Success(gps)
+    }
+
     suspend fun selectLocation(id: String) {
         if (id == GPS_LOCATION_ID) {
             locationsDataStore.setSelectedLocation(GPS_LOCATION_ID)
