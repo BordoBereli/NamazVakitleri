@@ -146,6 +146,8 @@ class LocationService(private val context: Context) {
     @SuppressLint("MissingPermission")
     private suspend fun awaitLastLocation(): Location? {
         return suspendCancellableCoroutine { continuation ->
+            // Coarse fix accepted: city-level accuracy suffices for prayer times,
+            // and the first delivery may be the cached last-known location.
             val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000)
                 .setWaitForAccurateLocation(false)
                 .build()
