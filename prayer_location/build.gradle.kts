@@ -36,6 +36,11 @@ android {
             jvmTarget = JvmTarget.JVM_11
         }
     }
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
 }
 
 dependencies {
@@ -66,6 +71,9 @@ dependencies {
     testImplementation(libs.truth) // For readable assertions
     testImplementation(libs.mockk) // MockK for creating mock objects in tests
     testImplementation(libs.assertj.core) // AssertJ for more readable assertions (optional, but recommended)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.junit.vintage.engine)
+    testImplementation(libs.androidx.junit)
 
     // Test Suite
     testImplementation(libs.junit.platform.suite)
