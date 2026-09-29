@@ -157,4 +157,17 @@ class HomeUiStateMergerTest {
         )
         assertThat(result).isEqualTo(HomeUiState.GpsDisabled(resolution = null))
     }
+
+    @Test
+    fun `merge with Locating gate returns HomeUiState Locating carrying message`() {
+        val result = mergeToHomeUiState(
+            gate = HomeScreenGate.Locating(android.R.string.ok),
+            location = null,
+            time = null,
+            prayer = null,
+            countdown = countdown,
+            quran = quran
+        )
+        assertThat(result).isEqualTo(HomeUiState.Locating(android.R.string.ok))
+    }
 }
