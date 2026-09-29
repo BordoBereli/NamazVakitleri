@@ -192,7 +192,7 @@ class HomeViewModel(
 
     fun loadPrayerTimesForCurrentLocation() {
         viewModelScope.launch {
-            _screenGate.value = HomeScreenGate.Locating(R.string.locating_loading_prayer_times)
+            _screenGate.value = HomeScreenGate.Loading
             val location = locationsCoordinator.resolveSelected()
             if (location != null) {
                 val state = locationsCoordinator.observeState().first()

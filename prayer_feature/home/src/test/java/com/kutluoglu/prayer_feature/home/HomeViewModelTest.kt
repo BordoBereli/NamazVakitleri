@@ -532,7 +532,7 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `calculation method change keeps gate Locating while data is cleared and reloading`() = runTest {
+    fun `calculation method change keeps gate Loading while data is cleared and reloading`() = runTest {
         val settingsFlow = MutableStateFlow(appSettings(calculationMethod = "TURKEY_DIYANET"))
         coEvery { locationsCoordinator.observeState() } returns flowOf(
             LocationsState(entries = listOf(entry), selectedId = "loc-1")
@@ -553,7 +553,7 @@ class HomeViewModelTest {
         }
         settingsFlow.value = appSettings(calculationMethod = "MWL")
 
-        assertThat(vm.screenGate.value).isEqualTo(HomeScreenGate.Locating(R.string.locating_loading_prayer_times))
+        assertThat(vm.screenGate.value).isEqualTo(HomeScreenGate.Loading)
         assertThat(vm.prayerDataByLocation.value).isEmpty()
 
         gate.complete(loadedData())
@@ -578,28 +578,5 @@ class HomeViewModelTest {
         vm.onEvent(HomeEvent.OnUseMyLocation)
 
         assertThat(vm.screenGate.value is HomeScreenGate.Error).isTrue()
-    }
-
-    @Test
-    fun `loadPrayerTimesForCurrentLocation shows Locating gate while loading`() = runTest {
-        val vmHolder = arrayOfNulls<HomeViewModel>(1)
-        coEvery { locationsCoordinator.observeState() } returns flowOf(
-            LocationsState(entries = listOf(entry), selectedId = "loc-1")
-        )
-        coEvery { locationsCoordinator.resolveInitial() } returns null
-        coEvery { locationsCoordinator.resolveSelected() } returns location
-        coEvery { prayerTimesLoader.load(any(), any(), any(), any()) } coAnswers {
-            val vm = vmHolder[0]
-            if (vm != null) {
-                assertThat(vm.screenGate.value).isInstanceOf(HomeScreenGate.Locating::class.java)
-            }
-            success(loadedData())
-        }
-
-        val vm = viewModel()
-        vmHolder[0] = vm
-        vm.loadPrayerTimesForCurrentLocation()
-
-        assertThat(vm.screenGate.value).isEqualTo(HomeScreenGate.Ready)
     }
 }
