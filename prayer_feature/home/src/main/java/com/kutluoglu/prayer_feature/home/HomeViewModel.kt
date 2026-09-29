@@ -13,6 +13,7 @@ import com.kutluoglu.prayer_location.data.LocationsState
 import com.kutluoglu.prayer.model.prayer.CalculationMethod
 import com.kutluoglu.prayer.model.prayer.JuristicMethod
 import com.kutluoglu.prayer.settings.SettingsProvider
+import com.kutluoglu.prayer_feature.home.R
 import com.kutluoglu.prayer_feature.home.domain.CountdownEngine
 import com.kutluoglu.prayer_feature.home.domain.LoadedPrayerData
 import com.kutluoglu.prayer_feature.home.domain.PrayerTimesLoader
@@ -191,7 +192,7 @@ class HomeViewModel(
 
     fun loadPrayerTimesForCurrentLocation() {
         viewModelScope.launch {
-            _screenGate.value = HomeScreenGate.Loading
+            _screenGate.value = HomeScreenGate.Locating(R.string.locating_loading_prayer_times)
             val location = locationsCoordinator.resolveSelected()
             if (location != null) {
                 val state = locationsCoordinator.observeState().first()
@@ -230,7 +231,7 @@ class HomeViewModel(
 
     private fun useMyLocation() {
         viewModelScope.launch {
-            _screenGate.value = HomeScreenGate.Loading
+            _screenGate.value = HomeScreenGate.Locating(R.string.locating_getting_location)
             locationsCoordinator.setGpsEnabled(true)
             when (val result = locationsCoordinator.refreshGpsWithSettings()) {
                 is GpsRefreshResult.Success -> {
