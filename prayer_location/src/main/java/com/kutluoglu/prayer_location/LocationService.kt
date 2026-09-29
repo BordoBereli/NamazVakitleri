@@ -10,11 +10,16 @@ import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import androidx.core.content.ContextCompat
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.common.api.CommonStatusCodes
+import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.Priority
+import com.google.android.gms.location.SettingsClient
 import com.google.android.gms.tasks.CancellationTokenSource
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.location.timeZoneIdFor
@@ -30,17 +35,52 @@ import kotlin.coroutines.resume
 @Single
 class LocationService(private val context: Context) {
 
-    private val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+    internal var fusedClientOverride: FusedLocationProviderClient? = null
+    internal var settingsClientOverride: SettingsClient? = null
+
+    private val fusedLocationClient: FusedLocationProviderClient
+        get() = fusedClientOverride ?: LocationServices.getFusedLocationProviderClient(context)
+
+    private val locationSettingsClient: SettingsClient
+        get() = settingsClientOverride ?: LocationServices.getSettingsClient(context)
+
     private val geocoder = Geocoder(context, Locale.getDefault())
     @Volatile
     private var currentLocation: LocationData? = null
 
     fun getLastKnownLocation(): LocationData? = currentLocation
 
+    suspend fun checkLocationSettings(): LocationSettingsResult {
+        return suspendCancellableCoroutine { continuation ->
+            val settingsRequest = LocationSettingsRequest.Builder()
+                .addLocationRequest(
+                    LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000).build()
+                )
+                .build()
+            locationSettingsClient
+                .checkLocationSettings(settingsRequest)
+                .addOnSuccessListener {
+                    if (continuation.isActive) continuation.resume(LocationSettingsResult.Satisfied)
+                }
+                .addOnFailureListener { exception ->
+                    if (!continuation.isActive) return@addOnFailureListener
+                    val result = if (exception is ApiException &&
+                        exception.statusCode == CommonStatusCodes.RESOLUTION_REQUIRED
+                    ) {
+                        LocationSettingsResult.ResolutionRequired(exception.status.resolution)
+                    } else {
+                        LocationSettingsResult.Unavailable
+                    }
+                    continuation.resume(result)
+                }
+        }
+    }
+
     // This is the main public function that will be called from the ViewModel
     @SuppressLint("MissingPermission") // Permissions are handled at the UI layer
     suspend fun getCurrentLocation(): LocationData? {
         if (!hasLocationPermission()) return null
+        if (checkLocationSettings() !is LocationSettingsResult.Satisfied) return null
         return withContext(Dispatchers.IO) {
             // 1. Get Coordinates
             val coordinates: Location = awaitLastLocation() ?: return@withContext null
