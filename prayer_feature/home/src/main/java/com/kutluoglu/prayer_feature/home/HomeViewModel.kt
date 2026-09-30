@@ -217,7 +217,7 @@ class HomeViewModel(
                     } else {
                         val error = result.exceptionOrNull()
                         _screenGate.value = HomeScreenGate.Error(
-                            error?.message ?: HomeErrorMapper.getUserFriendlyErrorMessage(error)
+                            HomeErrorMapper.getUserFriendlyErrorMessage(error)
                         )
                     }
                 } else {
