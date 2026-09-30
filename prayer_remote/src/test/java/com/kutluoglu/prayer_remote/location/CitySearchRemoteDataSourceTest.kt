@@ -1,5 +1,6 @@
 package com.kutluoglu.prayer_remote.location
 
+import com.kutluoglu.core.common.AppVersion
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
@@ -21,6 +22,7 @@ class CitySearchRemoteDataSourceTest {
         mockWebServer.start()
         dataSource = CitySearchRemoteDataSource(
             httpClient = OkHttpClient(),
+            appVersion = AppVersion(name = "2.0.0", code = 200),
             baseUrl = mockWebServer.url("/").toString().removeSuffix("/")
         )
     }

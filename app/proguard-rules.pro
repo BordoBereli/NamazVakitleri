@@ -20,6 +20,14 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
+# --- Debug logging ---
+# Strip verbose/debug logging from release builds (Architecture Review P1):
+# R8 removes the calls entirely since they have no side effects.
+-assumenosideeffects class android.util.Log {
+    public static *** d(...);
+    public static *** v(...);
+}
+
 # --- Crashlytics ---
 # Preserve line numbers so Crashlytics can map stack traces to source.
 -keepattributes SourceFile,LineNumberTable

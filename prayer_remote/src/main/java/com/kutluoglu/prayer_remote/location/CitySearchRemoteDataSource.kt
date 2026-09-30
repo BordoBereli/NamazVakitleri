@@ -1,5 +1,6 @@
 package com.kutluoglu.prayer_remote.location
 
+import com.kutluoglu.core.common.AppVersion
 import com.kutluoglu.prayer.model.location.City
 import com.kutluoglu.prayer.model.location.GeocodingResult
 import com.kutluoglu.prayer.model.location.timeZoneIdFor
@@ -17,8 +18,11 @@ import org.koin.core.annotation.Single
 @Single
 class CitySearchRemoteDataSource(
     private val httpClient: OkHttpClient,
+    private val appVersion: AppVersion,
     private val baseUrl: String = NOMINATIM_BASE_URL
 ) {
+
+    private val userAgent = "NamazVakitleri/${appVersion.name}"
 
     private val json = Json {
         ignoreUnknownKeys = true
@@ -35,7 +39,7 @@ class CitySearchRemoteDataSource(
             .build()
         val request = Request.Builder()
             .url(url)
-            .header("User-Agent", "NamazVakitleri/1.0")
+            .header("User-Agent", userAgent)
             .build()
 
         val response = httpClient.newCall(request).execute()
@@ -77,7 +81,7 @@ class CitySearchRemoteDataSource(
             .build()
         val request = Request.Builder()
             .url(url)
-            .header("User-Agent", "NamazVakitleri/1.0")
+            .header("User-Agent", userAgent)
             .build()
 
         val response = httpClient.newCall(request).execute()

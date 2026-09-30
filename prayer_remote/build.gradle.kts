@@ -18,6 +18,7 @@ kotlin {
 
 dependencies {
     implementation(project(":prayer:model"))
+    implementation(project(":core:common"))
 
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.serialization.json)
