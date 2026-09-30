@@ -4,10 +4,21 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2026-08-31T18:06:46.915196Z">
+        <DropdownSelection timestamp="2026-09-21T04:43:11.724381Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="PhysicalDevice" identifier="serial=ce12160ca5e0241205" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=/Users/a195143/.android/avd/Phone_ARM64.avd" />
+            </handle>
+          </Target>
+        </DropdownSelection>
+        <DialogSelection />
+      </SelectionState>
+      <SelectionState runConfigName="wear">
+        <option name="selectionMode" value="DROPDOWN" />
+        <DropdownSelection timestamp="2026-09-29T06:34:23.705207Z">
+          <Target type="DEFAULT_BOOT">
+            <handle>
+              <DeviceId pluginId="PhysicalDevice" identifier="serial=R5GL51X5E3W" />
             </handle>
           </Target>
         </DropdownSelection>
