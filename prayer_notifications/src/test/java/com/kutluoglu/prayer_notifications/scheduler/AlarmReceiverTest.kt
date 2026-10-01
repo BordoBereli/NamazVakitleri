@@ -215,29 +215,6 @@ class AlarmReceiverTest {
     }
 
     @Test
-    fun `countdown tick updates countdown`() {
-        val receiver = AlarmReceiver()
-        val intent = Intent(context, AlarmReceiver::class.java)
-            .setAction(AlarmReceiver.ACTION_COUNTDOWN_TICK)
-            .putExtra(AlarmReceiver.EXTRA_COUNTDOWN_TARGET, System.currentTimeMillis() + 60_000)
-            .putExtra(AlarmReceiver.EXTRA_COUNTDOWN_PRAYER_NAME, "Dhuhr")
-            .putExtra(AlarmReceiver.EXTRA_COUNTDOWN_PREVIOUS_TIME, System.currentTimeMillis())
-        receiver.onReceive(context, intent)
-        verify { scheduler.updateCountdown(any(), "Dhuhr", any()) }
-    }
-
-    @Test
-    fun `countdown tick without previous time passes null`() {
-        val receiver = AlarmReceiver()
-        val intent = Intent(context, AlarmReceiver::class.java)
-            .setAction(AlarmReceiver.ACTION_COUNTDOWN_TICK)
-            .putExtra(AlarmReceiver.EXTRA_COUNTDOWN_TARGET, System.currentTimeMillis() + 60_000)
-            .putExtra(AlarmReceiver.EXTRA_COUNTDOWN_PRAYER_NAME, "Dhuhr")
-        receiver.onReceive(context, intent)
-        verify { scheduler.updateCountdown(any(), "Dhuhr", null) }
-    }
-
-    @Test
     fun `prayer alarm transitions countdown with firing prayer trigger as previous`() = runTest {
         coEvery { dataStore.getSettings() } returns NotificationSettings(countdownEnabled = true)
         val receiver = AlarmReceiver()

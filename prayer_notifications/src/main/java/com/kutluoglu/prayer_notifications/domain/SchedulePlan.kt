@@ -28,7 +28,6 @@ data class ScheduledAlarm(
 class SchedulePlan {
 
     companion object {
-        const val REQUEST_CODE_COUNTDOWN_TICK = 2000
         const val REQUEST_CODE_DAILY_REMINDER = 2001
         const val REQUEST_CODE_SPECIAL_DAY = 2002
         const val REQUEST_CODE_PRE_SPECIAL_DAY = 2003

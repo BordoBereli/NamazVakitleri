@@ -194,13 +194,6 @@ class PrayerNotificationScheduler(
             )
             pendingIntent?.let { alarmManager.cancel(it) }
         }
-        val countdownIntent = Intent(context, AlarmReceiver::class.java)
-            .setAction(AlarmReceiver.ACTION_COUNTDOWN_TICK)
-        val countdownPendingIntent = PendingIntent.getBroadcast(
-            context, SchedulePlan.REQUEST_CODE_COUNTDOWN_TICK, countdownIntent,
-            PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
-        )
-        countdownPendingIntent?.let { alarmManager.cancel(it) }
         listOf(
             SchedulePlan.REQUEST_CODE_DAILY_REMINDER,
             SchedulePlan.REQUEST_CODE_SPECIAL_DAY,
@@ -280,33 +273,10 @@ class PrayerNotificationScheduler(
             return
         }
         notificationDisplayer.showCountdownNotification(prayerName, targetMillis, previousTimeMillis, remaining)
-        scheduleCountdownTick(targetMillis, prayerName, previousTimeMillis)
     }
 
     override fun cancelCountdown() {
         notificationDisplayer.cancelCountdown()
-        val intent = Intent(context, AlarmReceiver::class.java)
-            .setAction(AlarmReceiver.ACTION_COUNTDOWN_TICK)
-        val pendingIntent = PendingIntent.getBroadcast(
-            context, SchedulePlan.REQUEST_CODE_COUNTDOWN_TICK, intent,
-            PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
-        )
-        pendingIntent?.let { alarmManager.cancel(it) }
-    }
-
-    override fun scheduleCountdownTick(targetMillis: Long, prayerName: String, previousTimeMillis: Long?) {
-        val intent = Intent(context, AlarmReceiver::class.java)
-            .setAction(AlarmReceiver.ACTION_COUNTDOWN_TICK)
-            .putExtra(AlarmReceiver.EXTRA_COUNTDOWN_TARGET, targetMillis)
-            .putExtra(AlarmReceiver.EXTRA_COUNTDOWN_PRAYER_NAME, prayerName)
-        if (previousTimeMillis != null) {
-            intent.putExtra(AlarmReceiver.EXTRA_COUNTDOWN_PREVIOUS_TIME, previousTimeMillis)
-        }
-        val pendingIntent = PendingIntent.getBroadcast(
-            context, SchedulePlan.REQUEST_CODE_COUNTDOWN_TICK, intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-        setExactAlarm(System.currentTimeMillis() + 60_000, pendingIntent)
     }
 
     override suspend fun scheduleDailyReminder() {

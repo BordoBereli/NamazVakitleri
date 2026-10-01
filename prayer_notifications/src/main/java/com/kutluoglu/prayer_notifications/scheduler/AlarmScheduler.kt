@@ -18,24 +18,19 @@ interface AlarmScheduler {
     fun cancelDailyReschedule()
 
     /**
-     * Cancels the recurring countdown tick alarm and its countdown notification.
+     * Cancels the countdown notification.
      */
     fun cancelCountdown()
 
     /**
-     * Advances the countdown: shows/updates the countdown notification (via the
-     * notification displayer) and re-arms the countdown tick alarm.
+     * Shows/updates the countdown notification (via the notification displayer).
+     * The system chronometer ticks the remaining time; no alarm re-arming needed.
      */
     fun updateCountdown(
         targetMillis: Long,
         prayerName: String,
         previousTimeMillis: Long? = null
     )
-
-    /**
-     * Schedules a single countdown tick alarm (pure alarm concern).
-     */
-    fun scheduleCountdownTick(targetMillis: Long, prayerName: String, previousTimeMillis: Long?)
 
     suspend fun scheduleDailyReminder()
 

@@ -25,13 +25,9 @@ class AlarmReceiver : BroadcastReceiver(), KoinComponent {
         const val EXTRA_PRE_PRAYER_MINUTES = "extra_pre_prayer_minutes"
         const val EXTRA_DAILY_SUMMARY = "extra_daily_summary"
         const val EXTRA_SPECIAL_DAY = "extra_special_day"
-        const val EXTRA_COUNTDOWN_TARGET = "extra_countdown_target"
-        const val EXTRA_COUNTDOWN_PRAYER_NAME = "extra_countdown_prayer_name"
-        const val EXTRA_COUNTDOWN_PREVIOUS_TIME = "extra_countdown_previous_time"
         const val EXTRA_ALARM_TRIGGER_TIME = "extra_alarm_trigger_time"
         const val ACTION_STOP_COUNTDOWN = "STOP_COUNTDOWN"
         const val ACTION_STOP_ADHAN = "STOP_ADHAN"
-        const val ACTION_COUNTDOWN_TICK = "COUNTDOWN_TICK"
     }
 
     private val notificationDisplayer: NotificationDisplayer by inject()
@@ -43,16 +39,6 @@ class AlarmReceiver : BroadcastReceiver(), KoinComponent {
         when (intent.action) {
             ACTION_STOP_COUNTDOWN -> scheduler.cancelCountdown()
             ACTION_STOP_ADHAN -> context.stopService(Intent(context, AdhanService::class.java))
-            ACTION_COUNTDOWN_TICK -> {
-                val target = intent.getLongExtra(EXTRA_COUNTDOWN_TARGET, 0L)
-                val name = intent.getStringExtra(EXTRA_COUNTDOWN_PRAYER_NAME) ?: return
-                val previous = if (intent.hasExtra(EXTRA_COUNTDOWN_PREVIOUS_TIME)) {
-                    intent.getLongExtra(EXTRA_COUNTDOWN_PREVIOUS_TIME, 0L)
-                } else {
-                    null
-                }
-                scheduler.updateCountdown(target, name, previous)
-            }
             else -> {
                 val pendingResult = goAsync()
                 scope.launch {
@@ -122,7 +108,6 @@ class AlarmReceiver : BroadcastReceiver(), KoinComponent {
             }
             AlarmType.SAHUR_END -> notificationDisplayer.showSahurEndNotification()
             AlarmType.IFTAR -> notificationDisplayer.showIftarNotification()
-            AlarmType.COUNTDOWN_TICK -> Unit
         }
     }
 }

@@ -193,7 +193,7 @@ class PrayerNotificationSchedulerTest {
     }
 
     @Test
-    fun `cancelAll cancels countdown tick and reminder alarms`() = runTest {
+    fun `cancelAll cancels reminder alarms`() = runTest {
         val scheduler = scheduler(CoroutineScope(UnconfinedTestDispatcher(testScheduler)))
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val reminderIntent = Intent(context, AlarmReceiver::class.java)
@@ -207,18 +207,7 @@ class PrayerNotificationSchedulerTest {
             System.currentTimeMillis() + 60_000,
             reminderPendingIntent
         )
-        val tickIntent = Intent(context, AlarmReceiver::class.java)
-            .setAction(AlarmReceiver.ACTION_COUNTDOWN_TICK)
-        val tickPendingIntent = PendingIntent.getBroadcast(
-            context, SchedulePlan.REQUEST_CODE_COUNTDOWN_TICK, tickIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-        alarmManager.setExactAndAllowWhileIdle(
-            AlarmManager.RTC_WAKEUP,
-            System.currentTimeMillis() + 60_000,
-            tickPendingIntent
-        )
-        assertThat(shadowOf(alarmManager).scheduledAlarms).hasSize(2)
+        assertThat(shadowOf(alarmManager).scheduledAlarms).hasSize(1)
 
         scheduler.cancelAll()
 
@@ -233,25 +222,10 @@ class PrayerNotificationSchedulerTest {
     }
 
     @Test
-    fun `cancelCountdown cancels scheduled countdown tick alarm`() = runTest {
+    fun `cancelCountdown cancels the countdown notification`() = runTest {
         val scheduler = scheduler(CoroutineScope(UnconfinedTestDispatcher(testScheduler)))
-        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val tickIntent = Intent(context, AlarmReceiver::class.java)
-            .setAction(AlarmReceiver.ACTION_COUNTDOWN_TICK)
-        val tickPendingIntent = PendingIntent.getBroadcast(
-            context, SchedulePlan.REQUEST_CODE_COUNTDOWN_TICK, tickIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-        alarmManager.setExactAndAllowWhileIdle(
-            AlarmManager.RTC_WAKEUP,
-            System.currentTimeMillis() + 60_000,
-            tickPendingIntent
-        )
-        assertThat(shadowOf(alarmManager).scheduledAlarms).hasSize(1)
-
         scheduler.cancelCountdown()
-
-        assertThat(shadowOf(alarmManager).scheduledAlarms).isEmpty()
+        verify { notificationDisplayer.cancelCountdown() }
     }
 
     @Test
@@ -341,18 +315,13 @@ class PrayerNotificationSchedulerTest {
     }
 
     @Test
-    fun `updateCountdown schedules tick carrying previous time`() = runTest {
+    fun `updateCountdown posts notification without scheduling a tick`() = runTest {
         val scheduler = scheduler(CoroutineScope(UnconfinedTestDispatcher(testScheduler)))
         val target = System.currentTimeMillis() + 3_600_000
-        val previous = System.currentTimeMillis() - 60_000
-        scheduler.updateCountdown(target, "Maghrib", previous)
+        scheduler.updateCountdown(target, "Maghrib", null)
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val tickAlarm = shadowOf(alarmManager).scheduledAlarms.first { alarm ->
-            shadowOf(alarm.operation).requestCode == SchedulePlan.REQUEST_CODE_COUNTDOWN_TICK
-        }
-        val intent = shadowOf(tickAlarm.operation).savedIntent
-        assertThat(intent.getLongExtra(AlarmReceiver.EXTRA_COUNTDOWN_PREVIOUS_TIME, 0L))
-            .isEqualTo(previous)
+        assertThat(shadowOf(alarmManager).scheduledAlarms).isEmpty()
+        verify { notificationDisplayer.showCountdownNotification("Maghrib", target, null, any()) }
     }
 
     @Test
