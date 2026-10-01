@@ -61,11 +61,14 @@ class WidgetMinuteSchedulerTest {
     }
 
     @Test
-    fun `schedule skips when exact alarm permission is missing`() {
+    fun `schedule falls back to inexact alarm when exact permission is missing`() {
         ShadowAlarmManager.setCanScheduleExactAlarms(false)
 
         WidgetMinuteScheduler(context).schedule()
 
-        assertThat(scheduledAlarms()).isEmpty()
+        val alarms = scheduledAlarms()
+        assertThat(alarms).hasSize(1)
+        assertThat(alarms[0].allowWhileIdle).isTrue()
+        assertThat(alarms[0].triggerAtTime % 60_000).isEqualTo(0)
     }
 }

@@ -7,9 +7,11 @@ import android.content.Intent
 import android.os.Build
 
 /**
- * Schedules an exact alarm at the next minute boundary that refreshes every placed
- * widget instance. The alarm targets [PrayerWidgetReceiver] with [ACTION_MINUTE_TICK],
- * which re-arms the next minute, so the chain survives process death.
+ * Schedules an alarm at the next minute boundary that refreshes every placed
+ * widget instance. Uses an exact alarm when permitted; otherwise falls back to an
+ * inexact alarm so the chain keeps re-arming. The alarm targets [PrayerWidgetReceiver]
+ * with [ACTION_MINUTE_TICK], which re-arms the next minute, so the chain survives
+ * process death.
  */
 class WidgetMinuteScheduler(private val context: Context) {
 
@@ -17,17 +19,22 @@ class WidgetMinuteScheduler(private val context: Context) {
         context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
     fun schedule() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
-            !alarmManager.canScheduleExactAlarms()
-        ) {
-            return
-        }
+        val exact = Build.VERSION.SDK_INT < Build.VERSION_CODES.S ||
+            alarmManager.canScheduleExactAlarms()
         pendingIntent(PendingIntent.FLAG_UPDATE_CURRENT)?.let {
-            alarmManager.setExactAndAllowWhileIdle(
-                AlarmManager.RTC_WAKEUP,
-                nextMinuteBoundaryMillis(System.currentTimeMillis()),
-                it
-            )
+            if (exact) {
+                alarmManager.setExactAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    nextMinuteBoundaryMillis(System.currentTimeMillis()),
+                    it
+                )
+            } else {
+                alarmManager.setAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    nextMinuteBoundaryMillis(System.currentTimeMillis()),
+                    it
+                )
+            }
         }
     }
 
