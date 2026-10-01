@@ -186,18 +186,31 @@ class PrayerNotificationManagerTest {
     }
 
     @Test
-    fun `showCountdownNotification shows remaining time in body`() {
+    fun `showCountdownNotification uses system chronometer counting down to target`() {
         manager.createChannels()
         val target = LocalTime.of(18, 45).atDate(LocalDate.of(2026, 8, 22))
             .atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
         manager.showCountdownNotification("Maghrib", target, null, 90 * 60_000L)
         val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val notification = shadowOf(nm).allNotifications.single()
-        assertThat(notification.extras.getString("android.text")).isEqualTo("1h 30m remaining")
+        assertThat(notification.extras.getBoolean(Notification.EXTRA_SHOW_CHRONOMETER)).isTrue()
+        assertThat(notification.`when`).isEqualTo(target)
+        assertThat(notification.extras.getBoolean("android.chronometerCountDown")).isTrue()
     }
 
     @Test
-    fun `showCountdownNotification sets progress bar between previous and next`() {
+    fun `showCountdownNotification body is static and never stale`() {
+        manager.createChannels()
+        val target = LocalTime.of(18, 45).atDate(LocalDate.of(2026, 8, 22))
+            .atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        manager.showCountdownNotification("Maghrib", target, null, 90 * 60_000L)
+        val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notification = shadowOf(nm).allNotifications.single()
+        assertThat(notification.extras.getString("android.text")).isEqualTo("Time remaining until Maghrib")
+    }
+
+    @Test
+    fun `showCountdownNotification omits progress bar`() {
         manager.createChannels()
         val previous = LocalTime.of(16, 45).atDate(LocalDate.of(2026, 8, 22))
             .atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
@@ -208,8 +221,8 @@ class PrayerNotificationManagerTest {
         manager.showCountdownNotification("Maghrib", target, previous, target - now)
         val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val notification = shadowOf(nm).allNotifications.single()
-        assertThat(notification.extras.getInt(Notification.EXTRA_PROGRESS_MAX)).isEqualTo(gap.toInt())
-        assertThat(notification.extras.getInt(Notification.EXTRA_PROGRESS)).isEqualTo((gap / 2).toInt())
+        assertThat(notification.extras.getInt(Notification.EXTRA_PROGRESS_MAX)).isEqualTo(0)
+        assertThat(notification.extras.getInt(Notification.EXTRA_PROGRESS)).isEqualTo(0)
     }
 
     @Test

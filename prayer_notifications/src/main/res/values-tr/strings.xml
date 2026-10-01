@@ -16,6 +16,7 @@
 
     <string name="notification_remaining_hours_minutes">%1$d sa %2$d dk</string>
     <string name="notification_remaining_minutes">%1$d dk</string>
+    <string name="notification_countdown_body">%1$s vaktine kalan süre</string>
 
     <string name="prayer_imsak">İmsak</string>
     <string name="prayer_sunrise">Güneş</string>

@@ -159,19 +159,18 @@ class PrayerNotificationManager(
                 )
             )
             .setContentText(
-                localizedString(R.string.notification_remaining, formatRemaining(remainingMillis))
+                localizedString(
+                    R.string.notification_countdown_body,
+                    countdownDisplayName(nextPrayerName, nextPrayerTimeMillis)
+                )
             )
+            .setShowWhen(true)
+            .setUsesChronometer(true)
+            .setWhen(nextPrayerTimeMillis)
+            .setChronometerCountDown(true)
             .setOngoing(true)
             .setContentIntent(contentIntent)
             .addAction(0, localizedString(R.string.notification_stop), stopIntent)
-        previousPrayerTimeMillis?.let { previous ->
-            if (previous < nextPrayerTimeMillis) {
-                val now = nextPrayerTimeMillis - remainingMillis
-                val max = (nextPrayerTimeMillis - previous).toInt()
-                val progress = (now - previous).coerceIn(0, max.toLong()).toInt()
-                builder.setProgress(max, progress, false)
-            }
-        }
         notificationManager.notify(NOTIFICATION_ID_COUNTDOWN, builder.build())
     }
 

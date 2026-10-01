@@ -16,6 +16,7 @@
 
     <string name="notification_remaining_hours_minutes">%1$dh %2$dm</string>
     <string name="notification_remaining_minutes">%1$dm</string>
+    <string name="notification_countdown_body">Time remaining until %1$s</string>
 
     <string name="prayer_imsak">Imsak</string>
     <string name="prayer_sunrise">Sunrise</string>
