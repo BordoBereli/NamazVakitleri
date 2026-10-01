@@ -5,13 +5,13 @@ minSdk = "26"
 targetSdk = "36"
 compileSdk = "36"
 accompanistPermissions = "0.34.0"
-agp = "8.10.1"
+agp = "9.4.1"
 adhan2 = "0.0.6"
 datastorePreferences = "1.1.7"
 kotlinxCoroutinesCore = "1.8.0"
 kotlinxCoroutinesPlayServices = "1.9.0"
 kotlinxSerializationJson = "1.8.1"
-ksp = "2.2.20-2.0.3"
+ksp = "2.3.6"
 jetbrainsKotlinJvm = "2.2.20"
 kotlin = "2.2.20"
 coreKtx = "1.17.0"
@@ -158,7 +158,6 @@ junit = { group = "junit", name = "junit", version.ref = "junit" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
