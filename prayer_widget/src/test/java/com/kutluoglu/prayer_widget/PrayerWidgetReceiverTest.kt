@@ -7,8 +7,6 @@ import android.content.Intent
 import androidx.test.core.app.ApplicationProvider
 import androidx.work.Configuration
 import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.ExistingWorkPolicy
-import androidx.work.OneTimeWorkRequest
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
 import com.google.common.truth.Truth.assertThat
@@ -61,40 +59,22 @@ class PrayerWidgetReceiverTest {
     }
 
     @Test
-    fun `enqueueOneTimeRefresh enqueues unique one-time work for the widget worker`() {
-        val workManager = mockk<WorkManager>(relaxed = true)
-        val receiver = PrayerWidgetReceiver()
-
-        receiver.enqueueOneTimeRefresh(context, workManager)
-
-        val requestSlot = slot<OneTimeWorkRequest>()
-        verify {
-            workManager.enqueueUniqueWork(
-                BasePrayerWidgetReceiver.ONE_TIME_REFRESH_WORK_NAME,
-                ExistingWorkPolicy.REPLACE,
-                capture(requestSlot)
-            )
-        }
-        assertThat(requestSlot.captured.workSpec.workerClassName)
-            .isEqualTo(PrayerWidgetWorker::class.java.name)
-    }
-
-    @Test
-    fun `REFRESH action triggers one-time refresh enqueue`() {
+    fun `REFRESH action refreshes widgets directly`() {
         val receiver = spyk(PrayerWidgetReceiver())
+        every { receiver.handleRefresh(context) } just Runs
 
         receiver.onReceive(context, Intent(WidgetRefreshContract.ACTION_REFRESH))
 
-        verify { receiver.enqueueOneTimeRefresh(context, any()) }
+        verify { receiver.handleRefresh(context) }
     }
 
     @Test
-    fun `non-REFRESH action does not trigger one-time refresh`() {
+    fun `non-REFRESH action does not trigger direct refresh`() {
         val receiver = spyk(PrayerWidgetReceiver())
 
         receiver.onReceive(context, Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE))
 
-        verify(exactly = 0) { receiver.enqueueOneTimeRefresh(context, any()) }
+        verify(exactly = 0) { receiver.handleRefresh(context) }
     }
 
     @Test

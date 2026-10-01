@@ -23,7 +23,7 @@ class PrayerWidgetReceiver : BasePrayerWidgetReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         when (intent.action) {
             WidgetRefreshContract.ACTION_REFRESH -> {
-                enqueueOneTimeRefresh(context)
+                handleRefresh(context)
                 return
             }
             WidgetMinuteScheduler.ACTION_MINUTE_TICK -> {
@@ -44,6 +44,17 @@ class PrayerWidgetReceiver : BasePrayerWidgetReceiver() {
             }
         }
         rearmMinuteTick(context)
+    }
+
+    internal fun handleRefresh(context: Context) {
+        val pendingResult = goAsync()
+        scope.launch {
+            try {
+                refreshWidgets(context)
+            } finally {
+                pendingResult.finish()
+            }
+        }
     }
 
     internal suspend fun refreshWidgets(

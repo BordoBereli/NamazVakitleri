@@ -4,7 +4,6 @@ import android.appwidget.AppWidgetManager
 import android.content.Context
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
@@ -53,20 +52,7 @@ abstract class BasePrayerWidgetReceiver : GlanceAppWidgetReceiver() {
         )
     }
 
-    internal fun enqueueOneTimeRefresh(
-        context: Context,
-        workManager: WorkManager = WorkManager.getInstance(context)
-    ) {
-        val request = OneTimeWorkRequestBuilder<PrayerWidgetWorker>().build()
-        workManager.enqueueUniqueWork(
-            ONE_TIME_REFRESH_WORK_NAME,
-            ExistingWorkPolicy.REPLACE,
-            request
-        )
-    }
-
     companion object {
         const val REFRESH_WORK_NAME = "prayer-widget-refresh"
-        const val ONE_TIME_REFRESH_WORK_NAME = "prayer-widget-refresh-once"
     }
 }
