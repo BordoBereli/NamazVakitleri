@@ -1,6 +1,6 @@
-package com.kutluoglu.wear.shared.data
+package com.kutluoglu.core.common
 
-object WatchCountdownCalculator {
+object PrayerCountdownCalculator {
 
     fun countdownText(
         nextPrayerEpochMillis: Long,

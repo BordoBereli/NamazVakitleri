@@ -13,9 +13,9 @@ import androidx.wear.protolayout.material3.createMaterialScope
 import androidx.wear.tiles.Material3TileService
 import androidx.wear.tiles.RequestBuilders.TileRequest
 import androidx.wear.tiles.TileBuilders.Tile
+import com.kutluoglu.core.common.PrayerCountdownCalculator
 import com.kutluoglu.wear.R
 import com.kutluoglu.wear.data.TileDataRepository
-import com.kutluoglu.wear.shared.data.WatchCountdownCalculator
 import com.kutluoglu.wear.shared.model.WatchTileData
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -77,7 +77,7 @@ class PrayerTileService(
     }
 
     private fun countdownText(scope: MaterialScope, data: WatchTileData, now: Long): String =
-        WatchCountdownCalculator.countdownText(
+        PrayerCountdownCalculator.countdownText(
             nextPrayerEpochMillis = data.nextPrayerEpochMillis,
             nowEpochMillis = now,
             hourShort = scope.context.getString(R.string.wear_countdown_hour_short),
@@ -85,7 +85,7 @@ class PrayerTileService(
         )
 
     private fun ringProgress(data: WatchTileData, now: Long): Float =
-        WatchCountdownCalculator.ringProgress(
+        PrayerCountdownCalculator.ringProgress(
             currentPrayerEpochMillis = data.currentPrayerEpochMillis,
             nextPrayerEpochMillis = data.nextPrayerEpochMillis,
             nowEpochMillis = now,
