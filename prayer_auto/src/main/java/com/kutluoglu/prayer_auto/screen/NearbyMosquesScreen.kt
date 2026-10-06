@@ -2,10 +2,14 @@ package com.kutluoglu.prayer_auto.screen
 
 import android.content.Intent
 import android.net.Uri
+import android.text.SpannableStringBuilder
+import android.text.Spanned
 import androidx.car.app.CarContext
 import androidx.car.app.Screen
 import androidx.car.app.model.Action
 import androidx.car.app.model.CarLocation
+import androidx.car.app.model.Distance
+import androidx.car.app.model.DistanceSpan
 import androidx.car.app.model.ItemList
 import androidx.car.app.model.Metadata
 import androidx.car.app.model.Place
@@ -28,9 +32,9 @@ import org.koin.core.component.inject
 
 /**
  * Nearby mosques on a half-screen map. Tapping a mosque hands off to Google
- * Maps navigation. Search failures show an empty list with a message; the
- * map half stays visible. One-shot load on first resume (no refresh loop —
- * mosque locations don't change).
+ * Maps navigation. Search failures show a message row that retries the search on
+ * tap; the map half stays visible. One load on first resume, plus on-demand
+ * retry (no refresh loop — mosque locations don't change).
  *
  * Instantiated by the car library (not Koin), hence KoinComponent.
  */
@@ -49,14 +53,7 @@ class NearbyMosquesScreen(
         lifecycle.addObserver(object : DefaultLifecycleObserver {
             override fun onResume(owner: LifecycleOwner) {
                 if (!loaded) {
-                    loadJob = scope.launch {
-                        val surface = runCatching { surfaceProvider.load() }.getOrNull()
-                        mosques = surface?.let {
-                            searcher.search(it.location.latitude, it.location.longitude)
-                        } ?: emptyList()
-                        loaded = true
-                        invalidate()
-                    }
+                    load()
                 }
             }
 
@@ -71,20 +68,47 @@ class NearbyMosquesScreen(
         })
     }
 
+    private fun load() {
+        if (loadJob?.isActive == true) {
+            return
+        }
+        loadJob = scope.launch {
+            val surface = runCatching { surfaceProvider.load() }.getOrNull()
+            mosques = surface?.let {
+                searcher.search(it.location.latitude, it.location.longitude)
+            } ?: emptyList()
+            loaded = true
+            invalidate()
+        }
+    }
+
     override fun onGetTemplate(): Template {
         val list = ItemList.Builder()
         if (mosques.isEmpty()) {
             list.addItem(
                 Row.Builder()
                     .setTitle(carContext.getString(R.string.auto_no_mosques))
+                    .setBrowsable(true)
+                    .setOnClickListener { load() }
                     .build()
             )
         } else {
             mosques.forEach { mosque ->
+                val distanceText = SpannableStringBuilder(
+                    "%.1f km".format(mosque.distanceKm)
+                )
+                distanceText.setSpan(
+                    DistanceSpan.create(
+                        Distance.create(mosque.distanceKm.toDouble(), Distance.UNIT_KILOMETERS_P1)
+                    ),
+                    0,
+                    distanceText.length,
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
                 list.addItem(
                     Row.Builder()
                         .setTitle(mosque.name)
-                        .addText("%.1f km".format(mosque.distanceKm))
+                        .addText(distanceText)
                         .setMetadata(
                             Metadata.Builder()
                                 .setPlace(
