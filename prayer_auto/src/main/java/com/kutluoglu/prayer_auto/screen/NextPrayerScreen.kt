@@ -96,8 +96,7 @@ class NextPrayerScreen(
             .filter { it.isNotBlank() }
             .joinToString(" — ")
         val row = Row.Builder()
-            .setTitle("📍 $locationLine")
-            .addText("$remaining ${carContext.getString(R.string.auto_remaining_suffix)}")
+            .setTitle("$title --> $remaining ${carContext.getString(R.string.auto_remaining_suffix)}")
         if (isTomorrow) {
             row.addText(carContext.getString(R.string.auto_tomorrow_morning))
         }
@@ -117,6 +116,6 @@ class NextPrayerScreen(
                         .build()
                 )
                 .build()
-        ).setTitle(title).build()
+        ).setTitle("📍 $locationLine").build()
     }
 }

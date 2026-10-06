@@ -15,9 +15,8 @@ import kotlin.math.sqrt
  */
 @Factory
 class MosqueSearcher(
-    private val remoteDataSource: CitySearchRemoteDataSource,
+        private val remoteDataSource: CitySearchRemoteDataSource
 ) {
-
     suspend fun search(latitude: Double, longitude: Double): List<Mosque> {
         return runCatching {
             remoteDataSource.searchPlaces("mosque near $latitude,$longitude")
