@@ -31,6 +31,8 @@ import org.koin.core.component.inject
  * Maps navigation. Search failures show an empty list with a message; the
  * map half stays visible. One-shot load on first resume (no refresh loop —
  * mosque locations don't change).
+ *
+ * Instantiated by the car library (not Koin), hence KoinComponent.
  */
 class NearbyMosquesScreen(
     carContext: CarContext,
@@ -93,9 +95,11 @@ class NearbyMosquesScreen(
                         )
                         .setOnClickListener {
                             val uri = Uri.parse("google.navigation:q=${mosque.latitude},${mosque.longitude}")
-                            carContext.startActivity(
-                                Intent(Intent.ACTION_VIEW, uri).setPackage("com.google.android.apps.maps")
-                            )
+                            runCatching {
+                                carContext.startActivity(
+                                    Intent(Intent.ACTION_VIEW, uri).setPackage("com.google.android.apps.maps")
+                                )
+                            }
                         }
                         .build()
                 )
