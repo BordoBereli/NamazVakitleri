@@ -49,6 +49,6 @@ dependencies {
     testImplementation(libs.mockk)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.robolectric)
-    testImplementation("androidx.test:core:1.7.0")
+    testImplementation(libs.androidx.test.core)
 }
 tasks.withType<Test> { useJUnitPlatform() }
