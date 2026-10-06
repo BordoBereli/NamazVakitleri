@@ -12,6 +12,8 @@ import com.kutluoglu.namazvakitleri.di.AppAnalyticsModule
 import com.kutluoglu.prayer.data.di.PrayerDataModule
 import com.kutluoglu.prayer.di.PrayerDomainModule
 import com.kutluoglu.prayer.domain.PrayerSurfaceDataProvider
+import com.kutluoglu.prayer_auto.data.MosqueSearcher
+import com.kutluoglu.prayer_auto.di.PrayerAutoModule
 import com.kutluoglu.prayer_feature.common.di.PrayerFeatureCommonModule
 import com.kutluoglu.prayer_feature.home.HomeViewModel
 import com.kutluoglu.prayer_feature.home.SavedVersesViewModel
@@ -82,7 +84,8 @@ class KoinGraphVerificationTest {
         PrayerRemoteModule.module,
         PrayerQiblaModule.module,
         PrayerFeaturePrayerTimesModule.module,
-        PrayerFeatureSettingsModule.module
+        PrayerFeatureSettingsModule.module,
+        PrayerAutoModule.module
     )
 
     private val mockModule: Module = module {
@@ -159,5 +162,14 @@ class KoinGraphVerificationTest {
         }.koin
 
         assertThat(koin.get<PrayerSurfaceDataProvider>()).isNotNull()
+    }
+
+    @Test
+    fun `MosqueSearcher resolves from the full Koin graph`() {
+        val koin = koinApplication {
+            modules(allModules + mockModule)
+        }.koin
+
+        assertThat(koin.get<MosqueSearcher>()).isNotNull()
     }
 }
