@@ -146,6 +146,50 @@ class CitySearchRemoteDataSourceTest {
     }
 
     @Test
+    fun `searchPlaces keeps POI results without city address fields`() = runBlocking {
+        mockWebServer.enqueue(
+            MockResponse()
+                .setResponseCode(200)
+                .setBody(
+                    """
+                    [
+                        {
+                            "lat": "41.0054",
+                            "lon": "28.9768",
+                            "display_name": "Sultan Ahmed Mosque, Alemdar, Fatih, İstanbul, Türkiye",
+                            "address": {
+                                "road": "Alemdar Caddesi",
+                                "suburb": "Cankurtaran Mahallesi",
+                                "country": "Türkiye",
+                                "country_code": "tr"
+                            }
+                        }
+                    ]
+                    """.trimIndent()
+                )
+        )
+
+        val places = dataSource.searchPlaces("mosque near 41.0082,28.9784")
+
+        assertEquals(1, places.size)
+        val place = places.first()
+        assertEquals("Sultan Ahmed Mosque, Alemdar, Fatih, İstanbul, Türkiye", place.name)
+        assertEquals(41.0054, place.latitude)
+        assertEquals(28.9768, place.longitude)
+        assertEquals("Türkiye", place.country)
+    }
+
+    @Test
+    fun `searchPlaces encodes special characters in query`() = runBlocking {
+        mockWebServer.enqueue(MockResponse().setResponseCode(200).setBody("[]"))
+
+        dataSource.searchPlaces("Kadıköy & vicinity #1")
+
+        val recorded = mockWebServer.takeRequest()
+        assertEquals("Kadıköy & vicinity #1", recorded.requestUrl!!.queryParameter("q"))
+    }
+
+    @Test
     fun `reverseGeocode sets timezone from country code`() = runBlocking {
         mockWebServer.enqueue(
             MockResponse()

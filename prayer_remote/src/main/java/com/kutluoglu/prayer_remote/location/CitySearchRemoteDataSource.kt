@@ -29,7 +29,45 @@ class CitySearchRemoteDataSource(
         isLenient = true
     }
 
-    suspend fun searchCities(query: String): List<City> = withContext(Dispatchers.IO) {
+    suspend fun searchCities(query: String): List<City> = fetchSearchResults(query).mapNotNull { result ->
+        val address = result.address
+        val cityName = address?.getCityName() ?: return@mapNotNull null
+        val countyName = address?.getCountyName()
+        val cityField = address?.getCityName()
+        val countryCode = address?.country_code?.uppercase() ?: ""
+        val countryName = getCountryNameFromCode(countryCode) ?: address?.country ?: ""
+        val latitude = result.lat.toDoubleOrNull() ?: return@mapNotNull null
+        val longitude = result.lon.toDoubleOrNull() ?: return@mapNotNull null
+        City(
+            name = cityName,
+            city = cityField,
+            country = countryName,
+            latitude = latitude,
+            longitude = longitude,
+            timezone = timeZoneIdFor(latitude, longitude, countryCode) ?: "",
+            county = countyName,
+        )
+    }
+
+    /**
+     * Searches arbitrary places (e.g. mosque POIs) via the Nominatim free-text
+     * search. Unlike [searchCities], results are not filtered by city-level
+     * address fields: the display name is used as the [City.name], so POI
+     * results that lack city/province/town address components are kept.
+     */
+    suspend fun searchPlaces(query: String): List<City> = fetchSearchResults(query).mapNotNull { result ->
+        val latitude = result.lat.toDoubleOrNull() ?: return@mapNotNull null
+        val longitude = result.lon.toDoubleOrNull() ?: return@mapNotNull null
+        City(
+            name = result.display_name,
+            country = result.address?.country ?: "",
+            latitude = latitude,
+            longitude = longitude,
+            timezone = timeZoneIdFor(latitude, longitude, result.address?.country_code) ?: "",
+        )
+    }
+
+    private suspend fun fetchSearchResults(query: String): List<GeocodingResult> = withContext(Dispatchers.IO) {
         val url = baseUrl.toHttpUrl().newBuilder()
             .addPathSegment("search")
             .addQueryParameter("q", query)
@@ -48,27 +86,7 @@ class CitySearchRemoteDataSource(
         }
 
         val body = response.body?.string() ?: throw NetworkException("Empty response")
-        val results = json.decodeFromString<List<GeocodingResult>>(body)
-
-        results.mapNotNull { result ->
-            val address = result.address
-            val cityName = address?.getCityName() ?: return@mapNotNull null
-            val countyName = address?.getCountyName()
-            val cityField = address?.getCityName()
-            val countryCode = address?.country_code?.uppercase() ?: ""
-            val countryName = getCountryNameFromCode(countryCode) ?: address?.country ?: ""
-            val latitude = result.lat.toDoubleOrNull() ?: return@mapNotNull null
-            val longitude = result.lon.toDoubleOrNull() ?: return@mapNotNull null
-            City(
-                name = cityName,
-                city = cityField,
-                country = countryName,
-                latitude = latitude,
-                longitude = longitude,
-                timezone = timeZoneIdFor(latitude, longitude, countryCode) ?: "",
-                county = countyName
-            )
-        }
+        json.decodeFromString<List<GeocodingResult>>(body)
     }
 
     suspend fun reverseGeocode(latitude: Double, longitude: Double): City? = withContext(Dispatchers.IO) {
