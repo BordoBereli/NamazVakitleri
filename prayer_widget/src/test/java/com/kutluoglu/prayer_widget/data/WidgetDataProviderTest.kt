@@ -1,401 +1,82 @@
 package com.kutluoglu.prayer_widget.data
 
-import com.kutluoglu.prayer.domain.DailyPrayerTimes
-import com.kutluoglu.prayer.domain.DailyPrayerTimesLoader
+import com.kutluoglu.core.designsystem.prayerUtils.PrayerFormatter
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
+import com.kutluoglu.prayer.domain.PrayerSurfaceDataProvider
+import com.kutluoglu.prayer.domain.SurfacePrayerData
 import com.kutluoglu.prayer.model.location.LocationData
-import com.kutluoglu.prayer.model.location.resolveZoneId
-import com.kutluoglu.prayer.model.prayer.JuristicMethod
 import com.kutluoglu.prayer.model.prayer.Prayer
-import com.kutluoglu.prayer.settings.AppLocation
-import com.kutluoglu.prayer.settings.AppSettings
-import com.kutluoglu.prayer.settings.SettingsProvider
-import com.kutluoglu.prayer_location.LocationsCoordinator
 import io.mockk.coEvery
-import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Test
-import java.time.Clock
-import java.time.Instant
-import java.time.ZoneId
-import java.time.ZoneOffset
-import java.util.TimeZone
+import java.time.Duration
 
 class WidgetDataProviderTest {
 
-    private fun prayer(name: String, time: LocalTime, date: LocalDate = LocalDate(2026, 9, 2)) =
-        Prayer(name, name, time, date)
-
-    private fun dhuhrPrayer(time: LocalTime, date: LocalDate) =
-        Prayer(name = "Dhuhr", arabicName = "الظهر", time = time, date = date)
-
-    private fun dailyTimes(
-        prayers: List<Prayer>,
-        current: Prayer?,
-        next: Prayer?,
-        currentEpoch: Long = 0L,
-        nextEpoch: Long = 0L,
+    private fun surfaceData(
+        city: String = "Istanbul",
+        nextPrayerName: String = "Dhuhr",
+        nextPrayerTime: String = "12:30",
+        nextEpoch: Long = 1_700_000_000_000L,
+        currentEpoch: Long = 1_699_999_000_000L,
         isJumuah: Boolean = false
-    ) = DailyPrayerTimes(prayers, current, next, currentEpoch, nextEpoch, isJumuah)
-
-    private fun countdownFormatter() = mockk<WidgetCountdownFormatter>(relaxed = true)
-
-    private fun appSettings(
-        calculationMethod: String = "TURKEY_DIYANET",
-        juristicMethod: String = "STANDARD",
-        hijriAdjustment: Int = 0,
-        language: String = "system",
-        lockPortrait: Boolean = true,
-        compassAutoRotate: Boolean = true,
-        location: AppLocation = AppLocation(
-            latitude = 41.0082,
-            longitude = 28.9784,
-            cityName = "Istanbul",
-            district = null,
-            country = "Turkey",
-            timeZone = "Europe/Istanbul"
-        )
-    ): AppSettings = AppSettings(
-        calculationMethod = calculationMethod,
-        juristicMethod = juristicMethod,
-        hijriAdjustment = hijriAdjustment,
-        language = language,
-        lockPortrait = lockPortrait,
-        compassAutoRotate = compassAutoRotate,
-        location = location
+    ) = SurfacePrayerData(
+        city = city,
+        district = "Fatih",
+        nextPrayerName = nextPrayerName,
+        nextPrayerTime = nextPrayerTime,
+        nextPrayerLocalTime = LocalTime(12, 30),
+        currentPrayerLocalTime = LocalTime(5, 47),
+        nextPrayerEpochMillis = nextEpoch,
+        currentPrayerEpochMillis = currentEpoch,
+        isJumuah = isJumuah,
+        hijriAdjustment = 0,
+        location = LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", "Fatih", "Europe/Istanbul"),
+        prayers = listOf(
+            Prayer("Imsak", "Imsak", LocalTime(5, 47), LocalDate(2026, 10, 5)),
+            Prayer(nextPrayerName, nextPrayerName, LocalTime(12, 30), LocalDate(2026, 10, 5))
+        ),
+        nextPrayerDate = LocalDate(2026, 10, 5)
     )
 
-    private suspend fun withSystemDefaultZone(zoneId: String, block: suspend () -> Unit) {
-        val original = TimeZone.getDefault()
-        TimeZone.setDefault(TimeZone.getTimeZone(zoneId))
-        try {
-            block()
-        } finally {
-            TimeZone.setDefault(original)
-        }
-    }
-
     @Test
-    fun `load returns next prayer and countdown`() = runTest {
-        withSystemDefaultZone("Europe/Istanbul") {
-            val dailyLoader = mockk<DailyPrayerTimesLoader>(relaxed = true)
-            val locations = mockk<LocationsCoordinator>(relaxed = true)
-            val settings = mockk<SettingsProvider>(relaxed = true)
-            val calculator = PrayerLogicEngine(Clock.fixed(Instant.parse("2026-09-02T08:00:00Z"), ZoneOffset.UTC))
-            val formatter = mockk<com.kutluoglu.core.designsystem.prayerUtils.PrayerFormatter>(relaxed = true)
-            val countdown = countdownFormatter()
-
-            coEvery { locations.resolveSelected() } returns LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", null)
-            coEvery { settings.getSettings() } returns appSettings()
-            coEvery { dailyLoader.load(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
-                dailyTimes(
-                    prayers = listOf(
-                        prayer("Dhuhr", LocalTime(12, 30)),
-                        prayer("Maghrib", LocalTime(19, 30)),
-                        prayer("Asr", LocalTime(16, 0))
-                    ),
-                    current = prayer("Asr", LocalTime(16, 0)),
-                    next = prayer("Dhuhr", LocalTime(12, 30))
-                )
-            )
-            coEvery { formatter.withLocalizedNames(any()) } returns listOf(
-                prayer("Dhuhr", LocalTime(12, 30)),
-                prayer("Maghrib", LocalTime(19, 30)),
-                prayer("Asr", LocalTime(16, 0))
-            )
-            coEvery { countdown.format(any(), any()) } returns "2s 15d"
-
-            val provider = WidgetDataProvider(dailyLoader, locations, settings, calculator, formatter, countdown)
-            val result = provider.load()
-            assertTrue(result is WidgetResult.Success)
-            val data = (result as WidgetResult.Success).data
-            assertEquals("Dhuhr", data.nextPrayerName)
-            assertEquals("Istanbul", data.locationName)
-            assertEquals("2s 15d", data.countdownText)
-        }
-    }
-
-    @Test
-    fun `load populates current and next prayer epoch millis`() = runTest {
-        withSystemDefaultZone("Europe/Istanbul") {
-            val dailyLoader = mockk<DailyPrayerTimesLoader>(relaxed = true)
-            val locations = mockk<LocationsCoordinator>(relaxed = true)
-            val settings = mockk<SettingsProvider>(relaxed = true)
-            val clock = Clock.fixed(Instant.parse("2026-09-02T11:15:00Z"), ZoneOffset.UTC)
-            val calculator = PrayerLogicEngine(clock)
-            val formatter = mockk<com.kutluoglu.core.designsystem.prayerUtils.PrayerFormatter>(relaxed = true)
-            val countdown = countdownFormatter()
-
-            coEvery { locations.resolveSelected() } returns LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", null)
-            coEvery { settings.getSettings() } returns appSettings()
-            coEvery { dailyLoader.load(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
-                dailyTimes(
-                    prayers = listOf(
-                        prayer("Dhuhr", LocalTime(12, 30)),
-                        prayer("Asr", LocalTime(16, 0))
-                    ),
-                    current = prayer("Dhuhr", LocalTime(12, 30)),
-                    next = prayer("Asr", LocalTime(16, 0)),
-                    currentEpoch = Instant.parse("2026-09-02T09:30:00Z").toEpochMilli(),
-                    nextEpoch = Instant.parse("2026-09-02T13:00:00Z").toEpochMilli()
-                )
-            )
-            coEvery { formatter.withLocalizedNames(any()) } returns listOf(
-                prayer("Dhuhr", LocalTime(12, 30)),
-                prayer("Asr", LocalTime(16, 0))
-            )
-            coEvery { countdown.format(any(), any()) } returns "2s 15d"
-
-            val provider = WidgetDataProvider(dailyLoader, locations, settings, calculator, formatter, countdown, clock)
-            val result = provider.load()
-            assertTrue(result is WidgetResult.Success)
-            val data = (result as WidgetResult.Success).data
-            assertTrue(data.nextPrayerEpochMillis > 0L)
-            assertTrue(data.currentPrayerEpochMillis > 0L)
-        }
-    }
-
-    @Test
-    fun `load computes ring progress between current and next prayer`() = runTest {
-        withSystemDefaultZone("Europe/Istanbul") {
-            val dailyLoader = mockk<DailyPrayerTimesLoader>(relaxed = true)
-            val locations = mockk<LocationsCoordinator>(relaxed = true)
-            val settings = mockk<SettingsProvider>(relaxed = true)
-            val clock = Clock.fixed(Instant.parse("2026-09-02T11:15:00Z"), ZoneOffset.UTC)
-            val calculator = PrayerLogicEngine(clock)
-            val formatter = mockk<com.kutluoglu.core.designsystem.prayerUtils.PrayerFormatter>(relaxed = true)
-            val countdown = countdownFormatter()
-
-            coEvery { locations.resolveSelected() } returns LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", null)
-            coEvery { settings.getSettings() } returns appSettings()
-            coEvery { dailyLoader.load(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
-                dailyTimes(
-                    prayers = listOf(
-                        prayer("Dhuhr", LocalTime(12, 30)),
-                        prayer("Asr", LocalTime(16, 0))
-                    ),
-                    current = prayer("Dhuhr", LocalTime(12, 30)),
-                    next = prayer("Asr", LocalTime(16, 0))
-                )
-            )
-            coEvery { formatter.withLocalizedNames(any()) } returns listOf(
-                prayer("Dhuhr", LocalTime(12, 30)),
-                prayer("Asr", LocalTime(16, 0))
-            )
-            coEvery { countdown.format(any(), any()) } returns "2s 15d"
-
-            val provider = WidgetDataProvider(dailyLoader, locations, settings, calculator, formatter, countdown, clock)
-            val result = provider.load()
-            assertTrue(result is WidgetResult.Success)
-            val data = (result as WidgetResult.Success).data
-            // 11:15 UTC = 14:15 Istanbul; Dhuhr 12:30 -> Asr 16:00 is 50% through
-            assertEquals(0.5f, data.ringProgress, 0.01f)
-        }
-    }
-
-    @Test
-    fun `load returns error when no location`() = runTest {
-        val dailyLoader = mockk<DailyPrayerTimesLoader>(relaxed = true)
-        val locations = mockk<LocationsCoordinator>(relaxed = true)
-        val settings = mockk<SettingsProvider>(relaxed = true)
+    fun `load maps surface data to widget data`() = runTest {
+        val surfaceProvider = mockk<PrayerSurfaceDataProvider>(relaxed = true)
+        val formatter = mockk<PrayerFormatter>(relaxed = true)
+        val countdown = mockk<WidgetCountdownFormatter>(relaxed = true)
         val calculator = mockk<PrayerLogicEngine>(relaxed = true)
-        val formatter = mockk<com.kutluoglu.core.designsystem.prayerUtils.PrayerFormatter>(relaxed = true)
-        val countdown = countdownFormatter()
+        coEvery { surfaceProvider.load() } returns surfaceData()
+        every { countdown.format(any(), any()) } returns "2s 15d"
+        every { calculator.calculateTimeRemaining(any(), any()) } returns Duration.ofHours(2)
+        every { formatter.getInitialTimeInfo(any(), any(), any(), any()) } returns mockk(relaxed = true)
 
-        coEvery { locations.resolveSelected() } returns null
-
-        val provider = WidgetDataProvider(dailyLoader, locations, settings, calculator, formatter, countdown)
+        val provider = WidgetDataProvider(surfaceProvider, formatter, countdown, calculator)
         val result = provider.load()
+
+        assertTrue(result is WidgetResult.Success)
+        val data = (result as WidgetResult.Success).data
+        assertEquals("Dhuhr", data.nextPrayerName)
+        assertEquals("Istanbul", data.locationName)
+        assertEquals("2s 15d", data.countdownText)
+    }
+
+    @Test
+    fun `load returns error when surface data is null`() = runTest {
+        val surfaceProvider = mockk<PrayerSurfaceDataProvider>(relaxed = true)
+        val formatter = mockk<PrayerFormatter>(relaxed = true)
+        val countdown = mockk<WidgetCountdownFormatter>(relaxed = true)
+        val calculator = mockk<PrayerLogicEngine>(relaxed = true)
+        coEvery { surfaceProvider.load() } returns null
+
+        val provider = WidgetDataProvider(surfaceProvider, formatter, countdown, calculator)
+        val result = provider.load()
+
         assertTrue(result is WidgetResult.Error)
-    }
-
-    @Test
-    fun `load resolves zone from location and skips daily cache persist`() = runTest {
-        withSystemDefaultZone("Europe/Berlin") {
-            val dailyLoader = mockk<DailyPrayerTimesLoader>(relaxed = true)
-            val locations = mockk<LocationsCoordinator>(relaxed = true)
-            val settings = mockk<SettingsProvider>(relaxed = true)
-            val calculator = mockk<PrayerLogicEngine>(relaxed = true)
-            val formatter = mockk<com.kutluoglu.core.designsystem.prayerUtils.PrayerFormatter>(relaxed = true)
-            val countdown = countdownFormatter()
-
-            coEvery { locations.resolveSelected() } returns LocationData(41.0, 29.0, "United States", "US", "New York", null)
-            coEvery { settings.getSettings() } returns appSettings()
-            coEvery { dailyLoader.load(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
-                dailyTimes(
-                    prayers = listOf(prayer("Dhuhr", LocalTime(12, 30))),
-                    current = prayer("Dhuhr", LocalTime(12, 30)),
-                    next = prayer("Dhuhr", LocalTime(12, 30))
-                )
-            )
-            coEvery { formatter.withLocalizedNames(any()) } returns listOf(prayer("Dhuhr", LocalTime(12, 30)))
-
-            val provider = WidgetDataProvider(dailyLoader, locations, settings, calculator, formatter, countdown)
-            provider.load()
-
-            val expectedZone = resolveZoneId(LocationData(41.0, 29.0, "United States", "US", "New York", null))
-            assertNotEquals(ZoneId.of("Europe/Berlin"), expectedZone)
-            coVerify {
-                dailyLoader.load(any(), any(), any(), eq(expectedZone), any(), any(), eq(false))
-            }
-        }
-    }
-
-    @Test
-    fun `load forwards juristic method from settings to daily loader`() = runTest {
-        withSystemDefaultZone("Europe/Istanbul") {
-            val dailyLoader = mockk<DailyPrayerTimesLoader>(relaxed = true)
-            val locations = mockk<LocationsCoordinator>(relaxed = true)
-            val settings = mockk<SettingsProvider>(relaxed = true)
-            val calculator = mockk<PrayerLogicEngine>(relaxed = true)
-            val formatter = mockk<com.kutluoglu.core.designsystem.prayerUtils.PrayerFormatter>(relaxed = true)
-            val countdown = countdownFormatter()
-
-            coEvery { locations.resolveSelected() } returns LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", null)
-            coEvery { settings.getSettings() } returns appSettings(juristicMethod = "HANAFI")
-            coEvery { dailyLoader.load(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
-                dailyTimes(
-                    prayers = listOf(prayer("Dhuhr", LocalTime(12, 30))),
-                    current = prayer("Dhuhr", LocalTime(12, 30)),
-                    next = prayer("Dhuhr", LocalTime(12, 30))
-                )
-            )
-            coEvery { formatter.withLocalizedNames(any()) } returns listOf(prayer("Dhuhr", LocalTime(12, 30)))
-
-            val provider = WidgetDataProvider(dailyLoader, locations, settings, calculator, formatter, countdown)
-            provider.load()
-
-            coVerify {
-                dailyLoader.load(any(), any(), any(), any(), any(), JuristicMethod.HANAFI, any())
-            }
-        }
-    }
-
-    @Test
-    fun `load marks isJumuah true when next prayer is Dhuhr on Friday`() = runTest {
-        withSystemDefaultZone("Europe/Istanbul") {
-            val dailyLoader = mockk<DailyPrayerTimesLoader>(relaxed = true)
-            val locations = mockk<LocationsCoordinator>(relaxed = true)
-            val settings = mockk<SettingsProvider>(relaxed = true)
-            val calculator = PrayerLogicEngine(Clock.fixed(Instant.parse("2026-09-02T08:00:00Z"), ZoneOffset.UTC))
-            val formatter = mockk<com.kutluoglu.core.designsystem.prayerUtils.PrayerFormatter>(relaxed = true)
-            val countdown = countdownFormatter()
-
-            coEvery { locations.resolveSelected() } returns LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", null)
-            coEvery { settings.getSettings() } returns appSettings()
-            coEvery { dailyLoader.load(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
-                dailyTimes(
-                    prayers = listOf(
-                        dhuhrPrayer(LocalTime(12, 30), LocalDate(2026, 8, 28)), // Friday
-                        prayer("Asr", LocalTime(16, 0), LocalDate(2026, 8, 28)),
-                        prayer("Maghrib", LocalTime(19, 30), LocalDate(2026, 8, 28))
-                    ),
-                    current = dhuhrPrayer(LocalTime(12, 30), LocalDate(2026, 8, 28)),
-                    next = dhuhrPrayer(LocalTime(12, 30), LocalDate(2026, 8, 28)),
-                    isJumuah = true
-                )
-            )
-            coEvery { formatter.withLocalizedNames(any()) } returns listOf(
-                dhuhrPrayer(LocalTime(12, 30), LocalDate(2026, 8, 28)),
-                prayer("Asr", LocalTime(16, 0), LocalDate(2026, 8, 28)),
-                prayer("Maghrib", LocalTime(19, 30), LocalDate(2026, 8, 28))
-            )
-            coEvery { countdown.format(any(), any()) } returns "2s 15d"
-
-            val provider = WidgetDataProvider(dailyLoader, locations, settings, calculator, formatter, countdown)
-            val result = provider.load()
-            assertTrue(result is WidgetResult.Success)
-            val data = (result as WidgetResult.Success).data
-            assertTrue(data.isJumuah)
-            assertTrue(data.prayers.first { it.name == "Dhuhr" }.isJumuah)
-            assertFalse(data.prayers.first { it.name == "Asr" }.isJumuah)
-        }
-    }
-
-    @Test
-    fun `load marks isJumuah false when next prayer is Dhuhr on non-Friday`() = runTest {
-        withSystemDefaultZone("Europe/Istanbul") {
-            val dailyLoader = mockk<DailyPrayerTimesLoader>(relaxed = true)
-            val locations = mockk<LocationsCoordinator>(relaxed = true)
-            val settings = mockk<SettingsProvider>(relaxed = true)
-            val calculator = PrayerLogicEngine(Clock.fixed(Instant.parse("2026-09-02T08:00:00Z"), ZoneOffset.UTC))
-            val formatter = mockk<com.kutluoglu.core.designsystem.prayerUtils.PrayerFormatter>(relaxed = true)
-            val countdown = countdownFormatter()
-
-            coEvery { locations.resolveSelected() } returns LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", null)
-            coEvery { settings.getSettings() } returns appSettings()
-            coEvery { dailyLoader.load(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
-                dailyTimes(
-                    prayers = listOf(
-                        dhuhrPrayer(LocalTime(12, 30), LocalDate(2026, 9, 2)), // Wednesday
-                        prayer("Asr", LocalTime(16, 0), LocalDate(2026, 9, 2)),
-                        prayer("Maghrib", LocalTime(19, 30), LocalDate(2026, 9, 2))
-                    ),
-                    current = dhuhrPrayer(LocalTime(12, 30), LocalDate(2026, 9, 2)),
-                    next = dhuhrPrayer(LocalTime(12, 30), LocalDate(2026, 9, 2)),
-                    isJumuah = false
-                )
-            )
-            coEvery { formatter.withLocalizedNames(any()) } returns listOf(
-                dhuhrPrayer(LocalTime(12, 30), LocalDate(2026, 9, 2)),
-                prayer("Asr", LocalTime(16, 0), LocalDate(2026, 9, 2)),
-                prayer("Maghrib", LocalTime(19, 30), LocalDate(2026, 9, 2))
-            )
-            coEvery { countdown.format(any(), any()) } returns "2s 15d"
-
-            val provider = WidgetDataProvider(dailyLoader, locations, settings, calculator, formatter, countdown)
-            val result = provider.load()
-            assertTrue(result is WidgetResult.Success)
-            val data = (result as WidgetResult.Success).data
-            assertFalse(data.isJumuah)
-            assertFalse(data.prayers.first { it.name == "Dhuhr" }.isJumuah)
-        }
-    }
-
-    @Test
-    fun `load marks isJumuah false when next prayer is not Dhuhr on Friday`() = runTest {
-        withSystemDefaultZone("Europe/Istanbul") {
-            val dailyLoader = mockk<DailyPrayerTimesLoader>(relaxed = true)
-            val locations = mockk<LocationsCoordinator>(relaxed = true)
-            val settings = mockk<SettingsProvider>(relaxed = true)
-            // 10:00 UTC = 13:00 Istanbul, after Dhuhr 12:30 -> next is Asr
-            val calculator = PrayerLogicEngine(Clock.fixed(Instant.parse("2026-09-02T10:00:00Z"), ZoneOffset.UTC))
-            val formatter = mockk<com.kutluoglu.core.designsystem.prayerUtils.PrayerFormatter>(relaxed = true)
-            val countdown = countdownFormatter()
-
-            coEvery { locations.resolveSelected() } returns LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", null)
-            coEvery { settings.getSettings() } returns appSettings()
-            coEvery { dailyLoader.load(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
-                dailyTimes(
-                    prayers = listOf(
-                        dhuhrPrayer(LocalTime(12, 30), LocalDate(2026, 8, 28)), // Friday
-                        prayer("Asr", LocalTime(16, 0), LocalDate(2026, 8, 28)),
-                        prayer("Maghrib", LocalTime(19, 30), LocalDate(2026, 8, 28))
-                    ),
-                    current = dhuhrPrayer(LocalTime(12, 30), LocalDate(2026, 8, 28)),
-                    next = prayer("Asr", LocalTime(16, 0), LocalDate(2026, 8, 28)),
-                    isJumuah = false
-                )
-            )
-            coEvery { formatter.withLocalizedNames(any()) } returns listOf(
-                dhuhrPrayer(LocalTime(12, 30), LocalDate(2026, 8, 28)),
-                prayer("Asr", LocalTime(16, 0), LocalDate(2026, 8, 28)),
-                prayer("Maghrib", LocalTime(19, 30), LocalDate(2026, 8, 28))
-            )
-            coEvery { countdown.format(any(), any()) } returns "2s 15d"
-
-            val provider = WidgetDataProvider(dailyLoader, locations, settings, calculator, formatter, countdown)
-            val result = provider.load()
-            assertTrue(result is WidgetResult.Success)
-            val data = (result as WidgetResult.Success).data
-            assertFalse(data.isJumuah)
-        }
     }
 }

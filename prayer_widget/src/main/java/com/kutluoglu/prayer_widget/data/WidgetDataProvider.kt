@@ -1,91 +1,64 @@
 package com.kutluoglu.prayer_widget.data
 
-import com.kutluoglu.core.common.now
 import com.kutluoglu.core.designsystem.prayerUtils.PrayerFormatter
-import com.kutluoglu.prayer.domain.DailyPrayerTimesLoader
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
+import com.kutluoglu.prayer.domain.PrayerSurfaceDataProvider
 import com.kutluoglu.prayer.domain.formatClockTime
 import com.kutluoglu.prayer.domain.isJumuahPrayer
 import com.kutluoglu.prayer.model.location.resolveZoneId
-import com.kutluoglu.prayer.model.prayer.CalculationMethod
-import com.kutluoglu.prayer.model.prayer.JuristicMethod
-import com.kutluoglu.prayer.settings.SettingsProvider
-import com.kutluoglu.prayer_location.LocationsCoordinator
-import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.toKotlinLocalTime
 import org.koin.core.annotation.Factory
 import java.time.Clock
-import java.time.ZoneId
+import java.time.LocalTime
 import kotlin.time.toKotlinDuration
 
 @Factory
 class WidgetDataProvider(
-    private val dailyLoader: DailyPrayerTimesLoader,
-    private val locationsCoordinator: LocationsCoordinator,
-    private val settingsProvider: SettingsProvider,
-    private val calculator: PrayerLogicEngine,
+    private val surfaceProvider: PrayerSurfaceDataProvider,
     private val formatter: PrayerFormatter,
     private val countdownFormatter: WidgetCountdownFormatter,
+    private val calculator: PrayerLogicEngine,
     private val clock: Clock = Clock.systemDefaultZone()
 ) {
     suspend fun load(): WidgetResult {
-        val location = locationsCoordinator.resolveSelected() ?: return WidgetResult.Error
-        val zoneId = resolveZoneId(location)
-        val settings = runCatching { settingsProvider.getSettings() }.getOrNull() ?: return WidgetResult.Error
-        val method = CalculationMethod.fromSettingsId(settings.calculationMethod)
-        val juristicMethod = JuristicMethod.fromSettingsId(settings.juristicMethod)
-        val result = dailyLoader.load(
-            date = LocalDateTime.now(zoneId),
-            latitude = location.latitude,
-            longitude = location.longitude,
-            zoneId = zoneId,
-            calculationMethod = method,
-            juristicMethod = juristicMethod,
-            persistDailyCache = false
-        ).getOrNull() ?: return WidgetResult.Error
-        val localizedPrayers = formatter.withLocalizedNames(result.prayers)
-        // The loader returns raw (English-named) prayers. The raw current/next are
-        // elements of result.prayers (or a date-shifted copy after Isha), so map by
-        // index into the localized list (same size/order guaranteed by
-        // withLocalizedNames), preserving the raw date.
-        val nextPrayer = result.nextPrayer?.let { raw ->
-            localizedPrayers.getOrNull(result.prayers.indexOfFirst { it.time == raw.time })?.copy(date = raw.date)
-        } ?: return WidgetResult.Error
-        val currentPrayer = result.currentPrayer?.let { raw ->
-            localizedPrayers.getOrNull(result.prayers.indexOfFirst { it.time == raw.time })?.copy(date = raw.date)
-        }
-        val duration = calculator.calculateTimeRemaining(nextPrayer.time, zoneId)
+        val surface = surfaceProvider.load() ?: return WidgetResult.Error
+        val zoneId = resolveZoneId(surface.location)
+        val localizedPrayers = formatter.withLocalizedNames(surface.prayers)
+        val nextPrayerName = localizedPrayers.getOrNull(
+            surface.prayers.indexOfFirst { it.time == surface.nextPrayerLocalTime }
+        )?.name ?: surface.nextPrayerName
+        val duration = calculator.calculateTimeRemaining(surface.nextPrayerLocalTime, zoneId)
         val countdownText = duration.toKotlinDuration().toComponents { _, hours, minutes, _, _ ->
             countdownFormatter.format(hours, minutes)
         }
-        val ringProgress = currentPrayer?.let {
+        val ringProgress = surface.currentPrayerLocalTime?.let {
             WidgetProgressCalculator.computeRingProgress(
-                current = it.time,
-                next = nextPrayer.time,
-                now = java.time.LocalTime.now(clock.withZone(zoneId)).toKotlinLocalTime()
+                current = it,
+                next = surface.nextPrayerLocalTime,
+                now = LocalTime.now(clock.withZone(zoneId)).toKotlinLocalTime()
             )
         } ?: 0f
-        val timeInfo = formatter.getInitialTimeInfo(zoneId, hijriAdjustment = settings.hijriAdjustment)
+        val timeInfo = formatter.getInitialTimeInfo(zoneId, hijriAdjustment = surface.hijriAdjustment)
         return WidgetResult.Success(
             WidgetData(
-                nextPrayerName = nextPrayer.name,
-                nextPrayerTime = formatClockTime(nextPrayer.time),
+                nextPrayerName = nextPrayerName,
+                nextPrayerTime = surface.nextPrayerTime,
                 countdownText = countdownText,
                 ringProgress = ringProgress,
-                locationName = location.city ?: "",
+                locationName = surface.city,
                 gregorianDate = timeInfo.gregorianFullDate,
                 hijriDate = timeInfo.hijriDate,
                 prayers = localizedPrayers.map { p ->
                     WidgetPrayer(
                         name = p.name,
                         time = formatClockTime(p.time),
-                        isNext = p.name == nextPrayer.name,
+                        isNext = p.name == nextPrayerName,
                         isJumuah = isJumuahPrayer(p)
                     )
                 },
-                isJumuah = result.isJumuah,
-                currentPrayerEpochMillis = result.currentPrayerEpochMillis,
-                nextPrayerEpochMillis = result.nextPrayerEpochMillis
+                isJumuah = surface.isJumuah,
+                currentPrayerEpochMillis = surface.currentPrayerEpochMillis,
+                nextPrayerEpochMillis = surface.nextPrayerEpochMillis
             )
         )
     }
