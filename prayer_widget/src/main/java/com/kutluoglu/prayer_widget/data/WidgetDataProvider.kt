@@ -12,6 +12,9 @@ import java.time.Clock
 import java.time.LocalTime
 import kotlin.time.toKotlinDuration
 
+/**
+ * Maps `SurfacePrayerData` to `WidgetData`; orchestration lives in `PrayerSurfaceDataProvider`.
+ */
 @Factory
 class WidgetDataProvider(
     private val surfaceProvider: PrayerSurfaceDataProvider,
@@ -24,6 +27,9 @@ class WidgetDataProvider(
         val surface = surfaceProvider.load() ?: return WidgetResult.Error
         val zoneId = resolveZoneId(surface.location)
         val localizedPrayers = formatter.withLocalizedNames(surface.prayers)
+        // The raw current/next names are elements of surface.prayers, and
+        // withLocalizedNames preserves size/order, so map by index into the
+        // localized list.
         val nextPrayerName = localizedPrayers.getOrNull(
             surface.prayers.indexOfFirst { it.time == surface.nextPrayerLocalTime }
         )?.name ?: surface.nextPrayerName
