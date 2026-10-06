@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="auto_app_name">NamazVakitleri</string>
+    <string name="auto_remaining_suffix">kaldı</string>
+    <string name="auto_tomorrow_morning">Yarın sabah</string>
+    <string name="auto_prayer_times_action">Namaz Vakitleri</string>
+    <string name="auto_mosques_action">Camiler</string>
+    <string name="auto_no_location">Konum ayarlanmadı. Uygulamayı açıp konum seçin.</string>
+    <string name="auto_error">Namaz vakitleri yüklenemedi.</string>
+</resources>

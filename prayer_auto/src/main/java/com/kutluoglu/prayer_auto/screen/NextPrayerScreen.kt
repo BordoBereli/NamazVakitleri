@@ -2,22 +2,114 @@ package com.kutluoglu.prayer_auto.screen
 
 import androidx.car.app.CarContext
 import androidx.car.app.Screen
+import androidx.car.app.model.Action
 import androidx.car.app.model.Pane
 import androidx.car.app.model.PaneTemplate
+import androidx.car.app.model.Row
 import androidx.car.app.model.Template
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import com.kutluoglu.core.common.PrayerCountdownCalculator
 import com.kutluoglu.prayer.domain.PrayerSurfaceDataProvider
+import com.kutluoglu.prayer.domain.SurfacePrayerData
+import com.kutluoglu.prayer_auto.R
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import kotlinx.datetime.toKotlinLocalDate
+import java.time.Clock
+import java.time.LocalDate
+import java.time.ZoneId
 
 /**
- * Car home screen (placeholder — full PaneTemplate implementation lands in Task 7).
+ * Car home screen: location line, next prayer + time as the pane title,
+ * remaining time (minute granularity) as the subtitle. Refreshes every 60s
+ * via invalidate() while resumed; no per-second ticking (distraction policy).
  */
 class NextPrayerScreen(
     carContext: CarContext,
     private val surfaceProvider: PrayerSurfaceDataProvider,
+    private val clock: Clock = Clock.systemDefaultZone()
 ) : Screen(carContext) {
 
+    private var surface: SurfacePrayerData? = null
+    private var refreshJob: Job? = null
+    private val scope = CoroutineScope(Dispatchers.Main)
+
+    private val lifecycleObserver = object : DefaultLifecycleObserver {
+        override fun onResume(owner: LifecycleOwner) {
+            startRefreshLoop()
+        }
+
+        override fun onPause(owner: LifecycleOwner) {
+            refreshJob?.cancel()
+            refreshJob = null
+        }
+    }
+
+    init {
+        lifecycle.addObserver(lifecycleObserver)
+    }
+
+    private fun startRefreshLoop() {
+        refreshJob?.cancel()
+        refreshJob = scope.launch {
+            while (isActive) {
+                surface = surfaceProvider.load()
+                invalidate()
+                delay(60_000)
+            }
+        }
+    }
+
     override fun onGetTemplate(): Template {
-        return PaneTemplate.Builder(Pane.Builder().build())
-            .setTitle("")
-            .build()
+        val data = surface
+        if (data == null) {
+            return PaneTemplate.Builder(
+                Pane.Builder()
+                    .addRow(Row.Builder().setTitle(carContext.getString(R.string.auto_error)).build())
+                    .build()
+            ).setTitle(carContext.getString(R.string.auto_app_name)).build()
+        }
+        val zoneId = ZoneId.systemDefault()
+        val isTomorrow = data.nextPrayerDate > LocalDate.now(zoneId).toKotlinLocalDate()
+        val remaining = PrayerCountdownCalculator.countdownText(
+            nextPrayerEpochMillis = data.nextPrayerEpochMillis,
+            nowEpochMillis = clock.millis(),
+            hourShort = "s",
+            minuteShort = "dk"
+        )
+        val title = if (data.isJumuah) {
+            "${data.nextPrayerName} (Cuma) — ${data.nextPrayerTime}"
+        } else {
+            "${data.nextPrayerName} — ${data.nextPrayerTime}"
+        }
+        val locationLine = listOfNotNull(data.city, data.district).joinToString(" — ")
+        val row = Row.Builder()
+            .setTitle("📍 $locationLine")
+            .addText("$remaining ${carContext.getString(R.string.auto_remaining_suffix)}")
+        if (isTomorrow) {
+            row.addText(carContext.getString(R.string.auto_tomorrow_morning))
+        }
+        return PaneTemplate.Builder(
+            Pane.Builder()
+                .addRow(row.build())
+                .addAction(
+                    Action.Builder()
+                        .setTitle(carContext.getString(R.string.auto_prayer_times_action))
+                        .setOnClickListener { screenManager.push(PrayerTimesScreen(carContext, surfaceProvider)) }
+                        .build()
+                )
+                .addAction(
+                    Action.Builder()
+                        .setTitle(carContext.getString(R.string.auto_mosques_action))
+                        .setOnClickListener { screenManager.push(NearbyMosquesScreen(carContext, surfaceProvider)) }
+                        .build()
+                )
+                .build()
+        ).setTitle(title).build()
     }
 }
