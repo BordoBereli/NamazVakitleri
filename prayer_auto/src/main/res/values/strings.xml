@@ -10,4 +10,6 @@
     <string name="auto_countdown_hour_short">s</string>
     <string name="auto_countdown_minute_short">dk</string>
     <string name="auto_jumuah">Cuma</string>
+    <string name="auto_today_prefix">Bugün</string>
+    <string name="auto_tomorrow">Yarın</string>
 </resources>
