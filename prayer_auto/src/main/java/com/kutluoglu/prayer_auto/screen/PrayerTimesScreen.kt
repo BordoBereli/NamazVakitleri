@@ -24,12 +24,13 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.toKotlinLocalDate
 import java.time.Clock
 import java.time.LocalDate
-import java.time.ZoneId
 
 /**
  * Daily prayer times list. After Isha: today's full list stays visible and
- * tomorrow's Imsak is appended below a divider, highlighted as next
- * (spec Option A). Refreshes every 60s via invalidate() while resumed.
+ * tomorrow's Imsak is appended with a next-event cue (spec Option A).
+ * Note: shows today's Imsak time as an approximation for tomorrow's;
+ * tomorrow's exact time requires a provider extension (see TODO below).
+ * Refreshes every 60s via invalidate() while resumed.
  */
 class PrayerTimesScreen(
     carContext: CarContext,
@@ -95,7 +96,7 @@ class PrayerTimesScreen(
                 .build()
         }
 
-        val today = LocalDate.now(clock.withZone(ZoneId.systemDefault())).toKotlinLocalDate()
+        val today = LocalDate.now(clock).toKotlinLocalDate()
         val isAfterIsha = data.nextPrayerDate > today
         val list = ItemList.Builder()
         data.prayers.forEach { p ->
@@ -109,12 +110,13 @@ class PrayerTimesScreen(
             )
         }
         if (isAfterIsha) {
-            val tomorrowImsak = data.prayers.firstOrNull { it.isImsak }
-            if (tomorrowImsak != null) {
+            // TODO: SurfacePrayerData should expose tomorrow's Imsak time for exact display
+            val imsak = data.prayers.firstOrNull { it.isImsak }
+            if (imsak != null) {
                 list.addItem(
                     Row.Builder()
-                        .setTitle("${tomorrowImsak.name} (${carContext.getString(R.string.auto_tomorrow)})")
-                        .addText(formatClockTime(tomorrowImsak.time))
+                        .setTitle("▶ ${imsak.name} (${carContext.getString(R.string.auto_tomorrow)})")
+                        .addText(formatClockTime(imsak.time))
                         .build()
                 )
             }
