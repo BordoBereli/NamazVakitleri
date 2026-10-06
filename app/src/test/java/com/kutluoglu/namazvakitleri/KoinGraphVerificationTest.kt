@@ -11,6 +11,7 @@ import com.kutluoglu.core.designsystem.di.CoreCommonModule
 import com.kutluoglu.namazvakitleri.di.AppAnalyticsModule
 import com.kutluoglu.prayer.data.di.PrayerDataModule
 import com.kutluoglu.prayer.di.PrayerDomainModule
+import com.kutluoglu.prayer.domain.PrayerSurfaceDataProvider
 import com.kutluoglu.prayer_feature.common.di.PrayerFeatureCommonModule
 import com.kutluoglu.prayer_feature.home.HomeViewModel
 import com.kutluoglu.prayer_feature.home.SavedVersesViewModel
@@ -149,5 +150,14 @@ class KoinGraphVerificationTest {
         assertThat(koin.getAll<GetSettingsUseCase>().size).isEqualTo(1)
         assertThat(koin.getAll<SettingsRepository>().size).isEqualTo(1)
         assertThat(koin.getAll<HomeViewModel>().size).isEqualTo(1)
+    }
+
+    @Test
+    fun `PrayerSurfaceDataProvider resolves from the full Koin graph`() {
+        val koin = koinApplication {
+            modules(allModules + mockModule)
+        }.koin
+
+        assertThat(koin.get<PrayerSurfaceDataProvider>()).isNotNull()
     }
 }

@@ -4,9 +4,11 @@ import android.content.Context
 import com.kutluoglu.core.common.AppVersion
 import com.kutluoglu.namazvakitleri.locale.AppLocaleController
 import com.kutluoglu.namazvakitleri.locale.LocaleMigration
+import com.kutluoglu.namazvakitleri.location.SurfaceLocationSourceAdapter
 import com.kutluoglu.namazvakitleri.notifications.NotificationRescheduler
 import com.kutluoglu.namazvakitleri.notifications.PrayerCalculationSettingsProviderImpl
 import com.kutluoglu.namazvakitleri.push.PushTopicCoordinator
+import com.kutluoglu.prayer.domain.SurfaceLocationSource
 import com.kutluoglu.prayer_location.LocationsCoordinator
 import com.kutluoglu.prayer_notifications.domain.PrayerCalculationSettingsProvider
 import com.kutluoglu.prayer_notifications.push.TopicSubscriptionManager
@@ -71,6 +73,11 @@ object AppModule {
         locationsCoordinator: LocationsCoordinator,
         context: Context
     ): WidgetRefresher = WidgetRefresher.create(settingsProvider, locationsCoordinator, context)
+
+    @Single
+    fun provideSurfaceLocationSource(
+        locationsCoordinator: LocationsCoordinator
+    ): SurfaceLocationSource = SurfaceLocationSourceAdapter(locationsCoordinator)
 
     @Single
     fun provideSettingsDataStore(context: Context): SettingsDataStore = SettingsDataStore.create(context)
