@@ -7,4 +7,7 @@
     <string name="auto_mosques_action">Camiler</string>
     <string name="auto_no_location">Konum ayarlanmadı. Uygulamayı açıp konum seçin.</string>
     <string name="auto_error">Namaz vakitleri yüklenemedi.</string>
+    <string name="auto_countdown_hour_short">s</string>
+    <string name="auto_countdown_minute_short">dk</string>
+    <string name="auto_jumuah">Cuma</string>
 </resources>

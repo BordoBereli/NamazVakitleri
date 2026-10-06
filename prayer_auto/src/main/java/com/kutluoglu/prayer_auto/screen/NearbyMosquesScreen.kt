@@ -7,6 +7,7 @@ import androidx.car.app.model.PaneTemplate
 import androidx.car.app.model.Row
 import androidx.car.app.model.Template
 import com.kutluoglu.prayer.domain.PrayerSurfaceDataProvider
+import com.kutluoglu.prayer_auto.R
 
 /**
  * Nearby mosques list (placeholder — full PlaceListMapTemplate implementation lands in Task 9).
@@ -21,5 +22,5 @@ class NearbyMosquesScreen(
             Pane.Builder()
                 .addRow(Row.Builder().setTitle("...").build())
                 .build()
-        ).setTitle("Camiler").build()
+        ).setTitle(carContext.getString(R.string.auto_mosques_action)).build()
 }

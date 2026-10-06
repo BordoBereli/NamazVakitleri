@@ -7,6 +7,7 @@ import androidx.car.app.model.PaneTemplate
 import androidx.car.app.model.Row
 import androidx.car.app.model.Template
 import com.kutluoglu.prayer.domain.PrayerSurfaceDataProvider
+import com.kutluoglu.prayer_auto.R
 
 /**
  * Daily prayer times list (placeholder — full ListTemplate implementation lands in Task 8).
@@ -21,5 +22,5 @@ class PrayerTimesScreen(
             Pane.Builder()
                 .addRow(Row.Builder().setTitle("...").build())
                 .build()
-        ).setTitle("Namaz Vakitleri").build()
+        ).setTitle(carContext.getString(R.string.auto_prayer_times_action)).build()
 }

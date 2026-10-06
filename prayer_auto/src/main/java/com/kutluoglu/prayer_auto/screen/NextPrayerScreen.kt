@@ -16,6 +16,7 @@ import com.kutluoglu.prayer_auto.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -48,6 +49,10 @@ class NextPrayerScreen(
             refreshJob?.cancel()
             refreshJob = null
         }
+
+        override fun onDestroy(owner: LifecycleOwner) {
+            scope.cancel()
+        }
     }
 
     init {
@@ -58,7 +63,7 @@ class NextPrayerScreen(
         refreshJob?.cancel()
         refreshJob = scope.launch {
             while (isActive) {
-                surface = surfaceProvider.load()
+                surface = runCatching { surfaceProvider.load() }.getOrNull()
                 invalidate()
                 delay(60_000)
             }
@@ -79,15 +84,17 @@ class NextPrayerScreen(
         val remaining = PrayerCountdownCalculator.countdownText(
             nextPrayerEpochMillis = data.nextPrayerEpochMillis,
             nowEpochMillis = clock.millis(),
-            hourShort = "s",
-            minuteShort = "dk"
+            hourShort = carContext.getString(R.string.auto_countdown_hour_short),
+            minuteShort = carContext.getString(R.string.auto_countdown_minute_short)
         )
         val title = if (data.isJumuah) {
-            "${data.nextPrayerName} (Cuma) — ${data.nextPrayerTime}"
+            "${data.nextPrayerName} (${carContext.getString(R.string.auto_jumuah)}) — ${data.nextPrayerTime}"
         } else {
             "${data.nextPrayerName} — ${data.nextPrayerTime}"
         }
-        val locationLine = listOfNotNull(data.city, data.district).joinToString(" — ")
+        val locationLine = listOfNotNull(data.city, data.district)
+            .filter { it.isNotBlank() }
+            .joinToString(" — ")
         val row = Row.Builder()
             .setTitle("📍 $locationLine")
             .addText("$remaining ${carContext.getString(R.string.auto_remaining_suffix)}")
