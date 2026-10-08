@@ -28,8 +28,9 @@ import java.time.LocalDate
 /**
  * Daily prayer times list. After Isha: today's full list stays visible and
  * tomorrow's Imsak is appended with a next-event cue (spec Option A).
- * Note: shows today's Imsak time as an approximation for tomorrow's;
- * tomorrow's exact time requires a provider extension (see TODO below).
+ * Tomorrow's Imsak shows the exact time from [SurfacePrayerData.tomorrowImsakTime]
+ * (populated by the provider after Isha), falling back to today's Imsak time
+ * when the provider value is absent.
  * Refreshes every 60s via invalidate() while resumed.
  */
 class PrayerTimesScreen(
@@ -110,13 +111,13 @@ class PrayerTimesScreen(
             )
         }
         if (isAfterIsha) {
-            // TODO: SurfacePrayerData should expose tomorrow's Imsak time for exact display
-            val imsak = data.prayers.firstOrNull { it.isImsak }
-            if (imsak != null) {
+            val imsakTime = data.tomorrowImsakTime
+                ?: data.prayers.firstOrNull { it.isImsak }?.time
+            if (imsakTime != null) {
                 list.addItem(
                     Row.Builder()
-                        .setTitle("▶ ${imsak.name} (${carContext.getString(R.string.auto_tomorrow)})")
-                        .addText(formatClockTime(imsak.time))
+                        .setTitle("▶ Imsak (${carContext.getString(R.string.auto_tomorrow)})")
+                        .addText(formatClockTime(imsakTime))
                         .build()
                 )
             }
