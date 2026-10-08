@@ -6,6 +6,7 @@ import com.kutluoglu.prayer.settings.AppSettings
 import com.kutluoglu.prayer.settings.AppLocation
 import com.kutluoglu.prayer.settings.SettingsProvider
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.LocalDate
@@ -110,5 +111,106 @@ class PrayerSurfaceDataProviderTest {
 
         val provider = PrayerSurfaceDataProvider(dailyLoader, locationSource, settings)
         assertNull(provider.load())
+    }
+
+    @Test
+    fun `load after Isha exposes tomorrow's Imsak time`() = runTest {
+        val dailyLoader = mockk<DailyPrayerTimesLoader>(relaxed = true)
+        val locationSource = mockk<SurfaceLocationSource>(relaxed = true)
+        val settings = mockk<SettingsProvider>(relaxed = true)
+        val clock = Clock.fixed(Instant.parse("2026-10-05T08:00:00Z"), ZoneOffset.UTC)
+
+        val todayResult = DailyPrayerTimes(
+            prayers = listOf(prayer("Isha", LocalTime(19, 30))),
+            currentPrayer = prayer("Isha", LocalTime(19, 30)),
+            nextPrayer = prayer("Imsak", LocalTime(5, 47), date = LocalDate(2026, 10, 6)),
+            currentPrayerEpochMillis = 1L,
+            nextPrayerEpochMillis = 2L,
+            isJumuah = false
+        )
+        val tomorrowResult = DailyPrayerTimes(
+            prayers = listOf(Prayer("Imsak", "Imsak", LocalTime(5, 48), LocalDate(2026, 10, 6), isImsak = true)),
+            currentPrayer = null,
+            nextPrayer = null,
+            currentPrayerEpochMillis = 0L,
+            nextPrayerEpochMillis = 0L,
+            isJumuah = false
+        )
+
+        coEvery { locationSource.resolveSelected() } returns LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", "Fatih")
+        coEvery { settings.getSettings() } returns appSettings()
+        coEvery { dailyLoader.load(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(todayResult)
+        coEvery {
+            dailyLoader.load(match { it.date == LocalDate(2026, 10, 6) }, any(), any(), any(), any(), any(), any())
+        } returns Result.success(tomorrowResult)
+
+        val provider = PrayerSurfaceDataProvider(dailyLoader, locationSource, settings, clock)
+        val result = provider.load()
+
+        assertTrue(result != null)
+        assertEquals(LocalTime(5, 48), result!!.tomorrowImsakTime)
+        coVerify(exactly = 1) {
+            dailyLoader.load(match { it.date == LocalDate(2026, 10, 6) }, any(), any(), any(), any(), any(), any())
+        }
+    }
+
+    @Test
+    fun `load during the day skips tomorrow's Imsak load`() = runTest {
+        val dailyLoader = mockk<DailyPrayerTimesLoader>(relaxed = true)
+        val locationSource = mockk<SurfaceLocationSource>(relaxed = true)
+        val settings = mockk<SettingsProvider>(relaxed = true)
+        val clock = Clock.fixed(Instant.parse("2026-10-05T08:00:00Z"), ZoneOffset.UTC)
+
+        coEvery { locationSource.resolveSelected() } returns LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", "Fatih")
+        coEvery { settings.getSettings() } returns appSettings()
+        coEvery { dailyLoader.load(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
+            DailyPrayerTimes(
+                prayers = listOf(prayer("Imsak", LocalTime(5, 47)), prayer("Dhuhr", LocalTime(12, 58))),
+                currentPrayer = prayer("Imsak", LocalTime(5, 47)),
+                nextPrayer = prayer("Dhuhr", LocalTime(12, 58)),
+                currentPrayerEpochMillis = 1L,
+                nextPrayerEpochMillis = 2L,
+                isJumuah = false
+            )
+        )
+
+        val provider = PrayerSurfaceDataProvider(dailyLoader, locationSource, settings, clock)
+        val result = provider.load()
+
+        assertTrue(result != null)
+        assertNull(result!!.tomorrowImsakTime)
+        coVerify(exactly = 0) {
+            dailyLoader.load(match { it.date == LocalDate(2026, 10, 6) }, any(), any(), any(), any(), any(), any())
+        }
+    }
+
+    @Test
+    fun `load after Isha keeps tomorrowImsakTime null when tomorrow load fails`() = runTest {
+        val dailyLoader = mockk<DailyPrayerTimesLoader>(relaxed = true)
+        val locationSource = mockk<SurfaceLocationSource>(relaxed = true)
+        val settings = mockk<SettingsProvider>(relaxed = true)
+        val clock = Clock.fixed(Instant.parse("2026-10-05T08:00:00Z"), ZoneOffset.UTC)
+
+        val todayResult = DailyPrayerTimes(
+            prayers = listOf(prayer("Isha", LocalTime(19, 30))),
+            currentPrayer = prayer("Isha", LocalTime(19, 30)),
+            nextPrayer = prayer("Imsak", LocalTime(5, 47), date = LocalDate(2026, 10, 6)),
+            currentPrayerEpochMillis = 1L,
+            nextPrayerEpochMillis = 2L,
+            isJumuah = false
+        )
+
+        coEvery { locationSource.resolveSelected() } returns LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", "Fatih")
+        coEvery { settings.getSettings() } returns appSettings()
+        coEvery { dailyLoader.load(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(todayResult)
+        coEvery {
+            dailyLoader.load(match { it.date == LocalDate(2026, 10, 6) }, any(), any(), any(), any(), any(), any())
+        } returns Result.failure(RuntimeException("network"))
+
+        val provider = PrayerSurfaceDataProvider(dailyLoader, locationSource, settings, clock)
+        val result = provider.load()
+
+        assertTrue(result != null)
+        assertNull(result!!.tomorrowImsakTime)
     }
 }
