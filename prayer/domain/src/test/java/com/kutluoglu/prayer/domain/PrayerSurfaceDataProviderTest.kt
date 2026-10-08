@@ -213,4 +213,31 @@ class PrayerSurfaceDataProviderTest {
         assertTrue(result != null)
         assertNull(result!!.tomorrowImsakTime)
     }
+
+    @Test
+    fun `load exposes current prayer name`() = runTest {
+        val dailyLoader = mockk<DailyPrayerTimesLoader>(relaxed = true)
+        val locationSource = mockk<SurfaceLocationSource>(relaxed = true)
+        val settings = mockk<SettingsProvider>(relaxed = true)
+        val clock = Clock.fixed(Instant.parse("2026-10-05T08:00:00Z"), ZoneOffset.UTC)
+
+        coEvery { locationSource.resolveSelected() } returns LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", "Fatih")
+        coEvery { settings.getSettings() } returns appSettings()
+        coEvery { dailyLoader.load(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
+            DailyPrayerTimes(
+                prayers = listOf(prayer("Imsak", LocalTime(5, 47)), prayer("Dhuhr", LocalTime(12, 58))),
+                currentPrayer = prayer("Imsak", LocalTime(5, 47)),
+                nextPrayer = prayer("Dhuhr", LocalTime(12, 58)),
+                currentPrayerEpochMillis = 1L,
+                nextPrayerEpochMillis = 2L,
+                isJumuah = false
+            )
+        )
+
+        val provider = PrayerSurfaceDataProvider(dailyLoader, locationSource, settings, clock)
+        val result = provider.load()
+
+        assertTrue(result != null)
+        assertEquals("Imsak", result!!.currentPrayerName)
+    }
 }

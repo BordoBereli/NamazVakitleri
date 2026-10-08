@@ -10,7 +10,8 @@ import kotlinx.datetime.LocalTime
  * the Wear tile, and the Android Auto screens. Contains everything a surface
  * needs to render: location, current/next prayer, epoch millis, and the
  * localized prayer list. [tomorrowImsakTime] is only populated after Isha,
- * when the next prayer falls on tomorrow's date.
+ * when the next prayer falls on tomorrow's date. [currentPrayerName] is the
+ * name of the prayer currently in progress, or null when unknown.
  */
 data class SurfacePrayerData(
     val location: LocationData,
@@ -26,5 +27,6 @@ data class SurfacePrayerData(
     val hijriAdjustment: Int,
     val prayers: List<Prayer>,
     val nextPrayerDate: LocalDate,
-    val tomorrowImsakTime: LocalTime? = null
+    val tomorrowImsakTime: LocalTime? = null,
+    val currentPrayerName: String? = null
 )

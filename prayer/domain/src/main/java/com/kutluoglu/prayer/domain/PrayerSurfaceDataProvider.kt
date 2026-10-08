@@ -82,7 +82,8 @@ class PrayerSurfaceDataProvider(
             hijriAdjustment = settings.hijriAdjustment,
             prayers = result.prayers,
             nextPrayerDate = nextPrayer.date,
-            tomorrowImsakTime = tomorrowImsakTime
+            tomorrowImsakTime = tomorrowImsakTime,
+            currentPrayerName = result.currentPrayer?.name
         )
     }
 
