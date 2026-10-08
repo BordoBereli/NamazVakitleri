@@ -80,6 +80,7 @@ class NextPrayerScreenTest {
         assertThat(rows).hasSize(2)
         assertThat(rows[0].title.toString()).startsWith("●")
         assertThat(rows[0].title.toString()).contains("Maghrib")
+        assertThat(rows[1].title.toString()).contains("Isha")
         val span = rows[0].texts.single().spans.single().carSpan
         assertThat(span).isInstanceOf(ForegroundCarColorSpan::class.java)
         assertThat((span as ForegroundCarColorSpan).color).isEqualTo(CarColor.PRIMARY)

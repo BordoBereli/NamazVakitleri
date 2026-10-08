@@ -30,9 +30,10 @@ import java.time.LocalDate
 import java.time.ZoneId
 
 /**
- * Car home screen: location line, next prayer + time as the pane title,
- * remaining time (minute granularity) as the subtitle. Refreshes every 60s
- * via invalidate() while resumed; no per-second ticking (distraction policy).
+ * Car home screen: location line, current prayer row (● marker, when known)
+ * above the next prayer + time as the pane title, remaining time (minute
+ * granularity) as the subtitle. Refreshes every 60s via invalidate() while
+ * resumed; no per-second ticking (distraction policy).
  */
 class NextPrayerScreen(
     carContext: CarContext,
