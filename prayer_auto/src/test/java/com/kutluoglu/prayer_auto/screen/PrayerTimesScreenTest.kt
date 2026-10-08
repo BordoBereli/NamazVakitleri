@@ -1,6 +1,8 @@
 package com.kutluoglu.prayer_auto.screen
 
 import androidx.car.app.CarContext
+import androidx.car.app.model.CarColor
+import androidx.car.app.model.ForegroundCarColorSpan
 import androidx.car.app.model.ListTemplate
 import androidx.car.app.model.Row
 import com.google.common.truth.Truth.assertThat
@@ -27,7 +29,7 @@ class PrayerTimesScreenTest {
     private val today = LocalDate(2026, 10, 5)
     private val tomorrow = LocalDate(2026, 10, 6)
 
-    private fun surfaceData(tomorrowImsakTime: LocalTime?): SurfacePrayerData = SurfacePrayerData(
+    private fun surfaceData(tomorrowImsakTime: LocalTime?, currentPrayerName: String? = null): SurfacePrayerData = SurfacePrayerData(
         location = LocationData(41.0082, 28.9784, "Türkiye", "TR", "İstanbul", "İstanbul", "Europe/Istanbul"),
         city = "İstanbul",
         district = null,
@@ -39,6 +41,7 @@ class PrayerTimesScreenTest {
         currentPrayerEpochMillis = 0L,
         isJumuah = false,
         hijriAdjustment = 0,
+        currentPrayerName = currentPrayerName,
         prayers = listOf(
             Prayer("Imsak", "الإمساك", LocalTime(5, 47), today, isImsak = true),
             Prayer("Sunrise", "الشروق", LocalTime(7, 15), today),
@@ -92,5 +95,27 @@ class PrayerTimesScreenTest {
         val last = rows.last()
         assertThat(last.title.toString()).contains("Yarın")
         assertThat(last.texts.single().toString()).isEqualTo("05:47")
+    }
+
+    @Test
+    fun `current prayer row has marker and primary-colored time`() {
+        val data = surfaceData(tomorrowImsakTime = LocalTime(5, 48), currentPrayerName = "Isha")
+        val rows = rows(screenWith(data))
+
+        val current = rows.first { it.title.toString().contains("Isha") }
+        assertThat(current.title.toString()).startsWith("●")
+        val span = current.texts.single().spans.single().carSpan
+        assertThat(span).isInstanceOf(ForegroundCarColorSpan::class.java)
+        assertThat((span as ForegroundCarColorSpan).color).isEqualTo(CarColor.PRIMARY)
+    }
+
+    @Test
+    fun `non-current rows have no marker and no color span`() {
+        val data = surfaceData(tomorrowImsakTime = LocalTime(5, 48), currentPrayerName = "Isha")
+        val rows = rows(screenWith(data))
+
+        val dhuhr = rows.first { it.title.toString().contains("Dhuhr") }
+        assertThat(dhuhr.title.toString()).doesNotContain("●")
+        assertThat(dhuhr.texts.single().spans).isEmpty()
     }
 }

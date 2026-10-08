@@ -1,8 +1,11 @@
 package com.kutluoglu.prayer_auto.screen
 
+import android.text.SpannableString
 import androidx.car.app.CarContext
 import androidx.car.app.Screen
 import androidx.car.app.model.Action
+import androidx.car.app.model.CarColor
+import androidx.car.app.model.ForegroundCarColorSpan
 import androidx.car.app.model.Header
 import androidx.car.app.model.ItemList
 import androidx.car.app.model.ListTemplate
@@ -102,11 +105,28 @@ class PrayerTimesScreen(
         val list = ItemList.Builder()
         data.prayers.forEach { p ->
             val isNext = p.name == data.nextPrayerName && p.date == data.nextPrayerDate
-            val title = if (isNext) "▶ ${p.name}" else p.name
+            val isCurrent = p.name == data.currentPrayerName && p.date == today
+            val title = when {
+                isCurrent -> "● ${p.name}"
+                isNext -> "▶ ${p.name}"
+                else -> p.name
+            }
+            val timeText: CharSequence = if (isCurrent) {
+                val spannable = SpannableString(formatClockTime(p.time))
+                spannable.setSpan(
+                    ForegroundCarColorSpan.create(CarColor.PRIMARY),
+                    0,
+                    spannable.length,
+                    SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+                spannable
+            } else {
+                formatClockTime(p.time)
+            }
             list.addItem(
                 Row.Builder()
                     .setTitle(title)
-                    .addText(formatClockTime(p.time))
+                    .addText(timeText)
                     .build()
             )
         }
