@@ -123,7 +123,7 @@ class PrayerSurfaceDataProviderTest {
         val todayResult = DailyPrayerTimes(
             prayers = listOf(prayer("Isha", LocalTime(19, 30))),
             currentPrayer = prayer("Isha", LocalTime(19, 30)),
-            nextPrayer = prayer("Imsak", LocalTime(5, 47), date = LocalDate(2026, 10, 6)),
+            nextPrayer = prayer("Fajr", LocalTime(5, 47), date = LocalDate(2026, 10, 6)),
             currentPrayerEpochMillis = 1L,
             nextPrayerEpochMillis = 2L,
             isJumuah = false
@@ -137,7 +137,7 @@ class PrayerSurfaceDataProviderTest {
             isJumuah = false
         )
 
-        coEvery { locationSource.resolveSelected() } returns LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", "Fatih")
+        coEvery { locationSource.resolveSelected() } returns LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", "Fatih", timeZoneId = "Europe/Istanbul")
         coEvery { settings.getSettings() } returns appSettings()
         coEvery { dailyLoader.load(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(todayResult)
         coEvery {
@@ -161,7 +161,7 @@ class PrayerSurfaceDataProviderTest {
         val settings = mockk<SettingsProvider>(relaxed = true)
         val clock = Clock.fixed(Instant.parse("2026-10-05T08:00:00Z"), ZoneOffset.UTC)
 
-        coEvery { locationSource.resolveSelected() } returns LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", "Fatih")
+        coEvery { locationSource.resolveSelected() } returns LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", "Fatih", timeZoneId = "Europe/Istanbul")
         coEvery { settings.getSettings() } returns appSettings()
         coEvery { dailyLoader.load(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(
             DailyPrayerTimes(
@@ -194,13 +194,13 @@ class PrayerSurfaceDataProviderTest {
         val todayResult = DailyPrayerTimes(
             prayers = listOf(prayer("Isha", LocalTime(19, 30))),
             currentPrayer = prayer("Isha", LocalTime(19, 30)),
-            nextPrayer = prayer("Imsak", LocalTime(5, 47), date = LocalDate(2026, 10, 6)),
+            nextPrayer = prayer("Fajr", LocalTime(5, 47), date = LocalDate(2026, 10, 6)),
             currentPrayerEpochMillis = 1L,
             nextPrayerEpochMillis = 2L,
             isJumuah = false
         )
 
-        coEvery { locationSource.resolveSelected() } returns LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", "Fatih")
+        coEvery { locationSource.resolveSelected() } returns LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", "Fatih", timeZoneId = "Europe/Istanbul")
         coEvery { settings.getSettings() } returns appSettings()
         coEvery { dailyLoader.load(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(todayResult)
         coEvery {
