@@ -1,8 +1,11 @@
 package com.kutluoglu.prayer_auto.screen
 
+import android.text.SpannableString
 import androidx.car.app.CarContext
 import androidx.car.app.Screen
 import androidx.car.app.model.Action
+import androidx.car.app.model.CarColor
+import androidx.car.app.model.ForegroundCarColorSpan
 import androidx.car.app.model.Pane
 import androidx.car.app.model.PaneTemplate
 import androidx.car.app.model.Row
@@ -12,6 +15,7 @@ import androidx.lifecycle.LifecycleOwner
 import com.kutluoglu.core.common.PrayerCountdownCalculator
 import com.kutluoglu.prayer.domain.PrayerSurfaceDataProvider
 import com.kutluoglu.prayer.domain.SurfacePrayerData
+import com.kutluoglu.prayer.domain.formatClockTime
 import com.kutluoglu.prayer_auto.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -95,14 +99,32 @@ class NextPrayerScreen(
         val locationLine = listOfNotNull(data.city, data.district)
             .filter { it.isNotBlank() }
             .joinToString(" — ")
+        val pane = Pane.Builder()
+        data.currentPrayerName?.let { currentName ->
+            data.currentPrayerLocalTime?.let { currentTime ->
+                val spannable = SpannableString(formatClockTime(currentTime))
+                spannable.setSpan(
+                    ForegroundCarColorSpan.create(CarColor.PRIMARY),
+                    0,
+                    spannable.length,
+                    SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+                pane.addRow(
+                    Row.Builder()
+                        .setTitle("● $currentName")
+                        .addText(spannable)
+                        .build()
+                )
+            }
+        }
         val row = Row.Builder()
             .setTitle("$title --> $remaining ${carContext.getString(R.string.auto_remaining_suffix)}")
         if (isTomorrow) {
             row.addText(carContext.getString(R.string.auto_tomorrow_morning))
         }
+        pane.addRow(row.build())
         return PaneTemplate.Builder(
-            Pane.Builder()
-                .addRow(row.build())
+            pane
                 .addAction(
                     Action.Builder()
                         .setTitle(carContext.getString(R.string.auto_prayer_times_action))
