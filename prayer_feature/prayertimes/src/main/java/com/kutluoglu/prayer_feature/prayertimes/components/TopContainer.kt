@@ -18,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
@@ -35,8 +36,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kutluoglu.core.designsystem.states.TimeUiState
 import com.kutluoglu.prayer_feature.common.components.LocationInfoSection
 import com.kutluoglu.prayer_feature.prayertimes.R
 import com.kutluoglu.prayer_feature.common.states.LocationUiState
@@ -46,7 +49,8 @@ import com.kutluoglu.prayer_feature.prayertimes.PrayerTimesUiState
 fun TopContainer(
         modifier: Modifier = Modifier,
         painter: Painter,
-        uiState: PrayerTimesUiState
+        uiState: PrayerTimesUiState,
+        isLandscape: Boolean = false
 ) {
 
     val locationState by remember(uiState) {
@@ -55,7 +59,6 @@ fun TopContainer(
     val timeState by remember(uiState) {
         derivedStateOf { (uiState as? PrayerTimesUiState.Success)?.timeState }
     }
-    val borderColorFromTheme = MaterialTheme.colorScheme.onSecondaryContainer
 
     Box(
         modifier = modifier.fillMaxWidth(),
@@ -80,122 +83,149 @@ fun TopContainer(
                     )
                 )
         ) {
-            Box(
-                modifier = Modifier
-                    .weight(0.35F)
-                    .padding(start = 16.dp, top = 24.dp)
-            ) {
-                PageTitleSection()
-            }
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(0.45F)
-                    .padding(start = 16.dp, end = 16.dp)
-                    .background(
-                        Color.Transparent.copy(alpha = 0.1F),
-                        shape = RoundedCornerShape(corner = CornerSize(16.dp)),
-                    )
-                    .border(
-                        width = 1.dp,
-                        color = borderColorFromTheme.copy(alpha = 0.7F),
-                        shape = RoundedCornerShape(corner = CornerSize(16.dp))
-                    )
-                    .testTag("location_date_box")
-            ) {
-                Row(modifier = Modifier.fillMaxSize()) {
-                    Box(
-                        modifier = Modifier
-                            .width(3.dp)
-                            .fillMaxHeight()
-                            .padding(vertical = 10.dp)
-                            .background(
-                                color = MaterialTheme.colorScheme.primary,
-                                shape = RoundedCornerShape(50)
-                            )
-                    )
-                    Column(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxHeight()
-                            .padding(horizontal = 10.dp, vertical = 6.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Text(
-                            text = timeState?.gregorianShortDate ?: "",
-                            fontSize = 17.sp,
-                            color = Color.White,
-                            fontWeight = FontWeight.ExtraBold,
-                            textAlign = TextAlign.Center
-                        )
-                        timeState?.hijriDate?.let { hijri ->
-                            Text(
-                                text = hijri,
-                                color = MaterialTheme.colorScheme.primary,
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                modifier = Modifier
-                                    .padding(top = 3.dp)
-                                    .background(
-                                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
-                                        shape = RoundedCornerShape(50)
-                                    )
-                                    .border(
-                                        width = 1.dp,
-                                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.4f),
-                                        shape = RoundedCornerShape(50)
-                                    )
-                                    .padding(horizontal = 12.dp, vertical = 1.dp)
-                            )
-                        }
-                        timeState?.gregorianDayAndName?.let { day ->
-                            Text(
-                                text = day,
-                                color = Color.White.copy(alpha = 0.85f),
-                                fontSize = 10.sp,
-                                modifier = Modifier.padding(top = 2.dp)
-                            )
-                        }
-                        HorizontalDivider(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 5.dp),
-                            color = Color.White.copy(alpha = 0.15f)
-                        )
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            locationState?.let {
-                                LocationInfoSection(
-                                    modifier = Modifier.wrapContentWidth(),
-                                    locationState = it,
-                                    textColor = Color.White,
-                                    textSize = 11.sp
-                                )
-                            }
-                            timeState?.currentTime?.let { currentTime ->
-                                Text(
-                                    text = currentTime,
-                                    color = MaterialTheme.colorScheme.primary,
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
-                        }
-                    }
+            if (isLandscape) {
+                // Landscape: the container is full-height and narrow, so distribute the
+                // available height across title / info box / bottom gap to keep the
+                // original vertical placement.
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(0.35f)
+                        .padding(start = 16.dp, top = 24.dp)
+                ) {
+                    PageTitleSection()
                 }
+                LocationDateBox(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(0.45f)
+                        .padding(start = 16.dp, end = 16.dp),
+                    timeState = timeState,
+                    locationState = locationState
+                )
+                Spacer(modifier = Modifier.weight(0.2f))
+            } else {
+                // Portrait: the container is only ~35% of the screen height, so the info
+                // box must size to its content. A fixed weight would squeeze the divider
+                // and location/time row down to zero height on short screens.
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, top = 24.dp)
+                ) {
+                    PageTitleSection()
+                }
+                LocationDateBox(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, end = 16.dp),
+                    timeState = timeState,
+                    locationState = locationState
+                )
+                Spacer(modifier = Modifier.weight(1f))
             }
-            Box(
+        }
+    }
+}
+
+@Composable
+private fun LocationDateBox(
+    modifier: Modifier = Modifier,
+    timeState: TimeUiState?,
+    locationState: LocationUiState?
+) {
+    val accentColor = MaterialTheme.colorScheme.primary
+    val borderColorFromTheme = MaterialTheme.colorScheme.onSecondaryContainer
+
+    Box(
+        modifier = modifier
+            .background(
+                Color.Transparent.copy(alpha = 0.1F),
+                shape = RoundedCornerShape(corner = CornerSize(16.dp)),
+            )
+            .border(
+                width = 1.dp,
+                color = borderColorFromTheme.copy(alpha = 0.7F),
+                shape = RoundedCornerShape(corner = CornerSize(16.dp))
+            )
+            .testTag("location_date_box"),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .drawBehind {
+                    val barWidth = 3.dp.toPx()
+                    val inset = 10.dp.toPx()
+                    drawRoundRect(
+                        color = accentColor,
+                        topLeft = Offset(0f, inset),
+                        size = Size(barWidth, size.height - inset * 2),
+                        cornerRadius = CornerRadius(barWidth / 2f, barWidth / 2f)
+                    )
+                }
+                .padding(start = 13.dp, top = 6.dp, end = 10.dp, bottom = 6.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = timeState?.gregorianFullDate?.takeIf { it.isNotBlank() }
+                    ?: timeState?.gregorianShortDate ?: "",
+                fontSize = 17.sp,
+                lineHeight = 22.sp,
+                color = Color.White,
+                fontWeight = FontWeight.ExtraBold,
+                textAlign = TextAlign.Center
+            )
+            timeState?.hijriDate?.let { hijri ->
+                Text(
+                    text = hijri,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontSize = 11.sp,
+                    lineHeight = 16.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier
+                        .padding(top = 3.dp)
+                        .background(
+                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
+                            shape = RoundedCornerShape(50)
+                        )
+                        .border(
+                            width = 1.dp,
+                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.4f),
+                            shape = RoundedCornerShape(50)
+                        )
+                        .padding(horizontal = 12.dp, vertical = 1.dp)
+                )
+            }
+            HorizontalDivider(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 16.dp, bottom = 16.dp, end = 16.dp)
-                    .weight(0.2F),
-                contentAlignment = Alignment.Center
+                    .padding(vertical = 5.dp),
+                color = Color.White.copy(alpha = 0.15f)
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-
+                locationState?.let {
+                    LocationInfoSection(
+                        modifier = Modifier.wrapContentWidth(),
+                        locationState = it,
+                        textColor = Color.White,
+                        textSize = 11.sp
+                    )
+                }
+                timeState?.currentTime?.let { currentTime ->
+                    Text(
+                        text = currentTime,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = 12.sp,
+                        lineHeight = 16.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             }
         }
     }

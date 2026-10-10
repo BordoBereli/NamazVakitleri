@@ -38,7 +38,8 @@ fun PayerTimesScreen(
                 TopContainer(
                     modifier = Modifier.weight(0.43f),
                     painter = painterResource(id = R.drawable.image_prayers),
-                    uiState = uiState
+                    uiState = uiState,
+                    isLandscape = true
                 )
                 Card(
                     modifier = Modifier

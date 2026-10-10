@@ -30,6 +30,7 @@ class PrayerTopContainerBoxTest {
         isCurrentMonth = true,
         timeState = TimeUiState(
             gregorianShortDate = "September 2026",
+            gregorianFullDate = "10 September 2026, Thursday",
             hijriDate = "1 Muharram 1448",
             gregorianDayAndName = "Thursday",
             currentTime = "14:32"
@@ -52,7 +53,7 @@ class PrayerTopContainerBoxTest {
         }
         composeRule.waitForIdle()
 
-        listOf("September 2026", "1 Muharram 1448", "Thursday", "14:32", "Istanbul, TR")
+        listOf("10 September 2026, Thursday", "1 Muharram 1448", "14:32", "Istanbul, TR")
             .forEach { text ->
                 composeRule.onNodeWithText(text).assertExists()
             }
@@ -98,7 +99,7 @@ class PrayerTopContainerBoxTest {
             .fetchSemanticsNode().boundsInRoot
         val timeBottom = composeRule.onNodeWithText("14:32")
             .fetchSemanticsNode().boundsInRoot.bottom
-        val monthTop = composeRule.onNodeWithText("September 2026")
+        val monthTop = composeRule.onNodeWithText("10 September 2026, Thursday")
             .fetchSemanticsNode().boundsInRoot.top
 
         assertThat(timeBottom).isAtMost(boxBounds.bottom)
