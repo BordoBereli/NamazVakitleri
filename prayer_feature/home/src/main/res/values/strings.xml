@@ -7,6 +7,8 @@
     <string name="time_until_message">Time until next prayer</string>
     <string name="time_until_prayer_format">Time until %1$s</string>
     <string name="time_until_sunrise">Time until Sunrise</string>
+    <string name="time_until_sabah_for">Time until the %1$s prayer</string>
+    <string name="prayer_sabah">Fajr</string>
     <string name="prayer_jumuah">Jumu\'ah</string>
     <string name="ramadan_day_format">Ramadan Day %1$d</string>
     <string name="ramadan_sahur_ends_in">Sahur ends in</string>

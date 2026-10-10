@@ -162,14 +162,17 @@ private fun TimeInfoSection(timeState: TimeUiState, currentTime: String) {
 @Composable
 private fun NextPrayerInfo(prayerState: PrayerUiState, timeRemaining: String) {
     val nextPrayerNameRaw = prayerState.nextPrayer?.name ?: "İmsak"
+    val isImsak = nextPrayerNameRaw == "İmsak"
+    val isSunrise = nextPrayerNameRaw == "Güneş"
 
     val nextPrayerDisplayName = when {
         prayerState.isJumuahCountdown() -> stringResource(id = R.string.prayer_jumuah)
+        isImsak || isSunrise -> stringResource(id = R.string.prayer_sabah)
         else -> nextPrayerNameRaw
     }
 
-    val timeUntilText = when (nextPrayerNameRaw) {
-        "Güneş" -> stringResource(id = R.string.time_until_sunrise)
+    val timeUntilText = when {
+        isSunrise -> stringResource(id = R.string.time_until_sabah_for, nextPrayerDisplayName)
         else -> stringResource(id = R.string.time_until_prayer_format, nextPrayerDisplayName)
     }
     Column(

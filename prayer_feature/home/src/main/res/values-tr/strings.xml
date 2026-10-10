@@ -7,6 +7,8 @@
     <string name="time_until_message">Bir sonraki vakit için kalan süre</string>
     <string name="time_until_prayer_format">%1$s namazına kalan süre: </string>
     <string name="time_until_sunrise">Güneş\'in doğmasına kalan süre: </string>
+    <string name="time_until_sabah_for">%1$s namazı için kalan süre: </string>
+    <string name="prayer_sabah">Sabah</string>
     <string name="prayer_jumuah">Cuma</string>
     <string name="ramadan_day_format">Ramazan Günü %1$d</string>
     <string name="ramadan_sahur_ends_in">Sahur bitimine</string>
