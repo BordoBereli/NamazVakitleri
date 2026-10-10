@@ -29,7 +29,11 @@ class PrayerTimesScreenTest {
     private val today = LocalDate(2026, 10, 5)
     private val tomorrow = LocalDate(2026, 10, 6)
 
-    private fun surfaceData(tomorrowImsakTime: LocalTime?, currentPrayerName: String? = null): SurfacePrayerData = SurfacePrayerData(
+    private fun surfaceData(
+        tomorrowImsakTime: LocalTime?,
+        currentPrayerName: String? = null,
+        prayerDate: LocalDate = today
+    ): SurfacePrayerData = SurfacePrayerData(
         location = LocationData(41.0082, 28.9784, "Türkiye", "TR", "İstanbul", "İstanbul", "Europe/Istanbul"),
         city = "İstanbul",
         district = null,
@@ -43,12 +47,12 @@ class PrayerTimesScreenTest {
         hijriAdjustment = 0,
         currentPrayerName = currentPrayerName,
         prayers = listOf(
-            Prayer("Imsak", "الإمساك", LocalTime(5, 47), today, isImsak = true),
-            Prayer("Sunrise", "الشروق", LocalTime(7, 15), today),
-            Prayer("Dhuhr", "الظهر", LocalTime(13, 0), today),
-            Prayer("Asr", "العصر", LocalTime(16, 10), today),
-            Prayer("Maghrib", "المغرب", LocalTime(18, 45), today),
-            Prayer("Isha", "العشاء", LocalTime(20, 0), today),
+            Prayer("Imsak", "الإمساك", LocalTime(5, 47), prayerDate, isImsak = true),
+            Prayer("Sunrise", "الشروق", LocalTime(7, 15), prayerDate),
+            Prayer("Dhuhr", "الظهر", LocalTime(13, 0), prayerDate),
+            Prayer("Asr", "العصر", LocalTime(16, 10), prayerDate),
+            Prayer("Maghrib", "المغرب", LocalTime(18, 45), prayerDate),
+            Prayer("Isha", "العشاء", LocalTime(20, 0), prayerDate),
         ),
         nextPrayerDate = tomorrow,
         tomorrowImsakTime = tomorrowImsakTime
@@ -100,6 +104,25 @@ class PrayerTimesScreenTest {
     @Test
     fun `current prayer row has marker and primary-colored time`() {
         val data = surfaceData(tomorrowImsakTime = LocalTime(5, 48), currentPrayerName = "Isha")
+        val rows = rows(screenWith(data))
+
+        val current = rows.first { it.title.toString().contains("Isha") }
+        assertThat(current.title.toString()).startsWith("●")
+        val span = current.texts.single().spans.single().carSpan
+        assertThat(span).isInstanceOf(ForegroundCarColorSpan::class.java)
+        assertThat((span as ForegroundCarColorSpan).color).isEqualTo(CarColor.PRIMARY)
+    }
+
+    @Test
+    fun `current prayer highlighted when device-zone date differs from prayer date`() {
+        // Device clock is UTC (date 2026-10-05); prayers are dated in the location
+        // zone (Europe/Istanbul) where that same instant is already 2026-10-06.
+        // The `p.date == today` guard matched no row, so the highlight was dropped.
+        val data = surfaceData(
+            tomorrowImsakTime = LocalTime(5, 48),
+            currentPrayerName = "Isha",
+            prayerDate = LocalDate(2026, 10, 6)
+        )
         val rows = rows(screenWith(data))
 
         val current = rows.first { it.title.toString().contains("Isha") }

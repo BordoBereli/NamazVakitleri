@@ -105,7 +105,7 @@ class PrayerTimesScreen(
         val list = ItemList.Builder()
         data.prayers.forEach { p ->
             val isNext = p.name == data.nextPrayerName && p.date == data.nextPrayerDate
-            val isCurrent = p.name == data.currentPrayerName && p.date == today
+            val isCurrent = p.name == data.currentPrayerName
             val title = when {
                 isCurrent -> "● ${p.name}"
                 isNext -> "▶ ${p.name}"
