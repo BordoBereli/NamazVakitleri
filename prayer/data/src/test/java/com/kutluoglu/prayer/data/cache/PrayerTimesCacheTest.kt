@@ -58,6 +58,20 @@ class PrayerTimesCacheTest {
     }
 
     @Test
+    fun `put then get preserves the isImsak flag`() = runBlocking {
+        val prayers = listOf(
+            Prayer("Imsak", "الإمساك", LocalTime.parse("05:00"), LocalDate(2024, 1, 1), isImsak = true),
+            Prayer("Sunrise", "الشروق", LocalTime.parse("06:30"), LocalDate(2024, 1, 1))
+        )
+
+        cache.put("2024-01-01|41.0|29.0|Europe/Istanbul", prayers)
+
+        val result = cache.get("2024-01-01|41.0|29.0|Europe/Istanbul")
+        assertThat(result!!.first { it.name == "Imsak" }.isImsak).isTrue()
+        assertThat(result.first { it.name == "Sunrise" }.isImsak).isFalse()
+    }
+
+    @Test
     fun `clear removes all cached prayers`() = runBlocking {
         cache.put("key-1", listOf(Prayer("Imsak", "الإمساك", LocalTime.parse("05:00"), LocalDate(2024, 1, 1))))
         cache.put("key-2", listOf(Prayer("Isha", "العشاء", LocalTime.parse("20:42"), LocalDate(2024, 1, 1))))

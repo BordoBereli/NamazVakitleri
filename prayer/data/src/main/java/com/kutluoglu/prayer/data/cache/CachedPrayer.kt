@@ -14,13 +14,15 @@ data class CachedPrayer(
     val name: String,
     val arabicName: String,
     val time: String,
-    val date: String
+    val date: String,
+    val isImsak: Boolean = false
 ) {
     fun toPrayer(): Prayer = Prayer(
         name = name,
         arabicName = arabicName,
         time = LocalTime.parse(time),
-        date = LocalDate.parse(date)
+        date = LocalDate.parse(date),
+        isImsak = isImsak
     )
 }
 
@@ -28,5 +30,6 @@ fun Prayer.toCached(): CachedPrayer = CachedPrayer(
     name = name,
     arabicName = arabicName,
     time = time.toString(),
-    date = date.toString()
+    date = date.toString(),
+    isImsak = isImsak
 )
