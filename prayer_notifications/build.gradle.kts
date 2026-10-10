@@ -29,6 +29,7 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
     testOptions {
+        targetSdk = libs.versions.targetSdk.get().toInt()
         unitTests {
             isReturnDefaultValues = true
             isIncludeAndroidResources = true

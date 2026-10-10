@@ -33,6 +33,7 @@ android {
         compose = true
     }
     testOptions {
+        targetSdk = libs.versions.targetSdk.get().toInt()
         unitTests {
             isIncludeAndroidResources = true
         }
