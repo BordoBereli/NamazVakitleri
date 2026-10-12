@@ -108,9 +108,9 @@ class WatchTileDataBuilderTest {
         val result = data!!
 
         val nowMillis = beforeSunriseClock.instant().toEpochMilli()
-        assertThat(result.nextPrayerName).isEqualTo("Güneş")
+        assertThat(result.nextPrayerName).isEqualTo("İmsak")
         assertThat(result.nextPrayerEpochMillis).isGreaterThan(nowMillis)
-        // The engine reports Isha (today) as the "current" prayer before Sunrise.
+        // The engine reports Isha (today) as the "current" prayer before Imsak/Sunrise boundary.
         assertThat(result.currentPrayerEpochMillis).isGreaterThan(nowMillis)
     }
 
@@ -123,7 +123,7 @@ class WatchTileDataBuilderTest {
         val result = data!!
 
         val nowMillis = afterIshaClock.instant().toEpochMilli()
-        assertThat(result.nextPrayerName).isEqualTo("Güneş")
+        assertThat(result.nextPrayerName).isEqualTo("İmsak")
         assertThat(result.nextPrayerEpochMillis).isGreaterThan(nowMillis)
         val nextDate = Instant.ofEpochMilli(result.nextPrayerEpochMillis)
             .atZone(zoneId)

@@ -33,14 +33,15 @@ class WidgetDataProvider(
         val nextPrayerName = localizedPrayers.getOrNull(
             surface.prayers.indexOfFirst { it.time == surface.nextPrayerLocalTime }
         )?.name ?: surface.nextPrayerName
-        val duration = calculator.calculateTimeRemaining(surface.nextPrayerLocalTime, zoneId)
+        val nextLocalTime = surface.tomorrowImsakTime ?: surface.nextPrayerLocalTime
+        val duration = calculator.calculateTimeRemaining(nextLocalTime, zoneId)
         val countdownText = duration.toKotlinDuration().toComponents { _, hours, minutes, _, _ ->
             countdownFormatter.format(hours, minutes)
         }
         val ringProgress = surface.currentPrayerLocalTime?.let {
             WidgetProgressCalculator.computeRingProgress(
                 current = it,
-                next = surface.nextPrayerLocalTime,
+                next = nextLocalTime,
                 now = LocalTime.now(clock.withZone(zoneId)).toKotlinLocalTime()
             )
         } ?: 0f
@@ -48,7 +49,7 @@ class WidgetDataProvider(
         return WidgetResult.Success(
             WidgetData(
                 nextPrayerName = nextPrayerName,
-                nextPrayerTime = surface.nextPrayerTime,
+                nextPrayerTime = formatClockTime(nextLocalTime),
                 countdownText = countdownText,
                 ringProgress = ringProgress,
                 locationName = surface.city,

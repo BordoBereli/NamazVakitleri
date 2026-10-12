@@ -19,6 +19,7 @@
             <option value="$PROJECT_DIR$/prayer/data" />
             <option value="$PROJECT_DIR$/prayer/domain" />
             <option value="$PROJECT_DIR$/prayer/model" />
+            <option value="$PROJECT_DIR$/prayer_auto" />
             <option value="$PROJECT_DIR$/prayer_feature" />
             <option value="$PROJECT_DIR$/prayer_feature/common" />
             <option value="$PROJECT_DIR$/prayer_feature/home" />
