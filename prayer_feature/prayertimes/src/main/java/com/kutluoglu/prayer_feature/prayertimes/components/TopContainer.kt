@@ -12,6 +12,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -59,6 +60,10 @@ fun TopContainer(
     val timeState by remember(uiState) {
         derivedStateOf { (uiState as? PrayerTimesUiState.Success)?.timeState }
     }
+    val liveTime = rememberCurrentTime(
+        zoneId = timeState?.zoneId,
+        initial = timeState?.currentTime
+    )
 
     Box(
         modifier = modifier.fillMaxWidth(),
@@ -101,7 +106,8 @@ fun TopContainer(
                         .weight(0.45f)
                         .padding(start = 16.dp, end = 16.dp),
                     timeState = timeState,
-                    locationState = locationState
+                    locationState = locationState,
+                    liveTime = liveTime
                 )
                 Spacer(modifier = Modifier.weight(0.2f))
             } else {
@@ -120,7 +126,8 @@ fun TopContainer(
                         .fillMaxWidth()
                         .padding(start = 16.dp, end = 16.dp),
                     timeState = timeState,
-                    locationState = locationState
+                    locationState = locationState,
+                    liveTime = liveTime
                 )
                 Spacer(modifier = Modifier.weight(1f))
             }
@@ -132,7 +139,8 @@ fun TopContainer(
 private fun LocationDateBox(
     modifier: Modifier = Modifier,
     timeState: TimeUiState?,
-    locationState: LocationUiState?
+    locationState: LocationUiState?,
+    liveTime: State<String>
 ) {
     val accentColor = MaterialTheme.colorScheme.primary
     val borderColorFromTheme = MaterialTheme.colorScheme.onSecondaryContainer
@@ -219,7 +227,7 @@ private fun LocationDateBox(
                 }
                 timeState?.currentTime?.let { currentTime ->
                     Text(
-                        text = currentTime,
+                        text = liveTime.value,
                         color = MaterialTheme.colorScheme.primary,
                         fontSize = 12.sp,
                         lineHeight = 16.sp,
