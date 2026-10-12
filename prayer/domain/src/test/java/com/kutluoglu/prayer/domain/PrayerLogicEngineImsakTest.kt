@@ -40,14 +40,42 @@ class PrayerLogicEngineImsakTest {
     }
 
     @Test
-    fun `imsak is never returned as next prayer`() {
-        // 03:00 UTC = 06:00 Istanbul, at Sunrise
+    fun `after Isha next prayer is tomorrow's Imsak`() {
+        // 19:00 UTC = 22:00 Istanbul, after Isha (21:00)
         val prayers = listOf(
             prayer("Imsak", LocalTime(4, 50), isImsak = true),
-            prayer("Sunrise", LocalTime(6, 0))
+            prayer("Sunrise", LocalTime(6, 0)),
+            prayer("Isha", LocalTime(21, 0))
         )
-        val (_, next) = engineAt(3, 0).findCurrentAndNextPrayer(prayers, zoneId)
-        assertNotEquals("Imsak", next?.name)
+        val (current, next) = engineAt(19, 0).findCurrentAndNextPrayer(prayers, zoneId)
+        assertEquals("Isha", current?.name)
+        assertEquals("Imsak", next?.name)
+        assertEquals(LocalDate(2026, 9, 3), next?.date)
+    }
+
+    @Test
+    fun `before Imsak after midnight next prayer is today's Imsak`() {
+        // 23:00 UTC previous day = 02:00 Istanbul, before Imsak (04:50)
+        val prayers = listOf(
+            prayer("Imsak", LocalTime(4, 50), isImsak = true),
+            prayer("Sunrise", LocalTime(6, 0)),
+            prayer("Isha", LocalTime(21, 0))
+        )
+        val (current, next) = engineAt(23, 0).findCurrentAndNextPrayer(prayers, zoneId)
+        assertEquals("Isha", current?.name)
+        assertEquals("Imsak", next?.name)
+        assertEquals(LocalDate(2026, 9, 2), next?.date)
+    }
+
+    @Test
+    fun `between Imsak and Sunrise next prayer is Sunrise`() {
+        // 02:00 UTC = 05:00 Istanbul, Imsak (04:50) already passed, Sunrise (06:00) ahead
+        val prayers = listOf(
+            prayer("Imsak", LocalTime(4, 50), isImsak = true),
+            prayer("Sunrise", LocalTime(6, 0)),
+            prayer("Isha", LocalTime(21, 0))
+        )
+        val (_, next) = engineAt(2, 0).findCurrentAndNextPrayer(prayers, zoneId)
         assertEquals("Sunrise", next?.name)
     }
 }

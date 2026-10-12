@@ -29,16 +29,26 @@ class PrayerLogicEngine(
     ): Pair<Prayer?, Prayer?> {
         val prayerTimes = prayers.filterNot { it.isImsak }
         val currentPrayer = findCurrentPrayer(prayerTimes, zoneId)
-        // Handle period before the first prayer (Sunrise)
+        // Handle period before the first prayer (Sunrise). If now is still
+        // before Imsak, Imsak itself is the next event.
         if (currentPrayer == null) {
-            return Pair(prayerTimes.lastOrNull(), prayerTimes.firstOrNull())
+            val now = java.time.LocalTime.now(clock.withZone(zoneId))
+            val imsak = prayers.firstOrNull { it.isImsak }
+            val next = if (imsak != null && now.isBefore(imsak.time.toJavaLocalTime())) {
+                imsak
+            } else {
+                prayerTimes.firstOrNull()
+            }
+            return Pair(prayerTimes.lastOrNull(), next)
         }
         val currentIndex = prayerTimes.indexOf(currentPrayer)
         val nextPrayer = prayerTimes.getOrNull(currentIndex + 1)
 
-        // Handle period after the last prayer (Isha)
+        // Handle period after the last prayer (Isha): the next event is
+        // tomorrow's Imsak, not tomorrow's Sunrise.
         return if (nextPrayer == null) {
-            val nextPrayer = prayerTimes.firstOrNull()?.let {
+            val nextImsak = prayers.firstOrNull { it.isImsak } ?: prayerTimes.firstOrNull()
+            val nextPrayer = nextImsak?.let {
                 it.copy(
                     date = it.date.plus(1, DateTimeUnit.DAY)
                 )
