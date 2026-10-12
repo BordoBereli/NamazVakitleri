@@ -161,14 +161,17 @@ private fun TimeInfoSection(timeState: TimeUiState, currentTime: String) {
 
 @Composable
 private fun NextPrayerInfo(prayerState: PrayerUiState, timeRemaining: String) {
-    val nextPrayerNameRaw = prayerState.nextPrayer?.name ?: "İmsak"
-    val isImsak = nextPrayerNameRaw == "İmsak"
-    val isSunrise = nextPrayerNameRaw == "Güneş"
+    // Locale-independent detection: the localized `name` differs per language
+    // ("İmsak"/"Imsak"/"Sonnenaufgang"/...), so match on the isImsak flag and
+    // the stable arabicName instead of localized display strings.
+    val nextPrayer = prayerState.nextPrayer
+    val isImsak = nextPrayer?.isImsak == true
+    val isSunrise = nextPrayer?.arabicName == "الشروق"
 
     val nextPrayerDisplayName = when {
         prayerState.isJumuahCountdown() -> stringResource(id = R.string.prayer_jumuah)
         isImsak || isSunrise -> stringResource(id = R.string.prayer_sabah)
-        else -> nextPrayerNameRaw
+        else -> nextPrayer?.name ?: stringResource(id = R.string.prayer_sabah)
     }
 
     val timeUntilText = when {
