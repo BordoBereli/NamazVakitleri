@@ -1,13 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
     android:width="120dp"
     android:height="120dp"
     android:viewportWidth="120"
     android:viewportHeight="120">
+    <!-- Dark-green gradient disc (matches the app icon background) -->
+    <path android:pathData="M60,60m-60,0a60,60 0,1 1,120 0a60,60 0,1 1,-120 0">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="60"
+                android:startY="0"
+                android:endX="60"
+                android:endY="120"
+                android:startColor="#1B4A39"
+                android:endColor="#0C241B" />
+        </aapt:attr>
+    </path>
+    <!-- Gold mosque arch -->
+    <path android:pathData="M42,98 L42,58 C42,46 52,40 60,30 C68,40 78,46 78,58 L78,98 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="42"
+                android:startY="30"
+                android:endX="78"
+                android:endY="98"
+                android:startColor="#EBCD6E"
+                android:endColor="#C79A2D" />
+        </aapt:attr>
+    </path>
+    <!-- Kaaba -->
     <path
-        android:fillColor="#0D0D0F"
-        android:pathData="M60,60m-60,0a60,60 0,1 1,120 0a60,60 0,1 1,-120 0" />
+        android:fillColor="#101B14"
+        android:pathData="M50,64 L56,58 L76,58 L70,64 Z" />
     <path
-        android:fillColor="#FFD700"
-        android:pathData="M60,60m-40,0a40,40 0,1 1,80 0a40,40 0,1 1,-80 0" />
+        android:fillColor="#1C2B22"
+        android:pathData="M50,64 L70,64 L70,90 L50,90 Z" />
+    <path
+        android:fillColor="#131F18"
+        android:pathData="M70,64 L76,58 L76,84 L70,90 Z" />
+    <!-- Kaaba gold band -->
+    <path
+        android:fillColor="#D9B44A"
+        android:pathData="M50,72 L70,72 L70,77 L50,77 Z" />
+    <path
+        android:fillColor="#B8962E"
+        android:pathData="M70,72 L76,66 L76,71 L70,77 Z" />
+    <!-- Crescent with star -->
+    <path
+        android:fillColor="#F0C75E"
+        android:pathData="M36,34m-11,0a11,11 0,1 0,22 0a11,11 0,1 0,-22 0" />
+    <path
+        android:fillColor="#15402F"
+        android:pathData="M41,31m-10,0a10,10 0,1 0,20 0a10,10 0,1 0,-20 0" />
+    <path
+        android:fillColor="#FFF3C4"
+        android:pathData="M44,26 L45.5,30.5 L50,32 L45.5,33.5 L44,38 L42.5,33.5 L38,32 L42.5,30.5 Z" />
 </vector>
