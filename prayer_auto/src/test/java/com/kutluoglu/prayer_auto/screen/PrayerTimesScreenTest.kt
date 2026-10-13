@@ -32,12 +32,14 @@ class PrayerTimesScreenTest {
     private fun surfaceData(
         tomorrowImsakTime: LocalTime?,
         currentPrayerName: String? = null,
-        prayerDate: LocalDate = today
+        prayerDate: LocalDate = today,
+        nextPrayerName: String = "Imsak",
+        nextPrayerDate: LocalDate = tomorrow
     ): SurfacePrayerData = SurfacePrayerData(
         location = LocationData(41.0082, 28.9784, "Türkiye", "TR", "İstanbul", "İstanbul", "Europe/Istanbul"),
         city = "İstanbul",
         district = null,
-        nextPrayerName = "Imsak",
+        nextPrayerName = nextPrayerName,
         nextPrayerTime = "05:48",
         nextPrayerLocalTime = LocalTime(5, 48),
         currentPrayerLocalTime = LocalTime(20, 0),
@@ -54,7 +56,7 @@ class PrayerTimesScreenTest {
             Prayer("Maghrib", "المغرب", LocalTime(18, 45), prayerDate),
             Prayer("Isha", "العشاء", LocalTime(20, 0), prayerDate),
         ),
-        nextPrayerDate = tomorrow,
+        nextPrayerDate = nextPrayerDate,
         tomorrowImsakTime = tomorrowImsakTime
     )
 
@@ -128,6 +130,23 @@ class PrayerTimesScreenTest {
         val current = rows.first { it.title.toString().contains("Isha") }
         assertThat(current.title.toString()).startsWith("●")
         val span = current.texts.single().spans.single().carSpan
+        assertThat(span).isInstanceOf(ForegroundCarColorSpan::class.java)
+        assertThat((span as ForegroundCarColorSpan).color).isEqualTo(CarColor.PRIMARY)
+    }
+
+    @Test
+    fun `next prayer row has marker and primary-colored time`() {
+        val data = surfaceData(
+            tomorrowImsakTime = LocalTime(5, 48),
+            currentPrayerName = "Dhuhr",
+            nextPrayerName = "Asr",
+            nextPrayerDate = today
+        )
+        val rows = rows(screenWith(data))
+
+        val next = rows.first { it.title.toString().contains("Asr") }
+        assertThat(next.title.toString()).startsWith("▶")
+        val span = next.texts.single().spans.single().carSpan
         assertThat(span).isInstanceOf(ForegroundCarColorSpan::class.java)
         assertThat((span as ForegroundCarColorSpan).color).isEqualTo(CarColor.PRIMARY)
     }

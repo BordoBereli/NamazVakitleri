@@ -76,6 +76,17 @@ class PrayerTimesScreen(
         }
     }
 
+    private fun coloredTime(text: String): CharSequence {
+        val spannable = SpannableString(text)
+        spannable.setSpan(
+            ForegroundCarColorSpan.create(CarColor.PRIMARY),
+            0,
+            spannable.length,
+            SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+        return spannable
+    }
+
     override fun onGetTemplate(): Template {
         val data = surface
         val city = data?.city?.takeIf { it.isNotBlank() }
@@ -111,17 +122,10 @@ class PrayerTimesScreen(
                 isNext -> "▶ ${p.name}"
                 else -> p.name
             }
-            val timeText: CharSequence = if (isCurrent) {
-                val spannable = SpannableString(formatClockTime(p.time))
-                spannable.setSpan(
-                    ForegroundCarColorSpan.create(CarColor.PRIMARY),
-                    0,
-                    spannable.length,
-                    SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
-                )
-                spannable
-            } else {
-                formatClockTime(p.time)
+            val timeText: CharSequence = when {
+                isCurrent -> coloredTime(formatClockTime(p.time))
+                isNext -> coloredTime(formatClockTime(p.time))
+                else -> formatClockTime(p.time)
             }
             list.addItem(
                 Row.Builder()
