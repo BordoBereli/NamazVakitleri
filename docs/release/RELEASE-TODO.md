@@ -28,6 +28,7 @@ offline prayer times, adaptive launcher icon, and numerous fixes.
 - [x] **7. Screenshots** — captured to `/Users/a195143/2026Tasarım/prayer-icons/store/screenshots/`: 4 phone screenshots from SM-S948B (release build) — home (live countdown + mosque photo), prayer times (monthly program), qibla (compass), settings; + 1 Wear OS tile screenshot (454×454) from Wear_OS_Large_Round emulator — prayer tile with live countdown ring (Istanbul, Dhuhr, computed on-device)
 - [ ] **8. Bilingual listing copy** — DONE: drafted at `docs/release/PLAY-LISTING-2.0.1.md` (titles, short/full descriptions TR+EN, data-safety answers, rating notes)
 - [ ] **9. Data-safety declaration** — console form; exact answers pre-mapped in `docs/release/PLAY-LISTING-2.0.1.md` — enter them in Play Console
+- [ ] **9.1 Upload deobfuscation file** — Play Console → release → Deobfuscation files → upload `docs/release/mapping-2.0.1/mapping.txt` (Crashlytics mapping was auto-uploaded at build time; Play's is manual)
 
 ## 🟢 Optional quality gates
 
