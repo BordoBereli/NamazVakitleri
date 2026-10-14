@@ -25,7 +25,7 @@ offline prayer times, adaptive launcher icon, and numerous fixes.
 
 - [x] **5. Hosted privacy policy URL** — https://bordobereli.github.io/NamazVakitleri/privacy-policy.html (verified live 2026-10-14, bilingual EN/TR, last updated 13 Sep 2026)
 - [x] **6. Feature graphic 1024×500** + **512×512 icon** — at `/Users/a195143/2026Tasarım/prayer-icons/store/` (verified 2026-10-14); emerald set recommended (matches app icon): `feature-graphic-emerald-en.png` (1024×500) + `icon-emerald-512-fullbleed.png` (512×512); TR variants + purple theme also available
-- [x] **7. Screenshots** — 4 phone screenshots captured from SM-S948B (release build) at `/Users/a195143/2026Tasarım/prayer-icons/store/screenshots/`: home (live countdown + mosque photo), prayer times (monthly program), qibla (compass), settings; Wear screenshots: no watch device connected — skip or capture later if listing the watch app
+- [x] **7. Screenshots** — captured to `/Users/a195143/2026Tasarım/prayer-icons/store/screenshots/`: 4 phone screenshots from SM-S948B (release build) — home (live countdown + mosque photo), prayer times (monthly program), qibla (compass), settings; + 1 Wear OS tile screenshot (454×454) from Wear_OS_Large_Round emulator — prayer tile with live countdown ring (Istanbul, Dhuhr, computed on-device)
 - [ ] **8. Bilingual listing copy** — short + full descriptions (TR/EN)
 - [ ] **9. Data-safety declaration** — console form: precise location, network, analytics/crashlytics collection
 
