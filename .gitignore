@@ -40,4 +40,5 @@ NamazVakitleriTechnicalAnalysis
 .claude/
 docs/*
 !docs/privacy-policy.html
+!docs/release/
 prayer_settings/ANDROID_TECHNICAL_ANALYSIS_*.md
