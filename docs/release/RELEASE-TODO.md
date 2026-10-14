@@ -23,7 +23,7 @@ offline prayer times, adaptive launcher icon, and numerous fixes.
 
 ## 🟡 Play Store assets (before upload)
 
-- [ ] **5. Hosted privacy policy URL** — `PRIVACY_POLICY.md` exists; needs hosting (e.g. GitHub Pages)
+- [x] **5. Hosted privacy policy URL** — https://bordobereli.github.io/NamazVakitleri/privacy-policy.html (verified live 2026-10-14, bilingual EN/TR, last updated 13 Sep 2026)
 - [ ] **6. Feature graphic 1024×500** + **512×512 icon** export
 - [ ] **7. Screenshots** — min 2 phone screenshots (device/emulator); Wear screenshots if listing the watch app
 - [ ] **8. Bilingual listing copy** — short + full descriptions (TR/EN)
