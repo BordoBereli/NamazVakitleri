@@ -40,7 +40,7 @@ class WidgetDataProviderTest {
         hijriAdjustment = 0,
         location = LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", "Fatih", "Europe/Istanbul"),
         prayers = listOf(
-            Prayer("Imsak", "Imsak", LocalTime(5, 47), LocalDate(2026, 10, 5)),
+            Prayer("Imsak", "Imsak", LocalTime(5, 47), LocalDate(2026, 10, 5), isImsak = true),
             Prayer(nextPrayerName, nextPrayerName, LocalTime(12, 30), LocalDate(2026, 10, 5))
         ),
         nextPrayerDate = LocalDate(2026, 10, 5)
@@ -75,6 +75,41 @@ class WidgetDataProviderTest {
         assertEquals("Öğle", nextWidgetPrayer.name)
         assertEquals("12:30", nextWidgetPrayer.time)
         verify { countdown.format(2, 0) }
+    }
+
+    @Test
+    fun `load after Isha localizes tomorrow's Imsak name even when time is not in today's list`() = runTest {
+        val surfaceProvider = mockk<PrayerSurfaceDataProvider>(relaxed = true)
+        val formatter = mockk<PrayerFormatter>(relaxed = true)
+        val countdown = mockk<WidgetCountdownFormatter>(relaxed = true)
+        val calculator = mockk<PrayerLogicEngine>(relaxed = true)
+        val localizedNames = listOf("İmsak", "Öğle")
+        // After Isha the surface exposes tomorrow's exact Imsak time (05:48),
+        // which is NOT in today's prayer list (Imsak 05:47).
+        coEvery { surfaceProvider.load() } returns surfaceData(
+            nextPrayerName = "Imsak",
+            nextPrayerTime = "05:48"
+        ).copy(
+            nextPrayerLocalTime = LocalTime(5, 48),
+            tomorrowImsakTime = LocalTime(5, 48),
+            nextPrayerDate = LocalDate(2026, 10, 6)
+        )
+        every { countdown.format(any(), any()) } returns "2s 15d"
+        every { calculator.calculateTimeRemaining(any(), any()) } returns Duration.ofHours(2)
+        every { formatter.getInitialTimeInfo(any(), any(), any(), any()) } returns mockk(relaxed = true)
+        every { formatter.withLocalizedNames(any()) } answers { arg<List<Prayer>>(0).mapIndexed { index, prayer ->
+            prayer.copy(name = localizedNames[index])
+        } }
+
+        val provider = WidgetDataProvider(surfaceProvider, formatter, countdown, calculator)
+        val result = provider.load()
+
+        assertTrue(result is WidgetResult.Success)
+        val data = (result as WidgetResult.Success).data
+        assertEquals("İmsak", data.nextPrayerName)
+        assertEquals("05:48", data.nextPrayerTime)
+        val nextWidgetPrayer = data.prayers.first { it.isNext }
+        assertEquals("İmsak", nextWidgetPrayer.name)
     }
 
     @Test

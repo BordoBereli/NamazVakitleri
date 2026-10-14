@@ -60,21 +60,33 @@ class PrayerTimesLoader(
             persistDailyCache = true
         ).map { result ->
             val localized = formatter.withLocalizedNames(result.prayers)
+            // The engine can only date-shift today's Imsak as the after-Isha next
+            // prayer; patch its time with tomorrow's exact Imsak (fetched below)
+            // so the home countdown matches the notification scheduler. Fails
+            // soft: falls back to the date-shifted time when the load fails.
+            val nextImsakTime = loadNextImsakTime(
+                location = location,
+                zoneId = zoneId,
+                calculationMethod = calculationMethod,
+                juristicMethod = juristicMethod,
+                today = locationDateTime
+            )
+            val nextPrayerRaw = result.nextPrayer
+            val isAfterIsha = nextPrayerRaw != null && nextPrayerRaw.date > locationDateTime.date
+            val effectiveNextPrayer = if (isAfterIsha && nextImsakTime != null && nextPrayerRaw.isImsak) {
+                nextPrayerRaw.copy(time = nextImsakTime)
+            } else {
+                nextPrayerRaw
+            }
             LoadedPrayerData(
-                prayerState = buildPrayerState(result.prayers, localized, result.currentPrayer, result.nextPrayer),
+                prayerState = buildPrayerState(result.prayers, localized, result.currentPrayer, effectiveNextPrayer),
                 timeState = formatter.getInitialTimeInfo(zoneId, hijriAdjustment = hijriAdjustment),
                 locationState = LocationUiState(
                     locationData = location,
                     locationInfoText = formatter.locationInfo(location)
                 ),
                 zoneId = zoneId,
-                nextImsakTime = loadNextImsakTime(
-                    location = location,
-                    zoneId = zoneId,
-                    calculationMethod = calculationMethod,
-                    juristicMethod = juristicMethod,
-                    today = locationDateTime
-                )
+                nextImsakTime = nextImsakTime
             )
         }
     }
@@ -97,7 +109,16 @@ class PrayerTimesLoader(
             localized.getOrNull(rawPrayers.indexOfFirst { it.time == raw.time })?.copy(date = raw.date)
         }
         val localizedNext = nextPrayer?.let { raw ->
-            localized.getOrNull(rawPrayers.indexOfFirst { it.time == raw.time })?.copy(date = raw.date)
+            val index = rawPrayers.indexOfFirst { it.time == raw.time }
+            if (index >= 0) {
+                localized.getOrNull(index)?.copy(date = raw.date)
+            } else {
+                // After-Isha next prayer: tomorrow's Imsak (date-shifted, possibly
+                // time-patched with the exact tomorrow time) is not in today's
+                // [rawPrayers]; map to the localized Imsak entry, or fall back to
+                // the raw prayer when no localized Imsak exists.
+                localized.firstOrNull { it.isImsak }?.copy(date = raw.date, time = raw.time) ?: raw
+            }
         }
         val prayersWithCurrent = localized.map { prayer ->
             prayer.copy(

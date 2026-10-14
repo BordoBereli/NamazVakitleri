@@ -3,12 +3,15 @@ package com.kutluoglu.wear.data
 import com.kutluoglu.prayer.domain.DailyPrayerTimesLoader
 import com.kutluoglu.prayer.domain.formatClockTime
 import com.kutluoglu.prayer.domain.isJumuahPrayer
+import com.kutluoglu.prayer.domain.toEpochMillis
 import com.kutluoglu.prayer.model.prayer.CalculationMethod
 import com.kutluoglu.prayer.model.prayer.JuristicMethod
 import com.kutluoglu.prayer.model.prayer.Prayer
 import com.kutluoglu.wear.shared.model.WatchPrayer
 import com.kutluoglu.wear.shared.model.WatchTileData
+import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.plus
 import org.koin.core.annotation.Factory
 import java.time.ZoneId
 
@@ -52,18 +55,50 @@ class WatchTileDataBuilder(
             juristicMethod = juristicMethod,
             persistDailyCache = false
         ).getOrNull() ?: return null
+        // The engine can only date-shift today's Imsak as the after-Isha next
+        // prayer; load tomorrow's exact Imsak and patch it in so the watch tile
+        // matches the phone widget and the notification scheduler. Fails soft:
+        // falls back to the date-shifted time when the tomorrow load fails.
+        val nextPrayerRaw = result.nextPrayer
+        val isAfterIsha = nextPrayerRaw != null && nextPrayerRaw.date > date.date
+        val tomorrowImsakTime = if (isAfterIsha) {
+            runCatching {
+                dailyLoader.load(
+                    date = LocalDateTime(date.date.plus(1, DateTimeUnit.DAY), date.time),
+                    latitude = latitude,
+                    longitude = longitude,
+                    zoneId = zoneId,
+                    calculationMethod = calculationMethod,
+                    juristicMethod = juristicMethod,
+                    persistDailyCache = false
+                ).getOrNull()?.prayers?.firstOrNull { it.isImsak }?.time
+            }.getOrNull()
+        } else {
+            null
+        }
+        val effectiveNextPrayer = if (isAfterIsha && tomorrowImsakTime != null && nextPrayerRaw != null && nextPrayerRaw.isImsak) {
+            nextPrayerRaw.copy(time = tomorrowImsakTime)
+        } else {
+            nextPrayerRaw
+        }
         val localizedPrayers = localizeNames(result.prayers, prayerNames)
         // The loader returns raw (English-named) prayers. The raw current/next are
         // elements of result.prayers (or a date-shifted copy after Isha), so map by
         // index into the localized list (same size/order guaranteed by localizeNames),
         // preserving the raw date.
-        val nextPrayer = result.nextPrayer?.let { raw ->
-            localizedPrayers.getOrNull(result.prayers.indexOfFirst { it.time == raw.time })?.copy(date = raw.date)
+        val nextPrayer = effectiveNextPrayer?.let { raw ->
+            val index = result.prayers.indexOfFirst { it.time == raw.time }
+            if (index >= 0) {
+                localizedPrayers.getOrNull(index)?.copy(date = raw.date)
+            } else {
+                localizedPrayers.firstOrNull { it.isImsak }?.copy(date = raw.date, time = raw.time) ?: raw
+            }
         } ?: return null
         return WatchTileData(
             locationName = locationName,
             nextPrayerName = nextPrayer.name,
-            nextPrayerEpochMillis = result.nextPrayerEpochMillis,
+            nextPrayerEpochMillis = effectiveNextPrayer?.let { toEpochMillis(it, zoneId) }
+                ?: result.nextPrayerEpochMillis,
             currentPrayerEpochMillis = result.currentPrayerEpochMillis,
             isJumuah = result.isJumuah,
             prayers = localizedPrayers.map { prayer ->

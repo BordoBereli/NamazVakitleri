@@ -68,7 +68,12 @@ class PrayerSurfaceDataProviderTest {
         assertEquals("Istanbul", result!!.city)
         assertEquals("Fatih", result.district)
         assertEquals("Dhuhr", result.nextPrayerName)
-        assertEquals(2L, result.nextPrayerEpochMillis)
+        // Epoch is recomputed from the effective next prayer (Dhuhr 12:58 in
+        // Europe/Istanbul resolved from the TR country code), not passed through.
+        val expectedEpoch = java.time.ZonedDateTime.of(2026, 10, 5, 12, 58, 0, 0, java.time.ZoneId.of("Europe/Istanbul"))
+            .toInstant()
+            .toEpochMilli()
+        assertEquals(expectedEpoch, result.nextPrayerEpochMillis)
         assertEquals(1L, result.currentPrayerEpochMillis)
         assertEquals(2, result.prayers.size)
         assertEquals(false, result.isJumuah)
@@ -152,6 +157,50 @@ class PrayerSurfaceDataProviderTest {
         coVerify(exactly = 1) {
             dailyLoader.load(match { it.date == LocalDate(2026, 10, 6) }, any(), any(), any(), any(), any(), any())
         }
+    }
+
+    @Test
+    fun `load after Isha patches next prayer time and epoch with tomorrow's exact Imsak`() = runTest {
+        val dailyLoader = mockk<DailyPrayerTimesLoader>(relaxed = true)
+        val locationSource = mockk<SurfaceLocationSource>(relaxed = true)
+        val settings = mockk<SettingsProvider>(relaxed = true)
+        val clock = Clock.fixed(Instant.parse("2026-10-05T08:00:00Z"), ZoneOffset.UTC)
+
+        val todayResult = DailyPrayerTimes(
+            prayers = listOf(prayer("Isha", LocalTime(19, 30))),
+            currentPrayer = prayer("Isha", LocalTime(19, 30)),
+            nextPrayer = Prayer("Imsak", "Imsak", LocalTime(5, 47), LocalDate(2026, 10, 6), isImsak = true),
+            currentPrayerEpochMillis = 1L,
+            nextPrayerEpochMillis = 2L,
+            isJumuah = false
+        )
+        val tomorrowResult = DailyPrayerTimes(
+            prayers = listOf(Prayer("Imsak", "Imsak", LocalTime(5, 48), LocalDate(2026, 10, 6), isImsak = true)),
+            currentPrayer = null,
+            nextPrayer = null,
+            currentPrayerEpochMillis = 0L,
+            nextPrayerEpochMillis = 0L,
+            isJumuah = false
+        )
+
+        coEvery { locationSource.resolveSelected() } returns LocationData(41.0, 29.0, "Turkey", "TR", "Istanbul", "Fatih", timeZoneId = "Europe/Istanbul")
+        coEvery { settings.getSettings() } returns appSettings()
+        coEvery { dailyLoader.load(any(), any(), any(), any(), any(), any(), any()) } returns Result.success(todayResult)
+        coEvery {
+            dailyLoader.load(match { it.date == LocalDate(2026, 10, 6) }, any(), any(), any(), any(), any(), any())
+        } returns Result.success(tomorrowResult)
+
+        val provider = PrayerSurfaceDataProvider(dailyLoader, locationSource, settings, clock)
+        val result = provider.load()
+
+        assertTrue(result != null)
+        // Next prayer time must be tomorrow's exact Imsak (05:48), not today's (05:47).
+        assertEquals(LocalTime(5, 48), result!!.nextPrayerLocalTime)
+        assertEquals("05:48", result.nextPrayerTime)
+        val expectedEpoch = java.time.ZonedDateTime.of(2026, 10, 6, 5, 48, 0, 0, java.time.ZoneId.of("Europe/Istanbul"))
+            .toInstant()
+            .toEpochMilli()
+        assertEquals(expectedEpoch, result.nextPrayerEpochMillis)
     }
 
     @Test

@@ -166,6 +166,46 @@ class PrayerTimesLoaderTest {
     }
 
     @Test
+    fun `load after Isha patches next prayer time with tomorrow's exact Imsak`() = runTest {
+        val today = LocalDate(2026, 8, 2)
+        val tomorrow = today.plus(1, DateTimeUnit.DAY)
+        // Engine's after-Isha next prayer: today's Imsak time date-shifted to tomorrow.
+        val dateShiftedImsak = Prayer(name = "İmsak", arabicName = "الإمساك", time = LocalTime(4, 50), date = tomorrow, isImsak = true)
+        val tomorrowImsak = Prayer(name = "İmsak", arabicName = "الإمساك", time = LocalTime(4, 49), date = tomorrow, isImsak = true)
+
+        coEvery { dailyLoader.load(any(), any(), any(), any(), any(), any(), any()) } returns success(
+            DailyPrayerTimes(
+                prayers = listOf(
+                    Prayer(name = "İmsak", arabicName = "الإمساك", time = LocalTime(4, 50), date = today, isImsak = true),
+                    Prayer(name = "Yatsı", arabicName = "العشاء", time = LocalTime(21, 0), date = today)
+                ),
+                currentPrayer = Prayer(name = "Yatsı", arabicName = "العشاء", time = LocalTime(21, 0), date = today),
+                nextPrayer = dateShiftedImsak,
+                currentPrayerEpochMillis = 0L,
+                nextPrayerEpochMillis = 0L,
+                isJumuah = false
+            )
+        )
+        coEvery {
+            getPrayerTimesUseCase.invoke(
+                match<LocalDateTime> { it.date == tomorrow },
+                any(), any(), any(), any(), any(), any()
+            )
+        } returns success(listOf(tomorrowImsak))
+
+        every { formatter.withLocalizedNames(any()) } answers { arg<List<Prayer>>(0) }
+        every { formatter.getInitialTimeInfo(any(), any(), any(), any()) } returns TimeUiState()
+        every { formatter.locationInfo(any()) } returns "Istanbul, TR"
+
+        val loader = PrayerTimesLoader(getPrayerTimesUseCase, dailyLoader, calculator, formatter, fixedClock)
+        val loaded = loader.load(location, CalculationMethod.TURKEY_DIYANET).getOrThrow()
+
+        // Next prayer time must be tomorrow's exact Imsak (04:49), not today's (04:50).
+        assertThat(loaded.prayerState.nextPrayer?.time).isEqualTo(LocalTime(4, 49))
+        assertThat(loaded.nextImsakTime).isEqualTo(LocalTime(4, 49))
+    }
+
+    @Test
     fun `load resolves next imsak time from tomorrow prayers`() = runTest {
         val today = LocalDate(2026, 8, 2)
         val tomorrow = today.plus(1, DateTimeUnit.DAY)

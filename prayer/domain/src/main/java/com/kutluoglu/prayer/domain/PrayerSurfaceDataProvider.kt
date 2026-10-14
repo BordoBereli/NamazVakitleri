@@ -57,7 +57,8 @@ class PrayerSurfaceDataProvider(
             persistDailyCache = false
         ).getOrNull() ?: return null
         val nextPrayer = result.nextPrayer ?: return null
-        val tomorrowImsakTime = if (nextPrayer.date > today.date) {
+        val isAfterIsha = nextPrayer.date > today.date
+        val tomorrowImsakTime = if (isAfterIsha) {
             loadTomorrowImsakTime(
                 location = location,
                 zoneId = zoneId,
@@ -68,20 +69,30 @@ class PrayerSurfaceDataProvider(
         } else {
             null
         }
+        // The engine can only date-shift today's Imsak as the after-Isha next
+        // prayer; patch its time with tomorrow's exact Imsak so every surface
+        // (widget countdown/ring, watch tile epoch, Android Auto rows) agrees
+        // with the notification scheduler on tomorrow's real time. Falls back
+        // to the date-shifted time when the tomorrow load fails.
+        val effectiveNextPrayer = if (isAfterIsha && tomorrowImsakTime != null && nextPrayer.isImsak) {
+            nextPrayer.copy(time = tomorrowImsakTime)
+        } else {
+            nextPrayer
+        }
         return SurfacePrayerData(
             location = location,
             city = location.city ?: "",
             district = location.county,
-            nextPrayerName = nextPrayer.name,
-            nextPrayerTime = formatClockTime(nextPrayer.time),
-            nextPrayerLocalTime = nextPrayer.time,
+            nextPrayerName = effectiveNextPrayer.name,
+            nextPrayerTime = formatClockTime(effectiveNextPrayer.time),
+            nextPrayerLocalTime = effectiveNextPrayer.time,
             currentPrayerLocalTime = result.currentPrayer?.time,
-            nextPrayerEpochMillis = result.nextPrayerEpochMillis,
+            nextPrayerEpochMillis = toEpochMillis(effectiveNextPrayer, zoneId),
             currentPrayerEpochMillis = result.currentPrayerEpochMillis,
             isJumuah = result.isJumuah,
             hijriAdjustment = settings.hijriAdjustment,
             prayers = result.prayers,
-            nextPrayerDate = nextPrayer.date,
+            nextPrayerDate = effectiveNextPrayer.date,
             tomorrowImsakTime = tomorrowImsakTime,
             currentPrayerName = result.currentPrayer?.name
         )

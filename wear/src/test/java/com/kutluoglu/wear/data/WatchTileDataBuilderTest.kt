@@ -131,6 +131,32 @@ class WatchTileDataBuilderTest {
         assertThat(nextDate).isEqualTo(java.time.LocalDate.of(2026, 9, 19))
     }
 
+    @Test
+    fun `after last prayer returns tomorrow's exact Imsak time as next`() = runTest {
+        // 23:00 in Istanbul, after Isha.
+        val afterIshaClock = Clock.fixed(Instant.parse("2026-09-18T20:00:00Z"), zoneId)
+        val data = buildData(builder = builderWith(afterIshaClock))
+        assertThat(data).isNotNull()
+        val result = data!!
+
+        val nowMillis = afterIshaClock.instant().toEpochMilli()
+        assertThat(result.nextPrayerName).isEqualTo("İmsak")
+        assertThat(result.nextPrayerEpochMillis).isGreaterThan(nowMillis)
+        val nextDate = Instant.ofEpochMilli(result.nextPrayerEpochMillis)
+            .atZone(zoneId)
+            .toLocalDate()
+        assertThat(nextDate).isEqualTo(java.time.LocalDate.of(2026, 9, 19))
+        // The engine can only date-shift today's Imsak; the builder must patch in
+        // tomorrow's exact Imsak time (which differs from today's at this latitude).
+        // Derive today's Imsak from the returned prayer list to avoid hardcoding.
+        val todayImsakTimeText = result.prayers.first { it.name == "İmsak" }.time
+        val (h, m) = todayImsakTimeText.split(":").map { it.toInt() }
+        val todayDateShiftedImsakEpoch = java.time.ZonedDateTime.of(2026, 9, 19, h, m, 0, 0, zoneId)
+            .toInstant()
+            .toEpochMilli()
+        assertThat(result.nextPrayerEpochMillis).isNotEqualTo(todayDateShiftedImsakEpoch)
+    }
+
     private fun builderWith(clock: Clock): WatchTileDataBuilder = WatchTileDataBuilder(
         dailyLoader = DailyPrayerTimesLoader(
             source = PrayerTimeEngineSource(PrayerTimeEngine()),

@@ -6,6 +6,7 @@ import com.kutluoglu.prayer.domain.PrayerSurfaceDataProvider
 import com.kutluoglu.prayer.domain.formatClockTime
 import com.kutluoglu.prayer.domain.isJumuahPrayer
 import com.kutluoglu.prayer.model.location.resolveZoneId
+import kotlinx.datetime.toKotlinLocalDate
 import kotlinx.datetime.toKotlinLocalTime
 import org.koin.core.annotation.Factory
 import java.time.Clock
@@ -29,10 +30,18 @@ class WidgetDataProvider(
         val localizedPrayers = formatter.withLocalizedNames(surface.prayers)
         // The raw current/next names are elements of surface.prayers, and
         // withLocalizedNames preserves size/order, so map by index into the
-        // localized list.
-        val nextPrayerName = localizedPrayers.getOrNull(
-            surface.prayers.indexOfFirst { it.time == surface.nextPrayerLocalTime }
-        )?.name ?: surface.nextPrayerName
+        // localized list. After Isha (signalled by tomorrowImsakTime being
+        // populated), the next prayer is tomorrow's Imsak whose (patched, exact)
+        // time is not in today's list; then match on the isImsak flag instead of
+        // the time index.
+        val isAfterIsha = surface.tomorrowImsakTime != null
+        val nextPrayerName = if (isAfterIsha) {
+            localizedPrayers.firstOrNull { it.isImsak }?.name ?: surface.nextPrayerName
+        } else {
+            localizedPrayers.getOrNull(
+                surface.prayers.indexOfFirst { it.time == surface.nextPrayerLocalTime }
+            )?.name ?: surface.nextPrayerName
+        }
         val nextLocalTime = surface.tomorrowImsakTime ?: surface.nextPrayerLocalTime
         val duration = calculator.calculateTimeRemaining(nextLocalTime, zoneId)
         val countdownText = duration.toKotlinDuration().toComponents { _, hours, minutes, _, _ ->
@@ -59,7 +68,11 @@ class WidgetDataProvider(
                     WidgetPrayer(
                         name = p.name,
                         time = formatClockTime(p.time),
-                        isNext = p.name == nextPrayerName,
+                        isNext = if (isAfterIsha) {
+                            p.isImsak
+                        } else {
+                            p.name == nextPrayerName
+                        },
                         isJumuah = isJumuahPrayer(p)
                     )
                 },
