@@ -24,7 +24,7 @@ offline prayer times, adaptive launcher icon, and numerous fixes.
 ## 🟡 Play Store assets (before upload)
 
 - [x] **5. Hosted privacy policy URL** — https://bordobereli.github.io/NamazVakitleri/privacy-policy.html (verified live 2026-10-14, bilingual EN/TR, last updated 13 Sep 2026)
-- [ ] **6. Feature graphic 1024×500** + **512×512 icon** export
+- [x] **6. Feature graphic 1024×500** + **512×512 icon** — at `/Users/a195143/2026Tasarım/prayer-icons/store/` (verified 2026-10-14); emerald set recommended (matches app icon): `feature-graphic-emerald-en.png` (1024×500) + `icon-emerald-512-fullbleed.png` (512×512); TR variants + purple theme also available
 - [ ] **7. Screenshots** — min 2 phone screenshots (device/emulator); Wear screenshots if listing the watch app
 - [ ] **8. Bilingual listing copy** — short + full descriptions (TR/EN)
 - [ ] **9. Data-safety declaration** — console form: precise location, network, analytics/crashlytics collection
