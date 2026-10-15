@@ -252,4 +252,18 @@ class AdhanPlayerTest {
         assertThat(metadata?.title.toString()).isEqualTo(context.getString(R.string.prayer_isha))
         player.stop()
     }
+
+    @Test
+    fun `play sets explicit artwork uri overriding embedded album art`() {
+        val fakePlayer = FakePlayer(bufferingDelayMs = 0)
+        val player = adhanPlayer(fakePlayer)
+        player.play("Dhuhr", 30)
+        idleMainLooper()
+        val metadata = fakePlayer.currentMediaItem?.mediaMetadata
+        assertThat(metadata).isNotNull()
+        assertThat(metadata?.artworkUri).isNotNull()
+        assertThat(metadata?.artworkUri.toString())
+            .isEqualTo("android.resource://${context.packageName}/${R.drawable.ic_launcher}")
+        player.stop()
+    }
 }

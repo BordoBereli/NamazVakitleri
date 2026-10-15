@@ -102,6 +102,9 @@ class AdhanPlayer(
         MediaMetadata.Builder()
             .setTitle(localizedPrayerName(prayerKey))
             .setArtist(localizedString(R.string.channel_adhan))
+            .setArtworkUri(
+                Uri.parse("android.resource://${context.packageName}/${R.drawable.ic_launcher}")
+            )
             .build()
 
     private fun localizedPrayerName(key: String): String = when (key) {
