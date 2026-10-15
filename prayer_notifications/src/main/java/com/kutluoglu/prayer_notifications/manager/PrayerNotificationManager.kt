@@ -11,6 +11,9 @@ import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.session.MediaSession
+import androidx.media3.session.MediaStyleNotificationHelper
 import com.kutluoglu.prayer_notifications.R
 import com.kutluoglu.prayer_notifications.domain.NotificationSettings
 import com.kutluoglu.prayer_notifications.domain.SpecialDay
@@ -112,7 +115,11 @@ class PrayerNotificationManager(
         notificationManager.notify(NOTIFICATION_ID_PRAYER, builder.build())
     }
 
-    override fun buildAdhanNotification(prayerName: String): Notification {
+    override fun buildAdhanNotification(prayerName: String): Notification =
+        buildAdhanNotification(prayerName, mediaSession = null)
+
+    @OptIn(UnstableApi::class)
+    override fun buildAdhanNotification(prayerName: String, mediaSession: MediaSession?): Notification {
         val localizedName = localizedPrayerName(prayerName)
         val stopIntent = PendingIntent.getBroadcast(
             context, 0,
@@ -120,16 +127,31 @@ class PrayerNotificationManager(
                 .setAction(AlarmReceiver.ACTION_STOP_ADHAN),
             PendingIntent.FLAG_IMMUTABLE
         )
-        return NotificationCompat.Builder(context, CHANNEL_ADHAN)
+        val builder = NotificationCompat.Builder(context, CHANNEL_ADHAN)
             .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(localizedName)
             .setContentText(localizedString(R.string.notification_adhan_playing))
-            .setOngoing(false)
-            .setAutoCancel(true)
+            .setOngoing(true)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setCategory(NotificationCompat.CATEGORY_TRANSPORT)
             .setDeleteIntent(stopIntent)
-            .addAction(0, localizedString(R.string.notification_stop), stopIntent)
-            .build()
+            .addAction(R.drawable.ic_notification_stop, localizedString(R.string.notification_stop), stopIntent)
+        if (mediaSession != null) {
+            builder.setStyle(
+                MediaStyleNotificationHelper.MediaStyle(mediaSession)
+                    .setShowActionsInCompactView(0)
+            )
+        } else {
+            builder.setAutoCancel(true)
+        }
+        return builder.build()
+    }
+
+    override fun showAdhanNotification(prayerName: String, mediaSession: MediaSession?) {
+        notificationManager.notify(
+            NOTIFICATION_ID_ADHAN,
+            buildAdhanNotification(prayerName, mediaSession)
+        )
     }
 
     override fun showCountdownNotification(

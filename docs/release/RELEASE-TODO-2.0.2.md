@@ -11,17 +11,17 @@ Primary driver: **media-style adhan notification fix** for the Play foreground-s
 ## 🔴 Critical — media notification fix (blocks declaration video review)
 
 - [ ] **1. Media-style adhan notification**
-  - [ ] GitNexus impact check on `PrayerNotificationManager.buildAdhanNotification` + `AdhanVolumeController`
-  - [ ] Add `androidx.media:media` dependency (for `MediaStyle`) if not already present via media3
-  - [ ] Expose `MediaSession` token from `AdhanVolumeController`
-  - [ ] `buildAdhanNotification`: apply `MediaStyle` with session token, `setOngoing(true)`, `CATEGORY_TRANSPORT`, keep Stop action
-  - [ ] Unit test updates (notification builder is interface-seamed — mock/verify)
-  - [ ] `./gradlew testDebugUnitTest` green
-- [ ] **2. Rebuild release AAB**
-  - [ ] Bump version → `2.0.2` / versionCode `202` in `gradle/libs.versions.toml`
-  - [ ] `./gradlew bundleRelease` → signed AAB (keystore.properties ready, unicode-escaped path)
-  - [ ] Verify signature + versionCode 202
-  - [ ] Archive new `mapping.txt` → `docs/release/mapping-2.0.2/`
+  - [x] GitNexus impact check on `PrayerNotificationManager.buildAdhanNotification` + `AdhanVolumeController` (both LOW risk; only implementer is PrayerNotificationManager)
+  - [~] ~~Add `androidx.media:media` dependency (for `MediaStyle`) if not already present via media3~~ — **not needed**: `media3-session` already provides `MediaStyleNotificationHelper.MediaStyle`
+  - [x] Expose `MediaSession` token from `AdhanVolumeController` (via `AdhanPlayer.activeMediaSession`)
+  - [x] `buildAdhanNotification`: apply `MediaStyle` with session token, `setOngoing(true)`, `CATEGORY_TRANSPORT`, keep Stop action (now with `ic_notification_stop` icon for MediaStyle transport buttons)
+  - [x] Unit test updates (Robolectric tests: media style token extraction, ongoing+transport flags, service re-post with session)
+  - [x] `./gradlew testDebugUnitTest` green (module + Koin graph tests green)
+- [x] **2. Rebuild release AAB**
+  - [x] Bump version → `2.0.2` / versionCode `202` in `gradle/libs.versions.toml`
+  - [x] `./gradlew bundleRelease` → signed AAB (keystore.properties ready, unicode-escaped path)
+  - [x] Verify signature + versionCode 202 (jarsigner "jar verified", CN=Fahri Kutluoğlu; versionCode 202 in manifest)
+  - [x] Archive new `mapping.txt` → `docs/release/mapping-2.0.2/`
 - [ ] **3. Commit** (GitNexus `detect_changes` first, as usual)
 
 ## 🟠 Play Console — foreground service declaration

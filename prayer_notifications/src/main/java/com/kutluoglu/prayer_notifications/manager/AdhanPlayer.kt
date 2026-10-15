@@ -9,6 +9,7 @@ import android.util.Log
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
+import androidx.media3.session.MediaSession
 import org.koin.core.annotation.Single
 
 @Single
@@ -23,6 +24,11 @@ class AdhanPlayer(
     private var onCompletion: (() -> Unit)? = null
     private var onFocusLoss: (() -> Unit)? = null
     private var focusRequest: AudioFocusRequest? = null
+
+    /** The active media session while adhan playback is in progress, null otherwise. */
+    val activeMediaSession: MediaSession?
+        get() = volumeController.mediaSession
+
     internal val volumeController = AdhanVolumeController(context, player).also { controller ->
         controller.setOnMuteRequestedListener {
             stop()

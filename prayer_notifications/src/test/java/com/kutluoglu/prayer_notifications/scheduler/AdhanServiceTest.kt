@@ -7,6 +7,9 @@ import android.media.AudioManager
 import android.os.Looper
 import android.provider.Settings
 import androidx.core.app.NotificationCompat
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.session.MediaSession
+import androidx.media3.test.utils.FakePlayer
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.prayer_notifications.data.NotificationSettingsDataStore
@@ -33,6 +36,7 @@ import org.robolectric.Shadows.shadowOf
 import org.robolectric.android.controller.ServiceController
 import org.robolectric.annotation.Config
 
+@OptIn(UnstableApi::class)
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [35])
 class AdhanServiceTest {
@@ -79,6 +83,15 @@ class AdhanServiceTest {
         verify { adhanPlayer.play("Dhuhr", 50, null) }
         val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         assertThat(shadowOf(nm).allNotifications).isNotEmpty()
+    }
+
+    @Test
+    fun `onStartCommand re-posts notification with active session after play`() {
+        val sessionSlot = slot<MediaSession?>()
+        every { notificationDisplayer.showAdhanNotification(any(), captureNullable(sessionSlot)) } answers { }
+        val controller = startService("Dhuhr")
+        assertThat(sessionSlot.captured).isNotNull()
+        controller.destroy()
     }
 
     @Test

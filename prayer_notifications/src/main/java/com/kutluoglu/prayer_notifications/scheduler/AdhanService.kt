@@ -93,6 +93,10 @@ class AdhanService : Service(), KoinComponent {
             val settings = dataStore.getSettings()
             val styleId = settings.adhanStyles[prayerKey]
             adhanPlayer.play(prayerKey, settings.adhanVolume, styleId)
+            notificationDisplayer.showAdhanNotification(
+                prayerKey,
+                adhanPlayer.activeMediaSession
+            )
         }
         registerVolumeObserver()
         startVolumePolling()

@@ -3,6 +3,10 @@ package com.kutluoglu.prayer_notifications.manager
 import android.app.Notification
 import android.app.NotificationManager
 import android.content.Context
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.session.MediaSession
+import androidx.media3.session.MediaStyleNotificationHelper
+import androidx.media3.test.utils.FakePlayer
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.prayer_notifications.domain.NotificationSettings
@@ -17,6 +21,7 @@ import java.time.LocalTime
 import java.time.ZoneId
 import java.util.Locale
 
+@OptIn(UnstableApi::class)
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [35])
 class PrayerNotificationManagerTest {
@@ -258,6 +263,33 @@ class PrayerNotificationManagerTest {
         assertThat(notification.actions).hasLength(1)
         assertThat(notification.actions!![0].title.toString()).isEqualTo("Stop")
         assertThat(notification.deleteIntent).isNotNull()
+    }
+
+    @Test
+    fun `buildAdhanNotification applies media style with session token`() {
+        manager.createChannels()
+        val session = MediaSession.Builder(context, FakePlayer(bufferingDelayMs = 0)).build()
+        try {
+            val notification = manager.buildAdhanNotification("Dhuhr", session)
+            val extracted = MediaStyleNotificationHelper.MediaStyle.getSessionToken(notification)
+            assertThat(extracted).isNotNull()
+            assertThat(extracted).isEqualTo(session.token)
+        } finally {
+            session.release()
+        }
+    }
+
+    @Test
+    fun `buildAdhanNotification with session is ongoing transport category`() {
+        manager.createChannels()
+        val session = MediaSession.Builder(context, FakePlayer(bufferingDelayMs = 0)).build()
+        try {
+            val notification = manager.buildAdhanNotification("Dhuhr", session)
+            assertThat(notification.flags and Notification.FLAG_ONGOING_EVENT).isNotEqualTo(0)
+            assertThat(notification.category).isEqualTo(Notification.CATEGORY_TRANSPORT)
+        } finally {
+            session.release()
+        }
     }
 
     @Test
