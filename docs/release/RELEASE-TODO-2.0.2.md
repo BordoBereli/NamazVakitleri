@@ -1,7 +1,7 @@
 # Release ToDo List — NamazVakitleri → Play Store v2.0.2
 
 Status: `[ ]` = pending, `[x]` = done, `[~]` = in progress.
-Last updated: 2026-10-14
+Last updated: 2026-10-15
 
 Current release target: **v2.0.2 (versionCode 202)** — update to a live listing (follow-up to 2.0.1).
 Primary driver: **media-style adhan notification fix** for the Play foreground-service declaration.
@@ -17,6 +17,8 @@ Primary driver: **media-style adhan notification fix** for the Play foreground-s
   - [x] `buildAdhanNotification`: apply `MediaStyle` with session token, `setOngoing(true)`, `CATEGORY_TRANSPORT`, keep Stop action (now with `ic_notification_stop` icon for MediaStyle transport buttons)
   - [x] Unit test updates (Robolectric tests: media style token extraction, ongoing+transport flags, service re-post with session)
   - [x] `./gradlew testDebugUnitTest` green (module + Koin graph tests green)
+  - [x] **Redesign follow-up (Task 1, commit `6f85224b`)**: Mute action added to media notification, tap-to-open content intent (opens app), and elapsed-time chronometer — see `PrayerNotificationManager`
+  - [ ] **Wear OS surfacing**: no code needed — paired watch mirrors phone media sessions automatically; verify-on-device smoke test item (check adhan notification + controls appear on the watch when fired)
 - [x] **2. Rebuild release AAB**
   - [x] Bump version → `2.0.2` / versionCode `202` in `gradle/libs.versions.toml`
   - [x] `./gradlew bundleRelease` → signed AAB (keystore.properties ready, unicode-escaped path)
