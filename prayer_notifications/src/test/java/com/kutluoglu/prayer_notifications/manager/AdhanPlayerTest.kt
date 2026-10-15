@@ -263,7 +263,7 @@ class AdhanPlayerTest {
         assertThat(metadata).isNotNull()
         assertThat(metadata?.artworkUri).isNotNull()
         assertThat(metadata?.artworkUri.toString())
-            .isEqualTo("android.resource://${context.packageName}/${R.drawable.ic_launcher}")
+            .isEqualTo("android.resource://${context.packageName}/${R.drawable.media_artwork_adhan}")
         player.stop()
     }
 }

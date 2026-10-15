@@ -103,7 +103,7 @@ class AdhanPlayer(
             .setTitle(localizedPrayerName(prayerKey))
             .setArtist(localizedString(R.string.channel_adhan))
             .setArtworkUri(
-                Uri.parse("android.resource://${context.packageName}/${R.drawable.ic_launcher}")
+                Uri.parse("android.resource://${context.packageName}/${R.drawable.media_artwork_adhan}")
             )
             .build()
 
