@@ -22,7 +22,7 @@ Primary driver: **media-style adhan notification fix** for the Play foreground-s
   - [x] `./gradlew bundleRelease` → signed AAB (keystore.properties ready, unicode-escaped path)
   - [x] Verify signature + versionCode 202 (jarsigner "jar verified", CN=Fahri Kutluoğlu; versionCode 202 in manifest)
   - [x] Archive new `mapping.txt` → `docs/release/mapping-2.0.2/`
-- [ ] **3. Commit** (GitNexus `detect_changes` first, as usual)
+- [x] **3. Commit** (GitNexus `detect_changes` first, as usual) — committed `682ba906` (risk HIGH flagged: central seam, mitigated by single implementer + green tests)
 
 ## 🟠 Play Console — foreground service declaration
 
