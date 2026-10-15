@@ -1,10 +1,14 @@
 package com.kutluoglu.prayer_notifications.manager
 
 import android.content.Context
+import android.os.Bundle
 import android.os.Looper
 import androidx.media3.common.C
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.session.MediaController
+import androidx.media3.session.SessionCommand
+import androidx.media3.session.SessionResult
 import androidx.media3.test.utils.FakePlayer
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
@@ -155,5 +159,58 @@ class AdhanVolumeControllerTest {
         player.setDeviceMuted(true, C.VOLUME_FLAG_SHOW_UI)
         idleMainLooper()
         assertThat(muted).isFalse()
+    }
+
+    @Test
+    fun `activated session has session activity pointing to app launch intent`() {
+        val controller = newController()
+        controller.activate()
+        val session = controller.mediaSession
+        assertThat(session).isNotNull()
+        assertThat(session!!.sessionActivity).isNotNull()
+        assertThat(session.sessionActivity!!.creatorPackage).isEqualTo(context.packageName)
+        controller.deactivate()
+    }
+
+    @Test
+    fun `activated session exposes custom layout with mute button`() {
+        val controller = newController()
+        controller.activate()
+        val session = controller.mediaSession
+        assertThat(session).isNotNull()
+        val customLayout = session!!.customLayout
+        assertThat(customLayout).hasSize(1)
+        val muteButton = customLayout[0]
+        assertThat(muteButton.sessionCommand?.customAction).isEqualTo("com.kutluoglu.prayer_notifications.MUTE_ADHAN")
+        assertThat(muteButton.displayName.toString()).isNotEmpty()
+        controller.deactivate()
+    }
+
+    @Test
+    fun `mute custom command sent to session invokes the mute listener`() {
+        val player = TestVolumePlayer()
+        val controller = newController(player)
+        var muted = false
+        controller.setOnMuteRequestedListener { muted = true }
+        controller.activate()
+        val session = controller.mediaSession!!
+        idleMainLooper()
+        val sessionCommand = SessionCommand(
+            "com.kutluoglu.prayer_notifications.MUTE_ADHAN",
+            Bundle.EMPTY,
+        )
+        val controllerFuture = MediaController.Builder(context, session.token).buildAsync()
+        val mediaController = controllerFuture.get()
+        try {
+            val sendResult = mediaController.sendCustomCommand(sessionCommand, Bundle.EMPTY)
+            val sessionResult = sendResult.get()
+            assertThat(sessionResult.resultCode).isEqualTo(SessionResult.RESULT_SUCCESS)
+            idleMainLooper()
+            assertThat(muted).isTrue()
+        } finally {
+            mediaController.release()
+            MediaController.releaseFuture(controllerFuture)
+            controller.deactivate()
+        }
     }
 }
