@@ -228,4 +228,28 @@ class AdhanPlayerTest {
         assertThat(player.volumeController.mediaSession).isNotNull()
         player.stop()
     }
+
+    @Test
+    fun `play sets localized media metadata title and artist`() {
+        val fakePlayer = FakePlayer(bufferingDelayMs = 0)
+        val player = adhanPlayer(fakePlayer)
+        player.play("Dhuhr", 30)
+        idleMainLooper()
+        val metadata = fakePlayer.currentMediaItem?.mediaMetadata
+        assertThat(metadata).isNotNull()
+        assertThat(metadata?.title.toString()).isEqualTo(context.getString(R.string.prayer_dhuhr))
+        assertThat(metadata?.artist.toString()).isEqualTo(context.getString(R.string.channel_adhan))
+        player.stop()
+    }
+
+    @Test
+    fun `play sets localized metadata for each prayer key`() {
+        val fakePlayer = FakePlayer(bufferingDelayMs = 0)
+        val player = adhanPlayer(fakePlayer)
+        player.play("Isha", 30)
+        idleMainLooper()
+        val metadata = fakePlayer.currentMediaItem?.mediaMetadata
+        assertThat(metadata?.title.toString()).isEqualTo(context.getString(R.string.prayer_isha))
+        player.stop()
+    }
 }

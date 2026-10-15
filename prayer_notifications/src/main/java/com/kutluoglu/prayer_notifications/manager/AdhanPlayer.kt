@@ -1,16 +1,21 @@
 package com.kutluoglu.prayer_notifications.manager
 
 import android.content.Context
+import android.content.res.Configuration
 import android.media.AudioAttributes
 import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.net.Uri
 import android.util.Log
 import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.session.MediaSession
+import com.kutluoglu.prayer_notifications.R
 import org.koin.core.annotation.Single
+
+import java.util.Locale
 
 @Single
 class AdhanPlayer(
@@ -76,7 +81,10 @@ class AdhanPlayer(
         val resId = resolver.resolve(prayerKey, styleId)
         try {
             player.setMediaItem(
-                MediaItem.fromUri(Uri.parse("android.resource://${context.packageName}/$resId"))
+                MediaItem.Builder()
+                    .setUri(Uri.parse("android.resource://${context.packageName}/$resId"))
+                    .setMediaMetadata(mediaMetadata(prayerKey))
+                    .build()
             )
             player.volume = volume
             player.prepare()
@@ -88,6 +96,28 @@ class AdhanPlayer(
             volumeController.deactivate()
             Log.e("AdhanPlayer", "Failed to play adhan -> ${e.message}")
         }
+    }
+
+    private fun mediaMetadata(prayerKey: String): MediaMetadata =
+        MediaMetadata.Builder()
+            .setTitle(localizedPrayerName(prayerKey))
+            .setArtist(localizedString(R.string.channel_adhan))
+            .build()
+
+    private fun localizedPrayerName(key: String): String = when (key) {
+        "Imsak" -> localizedString(R.string.prayer_imsak)
+        "Sunrise" -> localizedString(R.string.prayer_sunrise)
+        "Dhuhr" -> localizedString(R.string.prayer_dhuhr)
+        "Asr" -> localizedString(R.string.prayer_asr)
+        "Maghrib" -> localizedString(R.string.prayer_maghrib)
+        "Isha" -> localizedString(R.string.prayer_isha)
+        else -> key
+    }
+
+    private fun localizedString(resId: Int): String {
+        val config = Configuration(context.resources.configuration)
+        config.setLocale(Locale.getDefault())
+        return context.createConfigurationContext(config).getString(resId)
     }
 
     fun stop() {
