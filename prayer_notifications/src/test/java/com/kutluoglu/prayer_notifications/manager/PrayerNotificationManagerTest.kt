@@ -9,6 +9,7 @@ import androidx.media3.session.MediaStyleNotificationHelper
 import androidx.media3.test.utils.FakePlayer
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
+import com.kutluoglu.prayer_notifications.R
 import com.kutluoglu.prayer_notifications.domain.NotificationSettings
 import com.kutluoglu.prayer_notifications.domain.SpecialDay
 import org.junit.Test
@@ -260,9 +261,36 @@ class PrayerNotificationManagerTest {
     fun `buildAdhanNotification includes stop action and delete intent`() {
         manager.createChannels()
         val notification = manager.buildAdhanNotification("Dhuhr")
-        assertThat(notification.actions).hasLength(1)
-        assertThat(notification.actions!![0].title.toString()).isEqualTo("Stop")
+        assertThat(notification.actions).hasLength(2)
+        assertThat(notification.actions!![0].title.toString()).isEqualTo("Mute")
+        assertThat(notification.actions[0].icon).isEqualTo(R.drawable.ic_notification_mute)
+        assertThat(notification.actions[1].title.toString()).isEqualTo("Stop")
+        assertThat(notification.actions[1].icon).isEqualTo(R.drawable.ic_notification_stop)
+        assertThat(notification.actions[0].actionIntent).isNotNull()
+        assertThat(notification.actions[0].actionIntent).isEqualTo(notification.actions[1].actionIntent)
         assertThat(notification.deleteIntent).isNotNull()
+    }
+
+    @Test
+    fun `buildAdhanNotification has content intent to open app`() {
+        manager.createChannels()
+        val notification = manager.buildAdhanNotification("Dhuhr")
+        assertThat(notification.contentIntent).isNotNull()
+    }
+
+    @Test
+    fun `buildAdhanNotification with session shows chronometer`() {
+        manager.createChannels()
+        val beforeBuild = System.currentTimeMillis()
+        val session = MediaSession.Builder(context, FakePlayer(bufferingDelayMs = 0)).build()
+        try {
+            val notification = manager.buildAdhanNotification("Dhuhr", session)
+            assertThat(notification.extras.getBoolean(Notification.EXTRA_SHOW_CHRONOMETER)).isTrue()
+            assertThat(notification.`when`).isAtLeast(beforeBuild)
+            assertThat(notification.`when`).isAtMost(System.currentTimeMillis())
+        } finally {
+            session.release()
+        }
     }
 
     @Test

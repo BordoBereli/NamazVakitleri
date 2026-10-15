@@ -127,6 +127,11 @@ class PrayerNotificationManager(
                 .setAction(AlarmReceiver.ACTION_STOP_ADHAN),
             PendingIntent.FLAG_IMMUTABLE
         )
+        val contentIntent = PendingIntent.getActivity(
+            context, 0,
+            context.packageManager.getLaunchIntentForPackage(context.packageName),
+            PendingIntent.FLAG_IMMUTABLE
+        )
         val builder = NotificationCompat.Builder(context, CHANNEL_ADHAN)
             .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(localizedName)
@@ -134,7 +139,12 @@ class PrayerNotificationManager(
             .setOngoing(true)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setCategory(NotificationCompat.CATEGORY_TRANSPORT)
+            .setShowWhen(true)
+            .setUsesChronometer(true)
+            .setWhen(System.currentTimeMillis())
+            .setContentIntent(contentIntent)
             .setDeleteIntent(stopIntent)
+            .addAction(R.drawable.ic_notification_mute, localizedString(R.string.notification_mute), stopIntent)
             .addAction(R.drawable.ic_notification_stop, localizedString(R.string.notification_stop), stopIntent)
         if (mediaSession != null) {
             builder.setStyle(
