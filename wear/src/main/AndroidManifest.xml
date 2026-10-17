@@ -3,6 +3,11 @@
 
     <uses-feature android:name="android.hardware.type.watch" />
 
+    <!-- ACCESS_FINE_LOCATION/ACCESS_COARSE_LOCATION would otherwise imply a *required*
+         GPS feature and filter GPS-less watches out of Play. -->
+    <uses-feature android:name="android.hardware.location.gps" android:required="false" />
+    <uses-feature android:name="android.hardware.location.network" android:required="false" />
+
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
@@ -13,7 +18,7 @@
         android:theme="@android:style/Theme.DeviceDefault">
         <meta-data
             android:name="com.google.android.wearable.standalone"
-            android:value="false" />
+            android:value="true" />
         <activity
             android:name=".MainActivity"
             android:taskAffinity=""

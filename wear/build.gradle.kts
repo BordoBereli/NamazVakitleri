@@ -1,3 +1,31 @@
+import java.io.FileInputStream
+import java.util.Properties
+
+// Mirrors app/build.gradle.kts: the watch artifact ships under the phone app's package
+// name and must be signed with the same upload key, so it reuses the same keystore
+// properties (resolved from the root project).
+val keystoreProperties = Properties()
+val keystorePropertiesFile = rootProject.file("keystore.properties")
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+}
+
+fun keystoreProp(propName: String, envName: String): String? =
+    keystoreProperties.getProperty(propName) ?: System.getenv(envName)
+
+val releaseStoreFile = keystoreProp("storeFile", "KEYSTORE_FILE")
+val releaseStorePassword = keystoreProp("storePassword", "KEYSTORE_PASSWORD")
+val releaseKeyAlias = keystoreProp("keyAlias", "KEYSTORE_KEY_ALIAS")
+val releaseKeyPassword = keystoreProp("keyPassword", "KEYSTORE_KEY_PASSWORD")
+
+// Only sign the release build when the full signing config is present; a partial
+// config degrades gracefully to an unsigned bundle instead of a cryptic signing error.
+val releaseSigningConfigured = listOf(
+    releaseStoreFile,
+    releaseStorePassword,
+    releaseKeyAlias,
+    releaseKeyPassword,
+).all { !it.isNullOrBlank() }
 
 plugins {
     alias(libs.plugins.android.application)
@@ -10,11 +38,29 @@ android {
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "com.kutluoglu.namazvakitleri.wear"
+        // The watch artifact is packaged as a sibling artifact of the phone app: it must
+        // share the phone app's package name for Play to attach it to the same listing.
+        applicationId = "com.kutluoglu.namazvakitleri"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = libs.versions.appVersionCode.get().toInt()
+        versionCode = libs.versions.wearVersionCode.get().toInt()
         versionName = libs.versions.appVersionName.get()
+    }
+
+    signingConfigs {
+        create("release") {
+            // Resolve relative to the repo root, matching where keystore.properties lives.
+            storeFile = releaseStoreFile?.let { rootProject.file(it) }
+            storePassword = releaseStorePassword
+            keyAlias = releaseKeyAlias
+            keyPassword = releaseKeyPassword
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig = if (releaseSigningConfigured) signingConfigs.getByName("release") else null
+        }
     }
 
     compileOptions {
