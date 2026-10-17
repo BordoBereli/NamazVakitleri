@@ -1,20 +1,33 @@
 # Play Store Listing Copy — v2.0.2 (bilingual TR/EN)
 
-Structure mirrors `PLAY-LISTING-2.0.1.md` (still the live listing) so the two can
-be diffed block by block. Copy is pasted at release time; the console clicks that
-make the new form factors appear are in `RELEASE-TODO-2.0.2.md`, and the
-user-facing "What's new" text is in `RELEASE-NOTES-2.0.2.md`.
+`PLAY-LISTING-2.0.2.md` supersedes `PLAY-LISTING-2.0.1.md` as the copy to paste
+for the 2.0.2 console session; 2.0.1 documents the currently published release and
+has no Wear OS / Android Auto sections. Copy is pasted at release time; the console
+clicks that make the new form factors appear are in `RELEASE-TODO-2.0.2.md`, and
+the user-facing "What's new" text is in `RELEASE-NOTES-2.0.2.md`.
 
-## Copy fixes applied against the live listing
+## Copy fixes applied against the Play Console listing
 
-Three machine-translation artefacts are corrected below; everything else is
-carried over verbatim from the live listing.
+> **Which "listing" the broken column comes from:** the **Play Console** listing
+> text — the live store listing, which is not stored in this repo.
+> `PLAY-LISTING-2.0.1.md` is only a partial local snapshot of it and is *already
+> partly clean*: it reads `⌚ WEAR OS SUPPORT` (line 37) and `Save your favorite
+> verses` (line 34), so the first two rows below are **not** in that file and cannot
+> be diffed against it; only the TR `canlı kadran/tile` row is still there
+> (line 80). Audit this table against the console, not against 2.0.1.
 
-| Live listing (broken) | 2.0.2 copy | Why |
+| Play Console listing (broken) | 2.0.2 copy | Why |
 |---|---|---|
 | `⌚ CLOCK SUPPORT` | `⌚ WEAR OS SUPPORT` | Wear OS is the platform name; "clock support" is a literal translation that hides the feature |
-| `Save the reference to save the verses` | `Save verses to your favourites` | The live string is a broken blend of two bullets (save a verse / tap a reference); the corrected line says what the button does |
+| `Save the reference to save the verses` | `Save verses to your favourites` | The console string is a broken blend of two bullets (save a verse / tap a reference); the corrected line says what the button does |
 | TR: `canlı kadran/tile` | TR: `canlı tile` | The watch feature is a **tile**, not a watch face (kadran); the app ships no watch face |
+| TR: `saatte ve araba` | TR: `saatte ve araçta` | `araba` (car, uninflected) is ungrammatical after `saatte`; `araçta` means "in the car" |
+| TR: `MWS` | TR: `MWL` | Muslim World League — the EN bullet already says `MWL`; `MWS` is a typo |
+
+The first three rows are the machine-translation artefacts flagged for 2.0.2; the
+last two were caught while producing this file. The rest of the copy is carried
+over from `PLAY-LISTING-2.0.1.md` unchanged, except the TR short description and
+the Wear/Android Auto wording (both fixed in this file).
 
 ## App title (max 30 chars)
 
@@ -24,7 +37,7 @@ carried over verbatim from the live listing.
 ## Short description (max 80 chars)
 
 - **EN:** Prayer times, Qibla compass & Quran verses — works offline, on your watch & car
-- **TR:** Namaz vakitleri, kıble pusulası ve Kuran ayetleri — çevrimdışı, saatte ve araba
+- **TR:** Namaz vakitleri, kıble pusulası ve Kuran ayetleri — çevrimdışı, saatte ve araçta
 
 ## Full description (max 4000 chars)
 
@@ -75,7 +88,7 @@ Namaz Vakitleri, Müslümanlar için güzel ve reklamsız bir namaz vakitleri uy
 
 🕌 HASSAS NAMAZ VAKİTLERİ
 • Dünyanın her yerinden hassas namaz vakitleri
-• Çok sayıda hesaplama yöntemi (Diyanet, MWS, Mısır, Karaçi, ISNA ve daha fazlası)
+• Çok sayıda hesaplama yöntemi (Diyanet, MWL, Mısır, Karaçi, ISNA ve daha fazlası)
 • Bugünün vurgulandığı aylık namaz programı
 • Bir sonraki vakite canlı geri sayım
 • ÇEVRİMDIŞI çalışır — vakitler cihazınızda hesaplanır, internet gerekmez

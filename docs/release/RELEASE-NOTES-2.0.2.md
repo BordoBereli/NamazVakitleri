@@ -1,4 +1,4 @@
-# Release Notes — v2.0.2 (versionCode 202)
+# Release Notes — v2.0.2 (phone versionCode 202, watch versionCode 3620200)
 
 ## English
 

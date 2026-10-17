@@ -40,7 +40,7 @@ Second driver: **Wear OS + Android Auto discoverability** — form factors added
 
 - [ ] **5. Data-safety declaration** — answers pre-mapped in `docs/release/PLAY-LISTING-2.0.1.md`
 - [ ] **6. Upload deobfuscation file** — release → Deobfuscation files → upload the 2.0.2 `mapping.txt` (replaces 2.0.1's; Crashlytics side is automatic)
-- [ ] **7. Update listing** if not yet done — copy/assets from `docs/release/PLAY-LISTING-2.0.1.md` + `2026Tasarım/prayer-icons/store/`
+- [ ] **7. Update listing** if not yet done — copy/assets from `docs/release/PLAY-LISTING-2.0.2.md` (**supersedes** `PLAY-LISTING-2.0.1.md`, which has no Wear OS / Android Auto sections) + `2026Tasarım/prayer-icons/store/`
 
 ## 🚀 Upload
 
@@ -62,7 +62,7 @@ factor shows up on Play until it is added, no matter what the bundles declare.
 - [ ] **12. Upload both bundles to the same release**
   - [ ] Phone bundle `docs/release/app-release.aab` — versionCode `202`
   - [ ] Watch bundle `docs/release/wear-release.aab` — versionCode `3620200`, package `com.kutluoglu.namazvakitleri`, same upload key as the phone app
-  - [ ] Upload via the release's app bundles (and/or **Advanced settings → Form factors**); confirm the two version codes stay unique across form factors — Play rejects a duplicate
+  - [ ] Upload both bundles on the **same release**, in the release's app-bundles section — the phone bundle first, then the watch bundle for the **Wear OS** form factor (the form factors must already be added, item 10); confirm the two version codes stay unique across form factors — Play rejects a duplicate
 - [ ] **13. Two consequences of the watch upload**
   - [ ] A physical watch carrying a locally-built **debug** watch app must **uninstall** it before installing the Play-signed release (different signing certificate)
   - [ ] **Wear 64-bit requirement** (already in force, Sep 2026) is **satisfied** — the watch app ships no native libraries
