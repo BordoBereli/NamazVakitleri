@@ -1,10 +1,11 @@
 # Release ToDo List — NamazVakitleri → Play Store v2.0.2
 
 Status: `[ ]` = pending, `[x]` = done, `[~]` = in progress.
-Last updated: 2026-10-15
+Last updated: 2026-10-17
 
 Current release target: **v2.0.2 (versionCode 202)** — update to a live listing (follow-up to 2.0.1).
 Primary driver: **media-style adhan notification fix** for the Play foreground-service declaration.
+Second driver: **Wear OS + Android Auto discoverability** — form factors added in the console (see below); plan `docs/superpowers/plans/2026-10-17-wear-auto-discoverability.md`, design `docs/superpowers/specs/2026-10-17-wear-auto-discoverability-design.md`.
 
 ---
 
@@ -45,6 +46,27 @@ Primary driver: **media-style adhan notification fix** for the Play foreground-s
 
 - [ ] **8. Upload AAB (2.0.2) → Internal testing track** → smoke test on device (adhan fires, media notification shows controls) → promote to production
 - [ ] **9. Post-release** — monitor Crashlytics + Android vitals, verify FSP declaration accepted
+
+## ⌚🚗 Play Console — Wear OS + Android Auto form factors (discoverability)
+
+The control that makes both features *discoverable* is **Advanced settings → Form
+factors → Add form factor** — it is **not** on the publishing page. Neither form
+factor shows up on Play until it is added, no matter what the bundles declare.
+
+- [ ] **10. Add both form factors**
+  - [ ] `Wear OS` — add the form factor, then upload the **Wear OS screenshots the form factor requires** (the 454×454 tile screenshot captured for 2.0.1 is at `/Users/a195143/2026Tasarım/prayer-icons/store/`)
+  - [ ] `Android Auto` — add the form factor; the store-listing copy for both is `docs/release/PLAY-LISTING-2.0.2.md`
+- [ ] **11. Android Auto Addendum + quality review**
+  - [ ] Accept the **Android Auto Addendum** and opt in to the Auto form factor
+  - [ ] Expect the **car-app quality review** (POI category) to add review time before open testing / production goes live
+- [ ] **12. Upload both bundles to the same release**
+  - [ ] Phone bundle `docs/release/app-release.aab` — versionCode `202`
+  - [ ] Watch bundle `docs/release/wear-release.aab` — versionCode `3620200`, package `com.kutluoglu.namazvakitleri`, same upload key as the phone app
+  - [ ] Upload via the release's app bundles (and/or **Advanced settings → Form factors**); confirm the two version codes stay unique across form factors — Play rejects a duplicate
+- [ ] **13. Two consequences of the watch upload**
+  - [ ] A physical watch carrying a locally-built **debug** watch app must **uninstall** it before installing the Play-signed release (different signing certificate)
+  - [ ] **Wear 64-bit requirement** (already in force, Sep 2026) is **satisfied** — the watch app ships no native libraries
+- [ ] **14. Retire the stale Wear planning note** — `docs/wear-sync-fix-prompt.md` still documents the old `…namazvakitleri.wear` package; marked historical, pointing at the plan/design above (file is local-only and gitignored, so the edit is not committed)
 
 ---
 
