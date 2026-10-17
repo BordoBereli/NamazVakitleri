@@ -62,10 +62,11 @@ factor shows up on Play until it is added, no matter what the bundles declare.
 - [ ] **12. Upload both bundles to the same release**
   - [ ] Phone bundle `docs/release/app-release.aab` — versionCode `202`
   - [ ] Watch bundle `docs/release/wear-release.aab` — versionCode `3620200`, package `com.kutluoglu.namazvakitleri`, same upload key as the phone app
+  - [ ] **Verify both AABs are signed before uploading** — `jarsigner -verify -verbose:summary docs/release/app-release.aab docs/release/wear-release.aab` must report `jar verified.` for each, with the same signer certificate; this is the exact defect that kept the watch app off Play, and the no-signing-properties experiment overwrites `wear-release.aab` with an **unsigned** bundle, so **re-copy both AABs from `app/build/outputs/bundle/release/` and `wear/build/outputs/bundle/release/` after any rebuild** and re-run the check
   - [ ] Upload both bundles on the **same release**, in the release's app-bundles section — the phone bundle first, then the watch bundle for the **Wear OS** form factor (the form factors must already be added, item 10); confirm the two version codes stay unique across form factors — Play rejects a duplicate
 - [ ] **13. Two consequences of the watch upload**
   - [ ] A physical watch carrying a locally-built **debug** watch app must **uninstall** it before installing the Play-signed release (different signing certificate)
-  - [ ] **Wear 64-bit requirement** (already in force, Sep 2026) is **satisfied** — the watch app ships no native libraries
+  - [ ] **Wear 64-bit requirement** (already in force, Sep 2026) is **satisfied** — the watch app does ship native libraries (`libandroidx.graphics.path.so`, `libdatastore_shared_counter.so`), and the bundle contains both 32-bit (`armeabi-v7a`) and 64-bit (`arm64-v8a`, `x86_64`) variants, which is what the rule requires; re-check with APK Analyzer if a dependency bump ever changes the native set
 - [ ] **14. Retire the stale Wear planning note** — `docs/wear-sync-fix-prompt.md` still documents the old `…namazvakitleri.wear` package; marked historical, pointing at the plan/design above (file is local-only and gitignored, so the edit is not committed)
 
 ---

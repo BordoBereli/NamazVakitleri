@@ -13,8 +13,9 @@ the user-facing "What's new" text is in `RELEASE-NOTES-2.0.2.md`.
 > `PLAY-LISTING-2.0.1.md` is only a partial local snapshot of it and is *already
 > partly clean*: it reads `⌚ WEAR OS SUPPORT` (line 37) and `Save your favorite
 > verses` (line 34), so the first two rows below are **not** in that file and cannot
-> be diffed against it; only the TR `canlı kadran/tile` row is still there
-> (line 80). Audit this table against the console, not against 2.0.1.
+> be diffed against it; the other three rows are still present there
+> (`saatte ve araba` line 11, `MWS` line 62, `canlı kadran/tile` line 80).
+> Audit this table against the console, not against 2.0.1.
 
 | Play Console listing (broken) | 2.0.2 copy | Why |
 |---|---|---|
@@ -26,8 +27,9 @@ the user-facing "What's new" text is in `RELEASE-NOTES-2.0.2.md`.
 
 The first three rows are the machine-translation artefacts flagged for 2.0.2; the
 last two were caught while producing this file. The rest of the copy is carried
-over from `PLAY-LISTING-2.0.1.md` unchanged, except the TR short description and
-the Wear/Android Auto wording (both fixed in this file).
+over from `PLAY-LISTING-2.0.1.md` unchanged, apart from the rows in the table
+above — the EN favourites bullet (`Save verses to your favourites`), the TR short
+description, and the Wear OS / Android Auto wording.
 
 ## App title (max 30 chars)
 
