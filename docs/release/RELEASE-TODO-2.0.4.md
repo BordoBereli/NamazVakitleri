@@ -30,7 +30,7 @@ release-blocking fix.
   - [ ] Remove/replace media-style builder tests in `PrayerNotificationManagerTest`
   - [ ] Full `testDebugUnitTest` green
 - [ ] **4. Release engineering**
-  - [ ] Bump version → `2.0.4` / versionCode `204` (2.0.3 reserved for hotfixes)
+  - [ ] Bump version → `2.0.4` / versionCode `204` (2.0.3 already shipped as a hotfix — versionCode 203)
   - [ ] `./gradlew bundleRelease`, verify signature + versionCode, archive `mapping.txt`
   - [ ] GitNexus impact + `detect_changes` before commit
   - [ ] Smoke test on device: adhan fires in background, media notification with controls, stop works

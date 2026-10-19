@@ -1,9 +1,9 @@
 [versions]
-appVersionCode = "202"
-appVersionName = "2.0.2"
+appVersionCode = "203"
+appVersionName = "2.0.3"
 # Wear OS artifacts must use a version code unique across form factors.
-# Scheme per Google (targetSdk 36 + version 202 + 00) — see docs/release/RELEASE-TODO-2.0.2.md.
-wearVersionCode = "3620200"
+# Scheme per Google (targetSdk 36 + version 203 + 00) — see docs/release/RELEASE-TODO-2.0.2.md.
+wearVersionCode = "3620300"
 minSdk = "26"
 targetSdk = "36"
 compileSdk = "37"
