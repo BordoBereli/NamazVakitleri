@@ -87,3 +87,4 @@ factor shows up on Play until it is added, no matter what the bundles declare.
 - Universal debug-installable APK from AAB: `bundletool build-apks --mode=universal` (bundletool-all jar at /tmp/bundletool.jar — re-download if purged)
 - Wear screenshots: Wear_OS_Large_Round emulator; tile must be added to carousel via tile picker first
 - Phone screenshots: SM-S948B (720×1560), connected via USB (`adb devices`)
+- Native debug symbols: after `bundleRelease`, zip the unstripped `.so` files from `app/build/intermediates/merged_native_libs/release/mergeReleaseNativeLibs/out/lib/` → `docs/release/native-debug-symbols.zip` → upload in Play Console (release → Native debug symbols). Required because the bundle ships native libraries (`libandroidx.graphics.path.so`, `libdatastore_shared_counter.so`).
