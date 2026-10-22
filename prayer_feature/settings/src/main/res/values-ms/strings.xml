@@ -134,4 +134,6 @@
     <string name="apply_background">Guna</string>
     <string name="delete_background">Padam latar belakang</string>
     <string name="delete_background_confirmation">Imej latar belakang tersimpan akan dipadamkan secara kekal.</string>
+    <string name="background_adjust">Laraskan latar belakang</string>
+    <string name="background_adjust_hint">Anjarkan dan cubit untuk membingkai imej, kemudian sahkan</string>
 </resources>

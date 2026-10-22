@@ -134,4 +134,6 @@
     <string name="apply_background">பயன்படுத்து</string>
     <string name="delete_background">பின்னணியை நீக்கு</string>
     <string name="delete_background_confirmation">சேமிக்கப்பட்ட பின்னணி படம் நிரந்தரமாக நீக்கப்படும்.</string>
+    <string name="background_adjust">பின்னணியை சரிசெய்க</string>
+    <string name="background_adjust_hint">படத்தை ஃபிரேம் செய்ய நகர்த்தி பின்ச் செய்யவும், பின்னர் உறுதிப்படுத்தவும்</string>
 </resources>

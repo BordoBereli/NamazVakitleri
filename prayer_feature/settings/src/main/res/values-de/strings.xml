@@ -134,4 +134,6 @@
     <string name="apply_background">Anwenden</string>
     <string name="delete_background">Hintergrund löschen</string>
     <string name="delete_background_confirmation">Das gespeicherte Hintergrundbild wird dauerhaft gelöscht.</string>
+    <string name="background_adjust">Hintergrund anpassen</string>
+    <string name="background_adjust_hint">Verschieben und zoomen Sie, um das Bild zu rahmen, dann bestätigen</string>
 </resources>

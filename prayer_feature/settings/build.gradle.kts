@@ -37,6 +37,7 @@ android {
         targetSdk = libs.versions.targetSdk.get().toInt()
         unitTests {
             isIncludeAndroidResources = true
+            isReturnDefaultValues = true
         }
     }
 }

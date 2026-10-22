@@ -3,6 +3,7 @@ package com.kutluoglu.prayer_feature.settings
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.kutluoglu.prayer_feature.settings.background.BackgroundAdjustRoute
 import com.kutluoglu.prayer_feature.settings.background.BackgroundLocationsRoute
 import com.kutluoglu.prayer_feature.settings.calculation.CalculationMethodRoute
 import com.kutluoglu.prayer_feature.settings.hijri.HijriAdjustmentRoute
@@ -52,8 +53,20 @@ fun NavGraphBuilder.settingsGraph(
         BackgroundLocationsRoute(
             onNavigateBack = { navController.popBackStack() },
             onPickImage = { locationId, imageUri ->
-                // TODO Task 5: navigate to Screen.BackgroundAdjustScreen with locationId + imageUri
+                navController.navigate("background_adjust/$locationId?imageUri=${imageUri}")
             }
+        )
+    }
+
+    composable(
+        route = "background_adjust/{locationId}?imageUri={imageUri}"
+    ) { backStackEntry ->
+        val locationId = backStackEntry.arguments?.getString("locationId").orEmpty()
+        val imageUri = backStackEntry.arguments?.getString("imageUri").orEmpty()
+        BackgroundAdjustRoute(
+            locationId = locationId,
+            imageUri = imageUri,
+            onNavigateBack = { navController.popBackStack() }
         )
     }
 

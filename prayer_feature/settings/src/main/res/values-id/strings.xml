@@ -135,4 +135,6 @@
     <string name="apply_background">Terapkan</string>
     <string name="delete_background">Hapus latar belakang</string>
     <string name="delete_background_confirmation">Gambar latar belakang tersimpan akan dihapus permanen.</string>
+    <string name="background_adjust">Sesuaikan latar belakang</string>
+    <string name="background_adjust_hint">Geser dan cubit untuk membingkai gambar, lalu konfirmasi</string>
 </resources>

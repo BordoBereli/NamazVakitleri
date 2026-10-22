@@ -134,4 +134,6 @@
     <string name="apply_background">Применить</string>
     <string name="delete_background">Удалить фон</string>
     <string name="delete_background_confirmation">Сохранённое фоновое изображение будет удалено безвозвратно.</string>
+    <string name="background_adjust">Настроить фон</string>
+    <string name="background_adjust_hint">Перемещайте и масштабируйте, чтобы кадрировать изображение, затем подтвердите</string>
 </resources>

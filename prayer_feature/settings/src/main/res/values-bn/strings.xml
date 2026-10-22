@@ -134,4 +134,6 @@
     <string name="apply_background">প্রয়োগ করুন</string>
     <string name="delete_background">পটভূমি মুছুন</string>
     <string name="delete_background_confirmation">সংরক্ষিত পটভূমি ছবি স্থায়ীভাবে মুছে ফেলা হবে।</string>
+    <string name="background_adjust">ব্যাকগ্রাউন্ড সামঞ্জস্য করুন</string>
+    <string name="background_adjust_hint">ছবিটি ফ্রেম করতে টেনে আনুন ও পিঞ্চ করুন, তারপর নিশ্চিত করুন</string>
 </resources>

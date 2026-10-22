@@ -134,4 +134,6 @@
     <string name="apply_background">اعمال</string>
     <string name="delete_background">حذف پس‌زمینه</string>
     <string name="delete_background_confirmation">تصویر پس‌زمینه ذخیره‌شده به‌طور دائم حذف خواهد شد.</string>
+    <string name="background_adjust">تنظیم پس‌زمینه</string>
+    <string name="background_adjust_hint">تصویر را جابه‌جا و بزرگ‌نمایی کنید، سپس تأیید کنید</string>
 </resources>

@@ -134,4 +134,6 @@
     <string name="apply_background">Uygula</string>
     <string name="delete_background">Arka planı sil</string>
     <string name="delete_background_confirmation">Kaydedilen arka plan görseli kalıcı olarak silinecek.</string>
+    <string name="background_adjust">Arka planı ayarla</string>
+    <string name="background_adjust_hint">Görüntüyü çerçevelemek için kaydırın ve yakınlaştırın, sonra onaylayın</string>
 </resources>

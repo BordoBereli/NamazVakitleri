@@ -134,4 +134,6 @@
     <string name="apply_background">Appliquer</string>
     <string name="delete_background">Supprimer le fond</string>
     <string name="delete_background_confirmation">L\'image de fond enregistrée sera définitivement supprimée.</string>
+    <string name="background_adjust">Ajuster l\'arrière-plan</string>
+    <string name="background_adjust_hint">Déplacez et pincez pour cadrer l\'image, puis confirmez</string>
 </resources>

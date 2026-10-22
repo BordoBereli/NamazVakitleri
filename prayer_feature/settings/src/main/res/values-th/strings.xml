@@ -134,4 +134,6 @@
     <string name="apply_background">ใช้</string>
     <string name="delete_background">ลบพื้นหลัง</string>
     <string name="delete_background_confirmation">รูปภาพพื้นหลังที่บันทึกไว้จะถูกลบอย่างถาวร</string>
+    <string name="background_adjust">ปรับพื้นหลัง</string>
+    <string name="background_adjust_hint">เลื่อนและถ่างนิ้วเพื่อจัดกรอบภาพ แล้วยืนยัน</string>
 </resources>
