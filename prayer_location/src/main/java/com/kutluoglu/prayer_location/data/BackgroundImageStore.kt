@@ -40,19 +40,27 @@ class BackgroundImageStore(
         cropRect: RectF,
         locationId: String
     ): String? = withContext(Dispatchers.IO) {
-        runCatching {
-            val source = decodeSampled(sourceUri) ?: return@runCatching null
-            val rotated = applyExifRotation(sourceUri, source)
-            val cropped = cropNormalized(rotated, cropRect) ?: return@runCatching null
+        var source: Bitmap? = null
+        var rotated: Bitmap? = null
+        var cropped: Bitmap? = null
+        try {
+            source = decodeSampled(sourceUri) ?: return@withContext null
+            rotated = applyExifRotation(sourceUri, source)
+            cropped = cropNormalized(rotated, cropRect) ?: return@withContext null
             val output = downscale(cropped, MAX_OUTPUT_EDGE_PX)
             val file = File(backgroundsDir, "${UUID.randomUUID()}.jpg")
             file.outputStream().use { stream ->
                 output.compress(Bitmap.CompressFormat.JPEG, JPEG_QUALITY, stream)
             }
             file.absolutePath
-        }.onFailure {
-            Log.e(TAG, "saveBakedCrop failed -> ${it.message}")
-        }.getOrNull()
+        } catch (e: Exception) {
+            Log.e(TAG, "saveBakedCrop failed for $locationId -> ${e.message}")
+            null
+        } finally {
+            source?.recycle()
+            rotated?.recycle()
+            cropped?.recycle()
+        }
     }
 
     /** All stored background files (the gallery source). */
@@ -61,10 +69,17 @@ class BackgroundImageStore(
             ?.sortedByDescending { it.lastModified() }
             .orEmpty()
 
-    /** Removes the background file at [path] if present. */
+    /** Removes the background file at [path] if present (must live in [backgroundsDir]). */
     fun deleteBackground(path: String) {
-        runCatching { File(path).delete() }
-            .onFailure { Log.e(TAG, "deleteBackground failed -> ${it.message}") }
+        runCatching {
+            val file = File(path)
+            val dir = backgroundsDir
+            if (file.canonicalFile.parentFile?.canonicalPath != dir.canonicalPath) {
+                Log.e(TAG, "deleteBackground refused: $path is outside $BACKGROUNDS_DIR")
+                return@runCatching
+            }
+            file.delete()
+        }.onFailure { Log.e(TAG, "deleteBackground failed -> ${it.message}") }
     }
 
     private fun decodeSampled(uri: Uri): Bitmap? {
@@ -95,27 +110,23 @@ class BackgroundImageStore(
             )
         } ?: ExifInterface.ORIENTATION_NORMAL
 
-        val degrees = when (orientation) {
-            ExifInterface.ORIENTATION_ROTATE_90 -> 90f
-            ExifInterface.ORIENTATION_ROTATE_180 -> 180f
-            ExifInterface.ORIENTATION_ROTATE_270 -> 270f
-            ExifInterface.ORIENTATION_FLIP_HORIZONTAL,
-            ExifInterface.ORIENTATION_FLIP_VERTICAL,
-            ExifInterface.ORIENTATION_TRANSPOSE,
-            ExifInterface.ORIENTATION_TRANSVERSE -> 90f
-            else -> 0f
-        }
-        val mirrored = orientation in intArrayOf(
-            ExifInterface.ORIENTATION_FLIP_HORIZONTAL,
-            ExifInterface.ORIENTATION_FLIP_VERTICAL,
-            ExifInterface.ORIENTATION_TRANSPOSE,
-            ExifInterface.ORIENTATION_TRANSVERSE
-        )
-        if (degrees == 0f && !mirrored) return bitmap
-
         val matrix = Matrix().apply {
-            if (mirrored) postScale(-1f, 1f)
-            postRotate(degrees)
+            when (orientation) {
+                ExifInterface.ORIENTATION_ROTATE_90 -> postRotate(90f)
+                ExifInterface.ORIENTATION_ROTATE_180 -> postRotate(180f)
+                ExifInterface.ORIENTATION_ROTATE_270 -> postRotate(270f)
+                ExifInterface.ORIENTATION_FLIP_HORIZONTAL -> postScale(-1f, 1f)
+                ExifInterface.ORIENTATION_FLIP_VERTICAL -> postScale(1f, -1f)
+                ExifInterface.ORIENTATION_TRANSPOSE -> {
+                    postScale(-1f, 1f)
+                    postRotate(90f)
+                }
+                ExifInterface.ORIENTATION_TRANSVERSE -> {
+                    postScale(-1f, 1f)
+                    postRotate(270f)
+                }
+                else -> return bitmap
+            }
         }
         val rotated = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
         if (rotated !== bitmap) bitmap.recycle()
