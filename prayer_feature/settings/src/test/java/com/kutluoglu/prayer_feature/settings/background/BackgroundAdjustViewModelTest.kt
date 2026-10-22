@@ -9,6 +9,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -132,7 +133,7 @@ class BackgroundAdjustViewModelTest {
 
         // Assert
         assertThat(viewModel.uiState.value.isSaving).isTrue()
-        kotlinx.coroutines.delay(200)
+        advanceTimeBy(200)
         assertThat(viewModel.uiState.value.isSaving).isFalse()
     }
 }

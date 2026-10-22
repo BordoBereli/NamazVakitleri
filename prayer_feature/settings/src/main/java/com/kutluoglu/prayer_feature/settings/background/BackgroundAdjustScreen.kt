@@ -25,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
@@ -38,6 +39,7 @@ import com.kutluoglu.core.designsystem.components.RoundedPageTitleBar
 import com.kutluoglu.prayer_location.data.CropMath
 import com.kutluoglu.prayer_feature.settings.R
 import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,7 +47,12 @@ fun BackgroundAdjustRoute(
     locationId: String,
     imageUri: String,
     onNavigateBack: () -> Unit,
-    viewModel: BackgroundAdjustViewModel = koinViewModel()
+    viewModel: BackgroundAdjustViewModel = koinViewModel {
+        parametersOf(
+            locationId,
+            runCatching { android.net.Uri.parse(imageUri) }.getOrNull()
+        )
+    }
 ) {
     val state by viewModel.uiState.collectAsState()
     val navigateBack by viewModel.navigateBack.collectAsState()
@@ -62,9 +69,6 @@ fun BackgroundAdjustRoute(
             )
         }
     ) { padding ->
-        val parsedUri = remember(imageUri) {
-            runCatching { android.net.Uri.parse(imageUri) }.getOrNull()
-        }
         BackgroundAdjustContent(
             state = state,
             onEvent = viewModel::onEvent,
@@ -110,7 +114,9 @@ private fun BackgroundAdjustContent(
                         onDoubleTap = { onEvent(BackgroundAdjustEvent.OnDoubleTap) }
                     )
                 },
-            contentAlignment = Alignment.Center
+            // TopStart so the image's top-left corner sits exactly at
+            // (offset.x, offset.y), matching CropMath's offset convention.
+            contentAlignment = Alignment.TopStart
         ) {
             state.uri?.let { uri ->
                 AsyncImage(
@@ -120,6 +126,9 @@ private fun BackgroundAdjustContent(
                     modifier = Modifier
                         .fillMaxSize()
                         .graphicsLayer {
+                            // Scale around the top-left corner so the top-left
+                            // corner stays at (offset.x, offset.y) at any zoom.
+                            transformOrigin = TransformOrigin(0f, 0f)
                             scaleX = state.scale
                             scaleY = state.scale
                             translationX = state.offset.x
@@ -132,6 +141,11 @@ private fun BackgroundAdjustContent(
                 )
             }
         }
+        Text(
+            text = stringResource(R.string.background_adjust_hint),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
         Button(
             onClick = { onEvent(BackgroundAdjustEvent.Confirm) },
             enabled = !state.isSaving && state.uri != null,
