@@ -25,7 +25,7 @@ class WearPackagingTest {
     @Test
     fun `watch artifact version code is unique across form factors`() {
         val info = context.packageManager.getPackageInfo(context.packageName, 0)
-        assertThat(info.longVersionCode).isEqualTo(3620200L)
+        assertThat(info.longVersionCode).isEqualTo(3620300L)
     }
 
     @Test
