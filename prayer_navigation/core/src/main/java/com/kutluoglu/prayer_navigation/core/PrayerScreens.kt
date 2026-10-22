@@ -19,4 +19,5 @@ sealed class Screen(val route: String) {
     data object JuristicMethodScreen: Screen("juristic_method")
     data object NotificationsScreen: Screen("notifications")
     data object SavedVersesScreen: Screen("saved_verses")
+    data object BackgroundAdjustScreen: Screen("background_adjust/{locationId}")
 }
