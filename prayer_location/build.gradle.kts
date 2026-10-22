@@ -40,8 +40,11 @@ android {
 dependencies {
     implementation(project(":core:designsystem"))
     implementation(project(":prayer:model"))
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.exifinterface)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.play.services.location)
 
