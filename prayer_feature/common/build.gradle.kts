@@ -61,6 +61,10 @@ dependencies {
     implementation(libs.androidx.material.icons.extended)
     //endregion
 
+    //region Coil
+    implementation(libs.coil)
+    //endregion
+
     //region Dependency Injection - Koin
     api(platform(libs.koin.bom))
     api(libs.koin.core)

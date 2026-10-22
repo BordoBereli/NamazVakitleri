@@ -139,6 +139,7 @@ fun LocationPager(
                     uiState = uiState,
                     quranVerseFormatter = quranVerseFormatter,
                     isAutoGps = entry.isAutoGps,
+                    backgroundPath = entry.backgroundPath,
                     onPrayerTimesClick = onPrayerTimesClick,
                     onChooseLocation = onChooseLocation,
                     onEvent = onEvent
@@ -146,6 +147,7 @@ fun LocationPager(
                 data != null -> LocationPagePreview(
                     data = data,
                     isAutoGps = entry.isAutoGps,
+                    backgroundPath = entry.backgroundPath,
                     onViewAllClicked = onPrayerTimesClick,
                     calculator = calculator,
                     formatter = formatter
@@ -170,6 +172,7 @@ private fun LocationPlaceholder(entry: LocationEntry?, languageCode: String) {
 private fun LocationPagePreview(
     data: LoadedPrayerData,
     isAutoGps: Boolean,
+    backgroundPath: String?,
     onViewAllClicked: () -> Unit,
     calculator: PrayerLogicEngine,
     formatter: PrayerFormatter
@@ -195,7 +198,8 @@ private fun LocationPagePreview(
             Box(modifier = modifier, contentAlignment = Alignment.Center) {
                 HomeTopContainer(
                     painter = painterResource(id = R.drawable.home_page_fallback),
-                    successState = successState
+                    successState = successState,
+                    backgroundPath = backgroundPath
                 )
             }
         },
@@ -253,6 +257,7 @@ private fun PrayerContent(
     uiState: HomeUiState,
     quranVerseFormatter: QuranVerseFormatter,
     isAutoGps: Boolean = false,
+    backgroundPath: String? = null,
     onPrayerTimesClick: () -> Unit,
     onChooseLocation: () -> Unit,
     onEvent: (HomeEvent) -> Unit
@@ -302,7 +307,8 @@ private fun PrayerContent(
                     Box(modifier = modifier, contentAlignment = Alignment.Center) {
                         HomeTopContainer(
                             painter = painterResource(id = R.drawable.home_page_fallback),
-                            successState = successState
+                            successState = successState,
+                            backgroundPath = backgroundPath
                         )
                     }
                 },

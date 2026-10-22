@@ -47,6 +47,7 @@ import java.time.ZoneId
 fun HomeTopContainer(
         successState: HomeUiState.Success?,
         painter: Painter,
+        backgroundPath: String? = null,
         ramadanDateResolver: RamadanDateResolver? = null
 ) {
     val resolver = ramadanDateResolver ?: remember { RamadanDateResolver() }
@@ -90,7 +91,8 @@ fun HomeTopContainer(
 
     TopContainer(
         painter = painter,
-        stringResourceId = R.string.home_page_fallback
+        stringResourceId = R.string.home_page_fallback,
+        backgroundPath = backgroundPath
     ) {
         Box(modifier = Modifier.weight(0.3F)
             .padding(start = 16.dp, top = 24.dp)
