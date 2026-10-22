@@ -4,6 +4,7 @@ import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithTag
 import com.kutluoglu.core.designsystem.prayerUtils.PrayerFormatter
 import com.kutluoglu.core.designsystem.states.TimeUiState
 import com.kutluoglu.prayer.domain.PrayerLogicEngine
@@ -133,18 +134,21 @@ class LocationPagerBackgroundTest {
         val file = File.createTempFile("background", ".jpg").apply { deleteOnExit() }
         activeLocationPager(backgroundEntry(file.absolutePath))
         composeTestRule.onNodeWithContentDescription(backgroundDescription).assertIsDisplayed()
+        composeTestRule.onNodeWithTag("background_custom_image").assertIsDisplayed()
     }
 
     @Test
     fun `active page falls back to default painter when background file is missing`() {
         activeLocationPager(backgroundEntry("/data/user/0/missing/backgrounds/uuid.jpg"))
         composeTestRule.onNodeWithContentDescription(backgroundDescription).assertIsDisplayed()
+        composeTestRule.onNodeWithTag("background_custom_image").assertDoesNotExist()
     }
 
     @Test
     fun `active page falls back to default painter when backgroundPath is null`() {
         activeLocationPager(backgroundEntry(null))
         composeTestRule.onNodeWithContentDescription(backgroundDescription).assertIsDisplayed()
+        composeTestRule.onNodeWithTag("background_custom_image").assertDoesNotExist()
     }
 
     @Test
@@ -152,11 +156,13 @@ class LocationPagerBackgroundTest {
         val file = File.createTempFile("background", ".jpg").apply { deleteOnExit() }
         previewLocationPager(backgroundEntry(file.absolutePath))
         composeTestRule.onNodeWithContentDescription(backgroundDescription).assertIsDisplayed()
+        composeTestRule.onNodeWithTag("background_custom_image").assertIsDisplayed()
     }
 
     @Test
     fun `preview page falls back to default painter when background file is missing`() {
         previewLocationPager(backgroundEntry("/data/user/0/missing/backgrounds/uuid.jpg"))
         composeTestRule.onNodeWithContentDescription(backgroundDescription).assertIsDisplayed()
+        composeTestRule.onNodeWithTag("background_custom_image").assertDoesNotExist()
     }
 }
