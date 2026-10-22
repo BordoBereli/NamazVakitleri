@@ -125,4 +125,13 @@
     <string name="lock_portrait">Kunci skrin ke mod potret</string>
     <string name="auto_rotate_compass">Putar kompas secara automatik</string>
     <string name="privacy_policy">Dasar Privasi</string>
+    <string name="background_image">Imej latar belakang</string>
+    <string name="background_image_subtitle">Latar belakang utama khusus bagi setiap lokasi</string>
+    <string name="background_locations">Imej Latar Belakang</string>
+    <string name="saved_backgrounds">Latar belakang tersimpan</string>
+    <string name="no_saved_backgrounds">Belum ada latar belakang tersimpan</string>
+    <string name="reset_background">Set semula latar belakang</string>
+    <string name="apply_background">Guna</string>
+    <string name="delete_background">Padam latar belakang</string>
+    <string name="delete_background_confirmation">Imej latar belakang tersimpan akan dipadamkan secara kekal.</string>
 </resources>

@@ -20,4 +20,5 @@ sealed class Screen(val route: String) {
     data object NotificationsScreen: Screen("notifications")
     data object SavedVersesScreen: Screen("saved_verses")
     data object BackgroundAdjustScreen: Screen("background_adjust/{locationId}")
+    data object BackgroundLocationsScreen: Screen("background_locations")
 }

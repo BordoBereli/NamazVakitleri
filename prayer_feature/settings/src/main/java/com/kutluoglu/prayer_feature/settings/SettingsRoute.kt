@@ -10,7 +10,8 @@ fun SettingsRoute(
     onNavigateToJuristicMethod: () -> Unit,
     onNavigateToLanguage: () -> Unit,
     onNavigateToThemeMode: () -> Unit,
-    onNavigateToNotifications: () -> Unit
+    onNavigateToNotifications: () -> Unit,
+    onNavigateToBackgroundImages: () -> Unit
 ) {
     SettingsScreen(
         onNavigateToMyLocations = onNavigateToMyLocations,
@@ -19,6 +20,7 @@ fun SettingsRoute(
         onNavigateToJuristicMethod = onNavigateToJuristicMethod,
         onNavigateToLanguage = onNavigateToLanguage,
         onNavigateToThemeMode = onNavigateToThemeMode,
-        onNavigateToNotifications = onNavigateToNotifications
+        onNavigateToNotifications = onNavigateToNotifications,
+        onNavigateToBackgroundImages = onNavigateToBackgroundImages
     )
 }

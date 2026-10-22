@@ -125,4 +125,13 @@
     <string name="lock_portrait">Verrouiller l\'écran en portrait</string>
     <string name="auto_rotate_compass">Rotation automatique de la boussole</string>
     <string name="privacy_policy">Politique de confidentialité</string>
+    <string name="background_image">Image de fond</string>
+    <string name="background_image_subtitle">Fond d\'accueil personnalisé par emplacement</string>
+    <string name="background_locations">Images de fond</string>
+    <string name="saved_backgrounds">Fonds enregistrés</string>
+    <string name="no_saved_backgrounds">Aucun fond enregistré pour le moment</string>
+    <string name="reset_background">Réinitialiser le fond</string>
+    <string name="apply_background">Appliquer</string>
+    <string name="delete_background">Supprimer le fond</string>
+    <string name="delete_background_confirmation">L\'image de fond enregistrée sera définitivement supprimée.</string>
 </resources>

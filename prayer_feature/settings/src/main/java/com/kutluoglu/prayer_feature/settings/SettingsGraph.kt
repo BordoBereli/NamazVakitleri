@@ -3,6 +3,7 @@ package com.kutluoglu.prayer_feature.settings
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.kutluoglu.prayer_feature.settings.background.BackgroundLocationsRoute
 import com.kutluoglu.prayer_feature.settings.calculation.CalculationMethodRoute
 import com.kutluoglu.prayer_feature.settings.hijri.HijriAdjustmentRoute
 import com.kutluoglu.prayer_feature.settings.juristic.JuristicMethodRoute
@@ -40,6 +41,18 @@ fun NavGraphBuilder.settingsGraph(
             },
             onNavigateToNotifications = {
                 navController.navigate(Screen.NotificationsScreen.route)
+            },
+            onNavigateToBackgroundImages = {
+                navController.navigate(Screen.BackgroundLocationsScreen.route)
+            }
+        )
+    }
+
+    composable(Screen.BackgroundLocationsScreen.route) {
+        BackgroundLocationsRoute(
+            onNavigateBack = { navController.popBackStack() },
+            onPickImage = { locationId, imageUri ->
+                // TODO Task 5: navigate to Screen.BackgroundAdjustScreen with locationId + imageUri
             }
         )
     }

@@ -125,4 +125,13 @@
     <string name="lock_portrait">स्क्रीन को पोर्ट्रेट में लॉक करें</string>
     <string name="auto_rotate_compass">कम्पास को स्वतः घुमाएँ</string>
     <string name="privacy_policy">गोपनीयता नीति</string>
+    <string name="background_image">पृष्ठभूमि चित्र</string>
+    <string name="background_image_subtitle">प्रत्येक स्थान के लिए कस्टम होम पृष्ठभूमि</string>
+    <string name="background_locations">पृष्ठभूमि चित्र</string>
+    <string name="saved_backgrounds">सहेजी गई पृष्ठभूमि</string>
+    <string name="no_saved_backgrounds">अभी तक कोई सहेजी गई पृष्ठभूमि नहीं</string>
+    <string name="reset_background">पृष्ठभूमि रीसेट करें</string>
+    <string name="apply_background">लागू करें</string>
+    <string name="delete_background">पृष्ठभूमि हटाएँ</string>
+    <string name="delete_background_confirmation">सहेजा गया पृष्ठभूमि चित्र स्थायी रूप से हटा दिया जाएगा।</string>
 </resources>

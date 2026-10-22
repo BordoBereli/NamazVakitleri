@@ -126,4 +126,13 @@
     <string name="auto_rotate_compass">Putar kompas otomatis</string>
     <string name="clear_cache_confirmation">Ini akan menghapus cache. Apakah Anda ingin melanjutkan?</string>
     <string name="privacy_policy">Kebijakan Privasi</string>
+    <string name="background_image">Gambar latar belakang</string>
+    <string name="background_image_subtitle">Latar belakang beranda khusus per lokasi</string>
+    <string name="background_locations">Gambar Latar Belakang</string>
+    <string name="saved_backgrounds">Latar belakang tersimpan</string>
+    <string name="no_saved_backgrounds">Belum ada latar belakang tersimpan</string>
+    <string name="reset_background">Atur ulang latar belakang</string>
+    <string name="apply_background">Terapkan</string>
+    <string name="delete_background">Hapus latar belakang</string>
+    <string name="delete_background_confirmation">Gambar latar belakang tersimpan akan dihapus permanen.</string>
 </resources>

@@ -125,4 +125,13 @@
     <string name="lock_portrait">قفل الشاشة في الوضع الرأسي</string>
     <string name="auto_rotate_compass">تدوير البوصلة تلقائياً</string>
     <string name="privacy_policy">سياسة الخصوصية</string>
+    <string name="background_image">صورة الخلفية</string>
+    <string name="background_image_subtitle">خلفية مخصصة لكل موقع</string>
+    <string name="background_locations">صور الخلفية</string>
+    <string name="saved_backgrounds">الخلفيات المحفوظة</string>
+    <string name="no_saved_backgrounds">لا توجد خلفيات محفوظة بعد</string>
+    <string name="reset_background">إعادة تعيين الخلفية</string>
+    <string name="apply_background">تطبيق</string>
+    <string name="delete_background">حذف الخلفية</string>
+    <string name="delete_background_confirmation">سيتم حذف صورة الخلفية المحفوظة نهائيًا.</string>
 </resources>

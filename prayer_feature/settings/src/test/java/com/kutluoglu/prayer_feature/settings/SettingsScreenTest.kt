@@ -70,6 +70,7 @@ class SettingsScreenTest {
                 onNavigateToLanguage = {},
                 onNavigateToThemeMode = {},
                 onNavigateToNotifications = {},
+                onNavigateToBackgroundImages = {},
                 viewModel = viewModel
             )
         }
@@ -86,6 +87,7 @@ class SettingsScreenTest {
         composeTestRule.onNodeWithText("Asr Calculation").assertIsDisplayed()
         composeTestRule.onNodeWithText("Language").assertIsDisplayed()
         composeTestRule.onNodeWithText("Notifications").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Background image").assertIsDisplayed()
     }
 
     @Test

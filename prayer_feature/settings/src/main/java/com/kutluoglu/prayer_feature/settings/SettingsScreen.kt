@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.CompassCalibration
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Functions
+import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Lock
@@ -77,6 +78,7 @@ fun SettingsScreen(
     onNavigateToLanguage: () -> Unit,
     onNavigateToThemeMode: () -> Unit,
     onNavigateToNotifications: () -> Unit,
+    onNavigateToBackgroundImages: () -> Unit,
     viewModel: SettingsViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -121,6 +123,7 @@ fun SettingsScreen(
                         onNavigateToLanguage = onNavigateToLanguage,
                         onNavigateToThemeMode = onNavigateToThemeMode,
                         onNavigateToNotifications = onNavigateToNotifications,
+                        onNavigateToBackgroundImages = onNavigateToBackgroundImages,
                         onLockPortraitChange = { viewModel.onEvent(SettingsEvent.UpdateLockPortrait(it)) },
                         onCompassAutoRotateChange = { viewModel.onEvent(SettingsEvent.UpdateCompassAutoRotate(it)) },
                         onPrivacyPolicyClick = {
@@ -159,6 +162,7 @@ private fun SettingsContent(
     onNavigateToLanguage: () -> Unit,
     onNavigateToThemeMode: () -> Unit,
     onNavigateToNotifications: () -> Unit,
+    onNavigateToBackgroundImages: () -> Unit,
     onLockPortraitChange: (Boolean) -> Unit,
     onCompassAutoRotateChange: (Boolean) -> Unit,
     onPrivacyPolicyClick: () -> Unit
@@ -248,6 +252,15 @@ private fun SettingsContent(
                     title = stringResource(SettingsR.string.notifications),
                     subtitle = "",
                     onClick = onNavigateToNotifications
+                )
+
+                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+
+                SettingsItem(
+                    icon = Icons.Filled.Image,
+                    title = stringResource(SettingsR.string.background_image),
+                    subtitle = stringResource(SettingsR.string.background_image_subtitle),
+                    onClick = onNavigateToBackgroundImages
                 )
             }
         }

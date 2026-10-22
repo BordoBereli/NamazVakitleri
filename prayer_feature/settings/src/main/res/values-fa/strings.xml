@@ -125,4 +125,13 @@
     <string name="lock_portrait">قفل کردن صفحه در حالت عمودی</string>
     <string name="auto_rotate_compass">چرخش خودکار قطب‌نما</string>
     <string name="privacy_policy">سیاست حفظ حریم خصوصی</string>
+    <string name="background_image">تصویر پس‌زمینه</string>
+    <string name="background_image_subtitle">پس‌زمینه اختصاصی برای هر مکان</string>
+    <string name="background_locations">تصاویر پس‌زمینه</string>
+    <string name="saved_backgrounds">پس‌زمینه‌های ذخیره‌شده</string>
+    <string name="no_saved_backgrounds">هنوز پس‌زمینه ذخیره‌شده‌ای نیست</string>
+    <string name="reset_background">بازنشانی پس‌زمینه</string>
+    <string name="apply_background">اعمال</string>
+    <string name="delete_background">حذف پس‌زمینه</string>
+    <string name="delete_background_confirmation">تصویر پس‌زمینه ذخیره‌شده به‌طور دائم حذف خواهد شد.</string>
 </resources>

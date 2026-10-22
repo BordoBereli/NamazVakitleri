@@ -125,4 +125,13 @@
     <string name="lock_portrait">Bloquear pantalla en vertical</string>
     <string name="auto_rotate_compass">Rotar brújula automáticamente</string>
     <string name="privacy_policy">Política de privacidad</string>
+    <string name="background_image">Imagen de fondo</string>
+    <string name="background_image_subtitle">Fondo personalizado por ubicación</string>
+    <string name="background_locations">Imágenes de fondo</string>
+    <string name="saved_backgrounds">Fondos guardados</string>
+    <string name="no_saved_backgrounds">Aún no hay fondos guardados</string>
+    <string name="reset_background">Restablecer fondo</string>
+    <string name="apply_background">Aplicar</string>
+    <string name="delete_background">Eliminar fondo</string>
+    <string name="delete_background_confirmation">La imagen de fondo guardada se eliminará permanentemente.</string>
 </resources>

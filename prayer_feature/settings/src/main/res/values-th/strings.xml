@@ -125,4 +125,13 @@
     <string name="lock_portrait">ล็อกหน้าจอเป็นแนวตั้ง</string>
     <string name="auto_rotate_compass">หมุนเข็มทิศอัตโนมัติ</string>
     <string name="privacy_policy">นโยบายความเป็นส่วนตัว</string>
+    <string name="background_image">รูปภาพพื้นหลัง</string>
+    <string name="background_image_subtitle">พื้นหลังหน้าแรกแบบกำหนดเองสำหรับแต่ละตำแหน่ง</string>
+    <string name="background_locations">รูปภาพพื้นหลัง</string>
+    <string name="saved_backgrounds">พื้นหลังที่บันทึกไว้</string>
+    <string name="no_saved_backgrounds">ยังไม่มีพื้นหลังที่บันทึกไว้</string>
+    <string name="reset_background">รีเซ็ตพื้นหลัง</string>
+    <string name="apply_background">ใช้</string>
+    <string name="delete_background">ลบพื้นหลัง</string>
+    <string name="delete_background_confirmation">รูปภาพพื้นหลังที่บันทึกไว้จะถูกลบอย่างถาวร</string>
 </resources>
