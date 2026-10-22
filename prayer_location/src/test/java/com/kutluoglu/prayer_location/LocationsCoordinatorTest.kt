@@ -287,4 +287,28 @@ class LocationsCoordinatorTest {
 
         assertThat(result).isEqualTo(GpsRefreshResult.Unavailable)
     }
+
+    @Test
+    fun `removeLocation keeps the background file for gallery reuse`() = runBlocking<Unit> {
+        // arrange: entry with backgroundPath set
+        val entryWithBackground = istanbul.copy(backgroundPath = "/data/bg.jpg")
+        coEvery { dataStore.getLocations() } returns LocationsState(
+            entries = listOf(entryWithBackground),
+            selectedId = "loc-1"
+        )
+
+        // act
+        coordinator.removeLocation("loc-1")
+
+        // assert: the data store removal is the ONLY destructive call —
+        // the coordinator has no BackgroundImageStore (or any file-deleting)
+        // dependency, so the background file must survive for gallery reuse.
+        coVerify(exactly = 1) { dataStore.removeLocation("loc-1") }
+        coVerify(exactly = 0) { dataStore.updateBackgroundPath(any(), any()) }
+        coVerify(exactly = 0) { dataStore.addLocation(any()) }
+        coVerify(exactly = 0) { dataStore.setSelectedLocation(any()) }
+        coVerify(exactly = 0) { dataStore.setLastGpsLocation(any()) }
+        coVerify(exactly = 0) { dataStore.setGpsEnabled(any()) }
+        coVerify(exactly = 0) { dataStore.reorderLocations(any()) }
+    }
 }
