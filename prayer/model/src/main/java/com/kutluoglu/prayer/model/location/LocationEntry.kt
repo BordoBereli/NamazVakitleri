@@ -10,5 +10,6 @@ data class LocationEntry(
     val displayName: String,
     val displayNameTr: String? = null,
     val displayNameAr: String? = null,
-    val displayNameFa: String? = null
+    val displayNameFa: String? = null,
+    val backgroundPath: String? = null
 )

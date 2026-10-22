@@ -158,6 +158,10 @@ class LocationsCoordinator(
         locationsDataStore.reorderLocations(ids)
     }
 
+    suspend fun setBackgroundPath(id: String, path: String?) {
+        locationsDataStore.updateBackgroundPath(id, path)
+    }
+
     suspend fun setGpsEnabled(enabled: Boolean) {
         locationsDataStore.setGpsEnabled(enabled)
     }

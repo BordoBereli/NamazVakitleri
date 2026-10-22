@@ -52,6 +52,15 @@ class LocationsDataStore(
         }
     }
 
+    suspend fun updateBackgroundPath(id: String, path: String?) {
+        dataStore.edit { prefs ->
+            val current = decodeEntries(prefs[Keys.LOCATIONS]).map { entry ->
+                if (entry.id == id) entry.copy(backgroundPath = path) else entry
+            }
+            prefs[Keys.LOCATIONS] = json.encodeToString(current)
+        }
+    }
+
     suspend fun reorderLocations(ids: List<String>) {
         dataStore.edit { prefs ->
             val current = decodeEntries(prefs[Keys.LOCATIONS])

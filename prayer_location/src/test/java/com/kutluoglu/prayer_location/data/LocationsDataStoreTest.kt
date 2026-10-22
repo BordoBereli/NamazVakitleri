@@ -133,6 +133,19 @@ class LocationsDataStoreTest {
     }
 
     @Test
+    fun `updateBackgroundPath sets and clears path on entry`() = runBlocking<Unit> {
+        store.addLocation(istanbul)
+
+        store.updateBackgroundPath(istanbul.id, "/data/bg.jpg")
+        val updated = store.getLocations().entries.first { it.id == istanbul.id }
+        assertThat(updated.backgroundPath).isEqualTo("/data/bg.jpg")
+
+        store.updateBackgroundPath(istanbul.id, null)
+        val cleared = store.getLocations().entries.first { it.id == istanbul.id }
+        assertThat(cleared.backgroundPath).isNull()
+    }
+
+    @Test
     fun `last gps location round trips through the store`() = runBlocking<Unit> {
         val gps = LocationData(40.0, 29.0, "Turkey", "TR", "Bursa", null)
 
