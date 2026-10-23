@@ -129,7 +129,6 @@
     <string name="background_image_subtitle">Fondo personalizado por ubicación</string>
     <string name="background_locations">Imágenes de fondo</string>
     <string name="saved_backgrounds">Fondos guardados</string>
-    <string name="no_saved_backgrounds">Aún no hay fondos guardados</string>
     <string name="reset_background">Restablecer fondo</string>
     <string name="apply_background">Aplicar</string>
     <string name="delete_background">Eliminar fondo</string>

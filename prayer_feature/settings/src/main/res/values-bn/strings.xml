@@ -129,7 +129,6 @@
     <string name="background_image_subtitle">প্রতিটি অবস্থানের জন্য কাস্টম হোম পটভূমি</string>
     <string name="background_locations">পটভূমি ছবিসমূহ</string>
     <string name="saved_backgrounds">সংরক্ষিত পটভূমি</string>
-    <string name="no_saved_backgrounds">এখনও কোনো সংরক্ষিত পটভূমি নেই</string>
     <string name="reset_background">পটভূমি রিসেট করুন</string>
     <string name="apply_background">প্রয়োগ করুন</string>
     <string name="delete_background">পটভূমি মুছুন</string>

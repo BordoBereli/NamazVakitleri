@@ -13,8 +13,10 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.withTimeout
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -96,11 +98,12 @@ class BackgroundLocationsViewModelTest {
         viewModel = BackgroundLocationsViewModel(locationsCoordinator, backgroundImageStore)
 
         // Act / Assert
-        viewModel.uiState.test {
-            val uiState = awaitItem()
-            assertThat(uiState.savedBackgrounds).containsExactly("/data/other.jpg", "/data/bg.jpg")
-            cancelAndIgnoreRemainingEvents()
+        // The refresh runs on a real IO dispatcher, so poll for the landed
+        // value instead of racing turbine emissions.
+        val uiState = withTimeout(2_000) {
+            viewModel.uiState.first { it.savedBackgrounds.isNotEmpty() }
         }
+        assertThat(uiState.savedBackgrounds).containsExactly("/data/other.jpg", "/data/bg.jpg")
     }
 
     @Test

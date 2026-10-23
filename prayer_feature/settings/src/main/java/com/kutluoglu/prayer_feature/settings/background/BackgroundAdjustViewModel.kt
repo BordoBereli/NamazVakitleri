@@ -8,10 +8,13 @@ import androidx.lifecycle.viewModelScope
 import com.kutluoglu.prayer_location.LocationsCoordinator
 import com.kutluoglu.prayer_location.data.BackgroundImageStore
 import com.kutluoglu.prayer_location.data.CropMath
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.android.annotation.KoinViewModel
 
 @KoinViewModel
@@ -80,10 +83,30 @@ class BackgroundAdjustViewModel(
             if (path != null) {
                 locationsCoordinator.setBackgroundPath(locationId, path)
                 _navigateBack.value = true
+                // Orphan cleanup is fire-and-forget: navigation must not wait
+                // on a disk scan, and the file is harmless if cleanup fails.
+                // Runs entirely on IO so it never resumes on Main after the
+                // caller's scope is gone.
+                viewModelScope.launch(Dispatchers.IO) { deleteOrphanedBackground(path) }
             } else {
                 _navigateBack.value = false
             }
             _uiState.value = _uiState.value.copy(isSaving = false)
+        }
+    }
+
+    /**
+     * After a successful replace, deletes the location's previous background
+     * file if no other location still references it. Files are kept when a
+     * location is removed (handled elsewhere), so this only runs on replace.
+     */
+    private suspend fun deleteOrphanedBackground(newPath: String) {
+        val state = locationsCoordinator.observeState().first()
+        val oldPath = state.entries.firstOrNull { it.id == locationId }?.backgroundPath
+        if (oldPath == null || oldPath == newPath) return
+        val referencedByOther = state.entries.any { it.id != locationId && it.backgroundPath == oldPath }
+        if (!referencedByOther) {
+            backgroundImageStore.deleteBackground(oldPath)
         }
     }
 

@@ -129,7 +129,6 @@
     <string name="background_image_subtitle">Konum başına özel ana ekran arka planı</string>
     <string name="background_locations">Arka Plan Görselleri</string>
     <string name="saved_backgrounds">Kaydedilen arka planlar</string>
-    <string name="no_saved_backgrounds">Henüz kaydedilmiş arka plan yok</string>
     <string name="reset_background">Arka planı sıfırla</string>
     <string name="apply_background">Uygula</string>
     <string name="delete_background">Arka planı sil</string>

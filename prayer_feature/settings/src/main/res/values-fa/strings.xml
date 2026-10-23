@@ -129,7 +129,6 @@
     <string name="background_image_subtitle">پس‌زمینه اختصاصی برای هر مکان</string>
     <string name="background_locations">تصاویر پس‌زمینه</string>
     <string name="saved_backgrounds">پس‌زمینه‌های ذخیره‌شده</string>
-    <string name="no_saved_backgrounds">هنوز پس‌زمینه ذخیره‌شده‌ای نیست</string>
     <string name="reset_background">بازنشانی پس‌زمینه</string>
     <string name="apply_background">اعمال</string>
     <string name="delete_background">حذف پس‌زمینه</string>

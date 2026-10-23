@@ -12,9 +12,6 @@ data class BackgroundLocationsUiState(
 )
 
 sealed class BackgroundLocationsEvent {
-    /** Screen-internal: launches the system photo picker for [locationId]. */
-    data class PickImage(val locationId: String) : BackgroundLocationsEvent()
-
     /** Sets [locationId]'s background to the existing file at [path]. */
     data class ApplySavedBackground(val locationId: String, val path: String) : BackgroundLocationsEvent()
 

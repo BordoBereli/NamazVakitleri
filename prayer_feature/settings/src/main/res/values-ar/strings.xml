@@ -129,7 +129,6 @@
     <string name="background_image_subtitle">خلفية مخصصة لكل موقع</string>
     <string name="background_locations">صور الخلفية</string>
     <string name="saved_backgrounds">الخلفيات المحفوظة</string>
-    <string name="no_saved_backgrounds">لا توجد خلفيات محفوظة بعد</string>
     <string name="reset_background">إعادة تعيين الخلفية</string>
     <string name="apply_background">تطبيق</string>
     <string name="delete_background">حذف الخلفية</string>

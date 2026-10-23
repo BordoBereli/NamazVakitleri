@@ -135,7 +135,6 @@
     <string name="background_image_subtitle">Custom home background per location</string>
     <string name="background_locations">Background Images</string>
     <string name="saved_backgrounds">Saved backgrounds</string>
-    <string name="no_saved_backgrounds">No saved backgrounds yet</string>
     <string name="reset_background">Reset background</string>
     <string name="apply_background">Apply</string>
     <string name="delete_background">Delete background</string>

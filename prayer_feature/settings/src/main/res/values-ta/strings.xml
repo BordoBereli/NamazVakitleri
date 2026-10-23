@@ -129,7 +129,6 @@
     <string name="background_image_subtitle">ஒவ்வொரு இடத்திற்கும் தனித்தனி முகப்பு பின்னணி</string>
     <string name="background_locations">பின்னணி படங்கள்</string>
     <string name="saved_backgrounds">சேமிக்கப்பட்ட பின்னணிகள்</string>
-    <string name="no_saved_backgrounds">இன்னும் சேமிக்கப்பட்ட பின்னணிகள் இல்லை</string>
     <string name="reset_background">பின்னணியை மீட்டமை</string>
     <string name="apply_background">பயன்படுத்து</string>
     <string name="delete_background">பின்னணியை நீக்கு</string>

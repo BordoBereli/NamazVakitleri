@@ -4,11 +4,13 @@ import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.prayer_location.LocationsCoordinator
 import com.kutluoglu.prayer_location.data.BackgroundImageStore
+import com.kutluoglu.prayer_location.data.LocationsState
 import com.kutluoglu.prayer_feature.settings.MainCoroutineRule
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
@@ -33,6 +35,8 @@ class BackgroundAdjustViewModelTest {
     fun setUp() {
         locationsCoordinator = mockk()
         coEvery { locationsCoordinator.setBackgroundPath(any(), any()) } returns Unit
+        // The orphan-cleanup path reads the current state; default to empty.
+        coEvery { locationsCoordinator.observeState() } returns flowOf(LocationsState())
         backgroundImageStore = mockk()
         viewModel = BackgroundAdjustViewModel(
             locationId = locationId,
@@ -60,6 +64,8 @@ class BackgroundAdjustViewModelTest {
         }
         coVerify { locationsCoordinator.setBackgroundPath(locationId, "/data/bg.jpg") }
         viewModel.navigateBack.test {
+            // UnconfinedTestDispatcher runs the confirm coroutine eagerly, so
+            // the flow already holds the final value when the test subscribes.
             assertThat(awaitItem()).isTrue()
             cancelAndIgnoreRemainingEvents()
         }

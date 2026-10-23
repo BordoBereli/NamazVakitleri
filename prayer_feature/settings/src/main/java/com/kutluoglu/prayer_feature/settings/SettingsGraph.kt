@@ -53,14 +53,16 @@ fun NavGraphBuilder.settingsGraph(
         BackgroundLocationsRoute(
             onNavigateBack = { navController.popBackStack() },
             onPickImage = { locationId, imageUri ->
-                navController.navigate("background_adjust/$locationId?imageUri=${imageUri}")
+                navController.navigate(
+                    Screen.BackgroundAdjustScreen.route
+                        .replace("{locationId}", locationId)
+                        .replace("{imageUri}", imageUri)
+                )
             }
         )
     }
 
-    composable(
-        route = "background_adjust/{locationId}?imageUri={imageUri}"
-    ) { backStackEntry ->
+    composable(Screen.BackgroundAdjustScreen.route) { backStackEntry ->
         val locationId = backStackEntry.arguments?.getString("locationId").orEmpty()
         val imageUri = backStackEntry.arguments?.getString("imageUri").orEmpty()
         BackgroundAdjustRoute(

@@ -129,7 +129,6 @@
     <string name="background_image_subtitle">พื้นหลังหน้าแรกแบบกำหนดเองสำหรับแต่ละตำแหน่ง</string>
     <string name="background_locations">รูปภาพพื้นหลัง</string>
     <string name="saved_backgrounds">พื้นหลังที่บันทึกไว้</string>
-    <string name="no_saved_backgrounds">ยังไม่มีพื้นหลังที่บันทึกไว้</string>
     <string name="reset_background">รีเซ็ตพื้นหลัง</string>
     <string name="apply_background">ใช้</string>
     <string name="delete_background">ลบพื้นหลัง</string>

@@ -129,7 +129,6 @@
     <string name="background_image_subtitle">Свой фон главного экрана для каждого места</string>
     <string name="background_locations">Фоновые изображения</string>
     <string name="saved_backgrounds">Сохранённые фоны</string>
-    <string name="no_saved_backgrounds">Сохранённых фонов пока нет</string>
     <string name="reset_background">Сбросить фон</string>
     <string name="apply_background">Применить</string>
     <string name="delete_background">Удалить фон</string>

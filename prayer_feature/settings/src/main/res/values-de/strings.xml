@@ -129,7 +129,6 @@
     <string name="background_image_subtitle">Eigener Startbildschirm-Hintergrund pro Standort</string>
     <string name="background_locations">Hintergrundbilder</string>
     <string name="saved_backgrounds">Gespeicherte Hintergründe</string>
-    <string name="no_saved_backgrounds">Noch keine gespeicherten Hintergründe</string>
     <string name="reset_background">Hintergrund zurücksetzen</string>
     <string name="apply_background">Anwenden</string>
     <string name="delete_background">Hintergrund löschen</string>

@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.RectF
 import android.net.Uri
+import androidx.exifinterface.media.ExifInterface
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
 import java.io.File
@@ -74,6 +75,27 @@ class BackgroundImageStoreTest {
         store.deleteBackground(path)
         assertThat(File(path).exists()).isFalse()
         assertThat(store.listBackgrounds().map { it.absolutePath }).doesNotContain(path)
+    }
+
+    @Test
+    fun `saveBakedCrop applies EXIF rotation so output dimensions are swapped`() = runTest {
+        // Arrange: landscape source with EXIF orientation ROTATE_90
+        val source = writeTestJpeg(1200, 800)
+        val sourcePath = source.path!!
+        ExifInterface(sourcePath).apply {
+            setAttribute(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_ROTATE_90.toString())
+            saveAttributes()
+        }
+
+        // Act: full-frame crop
+        val path = store.saveBakedCrop(source, RectF(0f, 0f, 1f, 1f), "loc1")
+
+        // Assert: 90° rotation swaps width and height — the landscape source
+        // becomes portrait, so the saved image is taller than wide.
+        assertThat(path).isNotNull()
+        val saved = BitmapFactory.decodeFile(path)
+        assertThat(saved.height).isGreaterThan(saved.width)
+        assertThat(saved.height.toFloat() / saved.width).isAtLeast(1.3f)
     }
 
     @Test

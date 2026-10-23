@@ -129,7 +129,6 @@
     <string name="background_image_subtitle">ہر مقام کے لیے خاص ہوم بیک گراؤنڈ</string>
     <string name="background_locations">بیک گراؤنڈ تصاویر</string>
     <string name="saved_backgrounds">محفوظ شدہ بیک گراؤنڈز</string>
-    <string name="no_saved_backgrounds">ابھی کوئی محفوظ شدہ بیک گراؤنڈ نہیں</string>
     <string name="reset_background">بیک گراؤنڈ ری سیٹ کریں</string>
     <string name="apply_background">لاگو کریں</string>
     <string name="delete_background">بیک گراؤنڈ حذف کریں</string>
