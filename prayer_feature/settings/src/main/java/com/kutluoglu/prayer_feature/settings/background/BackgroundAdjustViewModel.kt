@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.android.annotation.KoinViewModel
@@ -81,13 +82,19 @@ class BackgroundAdjustViewModel(
                 imageUri ?: return@launch, cropRect, locationId
             )
             if (path != null) {
+                // Capture the previous path BEFORE persisting the new one, so
+                // the orphan cleanup knows which file to consider for deletion.
+                val previousPath = locationsCoordinator.observeState().first()
+                    .entries.firstOrNull { it.id == locationId }?.backgroundPath
                 locationsCoordinator.setBackgroundPath(locationId, path)
                 _navigateBack.value = true
                 // Orphan cleanup is fire-and-forget: navigation must not wait
                 // on a disk scan, and the file is harmless if cleanup fails.
                 // Runs entirely on IO so it never resumes on Main after the
                 // caller's scope is gone.
-                viewModelScope.launch(Dispatchers.IO) { deleteOrphanedBackground(path) }
+                viewModelScope.launch(Dispatchers.IO) {
+                    deleteOrphanedBackground(newPath = path, previousPath = previousPath)
+                }
             } else {
                 _navigateBack.value = false
             }
@@ -100,13 +107,14 @@ class BackgroundAdjustViewModel(
      * file if no other location still references it. Files are kept when a
      * location is removed (handled elsewhere), so this only runs on replace.
      */
-    private suspend fun deleteOrphanedBackground(newPath: String) {
-        val state = locationsCoordinator.observeState().first()
-        val oldPath = state.entries.firstOrNull { it.id == locationId }?.backgroundPath
-        if (oldPath == null || oldPath == newPath) return
-        val referencedByOther = state.entries.any { it.id != locationId && it.backgroundPath == oldPath }
-        if (!referencedByOther) {
-            backgroundImageStore.deleteBackground(oldPath)
+    private suspend fun deleteOrphanedBackground(newPath: String, previousPath: String?) {
+        if (previousPath == null || previousPath == newPath) return
+        val stillReferenced = locationsCoordinator.observeState().firstOrNull()
+            ?.entries
+            ?.any { it.backgroundPath == previousPath }
+            ?: false
+        if (!stillReferenced) {
+            backgroundImageStore.deleteBackground(previousPath)
         }
     }
 

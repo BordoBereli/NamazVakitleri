@@ -5,6 +5,8 @@ import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.prayer_location.LocationsCoordinator
 import com.kutluoglu.prayer_location.data.BackgroundImageStore
 import com.kutluoglu.prayer_location.data.LocationsState
+import com.kutluoglu.prayer.model.location.LocationData
+import com.kutluoglu.prayer.model.location.LocationEntry
 import com.kutluoglu.prayer_feature.settings.MainCoroutineRule
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -72,8 +74,128 @@ class BackgroundAdjustViewModelTest {
     }
 
     @Test
-    fun `Confirm with failed save does not persist or navigate`() = runTest {
-        // Arrange
+    fun `Confirm on replace deletes the previous file when unreferenced`() = runTest {
+        // Arrange: the location currently points at /data/old.jpg; nothing else
+        // references it. The new save produces /data/bg.jpg. The coordinator
+        // mock is stateful: setBackgroundPath mutates the state that
+        // observeState() returns, modelling the real store.
+        val entries = mutableListOf(
+            LocationEntry(
+                id = locationId,
+                location = LocationData(
+                    latitude = 41.0, longitude = 29.0,
+                    country = "TR", countryCode = "TR",
+                    city = "Istanbul", county = null
+                ),
+                displayName = "Istanbul",
+                backgroundPath = "/data/old.jpg"
+            )
+        )
+        coEvery { locationsCoordinator.observeState() } answers { flowOf(LocationsState(entries = entries.toList())) }
+        coEvery { locationsCoordinator.setBackgroundPath(any(), any()) } coAnswers { params ->
+            @Suppress("UNCHECKED_CAST")
+            val id = params.invocation.args[0] as String
+            @Suppress("UNCHECKED_CAST")
+            val path = params.invocation.args[1] as String?
+            entries.removeAll { it.id == id }
+            if (path != null) {
+                entries.add(
+                    LocationEntry(
+                        id = id,
+                        location = LocationData(
+                            latitude = 41.0, longitude = 29.0,
+                            country = "TR", countryCode = "TR",
+                            city = "Istanbul", county = null
+                        ),
+                        displayName = "Istanbul",
+                        backgroundPath = path
+                    )
+                )
+            }
+            Unit
+        }
+        coEvery {
+            backgroundImageStore.saveBakedCrop(any(), any(), any())
+        } returns "/data/bg.jpg"
+        coEvery { backgroundImageStore.deleteBackground(any()) } returns Unit
+        viewModel.frameSize = androidx.compose.ui.geometry.Size(400f, 400f)
+        viewModel.displayedImageSize = androidx.compose.ui.geometry.Size(800f, 800f)
+
+        // Act
+        viewModel.onEvent(BackgroundAdjustEvent.Confirm)
+
+        // Assert: the previous file is deleted (cleanup runs on a real IO
+        // thread; block briefly so it completes before verifying).
+        Thread.sleep(300)
+        coVerify { backgroundImageStore.deleteBackground("/data/old.jpg") }
+    }
+
+    @Test
+    fun `Confirm on replace keeps the previous file when another location references it`() = runTest {
+        // Arrange: loc2 shares /data/old.jpg with loc1 — the file must survive.
+        // Stateful mock as above; after the replace, loc2 still references the
+        // old file.
+        val entries = mutableListOf(
+            LocationEntry(
+                id = locationId,
+                location = LocationData(
+                    latitude = 41.0, longitude = 29.0,
+                    country = "TR", countryCode = "TR",
+                    city = "Istanbul", county = null
+                ),
+                displayName = "Istanbul",
+                backgroundPath = "/data/old.jpg"
+            ),
+            LocationEntry(
+                id = "loc2",
+                location = LocationData(
+                    latitude = 39.9, longitude = 32.8,
+                    country = "TR", countryCode = "TR",
+                    city = "Ankara", county = null
+                ),
+                displayName = "Ankara",
+                backgroundPath = "/data/old.jpg"
+            )
+        )
+        coEvery { locationsCoordinator.observeState() } answers { flowOf(LocationsState(entries = entries.toList())) }
+        coEvery { locationsCoordinator.setBackgroundPath(any(), any()) } coAnswers { params ->
+            @Suppress("UNCHECKED_CAST")
+            val id = params.invocation.args[0] as String
+            @Suppress("UNCHECKED_CAST")
+            val path = params.invocation.args[1] as String?
+            entries.removeAll { it.id == id }
+            if (path != null) {
+                entries.add(
+                    LocationEntry(
+                        id = id,
+                        location = LocationData(
+                            latitude = 41.0, longitude = 29.0,
+                            country = "TR", countryCode = "TR",
+                            city = "Istanbul", county = null
+                        ),
+                        displayName = "Istanbul",
+                        backgroundPath = path
+                    )
+                )
+            }
+            Unit
+        }
+        coEvery {
+            backgroundImageStore.saveBakedCrop(any(), any(), any())
+        } returns "/data/bg.jpg"
+        viewModel.frameSize = androidx.compose.ui.geometry.Size(400f, 400f)
+        viewModel.displayedImageSize = androidx.compose.ui.geometry.Size(800f, 800f)
+
+        // Act
+        viewModel.onEvent(BackgroundAdjustEvent.Confirm)
+
+        // Assert: the shared file is NOT deleted
+        Thread.sleep(300)
+        coVerify(exactly = 0) { backgroundImageStore.deleteBackground(any()) }
+    }
+
+    @Test
+    fun `Confirm with failed save does not persist or navigate`() = runTest {        // Arrange
         coEvery { backgroundImageStore.saveBakedCrop(any(), any(), any()) } returns null
         viewModel.frameSize = androidx.compose.ui.geometry.Size(400f, 400f)
         viewModel.displayedImageSize = androidx.compose.ui.geometry.Size(800f, 800f)
