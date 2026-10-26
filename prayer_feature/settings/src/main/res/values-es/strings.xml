@@ -133,6 +133,8 @@
     <string name="apply_background">Aplicar</string>
     <string name="delete_background">Eliminar fondo</string>
     <string name="delete_background_confirmation">La imagen de fondo guardada se eliminará permanentemente.</string>
+    <string name="delete_all_backgrounds">Eliminar todo</string>
+    <string name="delete_all_backgrounds_confirmation">Se eliminarán permanentemente todas las imágenes de fondo guardadas y se quitarán de todas las ubicaciones.</string>
     <string name="background_adjust">Ajustar fondo</string>
     <string name="background_adjust_hint">Mueva y pellizque para enmarcar la imagen, luego confirme</string>
     <string name="background_no_locations">Añade una ubicación en Mis ubicaciones para establecer una imagen de fondo.</string>

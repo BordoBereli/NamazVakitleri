@@ -68,6 +68,7 @@ fun BackgroundLocationsRoute(
 ) {
     val state by viewModel.uiState.collectAsState()
     var deleteCandidate by remember { mutableStateOf<String?>(null) }
+    var showDeleteAllDialog by remember { mutableStateOf(false) }
     var pendingPickLocationId by remember { mutableStateOf<String?>(null) }
     var selectedLocationId by remember { mutableStateOf<String?>(null) }
 
@@ -139,13 +140,26 @@ fun BackgroundLocationsRoute(
             }
             if (state.savedBackgrounds.isNotEmpty()) {
                 item {
-                    Text(
-                        text = stringResource(R.string.saved_backgrounds),
-                        style = MaterialTheme.typography.titleSmall,
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                    )
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 16.dp, end = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = stringResource(R.string.saved_backgrounds),
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.weight(1f).padding(vertical = 8.dp)
+                        )
+                        TextButton(onClick = { showDeleteAllDialog = true }) {
+                            Text(
+                                text = stringResource(R.string.delete_all_backgrounds),
+                                color = MaterialTheme.colorScheme.error
+                            )
+                        }
+                    }
                 }
                 item {
                     LazyRow(
@@ -187,6 +201,27 @@ fun BackgroundLocationsRoute(
             },
             dismissButton = {
                 TextButton(onClick = { deleteCandidate = null }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        )
+    }
+
+    if (showDeleteAllDialog) {
+        AlertDialog(
+            onDismissRequest = { showDeleteAllDialog = false },
+            title = { Text(stringResource(R.string.delete_all_backgrounds)) },
+            text = { Text(stringResource(R.string.delete_all_backgrounds_confirmation)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    viewModel.onEvent(BackgroundLocationsEvent.DeleteAllBackgrounds)
+                    showDeleteAllDialog = false
+                }) {
+                    Text(stringResource(R.string.delete))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteAllDialog = false }) {
                     Text(stringResource(R.string.cancel))
                 }
             }

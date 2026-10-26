@@ -20,4 +20,7 @@ sealed class BackgroundLocationsEvent {
 
     /** Deletes the file at [path] and clears the path of any location referencing it. */
     data class DeleteBackground(val path: String) : BackgroundLocationsEvent()
+
+    /** Deletes every saved background file and clears the background of all locations. */
+    data object DeleteAllBackgrounds : BackgroundLocationsEvent()
 }

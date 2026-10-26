@@ -133,6 +133,8 @@
     <string name="apply_background">প্রয়োগ করুন</string>
     <string name="delete_background">পটভূমি মুছুন</string>
     <string name="delete_background_confirmation">সংরক্ষিত পটভূমি ছবি স্থায়ীভাবে মুছে ফেলা হবে।</string>
+    <string name="delete_all_backgrounds">সব মুছুন</string>
+    <string name="delete_all_backgrounds_confirmation">সংরক্ষিত সব পটভূমি ছবি স্থায়ীভাবে মুছে ফেলা হবে এবং সব অবস্থান থেকে সরানো হবে।</string>
     <string name="background_adjust">ব্যাকগ্রাউন্ড সামঞ্জস্য করুন</string>
     <string name="background_adjust_hint">ছবিটি ফ্রেম করতে টেনে আনুন ও পিঞ্চ করুন, তারপর নিশ্চিত করুন</string>
     <string name="background_no_locations">পটভূমির ছবি সেট করতে আমার অবস্থানসমূহ-এ একটি অবস্থান যোগ করুন।</string>

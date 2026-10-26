@@ -12,6 +12,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
@@ -172,5 +173,33 @@ class BackgroundLocationsViewModelTest {
         coVerify { locationsCoordinator.setBackgroundPath("loc1", null) }
         coVerify { locationsCoordinator.setBackgroundPath("loc2", null) }
         coVerify(exactly = 0) { locationsCoordinator.setBackgroundPath("loc3", null) }
+    }
+
+    @Test
+    fun `DeleteAllBackgrounds deletes every file and clears all location paths`() = runTest {
+        // Arrange
+        val state = LocationsState(
+            entries = listOf(
+                entry("loc1", "Istanbul", backgroundPath = "/data/bg.jpg"),
+                entry("loc2", "Ankara", backgroundPath = "/data/other.jpg"),
+                entry("loc3", "Izmir")
+            )
+        )
+        coEvery { locationsCoordinator.observeState() } returns flowOf(state)
+        viewModel = BackgroundLocationsViewModel(locationsCoordinator, backgroundImageStore)
+
+        // Act
+        viewModel.onEvent(BackgroundLocationsEvent.DeleteAllBackgrounds)
+
+        // Assert: the bulk delete clears every referencing location, the GPS
+        // entry included, but leaves locations without a background untouched.
+        verify(timeout = 2_000) { backgroundImageStore.deleteAllBackgrounds() }
+        coVerify(timeout = 2_000) { locationsCoordinator.setBackgroundPath("loc1", null) }
+        coVerify(timeout = 2_000) { locationsCoordinator.setBackgroundPath("loc2", null) }
+        coVerify(timeout = 2_000) {
+            locationsCoordinator.setBackgroundPath(LocationsCoordinator.GPS_LOCATION_ID, null)
+        }
+        coVerify(exactly = 0) { locationsCoordinator.setBackgroundPath("loc3", null) }
+        coVerify(exactly = 0) { backgroundImageStore.deleteBackground(any()) }
     }
 }

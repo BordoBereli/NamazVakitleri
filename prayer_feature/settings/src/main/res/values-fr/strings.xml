@@ -133,6 +133,8 @@
     <string name="apply_background">Appliquer</string>
     <string name="delete_background">Supprimer le fond</string>
     <string name="delete_background_confirmation">L\'image de fond enregistrée sera définitivement supprimée.</string>
+    <string name="delete_all_backgrounds">Tout supprimer</string>
+    <string name="delete_all_backgrounds_confirmation">Toutes les images de fond enregistrées seront définitivement supprimées et retirées de tous les lieux.</string>
     <string name="background_adjust">Ajuster l\'arrière-plan</string>
     <string name="background_adjust_hint">Déplacez et pincez pour cadrer l\'image, puis confirmez</string>
     <string name="background_no_locations">Ajoutez un lieu dans Mes localisations pour définir une image d\'arrière-plan.</string>

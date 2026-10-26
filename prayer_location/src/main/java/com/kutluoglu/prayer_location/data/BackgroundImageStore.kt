@@ -69,6 +69,21 @@ class BackgroundImageStore(
             ?.sortedByDescending { it.lastModified() }
             .orEmpty()
 
+    /**
+     * Deletes every stored background file. Only files returned by
+     * [listBackgrounds] are touched, so nothing outside [backgroundsDir] can be
+     * removed. Returns the number of files actually deleted.
+     */
+    fun deleteAllBackgrounds(): Int {
+        var deleted = 0
+        listBackgrounds().forEach { file ->
+            runCatching {
+                if (file.delete()) deleted++
+            }.onFailure { Log.e(TAG, "deleteAllBackgrounds failed for ${file.name} -> ${it.message}") }
+        }
+        return deleted
+    }
+
     /** Removes the background file at [path] if present (must live in [backgroundsDir]). */
     fun deleteBackground(path: String) {
         runCatching {

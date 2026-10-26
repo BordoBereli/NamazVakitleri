@@ -133,6 +133,8 @@
     <string name="apply_background">பயன்படுத்து</string>
     <string name="delete_background">பின்னணியை நீக்கு</string>
     <string name="delete_background_confirmation">சேமிக்கப்பட்ட பின்னணி படம் நிரந்தரமாக நீக்கப்படும்.</string>
+    <string name="delete_all_backgrounds">அனைத்தையும் நீக்கு</string>
+    <string name="delete_all_backgrounds_confirmation">சேமிக்கப்பட்ட அனைத்து பின்னணி படங்களும் நிரந்தரமாக நீக்கப்பட்டு அனைத்து இடங்களிலிருந்தும் அகற்றப்படும்.</string>
     <string name="background_adjust">பின்னணியை சரிசெய்க</string>
     <string name="background_adjust_hint">படத்தை ஃபிரேம் செய்ய நகர்த்தி பின்ச் செய்யவும், பின்னர் உறுதிப்படுத்தவும்</string>
     <string name="background_no_locations">பின்னணிப் படத்தை அமைக்க என் இருப்பிடங்கள்-இல் ஒரு இருப்பிடத்தைச் சேர்க்கவும்.</string>

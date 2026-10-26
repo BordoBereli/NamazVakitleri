@@ -133,6 +133,8 @@
     <string name="apply_background">ใช้</string>
     <string name="delete_background">ลบพื้นหลัง</string>
     <string name="delete_background_confirmation">รูปภาพพื้นหลังที่บันทึกไว้จะถูกลบอย่างถาวร</string>
+    <string name="delete_all_backgrounds">ลบทั้งหมด</string>
+    <string name="delete_all_backgrounds_confirmation">รูปภาพพื้นหลังที่บันทึกไว้ทั้งหมดจะถูกลบอย่างถาวรและนำออกจากทุกสถานที่</string>
     <string name="background_adjust">ปรับพื้นหลัง</string>
     <string name="background_adjust_hint">เลื่อนและถ่างนิ้วเพื่อจัดกรอบภาพ แล้วยืนยัน</string>
     <string name="background_no_locations">เพิ่มตำแหน่งในตำแหน่งของฉันเพื่อตั้งภาพพื้นหลัง</string>

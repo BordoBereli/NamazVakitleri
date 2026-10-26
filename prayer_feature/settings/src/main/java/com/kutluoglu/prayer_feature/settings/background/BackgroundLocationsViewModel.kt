@@ -56,6 +56,21 @@ class BackgroundLocationsViewModel(
                 }
                 refresh()
             }
+            BackgroundLocationsEvent.DeleteAllBackgrounds -> viewModelScope.launch {
+                // The GPS entry is cleared unconditionally: it may not be part
+                // of the visible list (GPS disabled) while still holding a path.
+                val referencingIds = _uiState.value.locations
+                    .filter { it.backgroundPath != null }
+                    .map { it.id }
+                    .toSet() + LocationsCoordinator.GPS_LOCATION_ID
+                withContext(Dispatchers.IO) {
+                    backgroundImageStore.deleteAllBackgrounds()
+                }
+                referencingIds.forEach { id ->
+                    locationsCoordinator.setBackgroundPath(id, null)
+                }
+                refresh()
+            }
         }
     }
 

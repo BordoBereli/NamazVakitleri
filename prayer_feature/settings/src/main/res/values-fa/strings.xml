@@ -133,6 +133,8 @@
     <string name="apply_background">اعمال</string>
     <string name="delete_background">حذف پس‌زمینه</string>
     <string name="delete_background_confirmation">تصویر پس‌زمینه ذخیره‌شده به‌طور دائم حذف خواهد شد.</string>
+    <string name="delete_all_backgrounds">حذف همه</string>
+    <string name="delete_all_backgrounds_confirmation">همه تصاویر پس‌زمینه ذخیره‌شده به‌طور دائم حذف و از همه مکان‌ها برداشته می‌شوند.</string>
     <string name="background_adjust">تنظیم پس‌زمینه</string>
     <string name="background_adjust_hint">تصویر را جابه‌جا و بزرگ‌نمایی کنید، سپس تأیید کنید</string>
     <string name="background_no_locations">برای تنظیم تصویر پس‌زمینه، یک موقعیت در موقعیت‌های من اضافه کنید.</string>

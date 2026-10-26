@@ -133,6 +133,8 @@
     <string name="apply_background">Применить</string>
     <string name="delete_background">Удалить фон</string>
     <string name="delete_background_confirmation">Сохранённое фоновое изображение будет удалено безвозвратно.</string>
+    <string name="delete_all_backgrounds">Удалить все</string>
+    <string name="delete_all_backgrounds_confirmation">Все сохранённые фоновые изображения будут удалены безвозвратно и удалены со всех мест.</string>
     <string name="background_adjust">Настроить фон</string>
     <string name="background_adjust_hint">Перемещайте и масштабируйте, чтобы кадрировать изображение, затем подтвердите</string>
     <string name="background_no_locations">Добавьте местоположение в «Мои местоположения», чтобы задать фоновое изображение.</string>

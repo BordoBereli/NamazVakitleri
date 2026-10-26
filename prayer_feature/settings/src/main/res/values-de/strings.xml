@@ -133,6 +133,8 @@
     <string name="apply_background">Anwenden</string>
     <string name="delete_background">Hintergrund löschen</string>
     <string name="delete_background_confirmation">Das gespeicherte Hintergrundbild wird dauerhaft gelöscht.</string>
+    <string name="delete_all_backgrounds">Alle löschen</string>
+    <string name="delete_all_backgrounds_confirmation">Alle gespeicherten Hintergrundbilder werden dauerhaft gelöscht und von allen Orten entfernt.</string>
     <string name="background_adjust">Hintergrund anpassen</string>
     <string name="background_adjust_hint">Verschieben und zoomen Sie, um das Bild zu rahmen, dann bestätigen</string>
     <string name="background_no_locations">Fügen Sie in Meine Standorte einen Standort hinzu, um ein Hintergrundbild festzulegen.</string>

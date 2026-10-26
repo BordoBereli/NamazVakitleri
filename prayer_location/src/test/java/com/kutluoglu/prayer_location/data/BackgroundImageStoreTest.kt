@@ -78,6 +78,21 @@ class BackgroundImageStoreTest {
     }
 
     @Test
+    fun `deleteAllBackgrounds removes every saved file and returns the count`() = runTest {
+        val source = writeTestJpeg(500, 500)
+        val first = store.saveBakedCrop(source, RectF(0f, 0f, 1f, 1f), "loc1")
+        val second = store.saveBakedCrop(source, RectF(0f, 0f, 1f, 1f), "loc2")
+        val before = store.listBackgrounds().size
+
+        val deleted = store.deleteAllBackgrounds()
+
+        assertThat(deleted).isEqualTo(before)
+        assertThat(store.listBackgrounds()).isEmpty()
+        assertThat(File(first!!).exists()).isFalse()
+        assertThat(File(second!!).exists()).isFalse()
+    }
+
+    @Test
     fun `saveBakedCrop applies EXIF rotation so output dimensions are swapped`() = runTest {
         // Arrange: landscape source with EXIF orientation ROTATE_90
         val source = writeTestJpeg(1200, 800)

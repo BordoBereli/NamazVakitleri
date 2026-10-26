@@ -133,6 +133,8 @@
     <string name="apply_background">लागू करें</string>
     <string name="delete_background">पृष्ठभूमि हटाएँ</string>
     <string name="delete_background_confirmation">सहेजा गया पृष्ठभूमि चित्र स्थायी रूप से हटा दिया जाएगा।</string>
+    <string name="delete_all_backgrounds">सभी हटाएँ</string>
+    <string name="delete_all_backgrounds_confirmation">सभी सहेजे गए पृष्ठभूमि चित्र स्थायी रूप से हटा दिए जाएँगे और सभी स्थानों से हटा दिए जाएँगे।</string>
     <string name="background_adjust">बैकग्राउंड समायोजित करें</string>
     <string name="background_adjust_hint">छवि को फ्रेम करने के लिए पैन और पिंच करें, फिर पुष्टि करें</string>
     <string name="background_no_locations">पृष्ठभूमि छवि सेट करने के लिए मेरे स्थान में एक स्थान जोड़ें।</string>
