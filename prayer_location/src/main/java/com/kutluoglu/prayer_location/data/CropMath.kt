@@ -16,36 +16,39 @@ object CropMath {
     /**
      * Clamps a pan/zoom transform so the frame is always covered (no gaps).
      *
-     * @param scale current scale relative to the displayed image size
+     * @param scale current scale relative to the width-fit drawn image size
      * @param offset current offset of the image's top-left corner in frame pixels
      * @param imageAspectRatio displayed image width / height
      * @param frameAspectRatio frame width / height
+     * @param frameSize frame size in pixels
      * @return the clamped (scale, offset); scale is at least the cover scale
      */
     fun clampTransform(
         scale: Float,
         offset: Offset,
         imageAspectRatio: Float,
-        frameAspectRatio: Float
+        frameAspectRatio: Float,
+        frameSize: Size
     ): Pair<Float, Offset> {
         require(imageAspectRatio > 0f) { "imageAspectRatio must be positive" }
         require(frameAspectRatio > 0f) { "frameAspectRatio must be positive" }
 
-        // Work in a normalized frame of width 1; the displayed image is then
-        // 1 wide and 1/imageAspectRatio tall at scale 1.
+        // The image is drawn width-fit: at scale 1 it spans the frame width and
+        // 1/imageAspectRatio times the frame width in height.
         val coverScale = maxOf(1f, imageAspectRatio / frameAspectRatio)
         val clampedScale = maxOf(scale, coverScale)
 
-        // Image size in frame pixels at the clamped scale.
-        val imageWidth = clampedScale
-        val imageHeight = clampedScale / imageAspectRatio
+        // The image's top-left corner must stay within [frameSize - imageSize, 0]
+        // so the frame is fully covered on both axes.
+        val imageWidth = clampedScale * frameSize.width
+        val imageHeight = imageWidth / imageAspectRatio
+        val minX = minOf(0f, frameSize.width - imageWidth)
+        val minY = minOf(0f, frameSize.height - imageHeight)
 
-        // The image's top-left corner must stay within [-imageSize, 0] so the
-        // frame is fully covered on both axes.
-        val clampedX = offset.x.coerceIn(-imageWidth, 0f)
-        val clampedY = offset.y.coerceIn(-imageHeight, 0f)
-
-        return clampedScale to Offset(clampedX, clampedY)
+        return clampedScale to Offset(
+            offset.x.coerceIn(minX, 0f),
+            offset.y.coerceIn(minY, 0f)
+        )
     }
 
     /**

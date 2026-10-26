@@ -45,7 +45,8 @@ class BackgroundAdjustViewModel(
                     scale = event.scale,
                     offset = event.offset,
                     imageAspectRatio = currentImageAspectRatio(),
-                    frameAspectRatio = currentFrameAspectRatio()
+                    frameAspectRatio = currentFrameAspectRatio(),
+                    frameSize = frameSize
                 )
                 _uiState.value = _uiState.value.copy(scale = scale, offset = offset)
             }
@@ -61,7 +62,10 @@ class BackgroundAdjustViewModel(
     }
 
     private fun confirm() {
-        val uri = _uiState.value.uri ?: run { _navigateBack.value = false; return }
+        if (_uiState.value.uri == null) {
+            _navigateBack.value = false
+            return
+        }
         // The UI must have measured the frame and loaded the image before a
         // crop can be computed; otherwise treat as a failed save.
         if (frameSize.width <= 0f || frameSize.height <= 0f ||
@@ -72,11 +76,18 @@ class BackgroundAdjustViewModel(
         }
         _uiState.value = _uiState.value.copy(isSaving = true)
         viewModelScope.launch {
+            // The image is drawn width-fit, so the crop math works against the
+            // drawn size (frame width x matching height), not the bitmap's
+            // intrinsic pixel size.
+            val drawnSize = Size(
+                frameSize.width,
+                frameSize.width / currentImageAspectRatio()
+            )
             val cropRect = CropMath.normalizedCropRect(
                 scale = _uiState.value.scale,
                 offset = _uiState.value.offset,
                 frameSize = frameSize,
-                displayedImageSize = displayedImageSize
+                displayedImageSize = drawnSize
             )
             val path = backgroundImageStore.saveBakedCrop(
                 imageUri ?: return@launch, cropRect, locationId

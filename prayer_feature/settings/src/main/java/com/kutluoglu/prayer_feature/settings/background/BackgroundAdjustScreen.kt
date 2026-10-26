@@ -122,7 +122,10 @@ private fun BackgroundAdjustContent(
                 AsyncImage(
                     model = uri,
                     contentDescription = stringResource(R.string.background_image),
-                    contentScale = ContentScale.Fit,
+                    // Width-fit + top-start keeps the drawn image's top-left
+                    // corner at (offset.x, offset.y), matching CropMath.
+                    contentScale = ContentScale.FillWidth,
+                    alignment = Alignment.TopStart,
                     modifier = Modifier
                         .fillMaxSize()
                         .graphicsLayer {

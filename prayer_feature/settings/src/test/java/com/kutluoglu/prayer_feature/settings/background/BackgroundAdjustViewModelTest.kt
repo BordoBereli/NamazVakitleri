@@ -213,9 +213,12 @@ class BackgroundAdjustViewModelTest {
 
     @Test
     fun `OnTransform updates scale and offset`() = runTest {
-        // Act: 1:1 image in 1:1 frame at scale 2 → image spans 2x2, so offset
-        // (-10, -20) is within [-2, 0]... no: clamps to (-2, -2)? Verify via impl:
-        // imageSize = scale = 2 → offset clamps to [-2, 0] x [-2, 0].
+        // Arrange: 1:1 image in a 400x400 frame; at scale 2 the drawn image is
+        // 800x800 px, so the top-left corner may sit anywhere in [-400, 0].
+        viewModel.frameSize = androidx.compose.ui.geometry.Size(400f, 400f)
+        viewModel.displayedImageSize = androidx.compose.ui.geometry.Size(800f, 800f)
+
+        // Act
         viewModel.onEvent(
             BackgroundAdjustEvent.OnTransform(
                 scale = 2f,
@@ -223,11 +226,31 @@ class BackgroundAdjustViewModelTest {
             )
         )
 
-        // Assert: clamped to the image bounds
+        // Assert: a valid transform is kept as-is
         val state = viewModel.uiState.value
         assertThat(state.scale).isEqualTo(2f)
-        assertThat(state.offset.x).isEqualTo(-2f)
-        assertThat(state.offset.y).isEqualTo(-2f)
+        assertThat(state.offset.x).isEqualTo(-10f)
+        assertThat(state.offset.y).isEqualTo(-20f)
+    }
+
+    @Test
+    fun `OnTransform clamps offset so the frame stays covered`() = runTest {
+        // Arrange: at scale 2 the 800x800 image can pan 400 px in each axis.
+        viewModel.frameSize = androidx.compose.ui.geometry.Size(400f, 400f)
+        viewModel.displayedImageSize = androidx.compose.ui.geometry.Size(800f, 800f)
+
+        // Act: pan far past the bounds in both axes
+        viewModel.onEvent(
+            BackgroundAdjustEvent.OnTransform(
+                scale = 2f,
+                offset = androidx.compose.ui.geometry.Offset(-1000f, 1000f)
+            )
+        )
+
+        // Assert: clamps to the bottom-right corner of the pannable range
+        val state = viewModel.uiState.value
+        assertThat(state.offset.x).isEqualTo(-400f)
+        assertThat(state.offset.y).isEqualTo(0f)
     }
 
     @Test

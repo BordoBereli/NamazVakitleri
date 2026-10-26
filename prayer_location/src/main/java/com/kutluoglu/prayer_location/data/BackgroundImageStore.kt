@@ -84,9 +84,10 @@ class BackgroundImageStore(
 
     private fun decodeSampled(uri: Uri): Bitmap? {
         val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
-        context.contentResolver.openInputStream(uri)?.use { stream ->
-            BitmapFactory.decodeStream(stream, null, bounds)
-        } ?: return null
+        // inJustDecodeBounds makes decodeStream return null by design, so the
+        // stream must be checked separately instead of relying on the result.
+        val boundsStream = context.contentResolver.openInputStream(uri) ?: return null
+        boundsStream.use { stream -> BitmapFactory.decodeStream(stream, null, bounds) }
         if (bounds.outWidth <= 0 || bounds.outHeight <= 0) return null
 
         // Sample so the long edge is around 2x the output cap: the crop keeps
