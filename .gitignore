@@ -42,6 +42,8 @@ docs/*
 !docs/privacy-policy.html
 !docs/release/
 # Release build artifacts are never committed (see AGENTS.md "Release Artifacts")
+*.aab
+*.apk
 docs/release/mapping-*/
 docs/release/*.aab
 docs/release/*.apk
