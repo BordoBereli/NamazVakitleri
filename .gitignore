@@ -41,4 +41,9 @@ NamazVakitleriTechnicalAnalysis
 docs/*
 !docs/privacy-policy.html
 !docs/release/
+# Release build artifacts are never committed (see AGENTS.md "Release Artifacts")
+docs/release/mapping-*/
+docs/release/*.aab
+docs/release/*.apk
+docs/release/*.zip
 prayer_settings/ANDROID_TECHNICAL_ANALYSIS_*.md
