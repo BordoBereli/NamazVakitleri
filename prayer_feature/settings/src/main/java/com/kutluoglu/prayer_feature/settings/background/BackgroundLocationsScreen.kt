@@ -113,6 +113,16 @@ fun BackgroundLocationsRoute(
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                 )
             }
+            if (state.locations.isEmpty()) {
+                item {
+                    Text(
+                        text = stringResource(R.string.background_no_locations),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
+                    )
+                }
+            }
             items(state.locations, key = { it.id }) { location ->
                 BackgroundLocationRow(
                     location = location,

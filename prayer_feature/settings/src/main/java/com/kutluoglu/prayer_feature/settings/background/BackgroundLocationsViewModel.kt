@@ -74,12 +74,11 @@ class BackgroundLocationsViewModel(
     }
 
     private fun List<LocationEntry>.toUi(): List<BackgroundLocationUi> =
-        filter { it.id != LocationsCoordinator.GPS_LOCATION_ID }
-            .map {
-                BackgroundLocationUi(
-                    id = it.id,
-                    displayName = it.displayName,
-                    backgroundPath = it.backgroundPath
-                )
-            }
+        map {
+            BackgroundLocationUi(
+                id = it.id,
+                displayName = it.displayName,
+                backgroundPath = it.backgroundPath
+            )
+        }
 }

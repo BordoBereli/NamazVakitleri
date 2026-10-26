@@ -135,4 +135,5 @@
     <string name="delete_background_confirmation">Kaydedilen arka plan görseli kalıcı olarak silinecek.</string>
     <string name="background_adjust">Arka planı ayarla</string>
     <string name="background_adjust_hint">Görüntüyü çerçevelemek için kaydırın ve yakınlaştırın, sonra onaylayın</string>
+    <string name="background_no_locations">Arka plan görseli ayarlamak için Konumlarım bölümüne bir konum ekleyin.</string>
 </resources>

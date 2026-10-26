@@ -135,4 +135,5 @@
     <string name="delete_background_confirmation">سيتم حذف صورة الخلفية المحفوظة نهائيًا.</string>
     <string name="background_adjust">تعديل الخلفية</string>
     <string name="background_adjust_hint">حرّك واضغط بإصبعين لتحديد الصورة ثم أكّد</string>
+    <string name="background_no_locations">أضف موقعًا في مواقعي لتعيين صورة خلفية.</string>
 </resources>

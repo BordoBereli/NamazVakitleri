@@ -136,4 +136,5 @@
     <string name="delete_background_confirmation">Gambar latar belakang tersimpan akan dihapus permanen.</string>
     <string name="background_adjust">Sesuaikan latar belakang</string>
     <string name="background_adjust_hint">Geser dan cubit untuk membingkai gambar, lalu konfirmasi</string>
+    <string name="background_no_locations">Tambahkan lokasi di Lokasi Saya untuk menetapkan gambar latar.</string>
 </resources>

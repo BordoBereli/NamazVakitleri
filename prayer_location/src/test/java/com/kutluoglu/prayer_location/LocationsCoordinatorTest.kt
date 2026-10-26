@@ -51,6 +51,23 @@ class LocationsCoordinatorTest {
     }
 
     @Test
+    fun `observeState attaches gps background to synthetic entry`() = runBlocking<Unit> {
+        coEvery { dataStore.observeLocations() } returns MutableStateFlow(
+            LocationsState(
+                entries = listOf(istanbul),
+                gpsEnabled = true,
+                gpsBackgroundPath = "/data/gps.jpg"
+            )
+        )
+        coordinator.setGpsLocation(gpsIstanbul)
+
+        val state = coordinator.observeState().first()
+        assertThat(state.entries.first().isAutoGps).isTrue()
+        assertThat(state.entries.first().backgroundPath).isEqualTo("/data/gps.jpg")
+        assertThat(state.entries[1].backgroundPath).isNull()
+    }
+
+    @Test
     fun `observeState omits gps entry when disabled`() = runBlocking<Unit> {
         coEvery { dataStore.observeLocations() } returns MutableStateFlow(
             LocationsState(entries = listOf(istanbul), gpsEnabled = false)

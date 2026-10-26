@@ -62,16 +62,22 @@ class BackgroundLocationsViewModelTest {
     }
 
     @Test
-    fun `locations state excludes GPS entry and exposes backgroundPath`() = runTest {
+    fun `locations state includes gps entry with its backgroundPath`() = runTest {
         // Arrange
         val state = LocationsState(
             entries = listOf(
-                entry(LocationsCoordinator.GPS_LOCATION_ID, "GPS", isAutoGps = true),
+                entry(
+                    LocationsCoordinator.GPS_LOCATION_ID,
+                    "Istanbul, Türkiye",
+                    backgroundPath = "/data/gps.jpg",
+                    isAutoGps = true
+                ),
                 entry("loc1", "Istanbul", backgroundPath = "/data/bg.jpg"),
                 entry("loc2", "Ankara")
             ),
             gpsEnabled = true,
-            selectedId = "loc1"
+            selectedId = LocationsCoordinator.GPS_LOCATION_ID,
+            gpsBackgroundPath = "/data/gps.jpg"
         )
         coEvery { locationsCoordinator.observeState() } returns flowOf(state)
         viewModel = BackgroundLocationsViewModel(locationsCoordinator, backgroundImageStore)
@@ -79,10 +85,24 @@ class BackgroundLocationsViewModelTest {
         // Act / Assert
         viewModel.uiState.test {
             val uiState = awaitItem()
-            assertThat(uiState.locations.map { it.id }).doesNotContain(LocationsCoordinator.GPS_LOCATION_ID)
-            assertThat(uiState.locations.map { it.id }).containsExactly("loc1", "loc2")
-            assertThat(uiState.locations.first().backgroundPath).isEqualTo("/data/bg.jpg")
-            assertThat(uiState.locations.first().displayName).isEqualTo("Istanbul")
+            assertThat(uiState.locations.map { it.id })
+                .containsExactly(LocationsCoordinator.GPS_LOCATION_ID, "loc1", "loc2").inOrder()
+            assertThat(uiState.locations.first().backgroundPath).isEqualTo("/data/gps.jpg")
+            assertThat(uiState.locations[1].backgroundPath).isEqualTo("/data/bg.jpg")
+            assertThat(uiState.locations[1].displayName).isEqualTo("Istanbul")
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `locations state is empty when gps is disabled and nothing is saved`() = runTest {
+        coEvery { locationsCoordinator.observeState() } returns flowOf(
+            LocationsState(entries = emptyList(), gpsEnabled = false)
+        )
+        viewModel = BackgroundLocationsViewModel(locationsCoordinator, backgroundImageStore)
+
+        viewModel.uiState.test {
+            assertThat(awaitItem().locations).isEmpty()
             cancelAndIgnoreRemainingEvents()
         }
     }

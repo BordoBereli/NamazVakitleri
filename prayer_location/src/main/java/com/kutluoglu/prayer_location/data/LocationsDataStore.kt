@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.location.LocationEntry
+import com.kutluoglu.prayer_location.LocationsCoordinator
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -25,13 +26,15 @@ class LocationsDataStore(
         val GPS_ENABLED = booleanPreferencesKey("gps_enabled")
         val SELECTED_ID = stringPreferencesKey("selected_location_id")
         val LAST_GPS = stringPreferencesKey("last_gps_location")
+        val GPS_BACKGROUND = stringPreferencesKey("gps_background_path")
     }
 
     fun observeLocations(): Flow<LocationsState> = dataStore.data.map { prefs ->
         LocationsState(
             entries = decodeEntries(prefs[Keys.LOCATIONS]),
             gpsEnabled = prefs[Keys.GPS_ENABLED] ?: true,
-            selectedId = prefs[Keys.SELECTED_ID]
+            selectedId = prefs[Keys.SELECTED_ID],
+            gpsBackgroundPath = prefs[Keys.GPS_BACKGROUND]
         )
     }
 
@@ -53,6 +56,12 @@ class LocationsDataStore(
     }
 
     suspend fun updateBackgroundPath(id: String, path: String?) {
+        if (id == LocationsCoordinator.GPS_LOCATION_ID) {
+            dataStore.edit { prefs ->
+                if (path == null) prefs.remove(Keys.GPS_BACKGROUND) else prefs[Keys.GPS_BACKGROUND] = path
+            }
+            return
+        }
         dataStore.edit { prefs ->
             val current = decodeEntries(prefs[Keys.LOCATIONS]).map { entry ->
                 if (entry.id == id) entry.copy(backgroundPath = path) else entry

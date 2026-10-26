@@ -10,6 +10,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.location.LocationEntry
+import com.kutluoglu.prayer_location.LocationsCoordinator
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.AfterEach
@@ -143,6 +144,21 @@ class LocationsDataStoreTest {
         store.updateBackgroundPath(istanbul.id, null)
         val cleared = store.getLocations().entries.first { it.id == istanbul.id }
         assertThat(cleared.backgroundPath).isNull()
+    }
+
+    @Test
+    fun `updateBackgroundPath stores gps background separately from saved entries`() = runBlocking<Unit> {
+        store.addLocation(istanbul)
+
+        store.updateBackgroundPath(LocationsCoordinator.GPS_LOCATION_ID, "/data/gps.jpg")
+        val withGps = store.getLocations()
+        assertThat(withGps.gpsBackgroundPath).isEqualTo("/data/gps.jpg")
+        assertThat(withGps.entries.single().backgroundPath).isNull()
+
+        store.updateBackgroundPath(LocationsCoordinator.GPS_LOCATION_ID, null)
+        val cleared = store.getLocations()
+        assertThat(cleared.gpsBackgroundPath).isNull()
+        assertThat(cleared.entries.single().backgroundPath).isNull()
     }
 
     @Test

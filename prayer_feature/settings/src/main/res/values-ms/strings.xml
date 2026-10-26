@@ -135,4 +135,5 @@
     <string name="delete_background_confirmation">Imej latar belakang tersimpan akan dipadamkan secara kekal.</string>
     <string name="background_adjust">Laraskan latar belakang</string>
     <string name="background_adjust_hint">Anjarkan dan cubit untuk membingkai imej, kemudian sahkan</string>
+    <string name="background_no_locations">Tambah lokasi dalam Lokasi Saya untuk menetapkan imej latar belakang.</string>
 </resources>

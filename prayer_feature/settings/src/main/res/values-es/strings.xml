@@ -135,4 +135,5 @@
     <string name="delete_background_confirmation">La imagen de fondo guardada se eliminará permanentemente.</string>
     <string name="background_adjust">Ajustar fondo</string>
     <string name="background_adjust_hint">Mueva y pellizque para enmarcar la imagen, luego confirme</string>
+    <string name="background_no_locations">Añade una ubicación en Mis ubicaciones para establecer una imagen de fondo.</string>
 </resources>

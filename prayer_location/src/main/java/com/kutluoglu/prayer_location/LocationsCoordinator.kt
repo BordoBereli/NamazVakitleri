@@ -29,7 +29,9 @@ class LocationsCoordinator(
     fun observeState(): Flow<LocationsState> =
         combine(locationsDataStore.observeLocations(), _gpsLocation) { state, gps ->
             if (state.gpsEnabled && gps != null) {
-                state.copy(entries = listOf(gps.toEntry()) + state.entries)
+                state.copy(
+                    entries = listOf(gps.toEntry(state.gpsBackgroundPath)) + state.entries
+                )
             } else {
                 state
             }
@@ -166,12 +168,13 @@ class LocationsCoordinator(
         locationsDataStore.setGpsEnabled(enabled)
     }
 
-    private fun LocationData.toEntry(): LocationEntry =
+    private fun LocationData.toEntry(backgroundPath: String? = null): LocationEntry =
         LocationEntry(
             id = GPS_LOCATION_ID,
             location = this,
             isAutoGps = true,
-            displayName = listOfNotNull(city, country).joinToString(", ").ifBlank { "GPS" }
+            displayName = listOfNotNull(city, country).joinToString(", ").ifBlank { "GPS" },
+            backgroundPath = backgroundPath
         )
 
     companion object {

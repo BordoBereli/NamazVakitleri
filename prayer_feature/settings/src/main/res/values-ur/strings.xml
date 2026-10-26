@@ -135,4 +135,5 @@
     <string name="delete_background_confirmation">محفوظ شدہ بیک گراؤنڈ تصویر مستقل طور پر حذف ہو جائے گی۔</string>
     <string name="background_adjust">پس منظر ایڈجسٹ کریں</string>
     <string name="background_adjust_hint">تصویر کو فریم کرنے کے لیے پین اور پنچ کریں، پھر تصدیق کریں</string>
+    <string name="background_no_locations">پس منظر کی تصویر مقرر کرنے کے لیے میرے مقامات میں ایک مقام شامل کریں۔</string>
 </resources>

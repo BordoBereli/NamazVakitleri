@@ -141,4 +141,5 @@
     <string name="delete_background_confirmation">This will permanently delete the saved background image.</string>
     <string name="background_adjust">Adjust background</string>
     <string name="background_adjust_hint">Pan and pinch to frame the image, then confirm</string>
+    <string name="background_no_locations">Add a location in My Locations to set a background image.</string>
 </resources>
