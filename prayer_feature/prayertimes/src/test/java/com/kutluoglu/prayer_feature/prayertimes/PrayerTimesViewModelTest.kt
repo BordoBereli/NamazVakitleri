@@ -2,6 +2,7 @@ package com.kutluoglu.prayer_feature.prayertimes
 
 import android.util.Log
 import androidx.lifecycle.ViewModelStore
+import androidx.lifecycle.viewModelScope
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.core.common.analytics.AnalyticsEvents
@@ -34,13 +35,17 @@ import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runCurrent
@@ -60,11 +65,14 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.api.parallel.Execution
+import org.junit.jupiter.api.parallel.ExecutionMode
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.Result.Companion.success
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @ExtendWith(MainCoroutineRule::class)
+@Execution(ExecutionMode.SAME_THREAD)
 class PrayerTimesViewModelTest {
 
     private lateinit var dailyLoader: DailyPrayerTimesLoader
@@ -78,6 +86,7 @@ class PrayerTimesViewModelTest {
     private val backgroundSaveScope = CoroutineScope(SupervisorJob() + UnconfinedTestDispatcher())
     private lateinit var viewModel: PrayerTimesViewModel
     private lateinit var viewModelStore: ViewModelStore
+    private val createdViewModelJobs = mutableListOf<Job>()
 
     private val mockLocation = LocationData(
         latitude = 41.0082,
@@ -152,12 +161,14 @@ class PrayerTimesViewModelTest {
         every { formatter.getInitialTimeInfo(any(), any()) } returns TimeUiState(gregorianShortDate = "August 2026")
         every { formatter.locationInfo(any()) } returns "Istanbul, TR"
 
-        buildViewModel()
         viewModelStore = ViewModelStore()
-        viewModelStore.put("viewModel", viewModel)
+        buildViewModel()
     }
 
-    private fun buildViewModel(locationResolutionTimeoutMs: Long = 15_000L) {
+    private fun buildViewModel(
+        locationResolutionTimeoutMs: Long = 15_000L,
+        computationDispatcher: CoroutineDispatcher = UnconfinedTestDispatcher()
+    ) {
         viewModel = PrayerTimesViewModel(
             dailyLoader,
             getMonthlyPrayerTimesUseCase,
@@ -168,14 +179,23 @@ class PrayerTimesViewModelTest {
             settingsProvider,
             analyticsTracker,
             backgroundSaveScope,
-            UnconfinedTestDispatcher(),
+            computationDispatcher,
             locationResolutionTimeoutMs
         )
+        createdViewModelJobs += checkNotNull(viewModel.viewModelScope.coroutineContext[Job])
+        viewModelStore.put("viewModel-${createdViewModelJobs.size}", viewModel)
     }
 
     @AfterEach
-    fun tearDown() {
+    fun tearDown() = runBlocking {
+        // Cancel every ViewModel (a test may rebuild one, replacing the field) and wait for its
+        // coroutines to finish before MainCoroutineRule resets Dispatchers.Main. A late resumption
+        // on Dispatchers.Main after resetMain() becomes an uncaught exception that kotlinx-coroutines-test
+        // reports to whichever runTest() starts next, failing an unrelated test with
+        // UncaughtExceptionsBeforeTest.
         viewModelStore.clear()
+        createdViewModelJobs.forEach { it.join() }
+        backgroundSaveScope.cancel()
     }
 
     @Test
@@ -756,20 +776,7 @@ class PrayerTimesViewModelTest {
             success(DailyPrayerTimes(mockPrayerList, null, null, 0L, 0L, false))
         }
 
-        val store = ViewModelStore()
-        val viewModel = PrayerTimesViewModel(
-            dailyLoader,
-            getMonthlyPrayerTimesUseCase,
-            saveMonthlyPrayerTimesUseCase,
-            activeLocationProvider,
-            calculator,
-            formatter,
-            settingsProvider,
-            analyticsTracker,
-            backgroundSaveScope,
-            Dispatchers.Default
-        )
-        store.put("viewModel", viewModel)
+        buildViewModel(computationDispatcher = Dispatchers.Default)
         viewModel.loadMonthlyPrayerTimes()
 
         val zoneId = resolveZoneId(mockLocation)
@@ -782,7 +789,7 @@ class PrayerTimesViewModelTest {
             }
         } finally {
             gate.complete(Unit)
-            store.clear()
+            viewModelStore.clear()
         }
 
         assertThat(maxConcurrent.get()).isGreaterThan(1)
