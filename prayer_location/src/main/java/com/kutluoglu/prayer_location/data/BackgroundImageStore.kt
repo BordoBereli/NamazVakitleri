@@ -63,6 +63,23 @@ class BackgroundImageStore(
         }
     }
 
+    /**
+     * Decodes [uri] (sampled) with EXIF rotation applied, for the adjust-screen
+     * preview. Returns null on failure (never throws).
+     *
+     * The preview draws this bitmap directly (Canvas + drawImage) instead of
+     * going through an image-loader painter, so the drawn size is fully
+     * deterministic and matches the crop math exactly.
+     */
+    suspend fun loadPreviewBitmap(uri: Uri): Bitmap? = withContext(Dispatchers.IO) {
+        try {
+            decodeSampled(uri)?.let { applyExifRotation(uri, it) }
+        } catch (e: Exception) {
+            Log.e(TAG, "loadPreviewBitmap failed for $uri -> ${e.message}")
+            null
+        }
+    }
+
     /** All stored background files (the gallery source). */
     fun listBackgrounds(): List<File> =
         backgroundsDir.listFiles()?.filter { it.isFile && it.extension == "jpg" }

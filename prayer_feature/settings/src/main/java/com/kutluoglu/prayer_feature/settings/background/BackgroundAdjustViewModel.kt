@@ -29,36 +29,81 @@ class BackgroundAdjustViewModel(
     private val _uiState = MutableStateFlow(BackgroundAdjustUiState(uri = imageUri?.toString()))
     val uiState: StateFlow<BackgroundAdjustUiState> = _uiState.asStateFlow()
 
+    init {
+        // Decode the preview bitmap up front: the screen draws it directly
+        // (Canvas + drawImage), so the drawn geometry matches the crop math.
+        imageUri?.let { uri ->
+            viewModelScope.launch { loadPreview(uri) }
+        }
+    }
+
+    /**
+     * Loads the preview bitmap and publishes its size into the state.
+     * Internal + suspend so tests can drive it deterministically.
+     */
+    internal suspend fun loadPreview(uri: Uri) {
+        val bitmap = backgroundImageStore.loadPreviewBitmap(uri) ?: return
+        _uiState.value = _uiState.value.copy(previewBitmap = bitmap)
+        if (bitmap.width > 0 && bitmap.height > 0) {
+            displayedImageSize = Size(bitmap.width.toFloat(), bitmap.height.toFloat())
+            _uiState.value = _uiState.value.copy(
+                imageAspectRatio = bitmap.width.toFloat() / bitmap.height
+            )
+            applyTransform(_uiState.value.scale, _uiState.value.offset)
+        }
+    }
+
     private val _navigateBack = MutableStateFlow(false)
     val navigateBack: StateFlow<Boolean> = _navigateBack.asStateFlow()
 
-    /** Frame size in pixels, captured from the UI via [FrameSizeChanged]. */
+    /** Frame size in pixels, captured from the UI via [BackgroundAdjustEvent.FrameMeasured]. */
     internal var frameSize: Size = Size.Zero
 
-    /** Displayed image size in pixels, captured from the UI via [ImageLoaded]. */
+    /** Displayed image size in pixels, captured from the decoded preview bitmap. */
     internal var displayedImageSize: Size = Size.Zero
 
     fun onEvent(event: BackgroundAdjustEvent) {
         when (event) {
-            is BackgroundAdjustEvent.OnTransform -> {
-                val (scale, offset) = CropMath.clampTransform(
-                    scale = event.scale,
-                    offset = event.offset,
-                    imageAspectRatio = currentImageAspectRatio(),
-                    frameAspectRatio = currentFrameAspectRatio(),
-                    frameSize = frameSize
-                )
-                _uiState.value = _uiState.value.copy(scale = scale, offset = offset)
-            }
-            BackgroundAdjustEvent.OnDoubleTap -> {
-                val coverScale = maxOf(
+            is BackgroundAdjustEvent.OnTransform ->
+                applyTransform(scale = event.scale, offset = event.offset)
+            BackgroundAdjustEvent.OnDoubleTap -> applyTransform(
+                scale = maxOf(
                     1f,
                     currentImageAspectRatio() / currentFrameAspectRatio().coerceAtLeast(0.001f)
-                )
-                _uiState.value = _uiState.value.copy(scale = coverScale, offset = Offset.Zero)
+                ),
+                offset = Offset.Zero
+            )
+            is BackgroundAdjustEvent.FrameMeasured -> {
+                frameSize = event.size
+                applyTransform(_uiState.value.scale, _uiState.value.offset)
             }
             BackgroundAdjustEvent.Confirm -> confirm()
         }
+    }
+
+    /**
+     * Stores [scale]/[offset] clamped so the frame always stays covered.
+     *
+     * The first render happens before the image is decoded, so raw values are
+     * kept until both [frameSize] and [displayedImageSize] are known; the
+     * [BackgroundAdjustEvent.FrameMeasured] event and the bitmap-load
+     * completion re-run this clamp as soon as a measurement arrives.
+     */
+    private fun applyTransform(scale: Float, offset: Offset) {
+        if (frameSize.width <= 0f || frameSize.height <= 0f ||
+            displayedImageSize.width <= 0f || displayedImageSize.height <= 0f
+        ) {
+            _uiState.value = _uiState.value.copy(scale = scale, offset = offset)
+            return
+        }
+        val (clampedScale, clampedOffset) = CropMath.clampTransform(
+            scale = scale,
+            offset = offset,
+            imageAspectRatio = currentImageAspectRatio(),
+            frameAspectRatio = currentFrameAspectRatio(),
+            frameSize = frameSize
+        )
+        _uiState.value = _uiState.value.copy(scale = clampedScale, offset = clampedOffset)
     }
 
     private fun confirm() {

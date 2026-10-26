@@ -93,4 +93,29 @@ class CropMathTest {
         assertThat(rect.right).isAtMost(1f)
         assertThat(rect.bottom).isAtMost(1f)
     }
+
+    @Test
+    fun `cover-clamped crop keeps the frame aspect ratio`() {
+        // 16:9 image in the home-banner-shaped frame; at scale 1 the frame is
+        // not covered, so clampTransform raises it to the cover scale. The
+        // resulting crop must keep the frame's aspect ratio, otherwise the
+        // home banner's ContentScale.Crop would trim the confirmed view again.
+        val frameSize = Size(660f, 446f)
+        val imageAspect = 1600f / 900f
+        val displayed = Size(660f, 660f / imageAspect)
+        val (scale, offset) = CropMath.clampTransform(
+            scale = 1f, offset = Offset.Zero,
+            imageAspectRatio = imageAspect,
+            frameAspectRatio = frameSize.width / frameSize.height,
+            frameSize = frameSize
+        )
+
+        val rect = CropMath.normalizedCropRect(
+            scale = scale, offset = offset,
+            frameSize = frameSize, displayedImageSize = displayed
+        )
+
+        val cropAspect = (rect.width() * displayed.width) / (rect.height() * displayed.height)
+        assertThat(cropAspect).isWithin(1e-3f).of(frameSize.width / frameSize.height)
+    }
 }

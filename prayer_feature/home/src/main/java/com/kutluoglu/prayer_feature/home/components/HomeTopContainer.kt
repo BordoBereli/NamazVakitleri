@@ -24,11 +24,13 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.kutluoglu.core.designsystem.states.TimeUiState
+import com.kutluoglu.prayer_feature.common.background.BackgroundBannerMetrics
 import com.kutluoglu.prayer_feature.common.components.LocationInfoSection
 import com.kutluoglu.prayer_feature.common.components.TopContainer
 import com.kutluoglu.prayer_feature.common.prayerUtils.getPrayerDrawableIdFrom
@@ -90,6 +92,11 @@ fun HomeTopContainer(
     val borderColorFromTheme = MaterialTheme.colorScheme.onSecondaryContainer
 
     TopContainer(
+        // Publish the banner's real size so the background adjust screen can
+        // frame the crop with the exact same aspect ratio (no re-crop on home).
+        modifier = Modifier.onSizeChanged { size ->
+            BackgroundBannerMetrics.update(size.width, size.height)
+        },
         painter = painter,
         stringResourceId = R.string.home_page_fallback,
         backgroundPath = backgroundPath

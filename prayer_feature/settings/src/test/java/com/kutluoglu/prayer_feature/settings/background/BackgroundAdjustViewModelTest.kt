@@ -8,8 +8,10 @@ import com.kutluoglu.prayer_location.data.LocationsState
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.location.LocationEntry
 import com.kutluoglu.prayer_feature.settings.MainCoroutineRule
+import android.graphics.Bitmap
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
@@ -40,6 +42,7 @@ class BackgroundAdjustViewModelTest {
         // The orphan-cleanup path reads the current state; default to empty.
         coEvery { locationsCoordinator.observeState() } returns flowOf(LocationsState())
         backgroundImageStore = mockk()
+        coEvery { backgroundImageStore.loadPreviewBitmap(any()) } returns null
         viewModel = BackgroundAdjustViewModel(
             locationId = locationId,
             imageUri = imageUri,
@@ -265,6 +268,88 @@ class BackgroundAdjustViewModelTest {
         val state = viewModel.uiState.value
         assertThat(state.scale).isEqualTo(1f)
         assertThat(state.offset).isEqualTo(androidx.compose.ui.geometry.Offset.Zero)
+    }
+
+    private fun stubPreviewBitmap(width: Int, height: Int) {
+        val bitmap = mockk<Bitmap> {
+            every { this@mockk.width } returns width
+            every { this@mockk.height } returns height
+            every { isRecycled } returns false
+        }
+        coEvery { backgroundImageStore.loadPreviewBitmap(any()) } returns bitmap
+    }
+
+    @Test
+    fun `Preview bitmap clamps a wider image to the cover scale`() = runTest {
+        // Arrange: 16:9 photo in the home-banner shaped frame (ratio ~1.48);
+        // width-fit at scale 1 would leave blank space top/bottom.
+        stubPreviewBitmap(1600, 900)
+        viewModel.loadPreview(imageUri)
+        viewModel.onEvent(
+            BackgroundAdjustEvent.FrameMeasured(androidx.compose.ui.geometry.Size(660f, 446f))
+        )
+
+        // Assert: cover scale = (1600/900) / (660/446) ~= 1.2014
+        val state = viewModel.uiState.value
+        assertThat(state.scale).isWithin(1e-3f).of(1.20135f)
+        assertThat(state.offset).isEqualTo(androidx.compose.ui.geometry.Offset.Zero)
+    }
+
+    @Test
+    fun `FrameMeasured after the bitmap load clamps once both sizes are known`() = runTest {
+        // Arrange: the bitmap is decoded asynchronously; before the frame is
+        // measured the initial scale stays unclamped.
+        stubPreviewBitmap(1600, 900)
+        viewModel.loadPreview(imageUri)
+        assertThat(viewModel.uiState.value.scale).isEqualTo(1f)
+
+        // Act
+        viewModel.onEvent(
+            BackgroundAdjustEvent.FrameMeasured(androidx.compose.ui.geometry.Size(660f, 446f))
+        )
+
+        // Assert
+        assertThat(viewModel.uiState.value.scale).isWithin(1e-3f).of(1.20135f)
+    }
+
+    @Test
+    fun `Preview bitmap exposes the aspect ratio used to lay out the preview`() = runTest {
+        // Arrange
+        stubPreviewBitmap(1600, 900)
+
+        // Act
+        viewModel.loadPreview(imageUri)
+
+        // Assert: the preview must lay the image out at its full drawn size,
+        // otherwise panning clips the bottom instead of revealing content.
+        assertThat(viewModel.uiState.value.imageAspectRatio)
+            .isWithin(1e-3f)
+            .of(1600f / 900f)
+    }
+
+    @Test
+    fun `OnTransform clamps pan at the cover-clamped scale`() = runTest {
+        // Arrange: same 16:9 image in a 660x446 frame.
+        stubPreviewBitmap(1600, 900)
+        viewModel.loadPreview(imageUri)
+        viewModel.onEvent(
+            BackgroundAdjustEvent.FrameMeasured(androidx.compose.ui.geometry.Size(660f, 446f))
+        )
+
+        // Act: zoom to 2x and pan far past the bottom-right bound.
+        viewModel.onEvent(
+            BackgroundAdjustEvent.OnTransform(
+                scale = 2f,
+                offset = androidx.compose.ui.geometry.Offset(-1000f, 1000f)
+            )
+        )
+
+        // Assert: image is 1320x742.5 px, so the top-left corner clamps to
+        // [660-1320, 0] x [446-742.5, 0].
+        val state = viewModel.uiState.value
+        assertThat(state.scale).isEqualTo(2f)
+        assertThat(state.offset.x).isWithin(1e-3f).of(-660f)
+        assertThat(state.offset.y).isWithin(1e-3f).of(0f)
     }
 
     @Test
