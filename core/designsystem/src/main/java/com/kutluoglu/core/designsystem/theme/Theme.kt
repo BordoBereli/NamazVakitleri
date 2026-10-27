@@ -9,10 +9,13 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.unit.Density
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -71,6 +74,14 @@ fun NamazVakitleriTheme(
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
+    // Cap the system font scale so oversized user font settings cannot break layouts.
+    // Users can still scale text up to 1.3x; anything larger is clamped.
+    val currentDensity = LocalDensity.current
+    val cappedDensity = if (currentDensity.fontScale > MAX_FONT_SCALE) {
+        Density(density = currentDensity.density, fontScale = MAX_FONT_SCALE)
+    } else {
+        currentDensity
+    }
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
@@ -98,8 +109,13 @@ fun NamazVakitleriTheme(
         }
     }
 
-    MaterialTheme(
-        colorScheme = colorScheme, typography = Typography, content = content
-    )
+    CompositionLocalProvider(LocalDensity provides cappedDensity) {
+        MaterialTheme(
+            colorScheme = colorScheme, typography = Typography, content = content
+        )
+    }
 }
+
+/** Maximum font scale allowed inside the app, regardless of the system setting. */
+private val MAX_FONT_SCALE = 1.3f
 
