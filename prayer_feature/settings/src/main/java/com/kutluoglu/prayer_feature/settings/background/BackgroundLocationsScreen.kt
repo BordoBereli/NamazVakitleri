@@ -4,7 +4,10 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,6 +25,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddAPhoto
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.RestartAlt
@@ -37,6 +42,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -67,10 +73,28 @@ fun BackgroundLocationsRoute(
     viewModel: BackgroundLocationsViewModel = koinViewModel()
 ) {
     val state by viewModel.uiState.collectAsState()
-    var deleteCandidate by remember { mutableStateOf<String?>(null) }
     var showDeleteAllDialog by remember { mutableStateOf(false) }
     var pendingPickLocationId by remember { mutableStateOf<String?>(null) }
     var selectedLocationId by remember { mutableStateOf<String?>(null) }
+    // Selection mode: long-press a gallery thumbnail to enter, tap toggles
+    // items while active; tap returns to "apply" once the mode is exited.
+    var selectionMode by remember { mutableStateOf(false) }
+    var selectedPaths by remember { mutableStateOf<Set<String>>(emptySet()) }
+    var showDeleteSelectionDialog by remember { mutableStateOf(false) }
+
+    fun exitSelectionMode() {
+        selectionMode = false
+        selectedPaths = emptySet()
+    }
+
+    // Leave selection mode when the gallery changes under us (a delete from
+    // elsewhere, or the last items removed) so stale paths can't stay selected.
+    LaunchedEffect(state.savedBackgrounds) {
+        if (selectionMode) {
+            selectedPaths = selectedPaths intersect state.savedBackgrounds.toSet()
+            if (selectedPaths.isEmpty()) selectionMode = false
+        }
+    }
 
     // Re-read the gallery whenever the screen comes back to the foreground,
     // so a background saved on the adjust screen shows up immediately.
@@ -146,18 +170,44 @@ fun BackgroundLocationsRoute(
                             .padding(start = 16.dp, end = 8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            text = stringResource(R.string.saved_backgrounds),
-                            style = MaterialTheme.typography.titleSmall,
-                            fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.weight(1f).padding(vertical = 8.dp)
-                        )
-                        TextButton(onClick = { showDeleteAllDialog = true }) {
+                        if (selectionMode) {
                             Text(
-                                text = stringResource(R.string.delete_all_backgrounds),
-                                color = MaterialTheme.colorScheme.error
+                                text = stringResource(
+                                    R.string.backgrounds_selected, selectedPaths.size
+                                ),
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.weight(1f).padding(vertical = 8.dp)
                             )
+                            IconButton(onClick = { showDeleteSelectionDialog = true }) {
+                                Icon(
+                                    Icons.Default.Delete,
+                                    contentDescription = stringResource(R.string.delete_backgrounds),
+                                    tint = MaterialTheme.colorScheme.error
+                                )
+                            }
+                            IconButton(onClick = { exitSelectionMode() }) {
+                                Icon(
+                                    Icons.Default.Close,
+                                    contentDescription = stringResource(R.string.cancel),
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        } else {
+                            Text(
+                                text = stringResource(R.string.saved_backgrounds),
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.weight(1f).padding(vertical = 8.dp)
+                            )
+                            TextButton(onClick = { showDeleteAllDialog = true }) {
+                                Text(
+                                    text = stringResource(R.string.delete_all_backgrounds),
+                                    color = MaterialTheme.colorScheme.error
+                                )
+                            }
                         }
                     }
                 }
@@ -169,15 +219,23 @@ fun BackgroundLocationsRoute(
                         items(state.savedBackgrounds, key = { it }) { path ->
                             SavedBackgroundThumbnail(
                                 path = path,
-                                onApply = {
-                                    val locationId = selectedLocationId
-                                    if (locationId != null) {
-                                        viewModel.onEvent(
-                                            BackgroundLocationsEvent.ApplySavedBackground(locationId, path)
-                                        )
-                                    }
+                                isSelected = path in selectedPaths,
+                                onLongClick = {
+                                    selectionMode = true
+                                    selectedPaths = selectedPaths + path
                                 },
-                                onDelete = { deleteCandidate = path }
+                                onClick = {
+                                    if (selectionMode) {
+                                        selectedPaths = selectedPaths.toggle(path)
+                                    } else {
+                                        val locationId = selectedLocationId
+                                        if (locationId != null) {
+                                            viewModel.onEvent(
+                                                BackgroundLocationsEvent.ApplySavedBackground(locationId, path)
+                                            )
+                                        }
+                                    }
+                                }
                             )
                         }
                     }
@@ -186,21 +244,30 @@ fun BackgroundLocationsRoute(
         }
     }
 
-    deleteCandidate?.let { path ->
+    if (showDeleteSelectionDialog) {
         AlertDialog(
-            onDismissRequest = { deleteCandidate = null },
-            title = { Text(stringResource(R.string.delete_background)) },
-            text = { Text(stringResource(R.string.delete_background_confirmation)) },
+            onDismissRequest = { showDeleteSelectionDialog = false },
+            title = { Text(stringResource(R.string.delete_backgrounds)) },
+            text = {
+                Text(
+                    stringResource(
+                        R.string.delete_backgrounds_confirmation, selectedPaths.size
+                    )
+                )
+            },
             confirmButton = {
                 TextButton(onClick = {
-                    viewModel.onEvent(BackgroundLocationsEvent.DeleteBackground(path))
-                    deleteCandidate = null
+                    viewModel.onEvent(
+                        BackgroundLocationsEvent.DeleteBackgrounds(selectedPaths.toList())
+                    )
+                    showDeleteSelectionDialog = false
+                    exitSelectionMode()
                 }) {
                     Text(stringResource(R.string.delete))
                 }
             },
             dismissButton = {
-                TextButton(onClick = { deleteCandidate = null }) {
+                TextButton(onClick = { showDeleteSelectionDialog = false }) {
                     Text(stringResource(R.string.cancel))
                 }
             }
@@ -281,17 +348,19 @@ private fun BackgroundLocationRow(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun SavedBackgroundThumbnail(
     path: String,
-    onApply: () -> Unit,
-    onDelete: () -> Unit
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    onLongClick: () -> Unit
 ) {
     Box(
         modifier = Modifier
             .size(72.dp)
             .clip(RoundedCornerShape(12.dp))
-            .clickable(onClick = onApply)
+            .combinedClickable(onClick = onClick, onLongClick = onLongClick)
     ) {
         AsyncImage(
             model = File(path),
@@ -299,15 +368,22 @@ private fun SavedBackgroundThumbnail(
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
         )
-        IconButton(
-            onClick = onDelete,
-            modifier = Modifier.align(Alignment.TopEnd).padding(2.dp)
-        ) {
+        if (isSelected) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)
+                    )
+            )
             Icon(
-                Icons.Default.Delete,
-                contentDescription = stringResource(R.string.delete_background),
-                tint = MaterialTheme.colorScheme.error,
-                modifier = Modifier.size(16.dp)
+                Icons.Default.CheckCircle,
+                contentDescription = stringResource(R.string.selected),
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(4.dp)
+                    .size(18.dp)
             )
         }
     }
@@ -340,3 +416,7 @@ private fun BackgroundThumbnail(path: String?) {
         }
     }
 }
+
+/** Returns [set] with [value] added, or without it if already present. */
+private fun Set<String>.toggle(value: String): Set<String> =
+    if (value in this) this - value else this + value

@@ -176,6 +176,54 @@ class BackgroundLocationsViewModelTest {
     }
 
     @Test
+    fun `DeleteBackgrounds deletes every selected file and clears referencing locations`() = runTest {
+        // Arrange: loc1 points at a selected file, loc2 at an unselected one,
+        // loc3 shares a selected file with the GPS entry.
+        val state = LocationsState(
+            entries = listOf(
+                entry("loc1", "Istanbul", backgroundPath = "/data/a.jpg"),
+                entry("loc2", "Ankara", backgroundPath = "/data/c.jpg"),
+                entry("loc3", "Izmir", backgroundPath = "/data/b.jpg"),
+                entry(
+                    LocationsCoordinator.GPS_LOCATION_ID,
+                    "Istanbul, Türkiye",
+                    backgroundPath = "/data/b.jpg",
+                    isAutoGps = true
+                )
+            )
+        )
+        coEvery { locationsCoordinator.observeState() } returns flowOf(state)
+        viewModel = BackgroundLocationsViewModel(locationsCoordinator, backgroundImageStore)
+
+        // Act
+        viewModel.onEvent(
+            BackgroundLocationsEvent.DeleteBackgrounds(listOf("/data/a.jpg", "/data/b.jpg"))
+        )
+
+        // Assert: both selected files are deleted, every location referencing
+        // either is cleared (GPS included), the unselected file survives.
+        coVerify(timeout = 2_000) { backgroundImageStore.deleteBackground("/data/a.jpg") }
+        coVerify(timeout = 2_000) { backgroundImageStore.deleteBackground("/data/b.jpg") }
+        coVerify(timeout = 2_000) { locationsCoordinator.setBackgroundPath("loc1", null) }
+        coVerify(timeout = 2_000) { locationsCoordinator.setBackgroundPath("loc3", null) }
+        coVerify(timeout = 2_000) {
+            locationsCoordinator.setBackgroundPath(LocationsCoordinator.GPS_LOCATION_ID, null)
+        }
+        coVerify(exactly = 0) { backgroundImageStore.deleteBackground("/data/c.jpg") }
+        coVerify(exactly = 0) { locationsCoordinator.setBackgroundPath("loc2", null) }
+    }
+
+    @Test
+    fun `DeleteBackgrounds with an empty selection deletes nothing`() = runTest {
+        // Act
+        viewModel.onEvent(BackgroundLocationsEvent.DeleteBackgrounds(emptyList()))
+
+        // Assert
+        coVerify(exactly = 0) { backgroundImageStore.deleteBackground(any()) }
+        coVerify(exactly = 0) { locationsCoordinator.setBackgroundPath(any(), any()) }
+    }
+
+    @Test
     fun `DeleteAllBackgrounds deletes every file and clears all location paths`() = runTest {
         // Arrange
         val state = LocationsState(

@@ -139,6 +139,9 @@
     <string name="apply_background">Apply</string>
     <string name="delete_background">Delete background</string>
     <string name="delete_background_confirmation">This will permanently delete the saved background image.</string>
+    <string name="delete_backgrounds">Delete backgrounds</string>
+    <string name="delete_backgrounds_confirmation">This will permanently delete %1$d saved background images and remove them from all locations.</string>
+    <string name="backgrounds_selected">%1$d selected</string>
     <string name="delete_all_backgrounds">Delete all</string>
     <string name="delete_all_backgrounds_confirmation">This will permanently delete every saved background image and remove it from all locations.</string>
     <string name="background_adjust">Adjust background</string>

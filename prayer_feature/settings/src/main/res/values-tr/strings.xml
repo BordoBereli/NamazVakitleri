@@ -133,6 +133,9 @@
     <string name="apply_background">Uygula</string>
     <string name="delete_background">Arka planı sil</string>
     <string name="delete_background_confirmation">Kaydedilen arka plan görseli kalıcı olarak silinecek.</string>
+    <string name="delete_backgrounds">Arka planları sil</string>
+    <string name="delete_backgrounds_confirmation">Kaydedilen %1$d arka plan görseli kalıcı olarak silinecek ve tüm konumlardan kaldırılacak.</string>
+    <string name="backgrounds_selected">%1$d seçildi</string>
     <string name="delete_all_backgrounds">Tümünü sil</string>
     <string name="delete_all_backgrounds_confirmation">Kaydedilen tüm arka plan görselleri kalıcı olarak silinecek ve tüm konumlardan kaldırılacak.</string>
     <string name="background_adjust">Arka planı ayarla</string>

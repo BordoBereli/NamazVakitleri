@@ -45,16 +45,10 @@ class BackgroundLocationsViewModel(
                 refresh()
             }
             is BackgroundLocationsEvent.DeleteBackground -> viewModelScope.launch {
-                val referencingIds = _uiState.value.locations
-                    .filter { it.backgroundPath == event.path }
-                    .map { it.id }
-                withContext(Dispatchers.IO) {
-                    backgroundImageStore.deleteBackground(event.path)
-                }
-                referencingIds.forEach { id ->
-                    locationsCoordinator.setBackgroundPath(id, null)
-                }
-                refresh()
+                deletePaths(listOf(event.path))
+            }
+            is BackgroundLocationsEvent.DeleteBackgrounds -> viewModelScope.launch {
+                deletePaths(event.paths)
             }
             BackgroundLocationsEvent.DeleteAllBackgrounds -> viewModelScope.launch {
                 // The GPS entry is cleared unconditionally: it may not be part
@@ -72,6 +66,23 @@ class BackgroundLocationsViewModel(
                 refresh()
             }
         }
+    }
+
+    /**
+     * Deletes [paths] from the gallery and clears the background path of any
+     * location referencing one of them.
+     */
+    private suspend fun deletePaths(paths: List<String>) {
+        val referencingIds = _uiState.value.locations
+            .filter { it.backgroundPath in paths }
+            .map { it.id }
+        withContext(Dispatchers.IO) {
+            paths.forEach { backgroundImageStore.deleteBackground(it) }
+        }
+        referencingIds.forEach { id ->
+            locationsCoordinator.setBackgroundPath(id, null)
+        }
+        refresh()
     }
 
     /**
