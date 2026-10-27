@@ -1,10 +1,18 @@
 package com.kutluoglu.prayer_feature.prayertimes
 
 import androidx.activity.ComponentActivity
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+
+import androidx.compose.ui.unit.Density
+import com.google.common.truth.Truth.assertThat
 import com.kutluoglu.core.designsystem.states.TimeUiState
 import com.kutluoglu.prayer.model.location.LocationData
 import com.kutluoglu.prayer.model.prayer.DailyPrayer
@@ -70,5 +78,59 @@ class PrayerTimesScreenTest {
         composeTestRule.onNodeWithText("Imsak").assertIsDisplayed()
         composeTestRule.onNodeWithText("Dhuhr").assertIsDisplayed()
         composeTestRule.onNodeWithText("Isha").assertIsDisplayed()
+    }
+
+    @Test
+    fun `prayer names are not clipped at large font scale`() {
+        withFontScale(2f) {
+            composeTestRule.onNodeWithText("Imsak").assertTextNotClipped()
+            composeTestRule.onNodeWithText("Sunrise").assertTextNotClipped()
+            composeTestRule.onNodeWithText("Dhuhr").assertTextNotClipped()
+            composeTestRule.onNodeWithText("Asr").assertTextNotClipped()
+            composeTestRule.onNodeWithText("Maghrib").assertTextNotClipped()
+            composeTestRule.onNodeWithText("Isha").assertTextNotClipped()
+        }
+    }
+
+    @Test
+    fun `prayer times are not clipped at large font scale`() {
+        withFontScale(2f) {
+            composeTestRule.onNodeWithText("05:00").assertTextNotClipped()
+            composeTestRule.onNodeWithText("07:00").assertTextNotClipped()
+            composeTestRule.onNodeWithText("12:30").assertTextNotClipped()
+            composeTestRule.onNodeWithText("15:30").assertTextNotClipped()
+            composeTestRule.onNodeWithText("18:00").assertTextNotClipped()
+            composeTestRule.onNodeWithText("19:30").assertTextNotClipped()
+        }
+    }
+
+    private fun withFontScale(fontScale: Float, block: () -> Unit) {
+        composeTestRule.setContent {
+            val density = Density(
+                density = LocalDensity.current.density,
+                fontScale = fontScale
+            )
+            CompositionLocalProvider(LocalDensity provides density) {
+                PayerTimesScreen(
+                    uiState = successState,
+                    onEvent = {}
+                )
+            }
+        }
+        composeTestRule.waitForIdle()
+        block()
+    }
+
+    private fun SemanticsNodeInteraction.assertTextNotClipped(): SemanticsNodeInteraction {
+        val node = fetchSemanticsNode()
+        val getLayoutResultAction = node.config[SemanticsActions.GetTextLayoutResult]
+            .action ?: error("Node does not expose a text layout result")
+        val layoutResult = mutableListOf<TextLayoutResult>()
+        @Suppress("UNCHECKED_CAST")
+        getLayoutResultAction.invoke(layoutResult as MutableList<TextLayoutResult>)
+        val result = layoutResult.lastOrNull()
+            ?: error("Text layout result was not provided by the node")
+        assertThat(result.didOverflowWidth).isFalse()
+        return this
     }
 }

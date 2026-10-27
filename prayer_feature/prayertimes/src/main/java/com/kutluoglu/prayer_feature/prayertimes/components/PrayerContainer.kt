@@ -20,12 +20,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -48,6 +50,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.kutluoglu.core.common.extractWeekdayName
 import com.kutluoglu.core.common.gregorianShortFormatter
 import com.kutluoglu.core.designsystem.components.ErrorMessage
@@ -251,9 +254,11 @@ private fun PrayersHeader(prayers: List<Prayer>) {
                     text = prayer.name,
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.primary,
-                    maxLines = 1,
-                    softWrap = false,
-                    overflow = TextOverflow.Clip
+                    autoSize = TextAutoSize.StepBased(
+                        minFontSize = 8.sp,
+                        maxFontSize = 12.sp
+                    ),
+                    maxLines = 1
                 )
             }
         }
@@ -333,13 +338,17 @@ private fun PrayersRow(prayers: List<Prayer>, isToday: Boolean) {
             val timeText = remember(prayer) { prayer.time.toString() }
             Text(
                 text = timeText,
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 2.dp),
                 style = MaterialTheme.typography.titleMedium,
                 color = textColor,
                 textAlign = TextAlign.Center,
-                maxLines = 1,
-                softWrap = false,
-                overflow = TextOverflow.Clip
+                autoSize = TextAutoSize.StepBased(
+                    minFontSize = 9.sp,
+                    maxFontSize = 16.sp
+                ),
+                maxLines = 1
             )
         }
     }
@@ -381,7 +390,12 @@ private fun PrayerDateInfo(
                     text = "$dayOfMonth",
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Bold,
-                    color = numberColor
+                    color = numberColor,
+                    autoSize = TextAutoSize.StepBased(
+                        minFontSize = 8.sp,
+                        maxFontSize = 16.sp
+                    ),
+                    maxLines = 1
                 )
             }
             Text(
@@ -391,10 +405,10 @@ private fun PrayerDateInfo(
                 color = dateColor,
                 textAlign = TextAlign.Start,
                 maxLines = 1,
-                softWrap = false,
-                overflow = TextOverflow.Clip
+                overflow = TextOverflow.Ellipsis
             )
         }
+        Spacer(modifier = Modifier.width(8.dp))
         Text(
             text = hijriDate,
             style = MaterialTheme.typography.titleMedium,
@@ -402,8 +416,8 @@ private fun PrayerDateInfo(
             color = hijriDateColor,
             textAlign = TextAlign.End,
             maxLines = 1,
-            softWrap = false,
-            overflow = TextOverflow.Clip
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.weight(1.4f, fill = false)
         )
     }
 }

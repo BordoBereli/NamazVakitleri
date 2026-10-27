@@ -219,7 +219,7 @@ private fun LocationDateBox(
             ) {
                 locationState?.let {
                     LocationInfoSection(
-                        modifier = Modifier.wrapContentWidth(),
+                        modifier = Modifier.weight(1f, fill = false),
                         locationState = it,
                         textColor = Color.White,
                         textSize = 11.sp
@@ -231,7 +231,8 @@ private fun LocationDateBox(
                         color = MaterialTheme.colorScheme.primary,
                         fontSize = 12.sp,
                         lineHeight = 16.sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1
                     )
                 }
             }
