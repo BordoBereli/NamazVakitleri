@@ -19,9 +19,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddAPhoto
@@ -125,30 +126,33 @@ fun BackgroundLocationsRoute(
             )
         }
     ) { padding ->
-        LazyColumn(
+        LazyVerticalGrid(
+            columns = GridCells.Adaptive(minSize = 72.dp),
             modifier = Modifier.fillMaxSize().padding(padding),
-            contentPadding = PaddingValues(vertical = 8.dp)
+            contentPadding = PaddingValues(vertical = 8.dp, horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            item {
+            item(span = { GridItemSpan(maxLineSpan) }) {
                 Text(
                     text = stringResource(R.string.background_image),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                    modifier = Modifier.padding(vertical = 8.dp)
                 )
             }
             if (state.locations.isEmpty()) {
-                item {
+                item(span = { GridItemSpan(maxLineSpan) }) {
                     Text(
                         text = stringResource(R.string.background_no_locations),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
+                        modifier = Modifier.padding(vertical = 12.dp)
                     )
                 }
             }
-            items(state.locations, key = { it.id }) { location ->
+            items(state.locations, key = { it.id }, span = { GridItemSpan(maxLineSpan) }) { location ->
                 BackgroundLocationRow(
                     location = location,
                     isSelected = location.id == selectedLocationId,
@@ -163,11 +167,9 @@ fun BackgroundLocationsRoute(
                 )
             }
             if (state.savedBackgrounds.isNotEmpty()) {
-                item {
+                item(span = { GridItemSpan(maxLineSpan) }) {
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 16.dp, end = 8.dp),
+                        modifier = Modifier.fillMaxWidth().padding(end = 8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         if (selectionMode) {
@@ -211,34 +213,27 @@ fun BackgroundLocationsRoute(
                         }
                     }
                 }
-                item {
-                    LazyRow(
-                        contentPadding = PaddingValues(horizontal = 16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        items(state.savedBackgrounds, key = { it }) { path ->
-                            SavedBackgroundThumbnail(
-                                path = path,
-                                isSelected = path in selectedPaths,
-                                onLongClick = {
-                                    selectionMode = true
-                                    selectedPaths = selectedPaths + path
-                                },
-                                onClick = {
-                                    if (selectionMode) {
-                                        selectedPaths = selectedPaths.toggle(path)
-                                    } else {
-                                        val locationId = selectedLocationId
-                                        if (locationId != null) {
-                                            viewModel.onEvent(
-                                                BackgroundLocationsEvent.ApplySavedBackground(locationId, path)
-                                            )
-                                        }
-                                    }
+                items(state.savedBackgrounds, key = { it }) { path ->
+                    SavedBackgroundThumbnail(
+                        path = path,
+                        isSelected = path in selectedPaths,
+                        onLongClick = {
+                            selectionMode = true
+                            selectedPaths = selectedPaths + path
+                        },
+                        onClick = {
+                            if (selectionMode) {
+                                selectedPaths = selectedPaths.toggle(path)
+                            } else {
+                                val locationId = selectedLocationId
+                                if (locationId != null) {
+                                    viewModel.onEvent(
+                                        BackgroundLocationsEvent.ApplySavedBackground(locationId, path)
+                                    )
                                 }
-                            )
+                            }
                         }
-                    }
+                    )
                 }
             }
         }
