@@ -238,7 +238,8 @@ class BackgroundAdjustViewModelTest {
 
     @Test
     fun `OnTransform clamps offset so the frame stays covered`() = runTest {
-        // Arrange: at scale 2 the 800x800 image can pan 400 px in each axis.
+        // Arrange: at scale 2 the 800x800 image can pan 200 px in each axis
+        // around the centered position (center convention).
         viewModel.frameSize = androidx.compose.ui.geometry.Size(400f, 400f)
         viewModel.displayedImageSize = androidx.compose.ui.geometry.Size(800f, 800f)
 
@@ -250,10 +251,10 @@ class BackgroundAdjustViewModelTest {
             )
         )
 
-        // Assert: clamps to the bottom-right corner of the pannable range
+        // Assert: clamps to the edge of the pannable range
         val state = viewModel.uiState.value
-        assertThat(state.offset.x).isEqualTo(-400f)
-        assertThat(state.offset.y).isEqualTo(0f)
+        assertThat(state.offset.x).isEqualTo(-200f)
+        assertThat(state.offset.y).isEqualTo(200f)
     }
 
     @Test
@@ -344,12 +345,12 @@ class BackgroundAdjustViewModelTest {
             )
         )
 
-        // Assert: image is 1320x742.5 px, so the top-left corner clamps to
-        // [660-1320, 0] x [446-742.5, 0].
+        // Assert: image is 1320x742.5 px, so the center offset clamps to
+        // ±(1320-660)/2 = ±330 on x and ±(742.5-446)/2 = ±148.25 on y.
         val state = viewModel.uiState.value
         assertThat(state.scale).isEqualTo(2f)
-        assertThat(state.offset.x).isWithin(1e-3f).of(-660f)
-        assertThat(state.offset.y).isWithin(1e-3f).of(0f)
+        assertThat(state.offset.x).isWithin(1e-3f).of(-330f)
+        assertThat(state.offset.y).isWithin(1e-3f).of(148.25f)
     }
 
     @Test

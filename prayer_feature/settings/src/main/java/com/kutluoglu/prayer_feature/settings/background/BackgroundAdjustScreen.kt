@@ -5,13 +5,11 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -27,12 +25,11 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.graphics.FilterQuality
-import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.res.stringResource
@@ -135,44 +132,34 @@ private fun BackgroundAdjustContent(
                 contentAlignment = Alignment.TopStart
             ) {
                 if (state.uri != null) {
-                    // Draw the decoded bitmap directly with an explicit dstSize
-                    // equal to the Canvas node's pixel size (frame width x
-                    // width / aspect). No image-loader painter in between, so
-                    // the drawn geometry is deterministic and always matches
-                    // CropMath's displayedImageSize convention.
+                    // Draw the decoded bitmap directly into a frame-sized
+                    // Canvas, positioned centered + offset — the exact inverse
+                    // of CropMath.normalizedCropRect's center convention, so
+                    // the baked crop always matches what the preview shows.
                     val imageAspectRatio = state.imageAspectRatio
                         .takeIf { it > 0f }
                         ?: BackgroundBannerMetrics.aspectRatio
                     val bitmap = state.previewBitmap
                     if (bitmap != null && !bitmap.isRecycled) {
-                        BoxWithConstraints {
-                            Canvas(
-                                modifier = Modifier
-                                    .requiredSize(maxWidth, maxWidth / imageAspectRatio)
-                                    .graphicsLayer {
-                                        // Scale around the top-left corner so the
-                                        // top-left corner stays at (offset.x,
-                                        // offset.y) at any zoom.
-                                        transformOrigin = TransformOrigin(0f, 0f)
-                                        scaleX = state.scale
-                                        scaleY = state.scale
-                                        translationX = state.offset.x
-                                        translationY = state.offset.y
-                                    }
-                            ) {
-                                drawImage(
-                                    image = bitmap.asImageBitmap(),
-                                    // DrawScope size == the node's pixel size
-                                    // (requiredSize above); using it keeps the
-                                    // drawn image exactly node-sized.
-                                    dstSize = IntSize(
-                                        size.width.roundToInt(),
-                                        size.height.roundToInt()
-                                    ),
-                                    dstOffset = IntOffset.Zero,
-                                    filterQuality = FilterQuality.Medium
-                                )
-                            }
+                        Canvas(modifier = Modifier.fillMaxSize()) {
+                            val drawnWidth = size.width * state.scale
+                            val drawnHeight = drawnWidth / imageAspectRatio
+                            val topLeft = Offset(
+                                (size.width - drawnWidth) / 2f + state.offset.x,
+                                (size.height - drawnHeight) / 2f + state.offset.y
+                            )
+                            drawImage(
+                                image = bitmap.asImageBitmap(),
+                                dstSize = IntSize(
+                                    drawnWidth.roundToInt(),
+                                    drawnHeight.roundToInt()
+                                ),
+                                dstOffset = IntOffset(
+                                    topLeft.x.roundToInt(),
+                                    topLeft.y.roundToInt()
+                                ),
+                                filterQuality = FilterQuality.Medium
+                            )
                         }
                     }
                 }
